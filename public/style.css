@@ -91,3 +91,14 @@ footer a{color:var(--acc)}#consent{position:fixed;left:50%;bottom:20px;transform
 .chip.on small{opacity:.8}.card .tag{text-shadow:none}
 @media(max-width:440px){.logo{font-size:16px;gap:8px;letter-spacing:1px}.logo img{height:34px}.live{font-size:9px}.bar{padding:10px 12px}}@media(max-width:340px){.logo span{display:none}}
 .card h2 a:focus-visible,.chip:focus-visible,.more:focus-visible{outline:2px solid var(--acc2);outline-offset:2px}
+
+/* v2: photo-first cards - image always on top, full width, whole photo visible (contain over a blurred fill) */
+.card,.card.hero{display:flex;flex-direction:column}
+.card .img,.card.hero .img{flex:none;width:100%;height:auto;min-height:0;aspect-ratio:16/9;max-height:520px;background:var(--card2)}
+.img img.bg,.story-hero img.bg{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;filter:blur(22px) brightness(.5) saturate(1.2);transform:scale(1.2)}
+.img img.fg{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:contain;transition:transform .6s}
+.card:hover .img img.fg{transform:scale(1.03)}.card:hover .img img.bg{transform:scale(1.2)}
+.card .body{flex:1}.card h2{font-size:24px}.card.hero h2{font-size:30px}
+.story-hero{position:relative;overflow:hidden;background:var(--card2)}.story-hero img.fg{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:contain}
+.ri{background-position:center 25%}
+@media(max-width:700px){.card .img,.card.hero .img{height:auto}.card h2{font-size:20px}.card.hero h2{font-size:23px}}

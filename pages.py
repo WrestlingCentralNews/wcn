@@ -43,7 +43,7 @@ def page(c, related):
 {ad("leaderboard", "728×90 Leaderboard", "ad-leader")}
 <main class="layout"><aside class="side">{ad("leftSkyscraper", "300×600 Half-page", "ad-sky")}</aside>
 <article class="story"><div class="tags">{conf}{tags}</div><h1>{e(c["title"])}</h1><div class="byline">WCN Staff · {nice(c["ts"])}</div>
-{f'<div class="story-hero" style="background-image:url(\'{e(img)}\')" role="img" aria-label="{e(c["title"])}"></div>' if img else f'<div class="story-hero ph-h"><span>{c["categories"][0]}</span></div>'}
+{f'<div class="story-hero"><img class="bg" src="{e(img)}" alt="" aria-hidden="true" referrerpolicy="no-referrer"><img class="fg" src="{e(img)}" alt="{e(c["title"])}" referrerpolicy="no-referrer"></div>' if img else f'<div class="story-hero ph-h"><span>{c["categories"][0]}</span></div>'}
 {f'<p class="pcredit"><a href="{e(c["image_credit"]["url"])}" rel="nofollow noopener" target="_blank">{e(c["image_credit"]["text"])}</a></p>' if c.get("image_credit") else ''}{quote}<div class="prose">{"".join(body)}</div>{tl}
 <p class="credit">Source: <a href="{e(c["link"])}" rel="nofollow noopener" target="_blank">{e(c["source"])}</a></p>
 {ad("storyBottom", "Responsive Banner")}
