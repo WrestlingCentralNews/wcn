@@ -16,6 +16,17 @@ window.wcnConsent=()=>{const c=get();return c?c==='yes':!EU};
 function banner(){if(document.getElementById('consent'))return;const b=document.createElement('div');b.id='consent';b.innerHTML='<p>We use cookies for analytics and ads to keep WCN free. See our <a href="/privacy.html">Privacy Policy</a>.</p><div><button data-c="no">Decline</button><button data-c="yes" class="ok">Accept</button></div>';
  b.onclick=e=>{const c=e.target.dataset.c;if(!c)return;try{localStorage.setItem(K,c)}catch(x){}apply(c);b.remove();track('consent_choice',{choice:c});document.dispatchEvent(new Event('wcn-consent'))};document.body.appendChild(b)}
 window.wcnCookieSettings=banner;
+// Microsoft Clarity (heatmaps + session recordings). Loaded ONLY when analytics consent is granted
+// (default outside EEA/UK/CH, or after Accept in the banner). Consent is passed with Clarity's consentv2 API;
+// a later Decline revokes it (Clarity deletes its cookies) and stops recording; the tag is not loaded on later pages.
+const CLARITY_ID='yzbrkdw45p';let clarityOn=false;
+window.clarity=window.clarity||function(){(window.clarity.q=window.clarity.q||[]).push(arguments)};
+function clarityConsent(ok){const v=ok?'granted':'denied';try{clarity('consentv2',{source:'wcn-banner',analytics_Storage:v,ad_Storage:'denied'})}catch(e){}}
+function loadClarity(){if(clarityOn)return;clarityOn=true;clarityConsent(true);try{clarity('set','page_type',pt())}catch(e){}
+ const t=document.createElement('script');t.async=1;t.src='https://www.clarity.ms/tag/'+CLARITY_ID;const f=document.getElementsByTagName('script')[0];(f&&f.parentNode?f.parentNode:document.head).insertBefore(t,f||null)}
+function clearClarity(){const h=location.hostname,ds=['',h,'.'+h.replace(/^www\./,'')];['_clck','_clsk'].forEach(n=>ds.forEach(d=>{document.cookie=n+'=; Max-Age=0; path=/'+(d?'; domain='+d:'')}))}
+function syncClarity(){if(window.wcnConsent())loadClarity();else if(clarityOn){clarityConsent(false);clarityOn=false;setTimeout(()=>{try{clarity('stop')}catch(e){}clearClarity()},300)}}
+document.addEventListener('wcn-consent',syncClarity);
 document.addEventListener('DOMContentLoaded',()=>{
  if(EU&&!get())banner();
  const f=document.querySelector('footer');if(f&&!f.querySelector('.cookie-set')){const a=document.createElement('a');a.href='#';a.className='cookie-set';a.textContent='Cookie settings';a.onclick=e=>{e.preventDefault();banner()};f.append(' · ',a)}
@@ -38,5 +49,6 @@ document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
   track('story_click',{story_title:((c?c.querySelector('h2'):a).innerText||'').trim().slice(0,100),story_slug:slug(a.href),brand:c?c.dataset.cat:rel?((document.querySelector('.story .tag:not(.conf)')||{}).textContent||''):((a.nextElementSibling||{}).textContent||''),position:c?+c.dataset.pos+1:items.indexOf(rel||a)+1,list,link_type:a.classList.contains('img')?'image':a.closest('.meta')?'read_more':'headline',outbound:ext,page_type:pt()})}
  if(ext&&(c||a.closest('.credit,.pcredit')))track('source_click',{source_domain:host(a),link_type:a.closest('.pcredit')?'image_credit':c?'feed_card':'source_link',story_slug:slug(location.pathname),page_type:pt()});
 });
+syncClarity();
 document.addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('upd')&&e.target.open)track('timeline_open')},true);
 })();

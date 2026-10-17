@@ -57,6 +57,7 @@ self.addEventListener("fetch", ev => {
     if (STATIC_EXT.test(url.pathname)) return ev.respondWith(cacheFirst(req, STATIC));
     return;
   }
-  // Google Fonts only; every other cross-origin request (AdSense, googletagmanager.com/google-analytics.com, OneSignal cdn/api, story images) is left alone.
+  // Google Fonts only; every other cross-origin request (AdSense, googletagmanager.com/google-analytics.com, Microsoft Clarity *.clarity.ms, OneSignal cdn/api, story images) is left alone.
+  if (/(^|\.)clarity\.ms$/.test(url.hostname)) return;
   if (url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com") return ev.respondWith(cacheFirst(req, FONTS));
 });
