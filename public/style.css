@@ -61,3 +61,20 @@ footer a{color:var(--gold)}#consent{position:fixed;left:50%;bottom:20px;transfor
 .qc .qm{position:absolute;left:12px;top:-6px;font-family:Georgia,serif;font-size:64px;color:var(--c);font-style:normal}
 .qc cite{display:block;margin-top:8px;font-size:12px;font-style:normal;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--c)}
 .card.quote{background:linear-gradient(145deg,#1b1726,#0f0f17)}
+.back{color:var(--gold);text-decoration:none;font-weight:600;font-size:14px}
+.story{min-width:0;display:flex;flex-direction:column;gap:18px}
+.story h1{font-family:'Bebas Neue';font-size:clamp(38px,5vw,58px);line-height:1.02;letter-spacing:1px;margin:0}
+.byline{color:var(--mut);font-size:13px}
+.hero{width:100%;aspect-ratio:16/9;border-radius:20px;background:#1a1a26 center/cover;box-shadow:0 30px 60px -30px var(--c)}
+.ph-h{display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,var(--c),#0b0b12 75%);font-family:'Bebas Neue';font-size:80px;color:rgba(255,255,255,.85)}
+.prose p{font-size:18px;line-height:1.8;color:#dddbe8;margin:0 0 22px}.prose p:first-child::first-letter{font-family:'Bebas Neue';font-size:64px;float:left;line-height:.9;margin:4px 10px 0 0;color:var(--c)}
+.prose .ad{margin:8px 0 28px}
+.qc.big{font-size:22px;padding:22px 24px 18px 64px}.qc.big .qm{font-size:90px}
+.timeline{background:#11111a;border:1px solid var(--line);border-radius:16px;padding:20px 22px}.timeline h2{font-family:'Bebas Neue';letter-spacing:1px;margin:0 0 6px;font-size:26px}.timeline b{color:var(--txt)}
+.credit{font-size:12px;color:var(--mut);margin:0}.credit a{color:var(--mut)}
+.related h2{font-family:'Bebas Neue';font-size:30px;letter-spacing:1px;margin:10px 0 14px}
+.relgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+.rel{display:flex;flex-direction:column;background:#13131c;border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--txt);transition:.3s}
+.rel:hover{transform:translateY(-4px);border-color:var(--c);box-shadow:0 14px 30px -14px var(--c)}.ri{height:130px;background:radial-gradient(circle at 30% 20%,var(--c),#0b0b12 75%) center/cover}
+.rel span{padding:12px 14px;font-weight:600;font-size:14px;line-height:1.4}
+@media(max-width:700px){.prose p{font-size:17px}.story h1{font-size:38px}}

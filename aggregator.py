@@ -98,8 +98,9 @@ def on_topic(a):
     t = a["raw_title"]; b = (a.get("body") or "") + " " + (a.get("summary_src") or "")
     if classify(re.sub(r"\b(Mexico|Japan|Australia)\b", "", t)) or SIG.search(t): return True
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
-import enrich, editorial, llm
+import enrich, editorial, llm, pages
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
+LONG_MAX_PER_RUN = 400
 LLM_MAX_PER_RUN = 700  # steady state is ~5-30 per run; high cap allows one-time backfill
 RETENTION_DAYS = 60  # prune stories older than this each run
 DROPPED_CL = set()
@@ -166,6 +167,20 @@ def run():
         clusters.append(c)
     json.dump({"articles": len(arts), "dropped_articles": sum(1 for a in arts if a.get("drop")), "dropped_clusters": len(DROPPED_CL), "clusters": len(clusters)}, open(os.path.join(os.path.dirname(STORE), "stats.json"), "w"))
     clusters = clusters[:3000]
+    # long-form write-ups for cards (cached on the card's lead article), then static pages + sitemap
+    bylink = {x["link"]: x for x in arts}
+    need = [(c, bylink.get(c["link"])) for c in clusters if bylink.get(c["link"]) and "llm_long" not in bylink[c["link"]]]
+    need = [(c, m) for c, m in need if m.get("llm")][:LONG_MAX_PER_RUN]
+    if need and llm.budget_left() > llm.LONGFORM_RESERVE_USD:
+        with ThreadPoolExecutor(6) as ex:
+            for (c, m), p in zip(need, ex.map(lambda cm: llm.longform(cm[1], cm[0]["title"]), need)):
+                if p: m["llm_long"] = p
+        llm.save_usage(); json.dump(arts, open(STORE, "w"))
+        print(f"llm longform: {sum(1 for c, m in need if 'llm_long' in m)}/{len(need)}, month spend ${llm._U['usd']:.3f}", flush=True)
+    for c in clusters:
+        m = bylink.get(c["link"]); c["long"] = (m or {}).get("llm_long")
+    pages.assign_urls(clusters); pages.build(clusters)
+    for c in clusters: c.pop("long", None)
     tmp = OUT + ".tmp"
     json.dump({"updated": int(time.time()), "count": len(clusters), "articles": len(arts), "items": clusters}, open(tmp, "w"))
     os.replace(tmp, OUT)

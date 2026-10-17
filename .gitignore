@@ -13,3 +13,7 @@ feeds_status.json
 public/news.prev.json
 data/
 public/news.json
+public/story/
+public/story.new/
+public/sitemap.xml
+public/robots.txt

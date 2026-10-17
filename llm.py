@@ -52,3 +52,24 @@ def rewrite(a):
         except Exception as e:
             err = str(e)[:80]; time.sleep(2)
     print("llm error:", err, flush=True); return None
+
+LONG_SYS = ("You write original articles for Wrestling Central News. From the source text, write 4-6 short paragraphs (2-3 sentences each) "
+ "reporting the story entirely in your own words. Facts only: no invented facts, numbers, quotes or names; no speculation, no opinions, "
+ "no mention of the source outlet, no calls to action. If the text is thin, write fewer paragraphs (min 2). Return JSON {\"paragraphs\": [..]}.")
+def longform(a, headline):
+    key = os.environ.get("AI_API_KEY")
+    if not key or budget_left() < LONGFORM_RESERVE_USD: return None
+    text = re.sub(r"\s+", " ", (a.get("body") or a.get("summary_src") or ""))[:2600]
+    if len(text) < 200: return None
+    body = {"model": MODEL, "max_tokens": 480, "temperature": 0.5, "response_format": {"type": "json_object"},
+            "messages": [{"role": "system", "content": LONG_SYS}, {"role": "user", "content": f"Headline: {headline}\nText: {text}"}]}
+    try:
+        r = urllib.request.urlopen(urllib.request.Request(URL, data=json.dumps(body).encode(),
+            headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"}), timeout=60)
+        d = json.load(r)
+        with _lock: _U["usd"] += d.get("usage", {}).get("cost_in_usd_ticks", 0) / 1e10; _U["calls"] += 1; _U["long"] = _U.get("long", 0) + 1
+        p = [x.strip() for x in json.loads(d["choices"][0]["message"]["content"]).get("paragraphs", []) if isinstance(x, str) and len(x.strip()) > 30]
+        return p[:7] or None
+    except Exception as e:
+        print("llm longform error:", str(e)[:80], flush=True); return None
+LONGFORM_RESERVE_USD = 1.0   # keep $1 of the monthly cap for headline/summary rewrites
