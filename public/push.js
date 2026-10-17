@@ -42,15 +42,18 @@
     var close = function(){ d.classList.remove('in'); setTimeout(function(){ d.remove(); }, 300); };
     d.querySelector('.pwa-x').onclick = close; setTimeout(close, ms || 9000);
   }
+  function track(n, p){ try { if (window.gtag) gtag('event', n, p || {}); } catch (e) {} }
   async function onTap(){
-    if (iosNeedsInstall) return toast('<b>Alerts need the WCN app on iPhone</b><small>Tap Share → <b>Add to Home Screen</b>, open WCN from your Home Screen, then tap the bell.</small>', 'ios', 15000);
+    if (iosNeedsInstall) { track('push_prompt_shown', {prompt_type: 'ios_install_required'}); return toast('<b>Alerts need the WCN app on iPhone</b><small>Tap Share → <b>Add to Home Screen</b>, open WCN from your Home Screen, then tap the bell.</small>', 'ios', 15000); }
     if (!ready) return toast('<b>One moment…</b><small>Alerts are still loading. Try again in a few seconds.</small>', '', 4000);
-    if (Notification.permission === 'denied') return toast('<b>Notifications are blocked</b><small>Allow notifications for wrestlingcentralnews.com in your browser\'s site settings, then tap the bell again.</small>', 'ios', 12000);
+    if (Notification.permission === 'denied') { track('push_prompt_shown', {prompt_type: 'blocked_hint'}); return toast('<b>Notifications are blocked</b><small>Allow notifications for wrestlingcentralnews.com in your browser\'s site settings, then tap the bell again.</small>', 'ios', 12000); }
     try {
-      if (subscribed()) { await OS.User.PushSubscription.optOut(); toast('<b>Alerts turned off</b><small>Tap the bell any time to turn them back on.</small>', '', 5000); }
+      if (subscribed()) { await OS.User.PushSubscription.optOut(); track('push_optout', {method: 'bell'}); toast('<b>Alerts turned off</b><small>Tap the bell any time to turn them back on.</small>', '', 5000); }
       else {
         OS.setConsentGiven(true);                      // tapping the bell = consent to push only (separate from ad/analytics cookies)
+        var asked = Notification.permission === 'default'; if (asked) track('push_prompt_shown', {prompt_type: 'browser_permission'});
         await OS.User.PushSubscription.optIn();        // shows the browser permission prompt if needed
+        if (Notification.permission === 'granted') track('push_optin', {method: 'bell', prompted: asked}); else track('push_prompt_declined', {result: Notification.permission});
         if (Notification.permission === 'granted') toast('<b>You\'re in!</b><small>We\'ll only ping you for big breaking wrestling news (max 3 a day).</small>', '', 7000);
       }
     } catch (e) { console.warn('WCN push', e); }

@@ -22,7 +22,21 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 // scroll depth
 const marks=[25,50,75,100],hit=new Set();addEventListener('scroll',()=>{const p=Math.round((scrollY+innerHeight)/document.body.scrollHeight*100);marks.forEach(m=>{if(p>=m&&!hit.has(m)){hit.add(m);track('scroll_depth',{percent:m})}})},{passive:true});
-document.addEventListener('click',e=>{const a=e.target.closest('.card a, .upd a');if(a){const c=a.closest('.card');track('story_click',{title:c.querySelector('h2').innerText.slice(0,100),source:a.hostname,category:c.dataset.cat,position:+c.dataset.pos,is_update:!!a.closest('.upd')})}
- const ch=e.target.closest('.chip');if(ch)setTimeout(()=>track('filter_change',{filter:ch.dataset.k,active:ch.classList.contains('on'),selected:document.querySelectorAll('.chip.on').length}),0)});
+// Behavior events (all via gtag, so Consent Mode applies exactly as for page_view). Enhanced measurement already covers page_view/scroll.
+const slug=h=>{const m=(h||'').match(/story\/([^\/?#]+?)(?:-[0-9a-f]{6,})?\.html/);return m?m[1].slice(0,100):''};
+const host=a=>(a.hostname||'').replace(/^www\./,'');
+const place=a=>a.closest('header')?'header':a.closest('footer')?'footer':'body';
+const pt=()=>document.body&&document.body.classList.contains('story-page')?'story':/\/newsletter\//.test(location.pathname)?'newsletter':'home';
+document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
+ const ch=t.closest('.chip');if(ch){setTimeout(()=>{const b=document.querySelector('.chip[data-k="'+ch.dataset.k+'"]');track('filter_click',{brand:ch.dataset.k,active:!!(b&&b.classList.contains('on')),selected_count:document.querySelectorAll('.chip.on').length})},0);return}
+ const a=t.closest('a[href]');if(!a)return;const ext=host(a)&&host(a)!==location.hostname.replace(/^www\./,'');
+ const so=/(^|\.)(x|twitter)\.com$/.test(host(a))?'x':/(^|\.)facebook\.com$/.test(host(a))?'facebook':'';
+ if(so&&/wrestlingWCN|Wrestling-Central-News/i.test(a.href)){track('social_click',{network:so,placement:place(a),page_type:pt()});return}
+ const c=a.closest('.card'),rel=a.closest('.rel'),ns=a.closest('.nl-sample');
+ if(c||rel||ns){const u=!!a.closest('.upd'),list=c?(u?'feed_update':'feed'):rel?'related':'newsletter_sample';
+  const items=rel?[...document.querySelectorAll('.rel')]:ns?[...ns.querySelectorAll('a')]:null;
+  track('story_click',{story_title:((c?c.querySelector('h2'):a).innerText||'').trim().slice(0,100),story_slug:slug(a.href),brand:c?c.dataset.cat:rel?((document.querySelector('.story .tag:not(.conf)')||{}).textContent||''):((a.nextElementSibling||{}).textContent||''),position:c?+c.dataset.pos+1:items.indexOf(rel||a)+1,list,link_type:a.classList.contains('img')?'image':a.closest('.meta')?'read_more':'headline',outbound:ext,page_type:pt()})}
+ if(ext&&(c||a.closest('.credit,.pcredit')))track('source_click',{source_domain:host(a),link_type:a.closest('.pcredit')?'image_credit':c?'feed_card':'source_link',story_slug:slug(location.pathname),page_type:pt()});
+});
 document.addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('upd')&&e.target.open)track('timeline_open')},true);
 })();

@@ -16,7 +16,7 @@
         .then(function (r) { return r.json().catch(function () { return { status: r.ok ? "success" : "failed" }; }); })
         .then(function (d) {
           if (d.status === "success") {
-            f.classList.add("done"); say(OK, "ok"); inp.value = ""; track("newsletter_signup", { form_location: f.dataset.where || "" });
+            f.classList.add("done"); say(OK, "ok"); inp.value = ""; track("newsletter_signup", { form_location: f.dataset.where || "", method: "kit", status: "pending_confirm" });
             try { localStorage.setItem("wcn_nl", "1"); } catch (e) {}
           } else if (d.status === "quarantined" && d.url) {
             say("One quick security check from our email provider…", "");
@@ -27,7 +27,7 @@
             say((Array.isArray(m) ? m.join(" ") : m) || "Sorry, that didn't work. Please try again.", "err");
           }
         })
-        .catch(function () { f.submit(); });   // network/CORS trouble: fall back to a normal form post
+        .catch(function () { track("newsletter_signup", { form_location: f.dataset.where || "", method: "kit", status: "form_post" }); f.submit(); });   // network/CORS trouble: fall back to a normal form post
     });
   }
   function init() { Array.prototype.forEach.call(document.querySelectorAll("form.nl-form"), bind); }
