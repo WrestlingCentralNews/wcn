@@ -5,6 +5,7 @@ import os, sys, json, glob, time, ssl, urllib.request, urllib.error
 ROOT = os.path.dirname(os.path.abspath(__file__)); PUB = os.path.join(ROOT, "public")
 HOST = "wrestlingcentralnews.com"
 STATE = os.path.join(ROOT, "data", "indexnow_sent.json")
+HTTPS_MARK = os.path.join(ROOT, "data", "indexnow_https_reping.json")  # one-time full re-ping once https is live
 ENDPOINT = "https://api.indexnow.org/indexnow"
 def log(m): print(f"[indexnow] {m}", flush=True)
 def get(url, t=15):
@@ -24,7 +25,19 @@ def main():
     try: sent = json.load(open(STATE))
     except Exception: sent = {}
     base = f"{scheme()}://{HOST}/"
-    new = [u for u in urls_now if u not in sent]
+    reping = base.startswith("https") and not os.path.exists(HTTPS_MARK)
+    if reping:
+        # resubmit homepage + every sitemap-listed story over https, exactly once
+        try:
+            import re
+            locs = re.findall(r"<loc>([^<]+)</loc>", open(os.path.join(PUB, "sitemap.xml")).read())
+            rel = [l.split(HOST + "/", 1)[1] for l in locs if HOST + "/" in l]
+            urls_now = list(dict.fromkeys([u for u in rel if u] + urls_now))
+        except Exception as ex: log(f"sitemap read failed ({ex}); using news.json")
+        new = urls_now
+        log(f"https is live: one-time re-ping of {len(new)} URLs")
+    else:
+        new = [u for u in urls_now if u not in sent]
     if not new: log("nothing new"); return
     # key file must be live before IndexNow will accept (it verifies keyLocation)
     for i in range(6):
@@ -46,6 +59,9 @@ def main():
     if code in (200, 202):
         now = int(time.time())
         for u in new[:9999]: sent[u] = now
+        if reping:
+            os.makedirs(os.path.dirname(HTTPS_MARK), exist_ok=True)
+            json.dump({"done": now, "count": len(batch)}, open(HTTPS_MARK, "w"))
         live = set(urls_now); sent = {u: t for u, t in sent.items() if u in live or now - t < 90 * 86400}
         os.makedirs(os.path.dirname(STATE), exist_ok=True); json.dump(sent, open(STATE, "w"))
     else: log("not recorded; will retry next run")
