@@ -1,0 +1,40 @@
+name: WCN Weekly newsletter (Kit)
+on:
+  schedule: [{cron: "1 13 * * 1"}, {cron: "41 13 * * 1"}, {cron: "11 15 * * 1"}]   # Mondays ~13:00 UTC = 9:00 AM Puerto Rico (AST, no DST); later slots are retries, no-ops once the week is sent
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "send = this week's issue (once per ISO week, gated by NEWSLETTER_ENABLED); test = send now only to Kit tag 'wcn-test'; dry = build only"
+        type: choice
+        options: [send, test, dry]
+        default: send
+permissions: {contents: write}
+concurrency: {group: wcn-update, cancel-in-progress: false}   # same group as the 15-min update: never races the data-branch save
+jobs:
+  newsletter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore state from 'data' branch
+        run: |
+          mkdir -p data
+          git fetch --depth=1 origin data && git archive FETCH_HEAD | tar -x -C . && ls data public/news.json
+      - name: Build and send WCN Weekly (never fails the run)
+        id: send
+        continue-on-error: true
+        env:
+          NEWSLETTER_ENABLED: "${{ vars.NEWSLETTER_ENABLED }}"
+          KIT_API_KEY: "${{ secrets.KIT_API_KEY }}"
+          MODE: "${{ github.event.inputs.mode || 'send' }}"
+        run: |
+          python3 newsletter.py --preview newsletter-preview.html
+          if [ "$MODE" = test ]; then python3 newsletter.py --test; elif [ "$MODE" = dry ]; then NEWSLETTER_ENABLED=0 python3 newsletter.py; else python3 newsletter.py; fi
+      - uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with: {name: newsletter-preview, path: newsletter-preview.html, retention-days: 14}
+      - name: Save state to 'data' branch (single orphan commit, force-pushed)
+        run: |
+          rm -rf /tmp/state && mkdir -p /tmp/state/public && cp -r data /tmp/state/ && cp public/news.json /tmp/state/public/
+          cd /tmp/state && git init -q -b data && git config user.name wcn-bot && git config user.email wcn-bot@users.noreply.github.com
+          git add -A && git commit -qm "state $(date -u +%FT%TZ) (newsletter)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data:data
