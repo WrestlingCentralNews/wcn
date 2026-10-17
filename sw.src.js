@@ -4,8 +4,8 @@ const STATIC = "wcn-static-" + VERSION, PAGES = "wcn-pages-v1", FONTS = "wcn-fon
 const KEEP = [STATIC, PAGES, FONTS];
 const PRECACHE = __PRECACHE__;
 const OFFLINE = "/offline.html", MAX_PAGES = 80;
-// Never touched by the SW (always straight to network): ads, analytics, consent, config.
-const BYPASS = /^\/push\/|\/(analytics|ads-config)\.js$|\/ads\.txt$|\/sw\.js$|\/manifest\.webmanifest$/;
+// Never touched by the SW (always straight to network): ads, analytics, consent, config, RSS feeds/sitemap (*.xml).
+const BYPASS = /^\/push\/|\.xml$|\/(analytics|ads-config)\.js$|\/ads\.txt$|\/sw\.js$|\/manifest\.webmanifest$/;
 const STATIC_EXT = /\.(css|js|png|jpe?g|webp|gif|svg|ico|woff2?)$/i;
 
 self.addEventListener("install", ev => {

@@ -1,5 +1,5 @@
 """Static story pages, sitemap.xml and robots.txt for WCN."""
-import os, re, json, html, shutil, time, datetime, hashlib
+import os, re, json, html, shutil, time, datetime, hashlib, email.utils
 ROOT = os.path.dirname(os.path.abspath(__file__)); PUB = os.path.join(ROOT, "public"); SD = os.path.join(PUB, "story")
 SITE = "https://wrestlingcentralnews.com/"
 CATC = {"WWE": "#f26a14", "AEW": "#7cd618", "TNA": "#4ea8ff", "Indie": "#f05fc1", "Global": "#2fd3b4"}
@@ -19,6 +19,46 @@ def nl_block(where, compact=False, head="h2", base="../"):
             f'<input type="email" name="email_address" required autocomplete="email" inputmode="email" placeholder="Your email address" aria-label="Email address">'
             f'<button type="submit">Subscribe</button></div><p class="nl-msg" role="status" aria-live="polite"></p>'
             f'<p class="nl-fine">Double opt-in via Kit. See our <a href="{base}privacy.html">Privacy Policy</a>.</p></form></section>')
+TAGLINE = "Wrestling news from WWE, AEW, TNA, the indies and around the world, updated around the clock."
+FEED_CATS = {"WWE": "wwe", "AEW": "aew", "TNA": "tna", "Indie": "indie", "Global": "global"}
+_CTRL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\ufffe\uffff]")
+def xe(s): return html.escape(_CTRL.sub("", str(s or "")), quote=True)
+def rfc822(ts): return email.utils.format_datetime(datetime.datetime.fromtimestamp(int(ts), datetime.timezone.utc), usegmt=True)
+def _imgtype(u):
+    p = u.split("?")[0].lower()
+    return "image/png" if p.endswith(".png") else "image/webp" if p.endswith(".webp") else "image/gif" if p.endswith(".gif") else "image/jpeg"
+def rss_item(c):
+    url = SITE + c["url"]; cat = c["categories"][0]
+    desc = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", c.get("summary") or "")).strip()
+    img = c.get("image") or ""; media = ""
+    if img.startswith("https://"):
+        t = _imgtype(img)
+        media = f'<enclosure url="{xe(img)}" length="0" type="{t}"/><media:content url="{xe(img)}" medium="image" type="{t}"/>'
+    return (f"<item><title>{xe(c['title'])}</title><link>{xe(url)}</link><guid isPermaLink=\"true\">{xe(url)}</guid>"
+            f"<pubDate>{rfc822(c.get('first_ts', c['ts']))}</pubDate><category>{xe(cat)}</category>"
+            f"<dc:creator>{xe(c.get('byline') or 'WCN Staff')}</dc:creator><description>{xe(desc)}</description>{media}</item>")
+def rss(items, self_url, title="Wrestling Central News", link=SITE, desc=TAGLINE):
+    last = max([int(c["ts"]) for c in items] or [int(time.time())])
+    return ('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" '
+            'xmlns:media="http://search.yahoo.com/mrss/" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel>'
+            f"<title>{xe(title)}</title><link>{xe(link)}</link><description>{xe(desc)}</description><language>en-us</language>"
+            f'<atom:link href="{xe(self_url)}" rel="self" type="application/rss+xml"/>'
+            f"<lastBuildDate>{rfc822(last)}</lastBuildDate><ttl>15</ttl>"
+            f"<image><url>{SITE}logo.png</url><title>{xe(title)}</title><link>{xe(link)}</link></image>"
+            + "".join(rss_item(c) for c in items) + "</channel></rss>\n")
+def build_feeds(clusters):
+    """RSS 2.0: /feed.xml (newest 50) + /feed/<cat>.xml (newest 30 per primary category)."""
+    srt = sorted(clusters, key=lambda c: -int(c.get("first_ts", c["ts"])))
+    open(os.path.join(PUB, "feed.xml"), "w").write(rss(srt[:50], SITE + "feed.xml"))
+    os.makedirs(os.path.join(PUB, "feed"), exist_ok=True)
+    for cat, slug in FEED_CATS.items():
+        its = [c for c in srt if c["categories"][0] == cat][:30]
+        open(os.path.join(PUB, "feed", slug + ".xml"), "w").write(
+            rss(its, f"{SITE}feed/{slug}.xml", title=f"Wrestling Central News: {cat}", desc=f"The latest {cat} news from Wrestling Central News. " + TAGLINE))
+def feed_links(cat=None):
+    s = f'<link rel="alternate" type="application/rss+xml" title="Wrestling Central News" href="{SITE}feed.xml">'
+    if cat in FEED_CATS: s += f'<link rel="alternate" type="application/rss+xml" title="Wrestling Central News: {cat}" href="{SITE}feed/{FEED_CATS[cat]}.xml">'
+    return s
 def ad(slot, size, cls="ad-feed"): return f'<div class="ad {cls}" data-slot="{slot}" data-size="{size}"></div>'
 def page(c, related):
     col = CATC.get(c["categories"][0], "#7cd618"); url = SITE + c["url"]
@@ -43,7 +83,7 @@ def page(c, related):
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag('consent','default',{{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500}});</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6049350409363098" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{e(c["title"])} | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">
+<title>{e(c["title"])} | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">{feed_links(c["categories"][0])}
 <meta property="og:type" content="article"><meta property="og:title" content="{e(c["title"])}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:image" content="{e(simg)}"><meta property="og:image:alt" content="{e(c["title"])}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="{e(simg)}"><meta name="robots" content="max-image-preview:large"><meta name="twitter:site" content="@wrestlingWCN"><meta property="article:publisher" content="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/"><meta property="article:published_time" content="{iso(c.get("first_ts", c["ts"]))}"><meta property="article:modified_time" content="{iso(c["ts"])}">
 <script type="application/ld+json">{json.dumps(ld)}</script>
@@ -61,7 +101,7 @@ def page(c, related):
 <section class="related"><h2>More {e(c["categories"][0])} news</h2><div class="relgrid">{rel}</div></section></article>
 <aside class="side">{ad("rightSkyscraper", "300×600 Half-page", "ad-sky")}</aside></main>
 {nl_block("footer-story")}
-<footer>© 2026 Wrestling Central News (WCN) · <a href="../privacy.html">Privacy Policy</a> · <a class="nl-link" href="../newsletter/">Newsletter</a> · <a href="mailto:wcn@mail.grokbot.com">Contact</a> · Follow us: <a href="https://x.com/wrestlingWCN" target="_blank" rel="noopener">X @wrestlingWCN</a> · <a href="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/" target="_blank" rel="noopener">Facebook</a></footer>
+<footer>© 2026 Wrestling Central News (WCN) · <a href="../privacy.html">Privacy Policy</a> · <a class="nl-link" href="../newsletter/">Newsletter</a> · <a href="mailto:wcn@mail.grokbot.com">Contact</a> · <a class="rss-link" href="/feed.xml" type="application/rss+xml">RSS</a> · Follow us: <a href="https://x.com/wrestlingWCN" target="_blank" rel="noopener">X @wrestlingWCN</a> · <a href="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/" target="_blank" rel="noopener">Facebook</a></footer>
 {ad("mobileSticky", "320×50 Mobile", "ad-mobile")}<script src="../story.js"></script><script src="/newsletter.js" defer></script><script src="/pwa.js" defer></script><script src="/push.js" defer></script></body></html>'''
 SW_PRECACHE = ["/index.html", "/offline.html", "/style.css", "/app.js", "/story.js", "/pwa.js", "/push.js", "/newsletter.js", "/logo-header.png", "/logo.png",
                "/favicon-32.png", "/apple-touch-icon.png", "/pwa/icon-192.png", "/pwa/icon-512.png"]
@@ -85,7 +125,7 @@ def build_newsletter_page(clusters):
     html_ = f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag('consent','default',{{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500}});</script>
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="max-image-preview:large">
-<title>WCN Weekly Newsletter: Top Wrestling News Every Monday | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">
+<title>WCN Weekly Newsletter: Top Wrestling News Every Monday | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">{feed_links()}
 <meta property="og:type" content="website"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:title" content="WCN Weekly: the week in wrestling, every Monday"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:image" content="{SITE}og-image.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@wrestlingWCN"><meta name="twitter:image" content="{SITE}og-image.jpg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><meta name="theme-color" content="#0a1a18"><link rel="manifest" href="/manifest.webmanifest"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="WCN">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"><script src="/analytics.js"></script></head><body>
@@ -97,7 +137,7 @@ def build_newsletter_page(clusters):
 <ul class="nl-perks"><li><b>10 stories, 2 minutes</b>Ranked by how big the story is and how many trusted outlets confirmed it.</li><li><b>Every Monday morning</b>Lands at 9:00 AM Puerto Rico time (AST), right before Raw week kicks off.</li><li><b>Free, no spam</b>One email a week. Unsubscribe with one click, anytime.</li></ul>
 {f'<section class="nl-sample"><h2>This week so far</h2><ol>{lis}</ol></section>' if lis else ''}
 <p style="margin-top:28px"><a href="/" style="color:#7cd618">← Back to the news</a></p></main>
-<footer>© 2026 Wrestling Central News (WCN) · <a href="/privacy.html">Privacy Policy</a> · <a href="mailto:wcn@mail.grokbot.com">Contact</a> · Follow us: <a href="https://x.com/wrestlingWCN" target="_blank" rel="noopener">X @wrestlingWCN</a> · <a href="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/" target="_blank" rel="noopener">Facebook</a></footer>
+<footer>© 2026 Wrestling Central News (WCN) · <a href="/privacy.html">Privacy Policy</a> · <a href="mailto:wcn@mail.grokbot.com">Contact</a> · <a class="rss-link" href="/feed.xml" type="application/rss+xml">RSS</a> · Follow us: <a href="https://x.com/wrestlingWCN" target="_blank" rel="noopener">X @wrestlingWCN</a> · <a href="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/" target="_blank" rel="noopener">Facebook</a></footer>
 <script src="/newsletter.js" defer></script><script src="/pwa.js" defer></script><script src="/push.js" defer></script></body></html>'''
     os.makedirs(os.path.join(PUB, "newsletter"), exist_ok=True)
     open(os.path.join(PUB, "newsletter", "index.html"), "w").write(html_)
@@ -111,6 +151,7 @@ def build(clusters):
         open(os.path.join(tmp, os.path.basename(c["url"])), "w").write(page(c, rel))
     shutil.rmtree(SD, ignore_errors=True); os.replace(tmp, SD)   # only current (<=60 day) stories survive
     build_newsletter_page(clusters)
+    build_feeds(clusters)
     sm = [f"<url><loc>{SITE}</loc><changefreq>always</changefreq><priority>1.0</priority></url>",
           f"<url><loc>{SITE}newsletter/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>"] + \
          [f"<url><loc>{SITE}{c['url']}</loc><lastmod>{iso(c['ts'])}</lastmod></url>" for c in clusters]

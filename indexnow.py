@@ -47,7 +47,7 @@ def main():
         except Exception as ex: pass
         time.sleep(10)
     else: log("key file not reachable yet; will retry next run"); return
-    batch = [base] + [base + u for u in new[:9999]]
+    batch = [base, base + "feed.xml"] + [base + u for u in new[:9999]]
     payload = json.dumps({"host": HOST, "key": key, "keyLocation": f"{base}{key}.txt", "urlList": batch}).encode()
     req = urllib.request.Request(ENDPOINT, data=payload, method="POST",
                                  headers={"Content-Type": "application/json; charset=utf-8", "User-Agent": "WCN-IndexNow/1.0"})
