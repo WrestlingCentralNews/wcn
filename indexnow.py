@@ -38,6 +38,17 @@ def main():
         log(f"https is live: one-time re-ping of {len(new)} URLs")
     else:
         new = [u for u in urls_now if u not in sent]
+    # hub/event/schedule pages, Spanish stories, trust pages, es feed and news sitemap (written by pages.build):
+    # submitted when new or when their content hash changed (hubs at most every 2 h)
+    extra_sent = sent.get("_pages", {}) if isinstance(sent.get("_pages"), dict) else {}
+    try: pages_idx = json.load(open(os.path.join(ROOT, "data", "indexnow_pages.json")))
+    except Exception: pages_idx = {}
+    now0 = int(time.time()); extra = []
+    for u, h in pages_idx.items():
+        prev = extra_sent.get(u)
+        if not prev or (prev[0] != h and now0 - prev[1] > 7200): extra.append(u)
+    extra = extra[:2000]
+    new = list(dict.fromkeys(new + extra))
     if not new: log("nothing new"); return
     # key file must be live before IndexNow will accept (it verifies keyLocation)
     for i in range(6):
@@ -47,7 +58,7 @@ def main():
         except Exception as ex: pass
         time.sleep(10)
     else: log("key file not reachable yet; will retry next run"); return
-    batch = [base, base + "feed.xml"] + [base + u for u in new[:9999]]
+    batch = list(dict.fromkeys([base, base + "feed.xml", base + "es/"] + [base + u for u in new[:9999]]))
     payload = json.dumps({"host": HOST, "key": key, "keyLocation": f"{base}{key}.txt", "urlList": batch}).encode()
     req = urllib.request.Request(ENDPOINT, data=payload, method="POST",
                                  headers={"Content-Type": "application/json; charset=utf-8", "User-Agent": "WCN-IndexNow/1.0"})
@@ -58,11 +69,14 @@ def main():
     log(f"HTTP {code} for {len(batch)} URLs ({base})")
     if code in (200, 202):
         now = int(time.time())
-        for u in new[:9999]: sent[u] = now
+        for u in new[:9999]:
+            if u in pages_idx: extra_sent[u] = [pages_idx[u], now]
+            else: sent[u] = now
         if reping:
             os.makedirs(os.path.dirname(HTTPS_MARK), exist_ok=True)
             json.dump({"done": now, "count": len(batch)}, open(HTTPS_MARK, "w"))
-        live = set(urls_now); sent = {u: t for u, t in sent.items() if u in live or now - t < 90 * 86400}
+        live = set(urls_now); sent = {u: t for u, t in sent.items() if u != "_pages" and (u in live or now - t < 90 * 86400)}
+        sent["_pages"] = {u: v for u, v in extra_sent.items() if u in pages_idx}
         os.makedirs(os.path.dirname(STATE), exist_ok=True); json.dump(sent, open(STATE, "w"))
     else: log("not recorded; will retry next run")
 if __name__ == "__main__":

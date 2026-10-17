@@ -1,5 +1,6 @@
 """Static story pages, sitemap.xml and robots.txt for WCN."""
 import os, re, json, html, shutil, time, datetime, hashlib, email.utils
+import chrome, hubs, imgmeta
 ROOT = os.path.dirname(os.path.abspath(__file__)); PUB = os.path.join(ROOT, "public"); SD = os.path.join(PUB, "story")
 SITE = "https://wrestlingcentralnews.com/"
 CATC = {"WWE": "#f26a14", "AEW": "#7cd618", "TNA": "#4ea8ff", "Indie": "#f05fc1", "Global": "#2fd3b4"}
@@ -10,15 +11,21 @@ def nice(ts): return datetime.datetime.fromtimestamp(ts, datetime.timezone.utc).
 def assign_urls(clusters):
     for c in clusters: c["url"] = f"story/{slugify(c['title'])}-{c['id']}.html"
 KIT_ACTION = "https://app.kit.com/forms/10060065/subscriptions"   # Kit form "WCN Weekly" (double opt-in)
-def nl_block(where, compact=False, head="h2", base="../"):
+def nl_block(where, compact=False, head="h2", base="../", lang="en"):
     """WCN Weekly signup. Native form -> Kit; newsletter.js upgrades it to fetch() + inline 'check your inbox' message."""
-    title = "Get the <b>WCN Weekly</b>" if not compact else "Never miss a big story: <b>WCN Weekly</b>"
-    sub = "The 10 biggest wrestling stories of the week, every Monday morning. Free, no spam, unsubscribe anytime."
+    if lang == "es":
+        title = "Recibe el <b>WCN Weekly</b>" if not compact else "No te pierdas nada: <b>WCN Weekly</b>"
+        sub = "Las 10 noticias más importantes de la lucha libre de la semana, cada lunes por la mañana (boletín en inglés). Gratis, sin spam."
+        ph, btn, fine = "Tu correo electrónico", "Suscribirme", f'Doble confirmación vía Kit. Consulta nuestra <a href="/privacy.html">Política de privacidad</a>.'
+    else:
+        title = "Get the <b>WCN Weekly</b>" if not compact else "Never miss a big story: <b>WCN Weekly</b>"
+        sub = "The 10 biggest wrestling stories of the week, every Monday morning. Free, no spam, unsubscribe anytime."
+        ph, btn, fine = "Your email address", "Subscribe", f'Double opt-in via Kit. See our <a href="{base}privacy.html">Privacy Policy</a>.'
     return (f'<section class="nl{" nl-box" if compact else ""}" aria-label="WCN Weekly newsletter"><div><{head}>{title}</{head}><p class="nl-sub">{sub}</p></div>'
             f'<form class="nl-form" action="{KIT_ACTION}" method="post" data-where="{where}"><div class="nl-row">'
-            f'<input type="email" name="email_address" required autocomplete="email" inputmode="email" placeholder="Your email address" aria-label="Email address">'
-            f'<button type="submit">Subscribe</button></div><p class="nl-msg" role="status" aria-live="polite"></p>'
-            f'<p class="nl-fine">Double opt-in via Kit. See our <a href="{base}privacy.html">Privacy Policy</a>.</p></form></section>')
+            f'<input type="email" name="email_address" required autocomplete="email" inputmode="email" placeholder="{ph}" aria-label="{ph}">'
+            f'<button type="submit">{btn}</button></div><p class="nl-msg" role="status" aria-live="polite"></p>'
+            f'<p class="nl-fine">{fine}</p></form></section>')
 TAGLINE = "Wrestling news from WWE, AEW, TNA, the indies and around the world, updated around the clock."
 FEED_CATS = {"WWE": "wwe", "AEW": "aew", "TNA": "tna", "Indie": "indie", "Global": "global"}
 _CTRL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\ufffe\uffff]")
@@ -37,15 +44,15 @@ def rss_item(c):
     return (f"<item><title>{xe(c['title'])}</title><link>{xe(url)}</link><guid isPermaLink=\"true\">{xe(url)}</guid>"
             f"<pubDate>{rfc822(c.get('first_ts', c['ts']))}</pubDate><category>{xe(cat)}</category>"
             f"<dc:creator>{xe(c.get('byline') or 'WCN Staff')}</dc:creator><description>{xe(desc)}</description>{media}</item>")
-def rss(items, self_url, title="Wrestling Central News", link=SITE, desc=TAGLINE):
-    last = max([int(c["ts"]) for c in items] or [int(time.time())])
+def rss(items, self_url, title="Wrestling Central News", link=SITE, desc=TAGLINE, lang="en-us"):
+    last = max([int(c["ts"]) for c in items if not isinstance(c, str)] or [int(time.time())])
     return ('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" '
             'xmlns:media="http://search.yahoo.com/mrss/" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel>'
-            f"<title>{xe(title)}</title><link>{xe(link)}</link><description>{xe(desc)}</description><language>en-us</language>"
+            f"<title>{xe(title)}</title><link>{xe(link)}</link><description>{xe(desc)}</description><language>{lang}</language>"
             f'<atom:link href="{xe(self_url)}" rel="self" type="application/rss+xml"/>'
             f"<lastBuildDate>{rfc822(last)}</lastBuildDate><ttl>15</ttl>"
             f"<image><url>{SITE}logo.png</url><title>{xe(title)}</title><link>{xe(link)}</link></image>"
-            + "".join(rss_item(c) for c in items) + "</channel></rss>\n")
+            + "".join(x if isinstance(x, str) else rss_item(x) for x in items) + "</channel></rss>\n")
 def build_feeds(clusters):
     """RSS 2.0: /feed.xml (newest 50) + /feed/<cat>.xml (newest 30 per primary category)."""
     srt = sorted(clusters, key=lambda c: -int(c.get("first_ts", c["ts"])))
@@ -60,53 +67,85 @@ def feed_links(cat=None):
     if cat in FEED_CATS: s += f'<link rel="alternate" type="application/rss+xml" title="Wrestling Central News: {cat}" href="{SITE}feed/{FEED_CATS[cat]}.xml">'
     return s
 def ad(slot, size, cls="ad-feed"): return f'<div class="ad {cls}" data-slot="{slot}" data-size="{size}"></div>'
-def page(c, related):
-    col = CATC.get(c["categories"][0], "#7cd618"); url = SITE + c["url"]
-    paras = c.get("long") or [c["summary"]]
-    desc = re.sub(r"\s+", " ", c["summary"])[:158]
+S = {
+ "en": {"conf": "✔ CONFIRMED BY {n} SOURCES", "timeline": "Story timeline · {n} reports", "source": "Source", "more": "More {cat} news", "by": "By",
+        "staff": "WCN Staff", "pub": "Published", "first": "First reported", "upd": "Updated", "part": "Part of our coverage of", "hub_go": "Full card & results →"},
+ "es": {"conf": "✔ CONFIRMADO POR {n} FUENTES", "timeline": "Cronología · {n} reportes", "source": "Fuente", "more": "Más noticias de {cat}", "by": "Por",
+        "staff": "Redacción WCN", "pub": "Publicado", "first": "Publicado", "upd": "Actualizado", "part": "Parte de nuestra cobertura de", "hub_go": "Cartelera y resultados →"},
+}
+def schema_image(c):
+    """ImageObject list for NewsArticle: largest known version of the story photo (>=1200px when available) + the 1200x630 site card."""
+    out = []
+    img = c.get("image") or ""
+    if img.startswith("https://"):
+        u, w, h = imgmeta.best(img)
+        o = {"@type": "ImageObject", "url": u}
+        if w and h: o["width"], o["height"] = w, h
+        out.append(o)
+    out.append({"@type": "ImageObject", "url": SITE + "og-image.jpg", "width": 1200, "height": 630})
+    return out
+def byline_html(c, lang):
+    """'By WCN Staff · Published X' or, for stories with follow-up reports, 'First reported X · Updated Y' (first_ts vs latest ts)."""
+    t = S[lang]; pub, mod = c.get("first_ts", c["ts"]), c["ts"]
+    staff_url = chrome.STATIC["staff"][1 if lang == "es" else 0]
+    upd = bool(c.get("updates")) and mod - pub > 300
+    s = (f'<div class="byline">{t["by"]} <a rel="author" href="{staff_url}">{t["staff"]}</a> · {t["first"] if upd else t["pub"]} '
+         f'<time datetime="{iso(pub)}" data-ts="{int(pub)}">{chrome.stamp(pub, lang)}</time>')
+    if upd: s += f' · {t["upd"]} <time datetime="{iso(mod)}" data-ts="{int(mod)}">{chrome.stamp(mod, lang)}</time>'
+    return s + "</div>"
+def page(c, related, lang="en", L=None, alt=None):
+    """Story page. lang='es' uses L = {'t','s','url','p'} (Spanish translation) and related = [(cluster, L)]."""
+    t = S[lang]; es = lang == "es"
+    title = L["t"] if es else c["title"]; summary = L["s"] if es else c["summary"]
+    rel_url = L["url"] if es else c["url"]; url = SITE + rel_url
+    col = CATC.get(c["categories"][0], "#7cd618")
+    paras = (L.get("p") or [summary]) if es else (c.get("long") or [c["summary"]])
+    desc = re.sub(r"\s+", " ", summary)[:158]
     img = c.get("image") or ""; simg = img or SITE + "og-image.jpg"
+    big = imgmeta.best(img)[0] if img.startswith("https://") else simg
     body = []
     for i, p in enumerate(paras):
         body.append(f"<p>{e(p)}</p>")
         if i in (1, 3) and i < len(paras) - 1: body.append(ad("inArticle", "In-Article"))
     k = c.get("kind") or {}
-    quote = f'<blockquote class="qc big"><span class="qm">“</span>{e(k.get("quote") or c["summary"].split(". ")[0])}<cite>— {e(k.get("who"))}</cite></blockquote>' if k.get("type") == "quote" and k.get("who") else ""
-    tl = "".join(f'<li><time>{nice(u["ts"])}</time><b>{e(u["title"])}</b><span>{e(u["line"])}</span></li>' for u in c.get("updates", []))
-    tl = f'<section class="timeline upd"><h2>Story timeline · {len(c["updates"]) + 1} reports</h2><ol>{tl}</ol></section>' if tl else ""
-    rel = "".join(f'<a class="rel" href="../{r["url"]}" style="--c:{CATC.get(r["categories"][0])}"><div class="ri" style="background-image:url(\'{e(r.get("image") or "")}\')"></div><span>{e(r["title"])}</span></a>' for r in related)
-    tags = "".join(f'<span class="tag" style="--c:{CATC[t]}">{t}</span>' for t in c["categories"])
-    conf = f'<span class="tag conf">✔ CONFIRMED BY {c["sources"]} SOURCES</span>' if c.get("sources", 1) > 1 else ""
-    ld = {"@context": "https://schema.org", "@type": "NewsArticle", "headline": c["title"][:110], "description": desc, "image": [simg], "url": url,
-          "datePublished": iso(c.get("first_ts", c["ts"])), "dateModified": iso(c["ts"]), "mainEntityOfPage": {"@type": "WebPage", "@id": url}, "articleSection": c["categories"][0],
-          "author": {"@type": "Organization", "name": "Wrestling Central News", "url": SITE}, "publisher": {"@type": "NewsMediaOrganization", "name": "Wrestling Central News", "url": SITE, "logo": {"@type": "ImageObject", "url": SITE + "logo.png", "width": 600, "height": 399}, "sameAs": ["https://x.com/wrestlingWCN", "https://www.facebook.com/p/Wrestling-Central-News-61595290838604/"]}}
-    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
-{GA_HEAD}
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6049350409363098" crossorigin="anonymous"></script>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{e(c["title"])} | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">{feed_links(c["categories"][0])}
-<meta property="og:type" content="article"><meta property="og:title" content="{e(c["title"])}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:image" content="{e(simg)}"><meta property="og:image:alt" content="{e(c["title"])}">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="{e(simg)}"><meta name="robots" content="max-image-preview:large"><meta name="twitter:site" content="@wrestlingWCN"><meta property="article:publisher" content="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/"><meta property="article:published_time" content="{iso(c.get("first_ts", c["ts"]))}"><meta property="article:modified_time" content="{iso(c["ts"])}">
-<script type="application/ld+json">{json.dumps(ld)}</script>
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png"><link rel="icon" type="image/png" sizes="512x512" href="../favicon-512.png"><link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png"><meta name="theme-color" content="#0a1a18"><link rel="manifest" href="/manifest.webmanifest"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="WCN"><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="../style.css"><script src="../ads-config.js"></script><script src="../analytics.js"></script></head>
-<body class="story-page" style="--c:{col}"><div class="spot s1"></div><div class="spot s2"></div>
-<header><div class="bar"><a class="logo" href="../index.html"><img src="../logo-header.png" width="240" height="160" alt="WCN"><span>WRESTLING CENTRAL NEWS</span></a><a class="back" href="../index.html" onclick="if(history.length>1&&document.referrer.indexOf(location.host)>-1){{history.back();return false}}">← All news</a><div class="social"><a class="soc soc-x" href="https://x.com/wrestlingWCN" target="_blank" rel="noopener me" aria-label="Follow WCN on X" title="Follow @wrestlingWCN on X"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.9 2H22l-7.2 8.2L23.3 22h-6.6l-5.2-6.8L5.5 22H2.4l7.7-8.8L1.9 2h6.8l4.7 6.2L18.9 2zm-1.2 18h1.8L7.4 3.9H5.5L17.7 20z"/></svg></a><a class="soc soc-fb" href="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/" target="_blank" rel="noopener me" aria-label="Follow WCN on Facebook" title="Follow WCN on Facebook"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4z"/></svg></a></div></div></header>
-{ad("leaderboard", "728×90 Leaderboard", "ad-leader")}
-<main class="layout"><aside class="side">{ad("leftSkyscraper", "300×600 Half-page", "ad-sky")}</aside>
-<article class="story"><div class="tags">{conf}{tags}</div><h1>{e(c["title"])}</h1><div class="byline">WCN Staff · {nice(c["ts"])}</div>
-{f'<div class="story-hero"><img class="bg" src="{e(img)}" alt="" aria-hidden="true" referrerpolicy="no-referrer"><img class="fg" src="{e(img)}" alt="{e(c["title"])}" referrerpolicy="no-referrer"></div>' if img else f'<div class="story-hero ph-h"><span>{c["categories"][0]}</span></div>'}
-{f'<p class="pcredit"><a href="{e(c["image_credit"]["url"])}" rel="nofollow noopener" target="_blank">{e(c["image_credit"]["text"])}</a></p>' if c.get("image_credit") else ''}{quote}<div class="prose">{"".join(body)}</div>{tl}
-<p class="credit">Source: <a href="{e(c["link"])}" rel="nofollow noopener" target="_blank">{e(c["source"])}</a></p>
-{nl_block("story", compact=True, head="h3")}
-{ad("storyBottom", "Responsive Banner")}
-<section class="related"><h2>More {e(c["categories"][0])} news</h2><div class="relgrid">{rel}</div></section></article>
-<aside class="side">{ad("rightSkyscraper", "300×600 Half-page", "ad-sky")}</aside></main>
-{nl_block("footer-story")}
-<footer>© 2026 Wrestling Central News (WCN) · <a href="../privacy.html">Privacy Policy</a> · <a class="nl-link" href="../newsletter/">Newsletter</a> · <a href="mailto:wcn@mail.grokbot.com">Contact</a> · <a class="rss-link" href="/feed.xml" type="application/rss+xml">RSS</a> · Follow us: <a href="https://x.com/wrestlingWCN" target="_blank" rel="noopener">X @wrestlingWCN</a> · <a href="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/" target="_blank" rel="noopener">Facebook</a></footer>
-{ad("mobileSticky", "320×50 Mobile", "ad-mobile")}<script src="../story.js"></script><script src="/newsletter.js" defer></script><script src="/pwa.js" defer></script><script src="/push.js" defer></script></body></html>'''
+    quote = ""
+    if k.get("type") == "quote" and k.get("who") and not es:
+        quote = f'<blockquote class="qc big"><span class="qm">“</span>{e(k.get("quote") or c["summary"].split(". ")[0])}<cite>— {e(k.get("who"))}</cite></blockquote>'
+    tl = "" if es else "".join(f'<li><time datetime="{iso(u["ts"])}">{nice(u["ts"])}</time><b>{e(u["title"])}</b><span>{e(u["line"])}</span></li>' for u in c.get("updates", []))
+    tl = f'<section class="timeline upd"><h2>{t["timeline"].format(n=len(c["updates"]) + 1)}</h2><ol>{tl}</ol></section>' if tl else ""
+    if es: rel = "".join(f'<a class="rel" href="/{r2["url"]}" style="--c:{CATC.get(r["categories"][0])}"><div class="ri" style="background-image:url(\'{e(r.get("image") or "")}\')"></div><span>{e(r2["t"])}</span></a>' for r, r2 in related)
+    else: rel = "".join(f'<a class="rel" href="/{r["url"]}" style="--c:{CATC.get(r["categories"][0])}"><div class="ri" style="background-image:url(\'{e(r.get("image") or "")}\')"></div><span>{e(r["title"])}</span></a>' for r in related)
+    tags = "".join(f'<span class="tag" style="--c:{CATC[x]}">{x}</span>' for x in c["categories"])
+    conf = f'<span class="tag conf">{t["conf"].format(n=c["sources"])}</span>' if c.get("sources", 1) > 1 else ""
+    hl = hubs.hub_link(c, lang)
+    hub = f'<a class="hubbox" href="/{hl[1]}"><small>{t["part"]}</small><b>{e(hl[0])}</b><span>{t["hub_go"]}</span></a>' if hl else ""
+    pub, mod = c.get("first_ts", c["ts"]), c["ts"]
+    ld = {"@context": "https://schema.org", "@type": "NewsArticle", "headline": title[:110], "description": desc, "image": schema_image(c), "url": url,
+          "datePublished": iso(pub), "dateModified": iso(mod), "mainEntityOfPage": {"@type": "WebPage", "@id": url}, "articleSection": c["categories"][0],
+          "inLanguage": lang, "isAccessibleForFree": True, "author": [chrome.staff_author(lang)], "publisher": chrome.PUBLISHER}
+    home = SITE + ("es/" if es else "")
+    crumbs = [("WCN en español" if es else "WCN", home), (title[:70], url)]
+    head = chrome.head(f"{title} | WCN", desc, url, lang, alts=alt, og_type="article", image=big, ads=True, ld=[ld, chrome.breadcrumbs(crumbs)],
+                       extra=(f'<meta property="og:image:alt" content="{e(title)}"><meta property="article:publisher" content="{chrome.FB}">'
+                              f'<meta property="article:published_time" content="{iso(pub)}"><meta property="article:modified_time" content="{iso(mod)}"><meta property="article:section" content="{e(c["categories"][0])}">'))
+    en_u = "/" + (alt or {}).get("en", SITE).replace(SITE, ""); es_u = "/" + (alt or {}).get("es", SITE + "es/").replace(SITE, "")
+    hero = (f'<div class="story-hero"><img class="bg" src="{e(img)}" alt="" aria-hidden="true" referrerpolicy="no-referrer"><img class="fg" src="{e(img)}" alt="{e(title)}" referrerpolicy="no-referrer"></div>'
+            if img else f'<div class="story-hero ph-h"><span>{c["categories"][0]}</span></div>')
+    credit = f'<p class="pcredit"><a href="{e(c["image_credit"]["url"])}" rel="nofollow noopener" target="_blank">{e(c["image_credit"]["text"])}</a></p>' if c.get("image_credit") else ""
+    return (f'{head}\n<body class="story-page" style="--c:{col}"><div class="spot s1"></div><div class="spot s2"></div>\n'
+            f'{chrome.header(lang, en_u, es_u, "news", back=True)}\n{ad("leaderboard", "728×90 Leaderboard", "ad-leader")}\n'
+            f'<main class="layout"><aside class="side">{ad("leftSkyscraper", "300×600 Half-page", "ad-sky")}</aside>\n'
+            f'<article class="story"><div class="tags">{conf}{tags}</div><h1>{e(title)}</h1>{byline_html(c, lang)}\n{hero}\n{credit}{quote}{hub}<div class="prose">{"".join(body)}</div>{tl}\n'
+            f'<p class="credit">{t["source"]}: <a href="{e(c["link"])}" rel="nofollow noopener" target="_blank">{e(c["source"])}</a></p>\n'
+            f'{nl_block("story-es" if es else "story", compact=True, head="h3", base="/", lang=lang)}\n{ad("storyBottom", "Responsive Banner")}\n'
+            f'<section class="related"><h2>{t["more"].format(cat=e(c["categories"][0]))}</h2><div class="relgrid">{rel}</div></section></article>\n'
+            f'<aside class="side">{ad("rightSkyscraper", "300×600 Half-page", "ad-sky")}</aside></main>\n'
+            f'{nl_block("footer-story-es" if es else "footer-story", base="/", lang=lang)}\n{chrome.footer(lang)}\n'
+            f'{ad("mobileSticky", "320×50 Mobile", "ad-mobile")}<script src="/story.js"></script>{chrome.SCRIPTS}</body></html>')
 # Google tag + Consent Mode v2 (region-aware): denied by default in EEA/UK/CH until the banner choice, granted elsewhere;
 # a stored banner choice (wcn_consent) is re-applied before config. Loaded directly in <head> on every page.
-GA_HEAD = '<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag(\'consent\',\'default\',{ad_storage:\'denied\',analytics_storage:\'denied\',ad_user_data:\'denied\',ad_personalization:\'denied\',wait_for_update:500,region:[\'AT\',\'BE\',\'BG\',\'HR\',\'CY\',\'CZ\',\'DK\',\'EE\',\'FI\',\'FR\',\'DE\',\'GR\',\'HU\',\'IS\',\'IE\',\'IT\',\'LV\',\'LI\',\'LT\',\'LU\',\'MT\',\'NL\',\'NO\',\'PL\',\'PT\',\'RO\',\'SK\',\'SI\',\'ES\',\'SE\',\'GB\',\'CH\']});gtag(\'consent\',\'default\',{ad_storage:\'granted\',analytics_storage:\'granted\',ad_user_data:\'granted\',ad_personalization:\'granted\'});try{var wc=localStorage.getItem(\'wcn_consent\');if(wc){var wv=wc===\'yes\'?\'granted\':\'denied\';gtag(\'consent\',\'update\',{ad_storage:wv,analytics_storage:wv,ad_user_data:wv,ad_personalization:wv})}}catch(e){}gtag(\'js\',new Date());gtag(\'config\',\'G-VXM9BRSC0B\');</script>\n<script async src="https://www.googletagmanager.com/gtag/js?id=G-VXM9BRSC0B"></script>'
-SW_PRECACHE = ["/index.html", "/offline.html", "/style.css", "/app.js", "/story.js", "/pwa.js", "/push.js", "/newsletter.js", "/logo-header.png", "/logo.png",
+GA_HEAD = chrome.GA_HEAD
+SW_PRECACHE = ["/index.html", "/offline.html", "/style.css", "/app.js", "/story.js", "/pwa.js", "/push.js", "/newsletter.js", "/time.js", "/logo-header.png", "/logo.png",
                "/favicon-32.png", "/apple-touch-icon.png", "/pwa/icon-192.png", "/pwa/icon-512.png"]
 def build_sw():
     """Write public/sw.js from sw.src.js; the cache version is a hash of the precached static files + SW source,
@@ -133,30 +172,64 @@ def build_newsletter_page(clusters):
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><meta name="theme-color" content="#0a1a18"><link rel="manifest" href="/manifest.webmanifest"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="WCN">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"><script src="/analytics.js"></script></head><body>
 <div class="spot s1"></div><div class="spot s2"></div>
-<header><div class="bar"><a class="logo" href="/"><img src="/logo-header.png" width="240" height="160" alt="WCN"><span>WRESTLING CENTRAL NEWS</span></a><a class="back" href="/">← All news</a></div></header>
+{chrome.header("en", "/newsletter/", "/es/", None, back=True)}
 <main class="nl-page"><h1>The week in wrestling, <b>every Monday.</b></h1>
 <p class="lede">WCN Weekly brings you the 10 biggest stories from WWE, AEW, TNA, the indies and around the world: our own headlines, a quick summary of each, and a link to the full story.</p>
 {nl_block("newsletter-page", base="/")}
 <ul class="nl-perks"><li><b>10 stories, 2 minutes</b>Ranked by how big the story is and how many trusted outlets confirmed it.</li><li><b>Every Monday morning</b>Lands at 9:00 AM Puerto Rico time (AST), right before Raw week kicks off.</li><li><b>Free, no spam</b>One email a week. Unsubscribe with one click, anytime.</li></ul>
 {f'<section class="nl-sample"><h2>This week so far</h2><ol>{lis}</ol></section>' if lis else ''}
 <p style="margin-top:28px"><a href="/" style="color:#7cd618">← Back to the news</a></p></main>
-<footer>© 2026 Wrestling Central News (WCN) · <a href="/privacy.html">Privacy Policy</a> · <a href="mailto:wcn@mail.grokbot.com">Contact</a> · <a class="rss-link" href="/feed.xml" type="application/rss+xml">RSS</a> · Follow us: <a href="https://x.com/wrestlingWCN" target="_blank" rel="noopener">X @wrestlingWCN</a> · <a href="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/" target="_blank" rel="noopener">Facebook</a></footer>
+{chrome.footer("en")}
 <script src="/newsletter.js" defer></script><script src="/pwa.js" defer></script><script src="/push.js" defer></script></body></html>'''
     os.makedirs(os.path.join(PUB, "newsletter"), exist_ok=True)
     open(os.path.join(PUB, "newsletter", "index.html"), "w").write(html_)
 def build(clusters):
+    import translate, extras
     build_sw()
+    imgmeta.run(clusters)
+    nh = hubs.tag(clusters)
+    tr = translate.run(clusters)   # {cluster_id: {t, s, url, p}} Spanish, cached; only new/changed stories cost anything
     tmp = SD + ".new"; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
+    ESD = os.path.join(PUB, "es", "noticias"); etmp = ESD + ".new"; shutil.rmtree(etmp, ignore_errors=True); os.makedirs(etmp)
     bycat = {}
     for c in clusters: bycat.setdefault(c["categories"][0], []).append(c)
     for c in clusters:
         rel = [r for r in bycat[c["categories"][0]] if r is not c][:6]
-        open(os.path.join(tmp, os.path.basename(c["url"])), "w").write(page(c, rel))
+        x = tr.get(c["id"])
+        alt = {"en": SITE + c["url"], "es": SITE + x["url"]} if x else None
+        open(os.path.join(tmp, os.path.basename(c["url"])), "w").write(page(c, rel, alt=alt or {"en": SITE + c["url"]}))
+        if x:
+            rel_es = [(r, tr[r["id"]]) for r in bycat[c["categories"][0]] if r is not c and r["id"] in tr][:6]
+            open(os.path.join(etmp, os.path.basename(x["url"])), "w").write(page(c, rel_es, lang="es", L=x, alt=alt))
     shutil.rmtree(SD, ignore_errors=True); os.replace(tmp, SD)   # only current (<=60 day) stories survive
+    shutil.rmtree(ESD, ignore_errors=True); os.replace(etmp, ESD)  # same pruning for Spanish pages
+    hub_pages = hubs.build(clusters, tr)
     build_newsletter_page(clusters)
     build_feeds(clusters)
-    sm = [f"<url><loc>{SITE}</loc><changefreq>always</changefreq><priority>1.0</priority></url>",
-          f"<url><loc>{SITE}newsletter/</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>"] + \
-         [f"<url><loc>{SITE}{c['url']}</loc><lastmod>{iso(c['ts'])}</lastmod></url>" for c in clusters]
-    open(os.path.join(PUB, "sitemap.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + "".join(sm) + "</urlset>")
-    open(os.path.join(PUB, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\nSitemap: {SITE}sitemap.xml\n")
+    # Spanish feed
+    es_items = [c for c in sorted(clusters, key=lambda c: -int(c.get("first_ts", c["ts"]))) if c["id"] in tr][:50]
+    def es_rss_item(c):
+        x = tr[c["id"]]; return rss_item(dict(c, title=x["t"], summary=x["s"], url=x["url"], byline="Redacción WCN"))
+    open(os.path.join(PUB, "es", "feed.xml"), "w").write(rss([es_rss_item(c) for c in es_items], SITE + "es/feed.xml", title="Wrestling Central News en español",
+        link=SITE + "es/", desc="Noticias de lucha libre en español: WWE, AEW, TNA, independientes y lucha libre mundial, actualizadas cada 15 minutos.", lang="es"))
+    static = extras.build_trust(clusters, tr) + extras.build_es_home(clusters, tr)
+    n_news = extras.news_sitemap(clusters, tr)
+    # sitemaps: English (+ trust/hub pages) and Spanish (/es/ only), with hreflang alternates
+    hub_en = sorted(p for p in hub_pages if not p.startswith("es/")); hub_es = sorted(p for p in hub_pages if p.startswith("es/"))
+    now_iso = iso(time.time())
+    en = [(SITE, now_iso, {"en": SITE, "es": SITE + "es/"}), (SITE + "newsletter/", None, None)]
+    en += [(SITE + p, now_iso, None) for p in hub_en]
+    en += [(SITE + p, None, None) for p in static if not p.startswith("es/")]
+    en += [(SITE + c["url"], iso(c["ts"]), {"en": SITE + c["url"], "es": SITE + tr[c["id"]]["url"]} if c["id"] in tr else None) for c in clusters]
+    open(os.path.join(PUB, "sitemap.xml"), "w").write(extras.urlset(en, alts=True))
+    es = [(SITE + "es/", now_iso, {"en": SITE, "es": SITE + "es/"})] + [(SITE + p, now_iso, None) for p in hub_es]
+    es += [(SITE + p, None, None) for p in static if p.startswith("es/") and p != "es/"]
+    es += [(SITE + tr[c["id"]]["url"], iso(c["ts"]), {"en": SITE + c["url"], "es": SITE + tr[c["id"]]["url"]}) for c in clusters if c["id"] in tr]
+    open(os.path.join(PUB, "es", "sitemap.xml"), "w").write(extras.urlset(es, alts=True))
+    extras.robots()
+    # pages for IndexNow beyond story URLs: hubs/events (with content hash so changed pages are re-pinged), static pages, Spanish stories
+    idx = {p: h for p, h in hub_pages.items()}
+    idx.update({p: "static" for p in static}); idx.update({tr[c["id"]]["url"]: "story" for c in clusters if c["id"] in tr})
+    idx.update({"es/feed.xml": "feed", "sitemap-news.xml": "news-" + str(int(time.time() // 21600))})
+    os.makedirs(os.path.join(ROOT, "data"), exist_ok=True); json.dump(idx, open(os.path.join(ROOT, "data", "indexnow_pages.json"), "w"))
+    print(f"pages: hubs tagged {nh} stories, {len(hub_pages)} hub pages, es stories {len(tr)}, news sitemap {n_news}", flush=True)

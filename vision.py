@@ -5,6 +5,9 @@ CACHE_F = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "imag
 UA = {"User-Agent": "WCN-bot/1.0 (https://wrestlingcentralnews.com/; wcn@mail.grokbot.com)"}
 VISION_RESERVE_USD = 1.5   # stop vision checks when less than this remains in the monthly cap
 _C = None
+MAX_CHECKS_PER_CARD = 4   # cap paid vision calls per card per run (was up to ~9: 4 cluster + 3 inline + wiki)
+import threading
+_tl = threading.local()
 def cache():
     global _C
     if _C is None:
@@ -18,7 +21,9 @@ def check(img, names):
     k = "v2|" + img + "|" + "|".join(sorted(names)); c = cache()
     if k in c: return c[k]["ok"]
     key = os.environ.get("AI_API_KEY")
-    if not key or llm.budget_left() < VISION_RESERVE_USD: return None
+    if not key or llm.budget_left() < VISION_RESERVE_USD or not llm.pace_ok(): return None
+    if getattr(_tl, "n", 0) >= MAX_CHECKS_PER_CARD: return None
+    _tl.n = getattr(_tl, "n", 0) + 1
     prompt = ("Pro-wrestling photo check. Expected people: " + ", ".join(names) +
               ". Answer true ONLY if an expected person is the clear main focus of the photo: shown solo, or dominant/central and largest. "
               "If two people are expected, a photo of either one or both together is fine. Answer false for event posters, logos/graphics, "
@@ -28,7 +33,7 @@ def check(img, names):
             "messages": [{"role": "user", "content": [{"type": "image_url", "image_url": {"url": img, "detail": "low"}}, {"type": "text", "text": prompt}]}]}
     try:
         r = urllib.request.urlopen(urllib.request.Request(llm.URL, data=json.dumps(body).encode(),
-            headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"}), timeout=45)
+            headers=llm.HDR(key, "wcn-vision")), timeout=45)
         d = json.load(r)
         with llm._lock:
             llm._U["usd"] += d.get("usage", {}).get("cost_in_usd_ticks", 0) / 1e10; llm._U["vision"] = llm._U.get("vision", 0) + 1
@@ -90,6 +95,7 @@ def names_in(title):
     return seen[:2]
 def choose(c, member_images, budget_ok=True):
     """Pick a photo that shows the headline's main person(s). Returns (image or None, credit dict or None, status)."""
+    _tl.n = 0
     names = names_in(c["title"]); guessed = names_in.guessed
     if not names: names = names_in(c.get("raw_title", "")); guessed = names_in.guessed
     if not names: return c.get("image"), None, "no-names"

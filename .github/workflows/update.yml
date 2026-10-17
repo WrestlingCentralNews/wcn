@@ -25,7 +25,7 @@ jobs:
       - name: Fetch, enrich, filter, cluster (60-day retention)
         id: agg
         env: {AI_API_KEY: "${{ secrets.AI_API_KEY }}"}
-        run: python aggregator.py | grep -v '"' | tail -n 20; cat data/stats.json data/llm_usage.json
+        run: python aggregator.py > agg.log 2>&1 || { tail -n 60 agg.log; exit 1; }; grep -vE '^( |\{|\})' agg.log | tail -n 30; cat data/stats.json data/llm_usage.json
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with: {path: public}

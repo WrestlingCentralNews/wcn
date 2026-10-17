@@ -1,0 +1,29 @@
+{
+ "_note": "Hand-maintained, sourced schedule data for hubs.py. Only add dates confirmed by an official or trusted source; put that source in 'source'. Weekly slots are the regular US broadcast slots (Eastern Time). Checked 2026-10-17.",
+ "shows": {
+  "wwe-raw":       {"name": "WWE Raw",       "brand": "WWE", "weekday": 0, "time": "20:00", "network": "Netflix",     "source": "https://www.wwe.com/article/wwe-upcoming-events"},
+  "wwe-nxt":       {"name": "WWE NXT",       "brand": "WWE", "weekday": 1, "time": "20:00", "network": "The CW",      "source": "https://www.wwe.com/article/wwe-upcoming-events"},
+  "aew-dynamite":  {"name": "AEW Dynamite",  "brand": "AEW", "weekday": 2, "time": "20:00", "network": "TBS / HBO Max", "source": "https://www.tpww.net/2026/09/warner-bros-discovery-announces-aew-programming-schedule-for-october-2026/"},
+  "tna-impact":    {"name": "TNA iMPACT!",   "brand": "TNA", "weekday": 3, "time": "21:00", "network": "AMC",         "source": "https://tnawrestling.com/news/tna-thursday-night-impact-on-amc-preview-october-15-2026"},
+  "wwe-smackdown": {"name": "WWE SmackDown", "brand": "WWE", "weekday": 4, "time": "20:00", "network": "USA Network", "source": "https://www.wwe.com/article/wwe-upcoming-events"},
+  "aew-collision": {"name": "AEW Collision", "brand": "AEW", "weekday": 5, "time": "20:00", "network": "TNT / HBO Max", "source": "https://www.tpww.net/2026/09/warner-bros-discovery-announces-aew-programming-schedule-for-october-2026/"}
+ },
+ "skips": {
+  "aew-collision": [{"date": "2026-10-17", "note": "No regular Collision: WrestleDream Tailgate Brawl (7 p.m. ET, TNT) and AEW WrestleDream", "note_es": "Sin Collision regular: WrestleDream Tailgate Brawl (7 p.m. ET, TNT) y AEW WrestleDream"}]
+ },
+ "extra": {
+  "aew-collision": [{"date": "2026-10-14", "time": "22:00", "network": "TBS / HBO Max", "note": "Aired Wednesday after Dynamite (3-hour special)", "note_es": "Se emitió el miércoles después de Dynamite (especial de 3 horas)"}]
+ },
+ "events": [
+  {"slug": "wwe-money-in-the-bank", "name": "WWE Money in the Bank 2026", "brand": "WWE", "date": "2026-10-10", "venue": "Smoothie King Center", "city": "New Orleans, Louisiana", "match": "Money in the Bank|\\bMITB\\b", "source": "https://www.wwe.com/article/new-orleans-to-host-money-in-the-bank-on-saturday-october-10"},
+  {"slug": "tna-bound-for-glory", "name": "TNA Bound for Glory 2026", "brand": "TNA", "date": "2026-10-11", "time": "16:30", "venue": "Yuengling Center", "city": "Tampa, Florida", "network": "TNA+ / PPV.com", "match": "Bound for Glory|\\bBFG\\b", "source": "https://tnawrestling.com/news/tna-bound-for-glory-2026-on-payperview-preview"},
+  {"slug": "aew-wrestledream", "name": "AEW WrestleDream 2026", "brand": "AEW", "date": "2026-10-17", "venue": "Addition Financial Arena", "city": "Orlando, Florida", "network": "PPV (HBO Max, Prime Video, PPV.com and more)", "match": "WrestleDream|Wrestle Dream", "source": "https://www.allelitewrestling.com/aew-event/aew-wrestledream-2026"},
+  {"slug": "aaa-heroes-inmortales", "name": "AAA Héroes Inmortales 2026", "brand": "Global", "date": "2026-10-24", "time": "22:00", "venue": "Gimnasio Olímpico", "city": "Mexico City, Mexico", "match": "H[eé]roes Inmortales", "source": "https://www.wwe.com/article/wwe-upcoming-events"},
+  {"slug": "wwe-nxt-halloween-havoc", "name": "NXT Halloween Havoc 2026", "brand": "WWE", "date": "2026-10-31", "time": "19:00", "venue": "WWE Performance Center", "city": "Orlando, Florida", "network": "The CW / ESPN Unlimited", "match": "Halloween Havoc", "source": "https://www.wwe.com/shows/nxtple/nxt-halloween-havoc-2026"},
+  {"slug": "wwe-crown-jewel", "name": "WWE Crown Jewel 2026", "brand": "WWE", "date": "2026-11-07", "venue": "Riyadh Season Stadium at KAFD", "city": "Riyadh, Saudi Arabia", "network": "ESPN (US) / Netflix (international)", "match": "Crown Jewel", "source": "https://www.wwe.com/shows/wwe-crown-jewel/crown-jewel-2026"},
+  {"slug": "aew-full-gear", "name": "AEW Full Gear 2026", "brand": "AEW", "date": "2026-11-14", "time": "19:00", "venue": "Mortgage Matchup Center", "city": "Phoenix, Arizona", "match": "Full Gear", "source": "https://www.allelitewrestling.com/aew-event/aew-full-gear-2026"},
+  {"slug": "wwe-survivor-series-wargames", "name": "WWE Survivor Series: WarGames 2026", "brand": "WWE", "date": "2026-11-28", "venue": "Daikin Park", "city": "Houston, Texas", "match": "Survivor Series|WarGames|War Games", "source": "https://www.wwe.com/shows/survivor-series-wargames/2026"},
+  {"slug": "wwe-wrestlepalooza-perth", "name": "WWE Wrestlepalooza: Perth 2026", "brand": "WWE", "date": "2026-12-12", "venue": "RAC Arena", "city": "Perth, Western Australia", "match": "Wrestlepalooza", "source": "https://fullpresscoverage.com/2026/10/12/upcoming-wwe-ple-schedule-2026-2027/"},
+  {"slug": "aew-worlds-end", "name": "AEW Worlds End 2026", "brand": "AEW", "date": "2026-12-19", "time": "19:00", "venue": "Target Center", "city": "Minneapolis, Minnesota", "match": "Worlds? End", "source": "https://www.allelitewrestling.com/aew-event/aew-worlds-end-2026"}
+ ]
+}
