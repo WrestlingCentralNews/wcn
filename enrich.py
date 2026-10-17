@@ -155,6 +155,10 @@ def dates(t):
     out |= {f"{_MON[m[:3].lower()]}/{int(d)}" for m, d in re.findall(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.? (\d{1,2})\b", t, re.I)}
     return frozenset(out)
 def similar(a, b):
+    if _sim(a, b): return True
+    if a.get('llm') and b.get('llm'): return _sim({**a, 'raw_title': a['title']}, {**b, 'raw_title': b['title']})
+    return False
+def _sim(a, b):
     if abs(a["ts"] - b["ts"]) > 72*3600: return False
     A, B = canon(a["raw_title"]), canon(b["raw_title"])
     da, db = dates(A), dates(B)
