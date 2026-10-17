@@ -59,6 +59,29 @@ def og_image(url):
         m = re.search(r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)', h) or re.search(r'content=["\']([^"\']+)["\'][^>]+property=["\']og:image', h)
         return html.unescape(m.group(1)) if m else None
     except Exception: return None
+import datetime as _dt
+def parse_date(d):
+    """Feed date -> epoch seconds, honouring timezone offsets (RFC 822 pubDate or ISO 8601/Atom). Naive times are UTC. None if unparseable."""
+    d = (d or "").strip()
+    if not d: return None
+    try:
+        x = email.utils.parsedate_to_datetime(d)
+        if x is not None:
+            if x.tzinfo is None: x = x.replace(tzinfo=_dt.timezone.utc)
+            return x.timestamp()
+    except Exception: pass
+    try:
+        x = _dt.datetime.fromisoformat(re.sub(r"Z$", "+00:00", d.replace(" ", "T", 1)))
+        if x.tzinfo is None: x = x.replace(tzinfo=_dt.timezone.utc)
+        return x.timestamp()
+    except Exception: pass
+    m = re.match(r"(\d{4}-\d{2}-\d{2})[T ](\d{2}:\d{2}(?::\d{2})?)(?:\.\d+)?\s*(Z|[+-]\d{2}:?\d{2})?", d)
+    if m:
+        tz = (m.group(3) or "+00:00").replace("Z", "+00:00")
+        if len(tz) == 5: tz = tz[:3] + ":" + tz[3:]
+        try: return _dt.datetime.fromisoformat(f"{m.group(1)}T{m.group(2)}{tz}").timestamp()
+        except Exception: pass
+    return None
 def classify(t):
     return [k for k, r in KW.items() if re.search(r, t, re.I)]
 def parse(name, url):
@@ -71,10 +94,7 @@ def parse(name, url):
         link = it.findtext("link") or (it.find(A+"link").get("href") if it.find(A+"link") is not None else "")
         desc = strip(it.findtext("description") or it.findtext(A+"summary") or it.findtext(A+"content") or "")
         date = it.findtext("pubDate") or it.findtext(A+"updated") or it.findtext(A+"published")
-        try: ts = email.utils.parsedate_to_datetime(date).timestamp()
-        except Exception:
-            try: ts = time.mktime(time.strptime(date[:19], "%Y-%m-%dT%H:%M:%S"))
-            except Exception: ts = time.time()
+        ts = parse_date(date)   # None if missing/unparseable -> first-seen time is used in run()
         src = name
         if name.startswith("Google News"):
             s = it.find("source"); src = s.text if s is not None else name
@@ -89,7 +109,7 @@ def parse(name, url):
         if not cats or not title: continue
         items.append({"id": hashlib.md5(re.sub(r"\W", "", title.lower()).encode()).hexdigest()[:12],
             "title": title, "summary": summarize(desc, title), "link": link.strip(), "source": src,
-            "ts": int(ts), "image": image_of(it), "categories": cats})
+            "ts": int(ts) if ts else None, "image": image_of(it), "categories": cats})
     return items
 SIG = re.compile(r"wrestl|lucha|luchador|superstar|\bPLE\b|pay-per-view|\bheel\b|babyface|tag team|ring name|\bpromo\b|W\.W\.E|Backlash|Hall of Fame", re.I)
 def on_topic(a):
@@ -100,7 +120,7 @@ def on_topic(a):
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
 import enrich, editorial, llm, pages, vision
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
-IMG_CHECK_TOP = 150
+IMG_CHECK_TOP = 60
 LONG_MAX_PER_RUN = 400
 LLM_MAX_PER_RUN = 700  # steady state is ~5-30 per run; high cap allows one-time backfill
 RETENTION_DAYS = 60  # prune stories older than this each run
@@ -116,6 +136,16 @@ def run():
         for n, r, err in ex.map(job, FEEDS.items()):
             status[n] = {"ok": err is None and len(r) > 0, "items": len(r), "error": err}; fresh += r
     cutoff = time.time() - RETENTION_DAYS*86400
+    # items whose feed date was missing/unparseable get the time we FIRST saw them (remembered across runs), never "now" on every run
+    fs_path = os.path.join(os.path.dirname(STORE), "first_seen.json")
+    try: first_seen = json.load(open(fs_path))
+    except Exception: first_seen = {}
+    now_i = int(time.time())
+    for i in fresh:
+        if i["ts"] is None:
+            i["ts"] = old[i["id"]]["ts"] if i["id"] in old else first_seen.setdefault(i["id"], now_i); i["ts_guessed"] = True
+    first_seen = {k: v for k, v in first_seen.items() if v > cutoff}
+    json.dump(first_seen, open(fs_path, "w"))
     new = {}
     for i in fresh:
         if i["id"] not in old and i["ts"] > cutoff: new.setdefault(i["id"], i)
@@ -170,9 +200,15 @@ def run():
     clusters = clusters[:3000]
     # long-form write-ups for cards (cached on the card's lead article), then static pages + sitemap
     bylink = {x["link"]: x for x in arts}
+    # reuse a long-form already written for another article of the same story (the lead article can change as reports arrive)
+    for c in clusters:
+        m = bylink.get(c["link"])
+        if m and "llm_long" not in m:
+            prev = next((bylink[u["link"]]["llm_long"] for u in c.get("updates", []) if u["link"] in bylink and bylink[u["link"]].get("llm_long")), None)
+            if prev: m["llm_long"] = prev
     need = [(c, bylink.get(c["link"])) for c in clusters if bylink.get(c["link"]) and "llm_long" not in bylink[c["link"]]]
     need = [(c, m) for c, m in need if m.get("llm")][:LONG_MAX_PER_RUN]
-    if need and llm.budget_left() > llm.LONGFORM_RESERVE_USD:
+    if need and llm.budget_left() > llm.LONGFORM_RESERVE_USD and llm.pace_ok():
         with ThreadPoolExecutor(6) as ex:
             for (c, m), p in zip(need, ex.map(lambda cm: llm.longform(cm[1], cm[0]["title"]), need)):
                 if p: m["llm_long"] = p
