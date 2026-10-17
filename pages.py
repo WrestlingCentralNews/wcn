@@ -1,7 +1,7 @@
 """Static story pages, sitemap.xml and robots.txt for WCN."""
 import os, re, json, html, shutil, time, datetime
 ROOT = os.path.dirname(os.path.abspath(__file__)); PUB = os.path.join(ROOT, "public"); SD = os.path.join(PUB, "story")
-SITE = "https://wrestlingcentralnews.github.io/wcn/"
+SITE = "https://wrestlingcentralnews.com/"
 CATC = {"WWE": "#e63946", "AEW": "#f5c542", "TNA": "#4cc9f0", "Indie": "#b5179e", "Global": "#2ec27e"}
 e = lambda s: html.escape(s or "", quote=True)
 def slugify(t): return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", (t or "").lower())).strip("-")[:70].rstrip("-")

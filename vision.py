@@ -2,7 +2,7 @@
 import os, re, json, html, time, urllib.request, urllib.parse
 import llm
 CACHE_F = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "image_checks.json")
-UA = {"User-Agent": "WCN-bot/1.0 (https://wrestlingcentralnews.github.io/wcn/; wcn@mail.grokbot.com)"}
+UA = {"User-Agent": "WCN-bot/1.0 (https://wrestlingcentralnews.com/; wcn@mail.grokbot.com)"}
 VISION_RESERVE_USD = 1.5   # stop vision checks when less than this remains in the monthly cap
 _C = None
 def cache():
