@@ -1,4 +1,4 @@
-const CATS={WWE:'#e63946',AEW:'#f5c542',TNA:'#4cc9f0',Indie:'#b5179e',Global:'#2ec27e'};
+const CATS={WWE:'#f26a14',AEW:'#7cd618',TNA:'#4ea8ff',Indie:'#f05fc1',Global:'#2fd3b4'};
 const KEY='wcn_filters';let sel=JSON.parse(localStorage.getItem(KEY)||'null')||Object.keys(CATS);
 let items=[],shown=12,lastSeen=+localStorage.getItem('wcn_seen')||0,q='';
 const $=s=>document.querySelector(s),esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

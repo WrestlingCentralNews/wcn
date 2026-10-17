@@ -2,7 +2,7 @@
 import os, re, json, html, shutil, time, datetime
 ROOT = os.path.dirname(os.path.abspath(__file__)); PUB = os.path.join(ROOT, "public"); SD = os.path.join(PUB, "story")
 SITE = "https://wrestlingcentralnews.com/"
-CATC = {"WWE": "#e63946", "AEW": "#f5c542", "TNA": "#4cc9f0", "Indie": "#b5179e", "Global": "#2ec27e"}
+CATC = {"WWE": "#f26a14", "AEW": "#7cd618", "TNA": "#4ea8ff", "Indie": "#f05fc1", "Global": "#2fd3b4"}
 e = lambda s: html.escape(s or "", quote=True)
 def slugify(t): return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", (t or "").lower())).strip("-")[:70].rstrip("-")
 def iso(ts): return datetime.datetime.fromtimestamp(ts, datetime.timezone.utc).isoformat(timespec="seconds")
@@ -11,7 +11,7 @@ def assign_urls(clusters):
     for c in clusters: c["url"] = f"story/{slugify(c['title'])}-{c['id']}.html"
 def ad(slot, size, cls="ad-feed"): return f'<div class="ad {cls}" data-slot="{slot}" data-size="{size}"></div>'
 def page(c, related):
-    col = CATC.get(c["categories"][0], "#e63946"); url = SITE + c["url"]
+    col = CATC.get(c["categories"][0], "#7cd618"); url = SITE + c["url"]
     paras = c.get("long") or [c["summary"]]
     desc = re.sub(r"\s+", " ", c["summary"])[:158]
     img = c.get("image") or ""
@@ -28,18 +28,18 @@ def page(c, related):
     conf = f'<span class="tag conf">✔ CONFIRMED BY {c["sources"]} SOURCES</span>' if c.get("sources", 1) > 1 else ""
     ld = {"@context": "https://schema.org", "@type": "NewsArticle", "headline": c["title"][:110], "description": desc, "image": [img] if img else [],
           "datePublished": iso(c.get("first_ts", c["ts"])), "dateModified": iso(c["ts"]), "mainEntityOfPage": url, "articleSection": c["categories"][0],
-          "author": {"@type": "Organization", "name": "Wrestling Central News"}, "publisher": {"@type": "Organization", "name": "Wrestling Central News (WCN)"}}
+          "author": {"@type": "Organization", "name": "Wrestling Central News"}, "publisher": {"@type": "Organization", "name": "Wrestling Central News (WCN)", "url": SITE, "logo": {"@type": "ImageObject", "url": SITE + "logo.png", "width": 600, "height": 399}}}
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag('consent','default',{{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500}});</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6049350409363098" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(c["title"])} | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">
-<meta property="og:type" content="article"><meta property="og:title" content="{e(c["title"])}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:site_name" content="Wrestling Central News">{f'<meta property="og:image" content="{e(img)}">' if img else ''}
+<meta property="og:type" content="article"><meta property="og:title" content="{e(c["title"])}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:image" content="{e(img) if img else SITE + 'og-image.jpg'}">
 <meta name="twitter:card" content="summary_large_image"><meta property="article:published_time" content="{iso(c.get("first_ts", c["ts"]))}"><meta property="article:modified_time" content="{iso(c["ts"])}">
 <script type="application/ld+json">{json.dumps(ld)}</script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="../style.css"><script src="../ads-config.js"></script><script src="../analytics.js"></script></head>
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png"><link rel="icon" type="image/png" sizes="512x512" href="../favicon-512.png"><link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png"><meta name="theme-color" content="#0a1a18"><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="../style.css"><script src="../ads-config.js"></script><script src="../analytics.js"></script></head>
 <body class="story-page" style="--c:{col}"><div class="spot s1"></div><div class="spot s2"></div>
-<header><div class="bar"><a class="logo" href="../index.html"><b>WCN</b> <span>WRESTLING CENTRAL NEWS</span></a><a class="back" href="../index.html" onclick="if(history.length>1&&document.referrer.indexOf(location.host)>-1){{history.back();return false}}">← All news</a></div></header>
+<header><div class="bar"><a class="logo" href="../index.html"><img src="../logo-header.png" width="240" height="160" alt="WCN"><span>WRESTLING CENTRAL NEWS</span></a><a class="back" href="../index.html" onclick="if(history.length>1&&document.referrer.indexOf(location.host)>-1){{history.back();return false}}">← All news</a></div></header>
 {ad("leaderboard", "728×90 Leaderboard", "ad-leader")}
 <main class="layout"><aside class="side">{ad("leftSkyscraper", "300×600 Half-page", "ad-sky")}</aside>
 <article class="story"><div class="tags">{conf}{tags}</div><h1>{e(c["title"])}</h1><div class="byline">WCN Staff · {nice(c["ts"])}</div>
