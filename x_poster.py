@@ -1,5 +1,6 @@
 """Auto-post the most important NEW WCN stories to X (@wrestlingWCN).
 
+Posts are link-free (cheap X plan): headline + one line + hashtags + "link in bio".
 Runs after the site deploy in the 15-min workflow. Standard library only (OAuth 1.0a user context).
 Enable with env X_POST_ENABLED=1 (repo variable); anything else = dry run (logs what it would post).
 State: data/posted_x.json (saved to the 'data' branch with the rest of the state).
@@ -10,7 +11,7 @@ NEWS = os.path.join(ROOT, "public", "news.json")
 STATE = os.path.join(ROOT, "data", "posted_x.json")
 SITE_HOST = "wrestlingcentralnews.com"
 # --- posting rules -------------------------------------------------------------------------------
-DAILY_CAP = 14            # max posts in any rolling 24h
+DAILY_CAP = 10            # max posts in any rolling 24h (cheap plan: link-free posts only)
 PER_RUN = 1               # normal max per 15-min run
 PER_RUN_BREAKING = 2      # allowed when the 2nd candidate is also breaking-level
 MIN_GAP_MIN = 25          # minutes between posting runs (breaking news may skip the gap)
@@ -44,14 +45,19 @@ def score(c):
     if "Indie" in c["categories"] and c.get("sources", 1) < 3: s -= 4
     return s
 
-def base_url():
-    """https canonical once GitHub has issued the certificate; plain http until then."""
-    try:
-        urllib.request.urlopen(urllib.request.Request(f"https://{SITE_HOST}/robots.txt", method="HEAD"), timeout=10, context=ssl.create_default_context())
-        return f"https://{SITE_HOST}/"
-    except Exception: return f"http://{SITE_HOST}/"
-
-def tweet_text(c, url):
+# Posts must contain NO URL (X bills link posts at a much higher rate): no links, no bare domains.
+URLISH = re.compile(r"(?i)(https?://|www\.|\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.[a-z]{2,}\b|\b\d{1,3}(?:\.\d{1,3}){3}\b)")
+OUTROS = ["Full story: link in bio", "Full story at the link in our bio", "More details: link in bio", "Full report: link in bio"]
+def x_len(t):
+    """Character count with X's weighting (most Latin text = 1, emoji/CJK etc. = 2)."""
+    import unicodedata
+    n = 0
+    for ch in unicodedata.normalize("NFC", t):
+        o = ord(ch)
+        n += 1 if (o <= 4351 or 8192 <= o <= 8205 or 8208 <= o <= 8223 or 8242 <= o <= 8247) else 2
+    return n
+def has_url(t): return bool(URLISH.search(t))
+def tweet_text(c):
     tags = []
     for k in c["categories"]:
         t = CAT_TAG.get(k)
@@ -63,14 +69,19 @@ def tweet_text(c, url):
     tags = tags[:3]
     somber = re.search(r"\b(died|dies|death|passed away|passes away|funeral|tribute)\b", c["title"], re.I)
     head = ("🚨 " if score(c) >= BREAKING and not somber else "") + c["title"].strip()
-    budget = 280 - 23 - len(head) - len(" ".join(tags)) - 6     # X counts every link as 23 chars
+    outro = OUTROS[int(hashlib.md5(c["id"].encode()).hexdigest(), 16) % len(OUTROS)]
+    tail = " ".join(tags) + "\n" + outro
+    def build(line): return "\n\n".join([head] + ([line] if line else []) + [tail])
     line = ""
-    sents = re.split(r"(?<=[.!?])\s+", (c.get("summary") or "").strip())
-    for snt in sents:
-        if len(line) + len(snt) + 1 > min(budget, 200): break
-        line = (line + " " + snt).strip()
-    parts = [head] + ([line] if line else []) + [" ".join(tags) + "\n" + url]
-    return "\n\n".join(parts)
+    for snt in re.split(r"(?<=[.!?])\s+", (c.get("summary") or "").strip()):
+        cand = (line + " " + snt).strip()
+        if len(cand) > 200 or x_len(build(cand)) > 280 or has_url(cand): break
+        line = cand
+    text = build(line)
+    if has_url(text) or x_len(text) > 280:
+        text = build("")                                  # drop the summary line and retry
+    if has_url(text) or x_len(text) > 280: return None    # safety: never send anything URL-like or too long
+    return text
 
 # --- OAuth 1.0a ----------------------------------------------------------------------------------
 def _q(s): return urllib.parse.quote(str(s), safe="~")
@@ -117,9 +128,10 @@ def run(test_top=False):
         n_allowed = PER_RUN_BREAKING if len(cands) > 1 and score(cands[1]) >= BREAKING else PER_RUN
         n_allowed = min(n_allowed, DAILY_CAP - len(recent))
     if not cands: log("nothing new worth posting"); return
-    base = base_url()
     for c in cands[:n_allowed]:
-        text = tweet_text(c, base + c["url"])
+        text = tweet_text(c)
+        if not text or has_url(text):
+            log("skipped (URL-like text or too long):", c["title"]); S["links"] += [c["link"]]; continue
         if not (enabled or test_top) or not have_keys:
             log(f"DRY RUN (enabled={enabled}, keys={have_keys}) score={score(c)}:", text.replace("\n", " ⏎ ")); continue
         code, body, hdr = post_tweet(text)
