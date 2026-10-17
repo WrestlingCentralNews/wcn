@@ -98,8 +98,9 @@ def on_topic(a):
     t = a["raw_title"]; b = (a.get("body") or "") + " " + (a.get("summary_src") or "")
     if classify(re.sub(r"\b(Mexico|Japan|Australia)\b", "", t)) or SIG.search(t): return True
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
-import enrich, editorial
+import enrich, editorial, llm
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
+LLM_MAX_PER_RUN = 700  # steady state is ~5-30 per run; high cap allows one-time backfill
 RETENTION_DAYS = 60  # prune stories older than this each run
 DROPPED_CL = set()
 def run():
@@ -134,6 +135,24 @@ def run():
             if r and a.get("drop") != r: editorial.log_drop(a, r)
             a["drop"] = r; a["title"] = enrich.headline(a["raw_title"], a["kind"]["type"]); a["summary"] = enrich.summarize(a)
             a["ev"] = editorial.VERSION
+    # LLM rewrite pass: only articles without a cached rewrite, trusted/mid-tier, not rule-dropped; newest first
+    todo = sorted([a for a in arts if not a.get("drop") and "llm" not in a and editorial.tier(a["source"]) < 3], key=lambda x: -x["ts"])[:LLM_MAX_PER_RUN]
+    if todo and llm.budget_left() > 0:
+        with ThreadPoolExecutor(6) as ex:
+            for a, out in zip(todo, ex.map(llm.rewrite, todo)):
+                if out: a["llm"] = out
+        llm.save_usage()
+        print(f"llm: rewrote {sum(1 for a in todo if 'llm' in a)}/{len(todo)}, month spend ${llm._U['usd']:.3f}", flush=True)
+    for a in arts:
+        L = a.get("llm")
+        if not L or a.get("drop") and not str(a["drop"]).startswith("llm:"): continue
+        a["title"], a["summary"] = L["headline"].strip(), L["summary"].strip()
+        if L["categories"]: a["categories"] = L["categories"]
+        t = L["type"]
+        a["kind"] = {"type": "quote", "who": L.get("speaker") or "", "quote": L.get("quote")} if t == "quote" and L.get("speaker") else {"type": t if t in ("results", "match") else "news"}
+        if t in ("opinion", "rumor", "listicle", "off-topic"):
+            if a.get("drop") != "llm:" + t: editorial.log_drop(a, "llm:" + t)
+            a["drop"] = "llm:" + t
     json.dump(arts, open(STORE, "w"))
     enrich.TIER = editorial.tier
     clusters = []
