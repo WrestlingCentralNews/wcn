@@ -1,10 +1,13 @@
 (function(){
 const ID=(window.ANALYTICS_CONFIG||{}).measurementId, K='wcn_consent';
-window.track=function(n,p){if(window.gtag)gtag('event',n,p||{})};
-function loadGA(){if(!ID||window._ga)return;window._ga=1;window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};
- gtag('consent','default',{ad_storage:'granted',analytics_storage:'granted',ad_user_data:'granted',ad_personalization:'granted'});
+window.track=function(n,p){if(window._ga)gtag('event',n,p||{})};
+// Consent Mode v2: everything denied by default until the visitor accepts.
+window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){dataLayer.push(arguments)};
+gtag('consent','default',{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});
+function loadGA(){if(!ID||window._ga)return;window._ga=1;
+ gtag('consent','update',{ad_storage:'granted',analytics_storage:'granted',ad_user_data:'granted',ad_personalization:'granted'});
  gtag('js',new Date());gtag('config',ID);const s=document.createElement('script');s.async=1;s.src='https://www.googletagmanager.com/gtag/js?id='+ID;document.head.appendChild(s)}
-function banner(){const b=document.createElement('div');b.id='consent';b.innerHTML='<p>We use cookies for analytics and ads to keep WCN free. See our <a href="privacy.html">Privacy Policy</a>.</p><div><button data-c="no">Decline</button><button data-c="yes" class="ok">Accept</button></div>';
+function banner(){const b=document.createElement('div');b.id='consent';b.innerHTML='<p>We use cookies for analytics and ads to keep WCN free. See our <a href="/privacy.html">Privacy Policy</a>.</p><div><button data-c="no">Decline</button><button data-c="yes" class="ok">Accept</button></div>';
  b.onclick=e=>{const c=e.target.dataset.c;if(!c)return;localStorage.setItem(K,c);b.remove();if(c==='yes')loadGA();document.dispatchEvent(new Event('wcn-consent'))};document.body.appendChild(b)}
 const c=localStorage.getItem(K);if(c==='yes')loadGA();else if(!c)document.addEventListener('DOMContentLoaded',banner);
 window.wcnConsent=()=>localStorage.getItem(K)==='yes';

@@ -7,4 +7,4 @@ window.ADS_CONFIG = {
   inFeedEvery: 4
 };
 // Google Analytics 4: set your measurement ID (G-XXXXXXX). Leave empty to disable; loads only after cookie consent.
-window.ANALYTICS_CONFIG = { measurementId: "" };
+window.ANALYTICS_CONFIG = { measurementId: "G-VXM9BRSC0B" };
