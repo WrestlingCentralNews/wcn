@@ -98,8 +98,9 @@ def on_topic(a):
     t = a["raw_title"]; b = (a.get("body") or "") + " " + (a.get("summary_src") or "")
     if classify(re.sub(r"\b(Mexico|Japan|Australia)\b", "", t)) or SIG.search(t): return True
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
-import enrich, editorial, llm, pages
+import enrich, editorial, llm, pages, vision
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
+IMG_CHECK_TOP = 150
 LONG_MAX_PER_RUN = 400
 LLM_MAX_PER_RUN = 700  # steady state is ~5-30 per run; high cap allows one-time backfill
 RETENTION_DAYS = 60  # prune stories older than this each run
@@ -179,6 +180,17 @@ def run():
         print(f"llm longform: {sum(1 for c, m in need if 'llm_long' in m)}/{len(need)}, month spend ${llm._U['usd']:.3f}", flush=True)
     for c in clusters:
         m = bylink.get(c["link"]); c["long"] = (m or {}).get("llm_long")
+    # image relevance (vision-verified) for top cards and every new card; results cached per card+names
+    stats_img = {}
+    def _pick(c):
+        mem = [bylink[u["link"]].get("image") for u in c.get("updates", []) if u["link"] in bylink]
+        return c, vision.choose(c, [m for m in mem if m])
+    todo = [c for i, c in enumerate(clusters) if i < IMG_CHECK_TOP or c["ts"] > time.time() - 3*86400]
+    with ThreadPoolExecutor(6) as ex:
+        for c, (img, cr, st) in ex.map(_pick, todo):
+            c["image"] = img; c["image_credit"] = cr; stats_img[st] = stats_img.get(st, 0) + 1
+    vision.save(); llm.save_usage()
+    print("images:", stats_img, f"month spend ${llm._U['usd']:.3f}", flush=True)
     pages.assign_urls(clusters); pages.build(clusters)
     for c in clusters: c.pop("long", None)
     tmp = OUT + ".tmp"
