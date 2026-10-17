@@ -35,7 +35,7 @@ def page(c, related):
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(c["title"])} | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">
 <meta property="og:type" content="article"><meta property="og:title" content="{e(c["title"])}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:image" content="{e(img) if img else SITE + 'og-image.jpg'}">
-<meta name="twitter:card" content="summary_large_image"><meta property="article:published_time" content="{iso(c.get("first_ts", c["ts"]))}"><meta property="article:modified_time" content="{iso(c["ts"])}">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@wrestlingWCN"><meta property="article:published_time" content="{iso(c.get("first_ts", c["ts"]))}"><meta property="article:modified_time" content="{iso(c["ts"])}">
 <script type="application/ld+json">{json.dumps(ld)}</script>
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png"><link rel="icon" type="image/png" sizes="512x512" href="../favicon-512.png"><link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png"><meta name="theme-color" content="#0a1a18"><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="../style.css"><script src="../ads-config.js"></script><script src="../analytics.js"></script></head>
 <body class="story-page" style="--c:{col}"><div class="spot s1"></div><div class="spot s2"></div>

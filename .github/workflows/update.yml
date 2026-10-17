@@ -2,6 +2,8 @@ name: Update news & deploy
 on:
   schedule: [{cron: "*/15 * * * *"}]
   workflow_dispatch:
+    inputs:
+      x_test_top: {description: 'Post the current top story to X once (test)', type: boolean, default: false}
   push: {branches: [main]}
 permissions: {contents: write, pages: write, id-token: write}
 concurrency: {group: wcn-update, cancel-in-progress: false}
@@ -21,16 +23,27 @@ jobs:
             git archive FETCH_HEAD | tar -x -C . && echo "restored state: $(ls data public/news.json)"
           else echo "no data branch yet; starting fresh"; fi
       - name: Fetch, enrich, filter, cluster (60-day retention)
+        id: agg
         env: {AI_API_KEY: "${{ secrets.AI_API_KEY }}"}
         run: python aggregator.py | grep -v '"' | tail -n 20; cat data/stats.json data/llm_usage.json
-      - name: Save state to 'data' branch (single orphan commit, force-pushed)
-        run: |
-          rm -rf /tmp/state && mkdir -p /tmp/state/public && cp -r data /tmp/state/ && cp public/news.json /tmp/state/public/
-          cd /tmp/state && git init -q -b data && git config user.name wcn-bot && git config user.email wcn-bot@users.noreply.github.com
-          git add -A && git commit -qm "state $(date -u +%FT%TZ)"
-          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data:data
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with: {path: public}
       - id: deploy
         uses: actions/deploy-pages@v4
+      - name: Post new stories to X (never fails the run)
+        continue-on-error: true
+        env:
+          X_POST_ENABLED: "${{ vars.X_POST_ENABLED }}"
+          X_API_KEY: "${{ secrets.X_API_KEY }}"
+          X_API_SECRET: "${{ secrets.X_API_SECRET }}"
+          X_ACCESS_TOKEN: "${{ secrets.X_ACCESS_TOKEN }}"
+          X_ACCESS_TOKEN_SECRET: "${{ secrets.X_ACCESS_TOKEN_SECRET }}"
+        run: sleep 20; python x_poster.py ${{ github.event.inputs.x_test_top == 'true' && '--test-top' || '' }}
+      - name: Save state to 'data' branch (single orphan commit, force-pushed)
+        if: always() && steps.agg.outcome == 'success'
+        run: |
+          rm -rf /tmp/state && mkdir -p /tmp/state/public && cp -r data /tmp/state/ && cp public/news.json /tmp/state/public/
+          cd /tmp/state && git init -q -b data && git config user.name wcn-bot && git config user.email wcn-bot@users.noreply.github.com
+          git add -A && git commit -qm "state $(date -u +%FT%TZ)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data:data
