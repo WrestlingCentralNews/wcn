@@ -109,7 +109,7 @@ def run(test_top=False):
     enabled = os.environ.get("X_POST_ENABLED", "0") == "1"
     have_keys = all(os.environ.get(k) for k in ("X_API_KEY", "X_API_SECRET", "X_ACCESS_TOKEN", "X_ACCESS_TOKEN_SECRET"))
     S = load_state(); now = time.time()
-    if not test_top and now < S.get("paused_until", 0):
+    if enabled and not test_top and now < S.get("paused_until", 0):
         log("paused until", time.strftime("%F %T", time.gmtime(S["paused_until"])), "reason:", S.get("pause_reason")); return
     items = json.load(open(NEWS))["items"]
     posted_links = set(S["links"])
