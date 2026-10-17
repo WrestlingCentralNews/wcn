@@ -74,13 +74,13 @@ S = {
         "staff": "Redacción WCN", "pub": "Publicado", "first": "Publicado", "upd": "Actualizado", "part": "Parte de nuestra cobertura de", "hub_go": "Cartelera y resultados →"},
 }
 def schema_image(c):
-    """ImageObject list for NewsArticle: largest known version of the story photo (>=1200px when available) + the 1200x630 site card."""
+    """ImageObject list for NewsArticle: the story photo at its largest known version (imgmeta.apply sets image/img_w/img_h;
+    >=1200px wide when the source has one) with its real size, then the 1200x630 site card as a fallback."""
     out = []
     img = c.get("image") or ""
     if img.startswith("https://"):
-        u, w, h = imgmeta.best(img)
-        o = {"@type": "ImageObject", "url": u}
-        if w and h: o["width"], o["height"] = w, h
+        o = {"@type": "ImageObject", "url": img, "contentUrl": img}
+        if c.get("img_w") and c.get("img_h"): o["width"], o["height"] = c["img_w"], c["img_h"]
         out.append(o)
     out.append({"@type": "ImageObject", "url": SITE + "og-image.jpg", "width": 1200, "height": 630})
     return out
@@ -101,8 +101,11 @@ def page(c, related, lang="en", L=None, alt=None):
     col = CATC.get(c["categories"][0], "#7cd618")
     paras = (L.get("p") or [summary]) if es else (c.get("long") or [c["summary"]])
     desc = re.sub(r"\s+", " ", summary)[:158]
-    img = c.get("image") or ""; simg = img or SITE + "og-image.jpg"
-    big = imgmeta.best(img)[0] if img.startswith("https://") else simg
+    img = c.get("image") or ""; big = img if img.startswith("https://") else SITE + "og-image.jpg"
+    iw, ih = (c.get("img_w"), c.get("img_h")) if img.startswith("https://") else (1200, 630)
+    wh = f' width="{iw}" height="{ih}"' if iw and ih else ""
+    imgx = (f'<meta property="og:image:width" content="{iw}"><meta property="og:image:height" content="{ih}">' if iw and ih else "") + \
+           (f'<link rel="preload" as="image" href="{e(img)}" fetchpriority="high" referrerpolicy="no-referrer">' if img else "")
     body = []
     for i, p in enumerate(paras):
         body.append(f"<p>{e(p)}</p>")
@@ -126,10 +129,10 @@ def page(c, related, lang="en", L=None, alt=None):
     home = SITE + ("es/" if es else "")
     crumbs = [("WCN en español" if es else "WCN", home), (title[:70], url)]
     head = chrome.head(f"{title} | WCN", desc, url, lang, alts=alt, og_type="article", image=big, ads=True, ld=[ld, chrome.breadcrumbs(crumbs)],
-                       extra=(f'<meta property="og:image:alt" content="{e(title)}"><meta property="article:publisher" content="{chrome.FB}">'
+                       extra=(f'<meta property="og:image:alt" content="{e(title)}">{imgx}<meta property="article:publisher" content="{chrome.FB}">'
                               f'<meta property="article:published_time" content="{iso(pub)}"><meta property="article:modified_time" content="{iso(mod)}"><meta property="article:section" content="{e(c["categories"][0])}">'))
     en_u = "/" + (alt or {}).get("en", SITE).replace(SITE, ""); es_u = "/" + (alt or {}).get("es", SITE + "es/").replace(SITE, "")
-    hero = (f'<div class="story-hero"><img class="bg" src="{e(img)}" alt="" aria-hidden="true" referrerpolicy="no-referrer"><img class="fg" src="{e(img)}" alt="{e(title)}" referrerpolicy="no-referrer"></div>'
+    hero = (f'<div class="story-hero"><img class="bg" src="{e(img)}" alt="" aria-hidden="true" decoding="async" referrerpolicy="no-referrer"><img class="fg" src="{e(img)}"{wh} alt="{e(title)}" fetchpriority="high" decoding="async" referrerpolicy="no-referrer"></div>'
             if img else f'<div class="story-hero ph-h"><span>{c["categories"][0]}</span></div>')
     credit = f'<p class="pcredit"><a href="{e(c["image_credit"]["url"])}" rel="nofollow noopener" target="_blank">{e(c["image_credit"]["text"])}</a></p>' if c.get("image_credit") else ""
     return (f'{head}\n<body class="story-page" style="--c:{col}"><div class="spot s1"></div><div class="spot s2"></div>\n'
@@ -186,7 +189,7 @@ def build_newsletter_page(clusters):
 def build(clusters):
     import translate, extras
     build_sw()
-    imgmeta.run(clusters)
+    imgmeta.run(clusters); imgmeta.apply(clusters)   # cards, story heroes, og:image and NewsArticle use the largest version of each photo
     nh = hubs.tag(clusters)
     tr = translate.run(clusters)   # {cluster_id: {t, s, url, p}} Spanish, cached; only new/changed stories cost anything
     tmp = SD + ".new"; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)

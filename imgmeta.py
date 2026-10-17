@@ -1,16 +1,31 @@
-"""Image dimensions for structured data / Discover (needs >=1200px wide). Probes only the first bytes of each image;
-cached in data/image_sizes.json; tries the full-size WordPress original when the feed gave a resized copy."""
-import os, re, json, struct, urllib.request, time
+"""Image dimensions + large-variant finder for Discover (wants >=1200px wide). No AI: probes only the first 64 KB of each
+image (Range request) and reads the size from the header. Cache: data/image_sizes.json {feed_url: {best:[url,w,h], v, at}}.
+
+For a feed image that is under 1200px it tries, cheapest first, versions of THE SAME photo:
+  1. URL rewrites: WordPress -300x200 / -e1712345678 suffixes removed, CDN resize/crop/fit query params removed or
+     bumped (i0.wp.com, Vox/Chorus, wmsports, Static Media l-intro, Wikimedia thumbs, Yahoo embedded originals);
+  2. the source article's og:image / twitter:image and the largest <img srcset> entry, only if the file name matches
+     (so a vision-verified photo is never swapped for a different picture).
+Picks the smallest version that is >=1200px wide (keeps pages light), else the largest found.
+apply() then points every card/story at that version and records its real width/height."""
+import os, re, json, struct, urllib.request, urllib.parse, html as _html, time
 from concurrent.futures import ThreadPoolExecutor
 ROOT = os.path.dirname(os.path.abspath(__file__)); CACHE = os.path.join(ROOT, "data", "image_sizes.json")
-UA = {"User-Agent": "Mozilla/5.0 (compatible; WCN-bot/1.0; +https://wrestlingcentralnews.com/)", "Range": "bytes=0-65535"}
+V = 2                         # cache entries from older finders (<1200px) are re-checked once with the new rules
+MIN_W = 1200
+WINDOW_D = 60                 # stories first reported within this many days get probed
+UA = "Mozilla/5.0 (compatible; WCN-bot/1.0; +https://wrestlingcentralnews.com/)"
 def dims(b):
     try:
         if b[:8] == b"\x89PNG\r\n\x1a\n": return struct.unpack(">II", b[16:24])
+        if b[:6] in (b"GIF87a", b"GIF89a"): return struct.unpack("<HH", b[6:10])
         if b[:4] == b"RIFF" and b[8:12] == b"WEBP":
             if b[12:16] == b"VP8X": return (int.from_bytes(b[24:27], "little") + 1, int.from_bytes(b[27:30], "little") + 1)
             if b[12:16] == b"VP8 ": w, h = struct.unpack("<HH", b[26:30]); return (w & 0x3fff, h & 0x3fff)
             if b[12:16] == b"VP8L": v = int.from_bytes(b[21:25], "little"); return ((v & 0x3fff) + 1, ((v >> 14) & 0x3fff) + 1)
+        if b[4:12] in (b"ftypavif", b"ftypavis"):
+            i = b.find(b"ispe")
+            if i > 0: return struct.unpack(">II", b[i + 8:i + 16])
         if b[:2] == b"\xff\xd8":
             i = 2
             while i < len(b) - 9:
@@ -18,15 +33,106 @@ def dims(b):
                 m = b[i + 1]
                 if m in (0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF):
                     h, w = struct.unpack(">HH", b[i + 5:i + 9]); return (w, h)
+                if m in (0xD8, 0x01) or 0xD0 <= m <= 0xD7: i += 2; continue
                 i += 2 + struct.unpack(">H", b[i + 2:i + 4])[0]
     except Exception: pass
     return None
 def probe(u):
-    try: return dims(urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=8).read(65536))
+    try:
+        r = urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": UA, "Range": "bytes=0-65535", "Accept": "image/avif,image/webp,image/*,*/*"}), timeout=8)
+        if not (r.headers.get("Content-Type") or "image").startswith("image"): return None
+        return dims(r.read(65536))
     except Exception: return None
+# ---------- same-photo URL variants ----------
+def _stem(u):
+    """Normalised file name: no extension, size/edit suffixes, or 'l-' prefixes -> compare two URLs for 'same photo'."""
+    p = urllib.parse.unquote(urllib.parse.urlsplit(u).path).rsplit("/", 1)[-1].lower()
+    p = re.sub(r"\.(jpe?g|png|webp|gif|avif)$", "", p)
+    p = re.sub(r"^\d+px-", "", p)
+    for rx in (r"-\d{2,4}x\d{2,4}$", r"-scaled$", r"-e\d{10,13}$", r"-\d{2,4}x\d{2,4}$", r"@\dx$", r"_(large|medium|small|thumb)(_cropped)?$"):
+        p = re.sub(rx, "", p)
+    return re.sub(r"^l-", "", p)
+def same_photo(a, b):
+    sa, sb = _stem(a), _stem(b)
+    return len(sa) >= 5 and len(sb) >= 5 and (sa == sb or (min(len(sa), len(sb)) >= 8 and (sa in sb or sb in sa)))
 def wp_original(u):
     m = re.match(r"^(.*?)-\d{2,4}x\d{2,4}(\.(?:jpe?g|png|webp))(\?.*)?$", u, re.I)
     return m.group(1) + m.group(2) if m else None
+RESIZE_Q = {"w", "h", "width", "height", "resize", "fit", "crop", "quality", "strip", "zoom", "lb", "ssl", "x", "y", "dpr", "q", "auto", "format", "fm"}
+def variants(u):
+    out = []
+    def add(x):
+        if x and x != u and x not in out: out.append(x)
+    s = urllib.parse.urlsplit(u); q = urllib.parse.parse_qsl(s.query, keep_blank_values=True)
+    path = s.path
+    # Yahoo/AOL image proxies carry the original URL at the end of the path
+    m = re.search(r"/(https?://[^?#]+)$", urllib.parse.unquote(u)) if re.search(r"yimg\.com|aol\.com", s.netloc) else None
+    if m: add(m.group(1))
+    # Wikimedia thumbnail -> original file
+    m = re.match(r"^(/wikipedia/[^/]+)/thumb(/[0-9a-f]/[0-9a-f]{2}/[^/]+)/\d+px-[^/]+$", path)
+    if m: add(f"https://upload.wikimedia.org{m.group(1)}{m.group(2)}")
+    # Wix: /media/<id>~mv2.jpg/v1/fill/w_1000,h_563,.../name.jpg -> original upload
+    m = re.match(r"^(/media/[^/]+?\.(?:jpe?g|png|webp))/v1/", path, re.I) if "wixstatic.com" in s.netloc else None
+    if m: add(urllib.parse.urlunsplit(s._replace(path=m.group(1), query="")))
+    # Static Media sites (wrestlinginc.com etc.): /img/gallery/<slug>/intro-123.jpg has a large 'l-intro-123.jpg'
+    if re.search(r"/img/gallery/[^/]+/intro-[^/]+$", path): add(urllib.parse.urlunsplit(s._replace(path=re.sub(r"/intro-([^/]+)$", r"/l-intro-\1", path), query="")))
+    # WordPress resized copies: -300x200 and edited -e1712345678 suffixes
+    base = re.sub(r"-\d{2,4}x\d{2,4}(?=\.(?:jpe?g|png|webp)$)", "", path, flags=re.I)
+    base = re.sub(r"-e\d{10,13}(?=\.(?:jpe?g|png|webp)$)", "", base, flags=re.I)
+    if base != path: add(urllib.parse.urlunsplit(s._replace(path=base, query="")))
+    # CDN resize/crop/fit params: drop them, or ask for a 1600px version
+    if any(k.lower() in RESIZE_Q for k, _ in q):
+        keep = [(k, v) for k, v in q if k.lower() not in RESIZE_Q]
+        add(urllib.parse.urlunsplit(s._replace(query=urllib.parse.urlencode(keep))))
+        wk = next((k for k, _ in q if k.lower() in ("w", "width")), None)
+        if wk:
+            hv = next((v for k, v in q if k.lower() in ("h", "height")), None); wv = next(v for k, v in q if k == wk)
+            nq = [(k, "1600" if k == wk else (str(round(int(hv) * 1600 / int(wv))) if k.lower() in ("h", "height") and hv and hv.isdigit() and wv.isdigit() and int(wv) else v)) for k, v in q]
+            add(urllib.parse.urlunsplit(s._replace(query=urllib.parse.urlencode(nq))))
+        if "wp.com" in s.netloc: add(urllib.parse.urlunsplit(s._replace(query=urllib.parse.urlencode(keep + [("w", "1600")]))))
+    elif "wp.com" in s.netloc or "/wp-content/" in path and re.search(r"platform\.|chorus|voxmedia", s.netloc):
+        add(urllib.parse.urlunsplit(s._replace(query="w=1600")))
+    return out
+def page_images(url, img):
+    """og:image / twitter:image / largest srcset entry of the source article that show the same photo."""
+    try:
+        h = urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) Chrome/124 Safari/537.36"}), timeout=10).read(700000).decode("utf8", "ignore")
+    except Exception: return []
+    out = []
+    for prop in ("og:image", "og:image:url", "og:image:secure_url", "twitter:image", "twitter:image:src"):
+        for m in re.finditer(r'<meta[^>]+(?:property|name)=["\']%s["\'][^>]*content=["\']([^"\']+)|<meta[^>]+content=["\']([^"\']+)["\'][^>]*(?:property|name)=["\']%s["\']' % (re.escape(prop), re.escape(prop)), h):
+            out.append(urllib.parse.urljoin(url, _html.unescape(m.group(1) or m.group(2))))
+    for m in re.finditer(r'srcset=["\']([^"\']+)["\']', h):
+        best = None
+        for part in _html.unescape(m.group(1)).split(","):
+            bits = part.strip().split()
+            if len(bits) == 2 and bits[1].endswith("w") and bits[1][:-1].isdigit():
+                if not best or int(bits[1][:-1]) > best[1]: best = (urllib.parse.urljoin(url, bits[0]), int(bits[1][:-1]))
+        if best: out.append(best[0])
+    return [u for u in dict.fromkeys(out) if u != img and u.startswith("https://") and same_photo(u, img)][:6]
+def _good(w, h): return w and h and 0.45 <= h / w <= 1.6     # skip banners / tall portraits as 'best'
+def pick(found):
+    """found: [(url, w, h)] -> smallest version >=1200 wide with a sane shape, else the widest."""
+    ok = [f for f in found if f[1] and f[1] >= MIN_W and _good(f[1], f[2])]
+    if ok: return min(ok, key=lambda f: f[1])
+    ok = [f for f in found if f[1]]
+    return max(ok, key=lambda f: f[1]) if ok else None
+def find(u, link=None):
+    """(best_url, w, h) for feed image u; only cheap HTTP."""
+    d = probe(u); found = [(u, *d)] if d else []
+    if d and d[0] >= MIN_W and _good(*d) and d[0] <= 2600: return (u, *d)
+    for v in variants(u)[:4]:
+        dv = probe(v)
+        if dv: found.append((v, *dv))
+        if dv and MIN_W <= dv[0] <= 2600 and _good(*dv): break
+    b = pick(found)
+    if link and (not b or b[1] < MIN_W or b[1] > 2600):
+        for v in page_images(link, u):
+            if any(v == f[0] for f in found): continue
+            dv = probe(v)
+            if dv: found.append((v, *dv))
+        b = pick(found)
+    return b or (u, None, None)
 _C = None
 def cache():
     global _C
@@ -39,22 +145,38 @@ def best(u):
     x = cache().get(u)
     if not x: return (u, None, None)
     return tuple(x["best"])
-def run(clusters, max_new=60):
+def _age(c, now): return now - c.get("first_ts", c["ts"])
+def stats(clusters, days=7, use_best=True):
+    """Share of recent stories whose (displayed) image is >=1200px wide."""
+    now = time.time(); r = [c for c in clusters if _age(c, now) < days * 86400]
+    w = [c for c in r if (c.get("image") or "").startswith("https://")]
+    big = [c for c in w if ((c.get("img_w") or 0) if "img_w" in c else (best(c["image"])[1] or 0)) >= MIN_W]
+    return {"stories": len(r), "with_image": len(w), "ge1200": len(big)}
+def run(clusters, max_new=150):
     C = cache(); now = time.time()
-    todo = [c["image"] for c in clusters if (c.get("image") or "").startswith("https://") and c["image"] not in C
-            and now - c.get("first_ts", c["ts"]) < 4 * 86400][:max_new]
-    def job(u):
-        d = probe(u); b = (u, *(d or (None, None)))
-        if not d or d[0] < 1200:
-            o = wp_original(u)
-            if o:
-                d2 = probe(o)
-                if d2 and d2[0] > (d[0] if d else 0): b = (o, *d2)
-        return u, b
-    with ThreadPoolExecutor(8) as ex:
-        for u, b in ex.map(job, todo): C[u] = {"best": list(b), "at": int(now)}
+    seen = set(); todo = []
+    for c in sorted(clusters, key=lambda c: _age(c, now)):
+        u = c.get("image") or ""
+        if not u.startswith("https://") or u in seen or _age(c, now) > WINDOW_D * 86400: continue
+        x = C.get(u)
+        if x and (x.get("v", 1) >= V or (x["best"][1] or 0) >= MIN_W): continue
+        seen.add(u); todo.append((u, c.get("link")))
+    todo = todo[:max_new]
+    def job(a): return a[0], find(*a)
+    with ThreadPoolExecutor(12) as ex:
+        for u, b in ex.map(job, todo): C[u] = {"best": list(b), "v": V, "at": int(now)}
     live = {c.get("image") for c in clusters}
     for k in [k for k, v in C.items() if k not in live and now - v.get("at", 0) > 7 * 86400]: C.pop(k)
     json.dump(C, open(CACHE, "w"))
-    big = sum(1 for c in clusters if c.get("image") in C and (C[c["image"]]["best"][1] or 0) >= 1200)
-    print(f"imgsize: probed {len(todo)}, >=1200px {big}/{sum(1 for c in clusters if c.get('image') in C)} known", flush=True)
+    s = stats(clusters)
+    print(f"imgsize: probed {len(todo)}; last 7 days >=1200px {s['ge1200']}/{s['with_image']} stories with photos ({s['stories']} stories)", flush=True)
+def apply(clusters):
+    """Point each card/story at the best-known version of its photo and record its real size (img_w/img_h)."""
+    n = 0
+    for c in clusters:
+        u = c.get("image") or ""
+        if not u.startswith("https://"): continue
+        b, w, h = best(u)
+        if b != u: c["image_src"] = u; c["image"] = b; n += 1
+        if w and h: c["img_w"], c["img_h"] = int(w), int(h)
+    return n

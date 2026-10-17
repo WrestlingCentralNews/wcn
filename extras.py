@@ -103,7 +103,9 @@ def build_trust(clusters, tr):
 # ---------- Spanish home ----------
 def card_html(c, L, n):
     col = CATC.get(c["categories"][0]); img = c.get("image") or ""
-    im = (f'<img class="bg" loading="lazy" referrerpolicy="no-referrer" src="{e(img)}" alt="" aria-hidden="true"><img class="fg" loading="lazy" referrerpolicy="no-referrer" src="{e(img)}" alt="">' if img else "")
+    ld = 'fetchpriority="high"' if n == 0 else 'loading="lazy"'   # lead card is the LCP image: load it first, never lazily
+    wh = f' width="{c["img_w"]}" height="{c["img_h"]}"' if c.get("img_w") and c.get("img_h") else ""
+    im = (f'<img class="bg" {ld} referrerpolicy="no-referrer" src="{e(img)}" alt="" aria-hidden="true"><img class="fg" {ld}{wh} referrerpolicy="no-referrer" src="{e(img)}" alt="">' if img else "")
     u = L["url"][3:]   # relative to /es/
     return (f'<article class="card {"hero" if n == 0 else ""} in" style="--c:{col}" data-cat="{c["categories"][0]}" data-pos="{n}"><a class="img" href="{e(u)}" aria-hidden="true" tabindex="-1"><div class="ph">{c["categories"][0]}</div>{im}</a><div class="body">'
             f'<div class="tags">{"".join(f"<span class=tag style=--c:{CATC[k]}>{k}</span>" for k in c["categories"])}</div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><p>{e(L["s"])}</p>'
