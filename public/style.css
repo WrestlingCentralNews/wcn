@@ -65,7 +65,7 @@ footer a{color:var(--gold)}#consent{position:fixed;left:50%;bottom:20px;transfor
 .story{min-width:0;display:flex;flex-direction:column;gap:18px}
 .story h1{font-family:'Bebas Neue';font-size:clamp(38px,5vw,58px);line-height:1.02;letter-spacing:1px;margin:0}
 .byline{color:var(--mut);font-size:13px}
-.hero{width:100%;aspect-ratio:16/9;border-radius:20px;background:#1a1a26 center/cover;box-shadow:0 30px 60px -30px var(--c)}
+.story-hero{width:100%;aspect-ratio:16/9;border-radius:20px;background:#1a1a26 center/cover;box-shadow:0 30px 60px -30px var(--c)}
 .ph-h{display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,var(--c),#0b0b12 75%);font-family:'Bebas Neue';font-size:80px;color:rgba(255,255,255,.85)}
 .prose p{font-size:18px;line-height:1.8;color:#dddbe8;margin:0 0 22px}.prose p:first-child::first-letter{font-family:'Bebas Neue';font-size:64px;float:left;line-height:.9;margin:4px 10px 0 0;color:var(--c)}
 .prose .ad{margin:8px 0 28px}
@@ -78,3 +78,11 @@ footer a{color:var(--gold)}#consent{position:fixed;left:50%;bottom:20px;transfor
 .rel:hover{transform:translateY(-4px);border-color:var(--c);box-shadow:0 14px 30px -14px var(--c)}.ri{height:130px;background:radial-gradient(circle at 30% 20%,var(--c),#0b0b12 75%) center/cover}
 .rel span{padding:12px 14px;font-weight:600;font-size:14px;line-height:1.4}
 @media(max-width:700px){.prose p{font-size:17px}.story h1{font-size:38px}}
+/* half-page side ads: 300x600 on wide desktop, 160x600 on narrower desktop, hidden <1180px */
+.layout{grid-template-columns:300px minmax(0,780px) 300px;gap:32px;max-width:1520px}
+.ad-sky{width:300px;height:600px}.ad-sky:before{content:'Advertisement · 300×600 Half-page'}
+@media(max-width:1519px){.layout{grid-template-columns:160px minmax(0,780px) 160px}.ad-sky{width:160px}.ad-sky:before{content:'Advertisement · 160×600 Skyscraper'}}
+@media(max-width:1180px){.layout{grid-template-columns:minmax(0,780px)}}
+.img{display:block}
+.card.hero{display:flex;flex-direction:column}.card.hero .img{flex:none;height:380px;min-height:0}@media(max-width:700px){.card.hero .img{height:230px}}
+.feed>*{flex-shrink:0}.card.hero .body{flex:none}

@@ -38,14 +38,14 @@ def page(c, related):
 <body class="story-page" style="--c:{col}"><div class="spot s1"></div><div class="spot s2"></div>
 <header><div class="bar"><a class="logo" href="../index.html"><b>WCN</b> <span>WRESTLING CENTRAL NEWS</span></a><a class="back" href="../index.html" onclick="if(history.length>1&&document.referrer.indexOf(location.host)>-1){{history.back();return false}}">← All news</a></div></header>
 {ad("leaderboard", "728×90 Leaderboard", "ad-leader")}
-<main class="layout"><aside class="side">{ad("leftSkyscraper", "160×600 Skyscraper", "ad-sky")}</aside>
+<main class="layout"><aside class="side">{ad("leftSkyscraper", "300×600 Half-page", "ad-sky")}</aside>
 <article class="story"><div class="tags">{conf}{tags}</div><h1>{e(c["title"])}</h1><div class="byline">WCN Staff · {nice(c["ts"])}</div>
-{f'<div class="hero" style="background-image:url(\'{e(img)}\')" role="img" aria-label="{e(c["title"])}"></div>' if img else f'<div class="hero ph-h"><span>{c["categories"][0]}</span></div>'}
+{f'<div class="story-hero" style="background-image:url(\'{e(img)}\')" role="img" aria-label="{e(c["title"])}"></div>' if img else f'<div class="story-hero ph-h"><span>{c["categories"][0]}</span></div>'}
 {quote}<div class="prose">{"".join(body)}</div>{tl}
 <p class="credit">Source: <a href="{e(c["link"])}" rel="nofollow noopener" target="_blank">{e(c["source"])}</a></p>
 {ad("storyBottom", "Responsive Banner")}
 <section class="related"><h2>More {e(c["categories"][0])} news</h2><div class="relgrid">{rel}</div></section></article>
-<aside class="side">{ad("rightSkyscraper", "160×600 Skyscraper", "ad-sky")}</aside></main>
+<aside class="side">{ad("rightSkyscraper", "300×600 Half-page", "ad-sky")}</aside></main>
 <footer>© 2026 Wrestling Central News (WCN) · <a href="../privacy.html">Privacy Policy</a> · <a href="mailto:wcn@mail.grokbot.com">Contact</a></footer>
 {ad("mobileSticky", "320×50 Mobile", "ad-mobile")}<script src="../story.js"></script></body></html>'''
 def build(clusters):
