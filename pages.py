@@ -14,7 +14,7 @@ def page(c, related):
     col = CATC.get(c["categories"][0], "#7cd618"); url = SITE + c["url"]
     paras = c.get("long") or [c["summary"]]
     desc = re.sub(r"\s+", " ", c["summary"])[:158]
-    img = c.get("image") or ""
+    img = c.get("image") or ""; simg = img or SITE + "og-image.jpg"
     body = []
     for i, p in enumerate(paras):
         body.append(f"<p>{e(p)}</p>")
@@ -26,16 +26,16 @@ def page(c, related):
     rel = "".join(f'<a class="rel" href="../{r["url"]}" style="--c:{CATC.get(r["categories"][0])}"><div class="ri" style="background-image:url(\'{e(r.get("image") or "")}\')"></div><span>{e(r["title"])}</span></a>' for r in related)
     tags = "".join(f'<span class="tag" style="--c:{CATC[t]}">{t}</span>' for t in c["categories"])
     conf = f'<span class="tag conf">✔ CONFIRMED BY {c["sources"]} SOURCES</span>' if c.get("sources", 1) > 1 else ""
-    ld = {"@context": "https://schema.org", "@type": "NewsArticle", "headline": c["title"][:110], "description": desc, "image": [img] if img else [],
-          "datePublished": iso(c.get("first_ts", c["ts"])), "dateModified": iso(c["ts"]), "mainEntityOfPage": url, "articleSection": c["categories"][0],
-          "author": {"@type": "Organization", "name": "Wrestling Central News"}, "publisher": {"@type": "Organization", "name": "Wrestling Central News (WCN)", "url": SITE, "logo": {"@type": "ImageObject", "url": SITE + "logo.png", "width": 600, "height": 399}, "sameAs": ["https://x.com/wrestlingWCN", "https://www.facebook.com/p/Wrestling-Central-News-61595290838604/"]}}
+    ld = {"@context": "https://schema.org", "@type": "NewsArticle", "headline": c["title"][:110], "description": desc, "image": [simg], "url": url,
+          "datePublished": iso(c.get("first_ts", c["ts"])), "dateModified": iso(c["ts"]), "mainEntityOfPage": {"@type": "WebPage", "@id": url}, "articleSection": c["categories"][0],
+          "author": {"@type": "Organization", "name": "Wrestling Central News", "url": SITE}, "publisher": {"@type": "NewsMediaOrganization", "name": "Wrestling Central News", "url": SITE, "logo": {"@type": "ImageObject", "url": SITE + "logo.png", "width": 600, "height": 399}, "sameAs": ["https://x.com/wrestlingWCN", "https://www.facebook.com/p/Wrestling-Central-News-61595290838604/"]}}
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
 <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag('consent','default',{{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500}});</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6049350409363098" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(c["title"])} | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">
-<meta property="og:type" content="article"><meta property="og:title" content="{e(c["title"])}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:image" content="{e(img) if img else SITE + 'og-image.jpg'}">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@wrestlingWCN"><meta property="article:publisher" content="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/"><meta property="article:published_time" content="{iso(c.get("first_ts", c["ts"]))}"><meta property="article:modified_time" content="{iso(c["ts"])}">
+<meta property="og:type" content="article"><meta property="og:title" content="{e(c["title"])}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:image" content="{e(simg)}"><meta property="og:image:alt" content="{e(c["title"])}">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="{e(simg)}"><meta name="robots" content="max-image-preview:large"><meta name="twitter:site" content="@wrestlingWCN"><meta property="article:publisher" content="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/"><meta property="article:published_time" content="{iso(c.get("first_ts", c["ts"]))}"><meta property="article:modified_time" content="{iso(c["ts"])}">
 <script type="application/ld+json">{json.dumps(ld)}</script>
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png"><link rel="icon" type="image/png" sizes="512x512" href="../favicon-512.png"><link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png"><meta name="theme-color" content="#0a1a18"><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="../style.css"><script src="../ads-config.js"></script><script src="../analytics.js"></script></head>
 <body class="story-page" style="--c:{col}"><div class="spot s1"></div><div class="spot s2"></div>
