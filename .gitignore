@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.log
+*.log.*
+*.bak
+*.bak-*
+*.tmp
+node_modules/
+.env
+*.env
+screenshots/
+feeds_status.json
+public/news.prev.json
+data/
+public/news.json

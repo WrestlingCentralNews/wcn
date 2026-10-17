@@ -1,0 +1,35 @@
+name: Update news & deploy
+on:
+  schedule: [{cron: "*/15 * * * *"}]
+  workflow_dispatch:
+  push: {branches: [main]}
+permissions: {contents: write, pages: write, id-token: write}
+concurrency: {group: wcn-update, cancel-in-progress: false}
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    environment: {name: github-pages, url: "${{ steps.deploy.outputs.page_url }}"}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - name: Restore state from 'data' branch
+        run: |
+          mkdir -p data
+          if git fetch --depth=1 origin data 2>/dev/null; then
+            git archive FETCH_HEAD | tar -x -C . && echo "restored state: $(ls data public/news.json)"
+          else echo "no data branch yet; starting fresh"; fi
+      - name: Fetch, enrich, filter, cluster (60-day retention)
+        run: python aggregator.py | tail -n 40; cat data/stats.json
+      - name: Save state to 'data' branch (single orphan commit, force-pushed)
+        run: |
+          rm -rf /tmp/state && mkdir -p /tmp/state/public && cp -r data /tmp/state/ && cp public/news.json /tmp/state/public/
+          cd /tmp/state && git init -q -b data && git config user.name wcn-bot && git config user.email wcn-bot@users.noreply.github.com
+          git add -A && git commit -qm "state $(date -u +%FT%TZ)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data:data
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: {path: public}
+      - id: deploy
+        uses: actions/deploy-pages@v4
