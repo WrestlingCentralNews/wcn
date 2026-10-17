@@ -29,7 +29,10 @@ def page(c, related):
     ld = {"@context": "https://schema.org", "@type": "NewsArticle", "headline": c["title"][:110], "description": desc, "image": [img] if img else [],
           "datePublished": iso(c.get("first_ts", c["ts"])), "dateModified": iso(c["ts"]), "mainEntityOfPage": url, "articleSection": c["categories"][0],
           "author": {"@type": "Organization", "name": "Wrestling Central News"}, "publisher": {"@type": "Organization", "name": "Wrestling Central News (WCN)"}}
-    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag('consent','default',{{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500}});</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6049350409363098" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(c["title"])} | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">
 <meta property="og:type" content="article"><meta property="og:title" content="{e(c["title"])}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:site_name" content="Wrestling Central News">{f'<meta property="og:image" content="{e(img)}">' if img else ''}
 <meta name="twitter:card" content="summary_large_image"><meta property="article:published_time" content="{iso(c.get("first_ts", c["ts"]))}"><meta property="article:modified_time" content="{iso(c["ts"])}">
