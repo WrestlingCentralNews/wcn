@@ -80,7 +80,7 @@ def page(c, related):
           "datePublished": iso(c.get("first_ts", c["ts"])), "dateModified": iso(c["ts"]), "mainEntityOfPage": {"@type": "WebPage", "@id": url}, "articleSection": c["categories"][0],
           "author": {"@type": "Organization", "name": "Wrestling Central News", "url": SITE}, "publisher": {"@type": "NewsMediaOrganization", "name": "Wrestling Central News", "url": SITE, "logo": {"@type": "ImageObject", "url": SITE + "logo.png", "width": 600, "height": 399}, "sameAs": ["https://x.com/wrestlingWCN", "https://www.facebook.com/p/Wrestling-Central-News-61595290838604/"]}}
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
-<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag('consent','default',{{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500}});</script>
+{GA_HEAD}
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6049350409363098" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(c["title"])} | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">{feed_links(c["categories"][0])}
@@ -103,6 +103,9 @@ def page(c, related):
 {nl_block("footer-story")}
 <footer>© 2026 Wrestling Central News (WCN) · <a href="../privacy.html">Privacy Policy</a> · <a class="nl-link" href="../newsletter/">Newsletter</a> · <a href="mailto:wcn@mail.grokbot.com">Contact</a> · <a class="rss-link" href="/feed.xml" type="application/rss+xml">RSS</a> · Follow us: <a href="https://x.com/wrestlingWCN" target="_blank" rel="noopener">X @wrestlingWCN</a> · <a href="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/" target="_blank" rel="noopener">Facebook</a></footer>
 {ad("mobileSticky", "320×50 Mobile", "ad-mobile")}<script src="../story.js"></script><script src="/newsletter.js" defer></script><script src="/pwa.js" defer></script><script src="/push.js" defer></script></body></html>'''
+# Google tag + Consent Mode v2 (region-aware): denied by default in EEA/UK/CH until the banner choice, granted elsewhere;
+# a stored banner choice (wcn_consent) is re-applied before config. Loaded directly in <head> on every page.
+GA_HEAD = '<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag(\'consent\',\'default\',{ad_storage:\'denied\',analytics_storage:\'denied\',ad_user_data:\'denied\',ad_personalization:\'denied\',wait_for_update:500,region:[\'AT\',\'BE\',\'BG\',\'HR\',\'CY\',\'CZ\',\'DK\',\'EE\',\'FI\',\'FR\',\'DE\',\'GR\',\'HU\',\'IS\',\'IE\',\'IT\',\'LV\',\'LI\',\'LT\',\'LU\',\'MT\',\'NL\',\'NO\',\'PL\',\'PT\',\'RO\',\'SK\',\'SI\',\'ES\',\'SE\',\'GB\',\'CH\']});gtag(\'consent\',\'default\',{ad_storage:\'granted\',analytics_storage:\'granted\',ad_user_data:\'granted\',ad_personalization:\'granted\'});try{var wc=localStorage.getItem(\'wcn_consent\');if(wc){var wv=wc===\'yes\'?\'granted\':\'denied\';gtag(\'consent\',\'update\',{ad_storage:wv,analytics_storage:wv,ad_user_data:wv,ad_personalization:wv})}}catch(e){}gtag(\'js\',new Date());gtag(\'config\',\'G-VXM9BRSC0B\');</script>\n<script async src="https://www.googletagmanager.com/gtag/js?id=G-VXM9BRSC0B"></script>'
 SW_PRECACHE = ["/index.html", "/offline.html", "/style.css", "/app.js", "/story.js", "/pwa.js", "/push.js", "/newsletter.js", "/logo-header.png", "/logo.png",
                "/favicon-32.png", "/apple-touch-icon.png", "/pwa/icon-192.png", "/pwa/icon-512.png"]
 def build_sw():
@@ -123,7 +126,7 @@ def build_newsletter_page(clusters):
     lis = "".join(f'<li><a href="/{c["url"]}">{e(c["title"])}</a><span>{e(c["categories"][0])}</span></li>' for c in sample)
     url = SITE + "newsletter/"; desc = "WCN Weekly: the 10 biggest pro wrestling stories of the week from WWE, AEW, TNA, the indies and around the world, in your inbox every Monday. Free."
     html_ = f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
-<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag('consent','default',{{ad_storage:'denied',analytics_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500}});</script>
+{GA_HEAD}
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="max-image-preview:large">
 <title>WCN Weekly Newsletter: Top Wrestling News Every Monday | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">{feed_links()}
 <meta property="og:type" content="website"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:title" content="WCN Weekly: the week in wrestling, every Monday"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:image" content="{SITE}og-image.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@wrestlingWCN"><meta name="twitter:image" content="{SITE}og-image.jpg">

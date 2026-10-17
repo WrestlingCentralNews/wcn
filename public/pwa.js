@@ -16,7 +16,7 @@
     addEventListener('beforeinstallprompt', function(e){
       e.preventDefault(); deferred = e;
       var ts = +get(K) || 0; if (Date.now() - ts < 30 * 864e5) return;   // dismissed: stay quiet for 30 days
-      (function show(){ if (!get('wcn_consent')) return setTimeout(show, 5000); if (document.querySelector('.pwa-bar')) return;
+      (function show(){ if ((window.wcnEU && !get('wcn_consent')) || document.getElementById('consent')) return setTimeout(show, 5000); if (document.querySelector('.pwa-bar')) return;
         var d = bar('<img src="/pwa/icon-192.png" alt="" width="34" height="34"><span><b>Get the WCN app</b><small>Breaking wrestling news, one tap away</small></span><button class="pwa-go">Install</button>');
         d.querySelector('.pwa-x').onclick = function(){ close(d, K); };
         d.querySelector('.pwa-go').onclick = function(){ if (!deferred) return close(d); deferred.prompt(); deferred.userChoice.then(function(){ deferred = null; close(d, K); }); };
@@ -25,7 +25,7 @@
     addEventListener('appinstalled', function(){ set(K); var d = document.querySelector('.pwa-bar'); if (d) close(d); });
     var ua = navigator.userAgent, isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     var safari = isIOS && /safari/i.test(ua) && !/crios|fxios|edgios|gsa\//i.test(ua);
-    if (safari && !get(IOS)) (function show(){ if (!get('wcn_consent')) return setTimeout(show, 5000);
+    if (safari && !get(IOS)) (function show(){ if ((window.wcnEU && !get('wcn_consent')) || document.getElementById('consent')) return setTimeout(show, 5000);
       set(IOS);   // shown at most once
       var d = bar('<img src="/pwa/icon-192.png" alt="" width="34" height="34"><span><b>Add WCN to your Home Screen</b><small>Tap <svg viewBox="0 0 24 24" width="14" height="14" aria-label="Share"><path fill="currentColor" d="M12 2l4 4h-3v8h-2V6H8l4-4zm-7 9h3v2H6v7h12v-7h-2v-2h3a1 1 0 011 1v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9a1 1 0 011-1z"/></svg> Share → Add to Home Screen</small></span>', 'ios');
       d.querySelector('.pwa-x').onclick = function(){ close(d); };

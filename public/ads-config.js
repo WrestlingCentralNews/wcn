@@ -6,5 +6,5 @@ window.ADS_CONFIG = {
            inFeed: "", footer: "", mobileSticky: "" },
   inFeedEvery: 4
 };
-// Google Analytics 4: set your measurement ID (G-XXXXXXX). Leave empty to disable; loads only after cookie consent.
+// Google Analytics 4 measurement ID (reference only): gtag.js is now loaded directly in every page <head> via GA_HEAD in pages.py.
 window.ANALYTICS_CONFIG = { measurementId: "G-VXM9BRSC0B" };

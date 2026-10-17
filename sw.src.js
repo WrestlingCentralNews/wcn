@@ -1,6 +1,6 @@
 /* WCN service worker. Generated into public/sw.js by pages.py; VERSION changes whenever static assets change. */
 const VERSION = "__VERSION__";
-const STATIC = "wcn-static-" + VERSION, PAGES = "wcn-pages-v1", FONTS = "wcn-fonts-v1";
+const STATIC = "wcn-static-" + VERSION, PAGES = "wcn-pages-v2", FONTS = "wcn-fonts-v1";
 const KEEP = [STATIC, PAGES, FONTS];
 const PRECACHE = __PRECACHE__;
 const OFFLINE = "/offline.html", MAX_PAGES = 80;
@@ -57,6 +57,6 @@ self.addEventListener("fetch", ev => {
     if (STATIC_EXT.test(url.pathname)) return ev.respondWith(cacheFirst(req, STATIC));
     return;
   }
-  // Google Fonts only; every other cross-origin request (AdSense, analytics, OneSignal cdn/api, story images) is left alone.
+  // Google Fonts only; every other cross-origin request (AdSense, googletagmanager.com/google-analytics.com, OneSignal cdn/api, story images) is left alone.
   if (url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com") return ev.respondWith(cacheFirst(req, FONTS));
 });
