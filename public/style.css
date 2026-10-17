@@ -109,3 +109,25 @@ footer a{color:var(--acc)}#consent{position:fixed;left:50%;bottom:20px;transform
 .soc:hover,.soc:focus-visible{background:#F26A14;border-color:#F26A14;color:#0a1a18;transform:translateY(-1px)}
 @media(max-width:440px){.soc{width:28px;height:28px}.soc svg{width:14px;height:14px}.bar-r{gap:8px}.social{gap:6px}}
 .back{white-space:nowrap}@media(max-width:440px){.story-page .back{margin-right:8px;font-size:13px}}
+
+/* PWA install / offline UI */
+.pwa-bar{position:fixed;left:50%;bottom:76px;transform:translate(-50%,140%);z-index:9998;display:flex;align-items:center;gap:10px;max-width:calc(100% - 24px);width:360px;padding:10px 12px;border-radius:14px;background:#0f2a26;border:1px solid rgba(124,214,24,.45);box-shadow:0 10px 30px rgba(0,0,0,.45);color:#e9f3ef;font:500 13px/1.3 Inter,system-ui,sans-serif;transition:transform .3s ease;opacity:.98}
+.pwa-bar.in{transform:translate(-50%,0)}
+.pwa-bar img{border-radius:8px;flex:none}
+.pwa-bar span{flex:1;min-width:0;display:flex;flex-direction:column}
+.pwa-bar b{font-weight:800;color:#fff}
+.pwa-bar small{opacity:.8;font-size:12px}
+.pwa-bar small svg{vertical-align:-2px;color:#4EA8FF}
+.pwa-go{flex:none;border:0;border-radius:999px;padding:7px 14px;background:#7CD618;color:#0a1a18;font-weight:800;cursor:pointer}
+.pwa-go:hover{background:#F26A14;color:#fff}
+.pwa-x{flex:none;background:none;border:0;color:#9fb3ad;font-size:20px;line-height:1;cursor:pointer;padding:2px 4px}
+.pwa-x:hover{color:#F26A14}
+.pwa-bar.ios{border-color:rgba(242,106,20,.55)}
+#pwa-offline{position:sticky;top:0;z-index:9999;background:#F26A14;color:#0a1a18;text-align:center;font:800 13px/1 Inter,system-ui,sans-serif;padding:8px}
+@media (display-mode: standalone){.pwa-bar{display:none}}
+
+/* Bigger header logo: desktop ~2x, tablet modest, mobile slight bump */
+@media(min-width:900px){.bar{padding:10px 24px}.logo{font-size:46px;gap:20px;letter-spacing:2.5px}.logo img{height:96px}}
+@media(min-width:701px) and (max-width:899px){.logo{font-size:36px;gap:16px}.logo img{height:68px}}
+@media(min-width:441px) and (max-width:700px){.logo img{height:46px}.logo{font-size:22px}}
+@media(max-width:440px){.logo img{height:38px}.logo{font-size:17px}}

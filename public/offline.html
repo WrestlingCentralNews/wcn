@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Offline — Wrestling Central News (WCN)</title><meta name="robots" content="noindex">
+<link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#0a1a18"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="stylesheet" href="/style.css">
+<style>.off{max-width:720px;margin:40px auto;padding:0 18px;color:#e9f3ef}.off .shield{display:block;width:200px;height:auto;margin:0 auto 14px}
+.off h1{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:1px;font-size:2.2rem;text-align:center;margin:.2em 0;color:#7CD618}
+.off p.lead{text-align:center;opacity:.85}.off ul{list-style:none;padding:0;margin:22px 0}.off li a{display:block;padding:14px 16px;margin:8px 0;border-radius:12px;background:rgba(255,255,255,.05);border-left:4px solid #F26A14;color:#fff;text-decoration:none;font-weight:600}
+.off li a:hover{background:rgba(124,214,24,.12)}.off .btn{display:inline-block;margin:6px auto;padding:10px 18px;border-radius:999px;background:#7CD618;color:#0a1a18;font-weight:800;border:0;cursor:pointer}.off .c{text-align:center}</style>
+</head><body><main class="off"><img class="shield" src="/logo-header.png" alt="WCN"><h1>You're offline — showing saved stories</h1>
+<p class="lead">No connection right now. Here's what WCN saved on this device. Fresh news loads as soon as you're back online.</p>
+<p class="c"><button class="btn" onclick="location.reload()">Try again</button></p><ul id="saved"></ul></main>
+<script>
+(async()=>{const ul=document.getElementById('saved');let n=0;
+ try{for(const k of await caches.keys()){if(!k.startsWith('wcn-pages-'))continue;const c=await caches.open(k);
+  for(const req of await c.keys()){const u=new URL(req.url);if(!u.pathname.endsWith('.html')||u.pathname==='/offline.html')continue;
+   const t=((await (await c.match(req)).text()).match(/<title>([^<]*)<\/title>/)||[])[1]||u.pathname;
+   const li=document.createElement('li'),a=document.createElement('a');a.href=u.pathname;a.textContent=u.pathname==='/index.html'?'WCN home (last saved feed)':t.replace(/ \| WCN$/,'').replace(/&amp;/g,'&').replace(/&#x27;|&#39;/g,"'").replace(/&quot;/g,'"');
+   li.appendChild(a);u.pathname==='/index.html'?ul.prepend(li):ul.appendChild(li);n++;}}}catch(e){}
+ if(!n)ul.innerHTML='<li style="text-align:center;opacity:.7">No saved stories yet. Open a few stories while online and they\'ll be here next time.</li>';
+ addEventListener('online',()=>location.reload());})();
+</script></body></html>

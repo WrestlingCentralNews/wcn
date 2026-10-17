@@ -1,5 +1,5 @@
 """Static story pages, sitemap.xml and robots.txt for WCN."""
-import os, re, json, html, shutil, time, datetime
+import os, re, json, html, shutil, time, datetime, hashlib
 ROOT = os.path.dirname(os.path.abspath(__file__)); PUB = os.path.join(ROOT, "public"); SD = os.path.join(PUB, "story")
 SITE = "https://wrestlingcentralnews.com/"
 CATC = {"WWE": "#f26a14", "AEW": "#7cd618", "TNA": "#4ea8ff", "Indie": "#f05fc1", "Global": "#2fd3b4"}
@@ -37,7 +37,7 @@ def page(c, related):
 <meta property="og:type" content="article"><meta property="og:title" content="{e(c["title"])}"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:image" content="{e(simg)}"><meta property="og:image:alt" content="{e(c["title"])}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="{e(simg)}"><meta name="robots" content="max-image-preview:large"><meta name="twitter:site" content="@wrestlingWCN"><meta property="article:publisher" content="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/"><meta property="article:published_time" content="{iso(c.get("first_ts", c["ts"]))}"><meta property="article:modified_time" content="{iso(c["ts"])}">
 <script type="application/ld+json">{json.dumps(ld)}</script>
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png"><link rel="icon" type="image/png" sizes="512x512" href="../favicon-512.png"><link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png"><meta name="theme-color" content="#0a1a18"><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="../style.css"><script src="../ads-config.js"></script><script src="../analytics.js"></script></head>
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png"><link rel="icon" type="image/png" sizes="512x512" href="../favicon-512.png"><link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png"><meta name="theme-color" content="#0a1a18"><link rel="manifest" href="/manifest.webmanifest"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="WCN"><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="../style.css"><script src="../ads-config.js"></script><script src="../analytics.js"></script></head>
 <body class="story-page" style="--c:{col}"><div class="spot s1"></div><div class="spot s2"></div>
 <header><div class="bar"><a class="logo" href="../index.html"><img src="../logo-header.png" width="240" height="160" alt="WCN"><span>WRESTLING CENTRAL NEWS</span></a><a class="back" href="../index.html" onclick="if(history.length>1&&document.referrer.indexOf(location.host)>-1){{history.back();return false}}">← All news</a><div class="social"><a class="soc soc-x" href="https://x.com/wrestlingWCN" target="_blank" rel="noopener me" aria-label="Follow WCN on X" title="Follow @wrestlingWCN on X"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.9 2H22l-7.2 8.2L23.3 22h-6.6l-5.2-6.8L5.5 22H2.4l7.7-8.8L1.9 2h6.8l4.7 6.2L18.9 2zm-1.2 18h1.8L7.4 3.9H5.5L17.7 20z"/></svg></a><a class="soc soc-fb" href="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/" target="_blank" rel="noopener me" aria-label="Follow WCN on Facebook" title="Follow WCN on Facebook"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4z"/></svg></a></div></div></header>
 {ad("leaderboard", "728×90 Leaderboard", "ad-leader")}
@@ -50,8 +50,20 @@ def page(c, related):
 <section class="related"><h2>More {e(c["categories"][0])} news</h2><div class="relgrid">{rel}</div></section></article>
 <aside class="side">{ad("rightSkyscraper", "300×600 Half-page", "ad-sky")}</aside></main>
 <footer>© 2026 Wrestling Central News (WCN) · <a href="../privacy.html">Privacy Policy</a> · <a href="mailto:wcn@mail.grokbot.com">Contact</a> · Follow us: <a href="https://x.com/wrestlingWCN" target="_blank" rel="noopener">X @wrestlingWCN</a> · <a href="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/" target="_blank" rel="noopener">Facebook</a></footer>
-{ad("mobileSticky", "320×50 Mobile", "ad-mobile")}<script src="../story.js"></script></body></html>'''
+{ad("mobileSticky", "320×50 Mobile", "ad-mobile")}<script src="../story.js"></script><script src="/pwa.js" defer></script></body></html>'''
+SW_PRECACHE = ["/index.html", "/offline.html", "/style.css", "/app.js", "/story.js", "/pwa.js", "/logo-header.png", "/logo.png",
+               "/favicon-32.png", "/apple-touch-icon.png", "/pwa/icon-192.png", "/pwa/icon-512.png"]
+def build_sw():
+    """Write public/sw.js from sw.src.js; the cache version is a hash of the precached static files + SW source,
+    so any CSS/JS/logo change ships a new SW that refreshes caches and deletes old ones."""
+    src = open(os.path.join(ROOT, "sw.src.js")).read(); h = hashlib.sha256(src.encode())
+    for u in SW_PRECACHE:
+        if u == "/index.html": continue   # regenerated feed shell; network-first, so no version bump per news update
+        h.update(open(os.path.join(PUB, u.lstrip("/")), "rb").read())
+    out = src.replace("__VERSION__", h.hexdigest()[:12]).replace("__PRECACHE__", json.dumps(SW_PRECACHE))
+    open(os.path.join(PUB, "sw.js"), "w").write(out)
 def build(clusters):
+    build_sw()
     tmp = SD + ".new"; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
     bycat = {}
     for c in clusters: bycat.setdefault(c["categories"][0], []).append(c)
