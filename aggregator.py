@@ -227,7 +227,7 @@ def run():
             c["image"] = img; c["image_credit"] = cr; stats_img[st] = stats_img.get(st, 0) + 1
     vision.save(); llm.save_usage()
     print("images:", stats_img, f"month spend ${llm._U['usd']:.3f}", flush=True)
-    pages.assign_urls(clusters); pages.build(clusters)
+    pages.assign_urls(clusters); pages.build(clusters); llm.save_usage()   # build() runs the Spanish translations: record their spend
     for c in clusters: c.pop("long", None)
     tmp = OUT + ".tmp"
     json.dump({"updated": int(time.time()), "count": len(clusters), "articles": len(arts), "items": clusters}, open(tmp, "w"))

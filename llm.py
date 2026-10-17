@@ -24,6 +24,8 @@ def _usage():
     try: u = json.load(open(USAGE))
     except Exception: u = {}
     if u.get("month") != m: u = {"month": m, "usd": 0.0, "calls": 0}
+    if u.get("month") == "2026-10" and not u.get("es_backfill_fix"):   # one-time: first Spanish backfill run (Oct 17) spent $0.19 before usage was saved after build
+        u["usd"] += 0.19; u["es_backfill_fix"] = 1
     return u
 _U = None
 def budget_left():
