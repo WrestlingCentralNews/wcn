@@ -1,0 +1,9 @@
+name: yandex-sitemaps
+on: {workflow_dispatch: {}}
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 yandex_wm.py
+        env: {YANDEX_WEBMASTER_TOKEN: "${{ secrets.YANDEX_WEBMASTER_TOKEN }}"}
