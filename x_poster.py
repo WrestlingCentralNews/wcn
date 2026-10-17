@@ -57,25 +57,24 @@ def x_len(t):
         n += 1 if (o <= 4351 or 8192 <= o <= 8205 or 8208 <= o <= 8223 or 8242 <= o <= 8247) else 2
     return n
 def has_url(t): return bool(URLISH.search(t))
-def tweet_text(c):
+def hashtags(c, text):
     tags = []
     for k in c["categories"]:
         t = CAT_TAG.get(k)
         if t and t not in tags: tags.append(t)
-    blob = c["title"] + " " + c.get("summary", "")
     for rx, t in TAGS:
         if len(tags) >= 3: break
-        if re.search(rx, blob) and t not in tags: tags.append(t)
-    tags = tags[:3]
+        if re.search(rx, text) and t not in tags: tags.append(t)   # only from what the post actually says
+    return tags[:3]
+def tweet_text(c):
     somber = re.search(r"\b(died|dies|death|passed away|passes away|funeral|tribute)\b", c["title"], re.I)
     head = ("🚨 " if score(c) >= BREAKING and not somber else "") + c["title"].strip()
     outro = OUTROS[int(hashlib.md5(c["id"].encode()).hexdigest(), 16) % len(OUTROS)]
-    tail = " ".join(tags) + "\n" + outro
-    def build(line): return "\n\n".join([head] + ([line] if line else []) + [tail])
+    def build(line): return "\n\n".join([head] + ([line] if line else []) + [" ".join(hashtags(c, head + " " + line)) + "\n" + outro])
     line = ""
     for snt in re.split(r"(?<=[.!?])\s+", (c.get("summary") or "").strip()):
         cand = (line + " " + snt).strip()
-        if len(cand) > 200 or x_len(build(cand)) > 280 or has_url(cand): break
+        if len(cand) > (230 if not line else 200) or x_len(build(cand)) > 280 or has_url(cand): break
         line = cand
     text = build(line)
     if has_url(text) or x_len(text) > 280:
@@ -139,6 +138,7 @@ def run(test_top=False):
         if code in (200, 201):
             tid = body["data"]["id"]; entry.update(ok=True, tweet=tid)
             S["posted"][c["id"]] = {"tweet": tid, "at": int(now), "title": c["title"]}
+            S.pop("paused_until", None); S.pop("pause_reason", None)   # credits/limits are fine again
             S["links"] += [c["link"]] + [u["link"] for u in c.get("updates", [])]
             log(f"posted https://x.com/wrestlingWCN/status/{tid} score={score(c)} {c['title']}")
         else:
