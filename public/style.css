@@ -131,3 +131,12 @@ footer a{color:var(--acc)}#consent{position:fixed;left:50%;bottom:20px;transform
 @media(min-width:701px) and (max-width:899px){.logo{font-size:36px;gap:16px}.logo img{height:68px}}
 @media(min-width:441px) and (max-width:700px){.logo img{height:46px}.logo{font-size:22px}}
 @media(max-width:440px){.logo img{height:38px}.logo{font-size:17px}}
+
+/* Breaking-news alerts bell */
+.soc-bell{cursor:pointer;font:inherit;color:#F26A14;border-color:rgba(242,106,20,.6);background:rgba(242,106,20,.10);padding:0}
+.soc-bell .lbl{display:none}
+.soc-bell:hover{background:#F26A14;color:#0a1a18;border-color:#F26A14}
+.soc-bell.on{color:#7CD618;border-color:rgba(124,214,24,.6);background:rgba(124,214,24,.10)}
+.soc-bell.on:hover{background:#7CD618;color:#0a1a18}
+@media(min-width:1100px){.soc-bell{width:auto;border-radius:999px;padding:0 12px 0 10px;gap:6px}.soc-bell .lbl{display:inline;font:800 11px/1 Inter,system-ui,sans-serif;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}}
+.push-toast{bottom:76px}

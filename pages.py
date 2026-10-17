@@ -50,8 +50,8 @@ def page(c, related):
 <section class="related"><h2>More {e(c["categories"][0])} news</h2><div class="relgrid">{rel}</div></section></article>
 <aside class="side">{ad("rightSkyscraper", "300×600 Half-page", "ad-sky")}</aside></main>
 <footer>© 2026 Wrestling Central News (WCN) · <a href="../privacy.html">Privacy Policy</a> · <a href="mailto:wcn@mail.grokbot.com">Contact</a> · Follow us: <a href="https://x.com/wrestlingWCN" target="_blank" rel="noopener">X @wrestlingWCN</a> · <a href="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/" target="_blank" rel="noopener">Facebook</a></footer>
-{ad("mobileSticky", "320×50 Mobile", "ad-mobile")}<script src="../story.js"></script><script src="/pwa.js" defer></script></body></html>'''
-SW_PRECACHE = ["/index.html", "/offline.html", "/style.css", "/app.js", "/story.js", "/pwa.js", "/logo-header.png", "/logo.png",
+{ad("mobileSticky", "320×50 Mobile", "ad-mobile")}<script src="../story.js"></script><script src="/pwa.js" defer></script><script src="/push.js" defer></script></body></html>'''
+SW_PRECACHE = ["/index.html", "/offline.html", "/style.css", "/app.js", "/story.js", "/pwa.js", "/push.js", "/logo-header.png", "/logo.png",
                "/favicon-32.png", "/apple-touch-icon.png", "/pwa/icon-192.png", "/pwa/icon-512.png"]
 def build_sw():
     """Write public/sw.js from sw.src.js; the cache version is a hash of the precached static files + SW source,

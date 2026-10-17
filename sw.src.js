@@ -5,7 +5,7 @@ const KEEP = [STATIC, PAGES, FONTS];
 const PRECACHE = __PRECACHE__;
 const OFFLINE = "/offline.html", MAX_PAGES = 80;
 // Never touched by the SW (always straight to network): ads, analytics, consent, config.
-const BYPASS = /\/(analytics|ads-config)\.js$|\/ads\.txt$|\/sw\.js$|\/manifest\.webmanifest$/;
+const BYPASS = /^\/push\/|\/(analytics|ads-config)\.js$|\/ads\.txt$|\/sw\.js$|\/manifest\.webmanifest$/;
 const STATIC_EXT = /\.(css|js|png|jpe?g|webp|gif|svg|ico|woff2?)$/i;
 
 self.addEventListener("install", ev => {
@@ -57,6 +57,6 @@ self.addEventListener("fetch", ev => {
     if (STATIC_EXT.test(url.pathname)) return ev.respondWith(cacheFirst(req, STATIC));
     return;
   }
-  // Google Fonts only; every other cross-origin request (AdSense, analytics, story images) is left alone.
+  // Google Fonts only; every other cross-origin request (AdSense, analytics, OneSignal cdn/api, story images) is left alone.
   if (url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com") return ev.respondWith(cacheFirst(req, FONTS));
 });
