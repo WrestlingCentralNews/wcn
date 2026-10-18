@@ -168,15 +168,25 @@ def track(S):
     if not T: return
     now = time.time()
     code, news, S["site_meta"] = jget(SITE_JSON + "?t=" + str(int(now)), {})
-    if news: S["site_links"] = {l: c["id"] for c in news.get("items", []) for l in [c.get("link")] + [u.get("link") for u in c.get("updates", [])] if l}
+    if news:
+        S["site_links"] = {l: c["id"] for c in news.get("items", []) for l in [c.get("link")] + [u.get("link") for u in c.get("updates", [])] if l}
+        S["site_titles"] = [[c["id"], t] for c in news.get("items", [])[:150] for t in [c.get("raw_title"), c.get("title")] + [u.get("title") for u in c.get("updates", [])] if t]
     links = S.get("site_links") or {}
+    def by_title(title):    # Google News items carry news.google.com links; the site stores the resolved article URL
+        a = _toks(title)
+        for cid, t in S.get("site_titles") or []:
+            b = _toks(t)
+            if a and b and len(a & b) / len(a | b) >= .6: return cid
+        return None
     code, xs, S["x_meta"] = jget(XSTATE_RAW, S.get("x_meta", {}))
     if xs: S["x_posted"] = {k: v.get("at") for k, v in (xs.get("posted") or {}).items()}
     xp = S.get("x_posted") or {}
     keep = []
     for t in T:
         base = t.get("dispatched_at") or t["seen_at"]
-        if not t.get("site_at") and t["link"] in links: t["site_at"] = int(now); t["card"] = links[t["link"]]
+        if not t.get("site_at"):
+            cid = links.get(t["link"]) or (by_title(t["title"]) if "news.google." in t["link"] or t["feed"] in ("PWInsider", "WWE.com", "TNA Wrestling", "STARDOM", "Bleacher Report") else None)
+            if cid: t["site_at"] = int(now); t["card"] = cid
         if t.get("card") and not t.get("x_at") and t["card"] in xp: t["x_at"] = int(xp[t["card"]])
         done = t.get("site_at") and (t.get("x_at") or now - base > 1800)
         if done or now - base > TRACK_MAX_S:
@@ -187,6 +197,7 @@ def track(S):
             S["latency"] = S["latency"][-300:]
         else: keep.append(t)
     S["tracking"] = keep
+def _toks(t): return set(re.findall(r"[a-z0-9]{3,}", (t or "").lower())) - {"the", "and", "for", "with", "from", "after", "wwe", "aew"}
 def git_pull(S):
     if time.time() - S.get("pulled_at", 0) < 3600: return
     r = subprocess.run(["git", "-C", REPO_DIR, "pull", "-q", "--ff-only"], capture_output=True, text=True, timeout=120)
