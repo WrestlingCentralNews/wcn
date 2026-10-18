@@ -235,9 +235,13 @@ def run():
     stats_img = {}
     def _pick(c):
         # only photos of members that are about the same people as the lead (enrich.cluster), never an off-topic neighbour's
-        return c, vision.choose(c, [m for m in c.get("member_images", []) if m])
-    todo = [c for i, c in enumerate(clusters) if i < IMG_CHECK_TOP or c["ts"] > time.time() - 3*86400]
-    with ThreadPoolExecutor(6) as ex:
+        r = rank[c["id"]]
+        return c, vision.choose(c, [m for m in c.get("member_images", []) if m], rank=r, fetch=r < IMG_CHECK_TOP or c["ts"] > time.time() - 3*86400)
+    # every card gets the key-person rule (labels/file names are free); article pages are fetched for top + recent cards,
+    # vision confirms only for the top vision.VISION_TOP cards when candidates are ambiguous
+    rank = {c["id"]: i for i, c in enumerate(clusters)}
+    todo = clusters
+    with ThreadPoolExecutor(8) as ex:
         for c, (img, cr, st) in ex.map(_pick, todo):
             c["image"] = img; c["image_credit"] = cr; stats_img[st] = stats_img.get(st, 0) + 1
     for c in clusters: c.pop("member_images", None)

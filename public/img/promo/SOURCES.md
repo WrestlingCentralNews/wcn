@@ -1,0 +1,15 @@
+# Promotion logo cards (1200x675)
+Logos are trademarks of their owners, shown to identify the promotion a story is about. Source files (Wikipedia/Wikimedia Commons):
+
+- wwe.jpg: https://commons.wikimedia.org/wiki/File:WWE_official_logo.svg (Public domain)
+- aew.jpg: https://commons.wikimedia.org/wiki/File:All_Elite_Wrestling_logo_2024.svg (Public domain)
+- tna.jpg: https://commons.wikimedia.org/wiki/File:TNA-logo-June-2024-v2.png (Public domain)
+- nxt.jpg: https://commons.wikimedia.org/wiki/File:WWE_NXT_2024_Logo.svg (Public domain)
+- njpw.jpg: https://en.wikipedia.org/wiki/File:New_Japan_Pro_Wrestling_Logo_2.svg (Fair use)
+- aaa.jpg: https://en.wikipedia.org/wiki/File:Lucha_Libre_AAA_Worldwide_2026_Logo.png (PD)
+- cmll.jpg: https://en.wikipedia.org/wiki/File:CMLL-logo-2018.png (PD)
+- roh.jpg: https://commons.wikimedia.org/wiki/File:Ring_Of_Honor_(2022)_Logo.svg (Public domain)
+- stardom.jpg: https://commons.wikimedia.org/wiki/File:Stardom_2021_logo.svg (Public domain)
+- mlw.jpg: https://en.wikipedia.org/wiki/File:Major_League_Wrestling_(logo).png (PD)
+- gcw.jpg: https://commons.wikimedia.org/wiki/File:Game_Changer_Wrestling_Logo_(black).png (Public domain)
+- nwa.jpg: https://en.wikipedia.org/wiki/File:National_Wrestling_Alliance_logo_2019.svg (Fair use)

@@ -38,6 +38,7 @@ def dims(b):
     except Exception: pass
     return None
 def probe(u):
+    if u.startswith("https://wrestlingcentralnews.com/img/promo/"): return (1200, 675) # our own logo cards (may not be deployed yet on the run that first uses them)
     try:
         r = urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": UA, "Range": "bytes=0-65535", "Accept": "image/avif,image/webp,image/*,*/*"}), timeout=8)
         if not (r.headers.get("Content-Type") or "image").startswith("image"): return None
