@@ -116,12 +116,37 @@ def persons(t):
         except Exception: _persons = lambda x: frozenset()
     return _persons(t)
 def links(c): return {c.get("link")} | {u.get("link") for u in c.get("updates", [])} - {None}
+RESULT_TYPES = {"title change", "PPV main-event result"}
+def live_candidates(now):
+    """Title changes from live results (live.py) as push candidates: same rules, caps, quiet hours and de-dupe as stories.
+    Only confirmed results with >= 2 trusted sources and no conflicting report; at most 3h old."""
+    import glob
+    out = []
+    for f in glob.glob(os.path.join(ROOT, "data", "live", "*.json")):
+        try: st = json.load(open(f))
+        except Exception: continue
+        if st.get("brand") not in BIG3 and st.get("kind") != "ppv": continue
+        show = re.sub(r"\s+\d{4}$", "", st["name"])
+        for m in st.get("matches", []):
+            if m.get("title") != "change" or m.get("conflict") or len(m.get("sources", [])) < 2 or now - m["first_seen"] > 3 * 3600: continue
+            belt = m.get("stip") if re.search(r"(?i)title|championship", m.get("stip") or "") else "title"
+            belt = re.sub(r"(?i)\s*[-–—:]\s*.*match$|\s+match$", "", belt)
+            pl = bool(re.search(r"&| and |,", m["winner"]))
+            ev_path = (f"events/{st['key']}/" if st.get("kind") == "ppv" else f"events/{st['date']}-{st['slug']}/")
+            es_path = (f"es/eventos/{st['slug']}-{st['date']}/" if st.get("kind") == "ppv" else f"es/eventos/resultados-{st['slug']}-{st['date']}/")
+            out.append({"id": f"live-{st['key']}-{m['id']}", "title": f"{m['winner']} {'win' if pl else 'wins'} the {belt} at {show}",
+                        "summary": m.get("en", ""), "categories": [st.get("brand", "AEW")], "kind": {"type": "results"},
+                        "sources": len(m["sources"]), "trusted": len(m["sources"]), "first_ts": m["first_seen"], "ts": m.get("updated", m["first_seen"]),
+                        "url": ev_path + "#" + m["id"], "link": m["sources"][0]["url"], "updates": [{"link": x["url"]} for x in m["sources"][1:]],
+                        "live_es": {"t": f"{m['winner']} {'ganan' if pl else 'gana'} el título en {show}", "url": es_path + "#" + m["id"]}})
+    return out
 def duplicate_of(c, typ, s, now):
     if str(c["id"]) in s["pushed"]: return s["pushed"][str(c["id"])].get("title", "same story")
     L = links(c); P = persons(c["title"])
     for v in s["pushed"].values():
         if v.get("url") == c.get("url") or L & set(v.get("links", [])): return v.get("title")
-        if now - v.get("ts", 0) < 72 * 3600 and v.get("type") == typ and P and P & set(v.get("persons", [])): return v.get("title")
+        same_kind = v.get("type") == typ or {v.get("type"), typ} <= RESULT_TYPES   # a live title change and the later story about it are one event
+        if now - v.get("ts", 0) < 72 * 3600 and same_kind and P and P & set(v.get("persons", [])): return v.get("title")
     return None
 
 # ---------- timing ----------
@@ -147,6 +172,7 @@ def call(method, path, key, body=None, t=20):
         except Exception: b = {}
         return ex.code, b, ex.headers
 def es_version(c):
+    if c.get("live_es"): return c["live_es"]
     try: x = json.load(open(TR)).get(c["id"])
     except Exception: x = None
     if not x or not x.get("t") or not x.get("sl"): return None
@@ -176,6 +202,8 @@ def main():
     app_id = os.environ.get("ONESIGNAL_APP_ID", "").strip(); key = os.environ.get("ONESIGNAL_REST_API_KEY", "").strip()
     s = load_state(); now = time.time()
     items = json.load(open(NEWS)).get("items", [])
+    try: items = live_candidates(now) + items
+    except Exception as ex: log(f"live candidates error (ignored): {ex}")
     pool = sorted([c for c in items if c.get("url") and fresh(c, now)], key=score, reverse=True)
     recent = sorted(v["ts"] for v in s["pushed"].values() if v.get("sent") and now - v["ts"] < 86400)
     lt = local(now)

@@ -20,6 +20,7 @@ PPV_H, WEEKLY_H, PRE_MIN = 3.5, 2.5, 15
 COLLECT_H = 8          # keep collecting (on the normal 15-min runs) this long after start so the permanent page is complete
 FEEDS = {"Wrestling Observer": "https://www.f4wonline.com/feed", "Wrestling Inc": "https://www.wrestlinginc.com/feed/",
          "Fightful": "https://www.fightful.com/rss.xml"}
+LISTINGS = ["https://www.fightful.com/wrestling/results/"]
 TRUSTED_HOSTS = {"f4wonline.com": "Wrestling Observer", "wrestlinginc.com": "Wrestling Inc", "fightful.com": "Fightful", "pwinsider.com": "PWInsider"}
 SHOW_RX = {"wwe-raw": r"\bRaw\b", "wwe-smackdown": r"smack\s?down", "wwe-nxt": r"\bNXT\b", "aew-dynamite": r"\bDynamite\b",
            "aew-collision": r"\bCollision\b", "tna-impact": r"\bimpact\b"}
@@ -88,6 +89,12 @@ def discover(w, store_articles=()):
                 try: import email.utils as eu; ts = eu.parsedate_to_datetime(p.group(1).strip()).timestamp()
                 except Exception: ts = None
             if source_of(link) and ok(title, ts): found.setdefault(link, source_of(link))
+    for lst in LISTINGS:   # results-section pages whose links carry the show name + date in the URL slug
+        try: x = get(lst, 15)
+        except Exception: continue
+        for link in set(re.findall(r'https://www\.fightful\.com/wrestling/[a-z0-9-]*results[a-z0-9-]*/?', x)):
+            slug = link.rstrip("/").rsplit("/", 1)[-1].replace("-", " ")
+            if rx.search(slug) and (f"{d.month} {d.day} {d.year}" in slug or f"{d.month} {d.day}" in slug): found.setdefault(link, "Fightful")
     for a in store_articles:
         link = a.get("link", "")
         if source_of(link) and ok(a.get("raw_title") or a.get("title", ""), a.get("ts")): found.setdefault(link, source_of(link))

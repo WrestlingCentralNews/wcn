@@ -44,9 +44,12 @@ def main():
     try: pages_idx = json.load(open(os.path.join(ROOT, "data", "indexnow_pages.json")))
     except Exception: pages_idx = {}
     now0 = int(time.time()); extra = []
+    try: live_paths = {p for x in json.load(open(os.path.join(PUB, "live.json"))).get("live", []) for p in (x.get("en"), x.get("es")) if p}
+    except Exception: live_paths = set()
     for u, h in pages_idx.items():
         prev = extra_sent.get(u)
-        if not prev or (prev[0] != h and now0 - prev[1] > 7200): extra.append(u)
+        gap = 1080 if u in live_paths else 7200      # live results pages: re-ping on real changes, at most every 18 min
+        if not prev or (prev[0] != h and now0 - prev[1] > gap): extra.append(u)
     extra = extra[:2000]
     new = list(dict.fromkeys(new + extra))
     if not new: log("nothing new"); return
