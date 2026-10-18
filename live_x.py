@@ -29,7 +29,7 @@ def show_name(st): return re.sub(r"\s+\d{4}$", "", st["name"])
 def fits(t): return XP.x_len(t) <= 280 and not XP.has_url(t)
 def match_text(st, m):
     tags = " ".join(x for x in dict.fromkeys([st.get("tag"), brand_tag(st)]) if x)
-    if m.get("title") == "change": head = f"🏆 TITLE CHANGE at {show_name(st)}!"
+    if m.get("title") == "change": head = f"{XP.breaking.LABEL}\nTITLE CHANGE at {show_name(st)}!"   # live.py's title-change detection
     else: head = f"{show_name(st)} result:"
     line = m["en"]
     if m.get("stip") and len(m["stip"]) < 70: line = f"{m['stip']}: {line}"

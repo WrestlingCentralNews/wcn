@@ -6,7 +6,7 @@ Enable with env X_POST_ENABLED=1 (repo variable); anything else = dry run (logs 
 State: data/posted_x.json (saved to the 'data' branch with the rest of the state).
 """
 import os, re, sys, json, time, hmac, base64, hashlib, secrets, ssl, urllib.parse, urllib.request, urllib.error
-import xspend
+import xspend, breaking
 ROOT = os.path.dirname(os.path.abspath(__file__))
 NEWS = os.path.join(ROOT, "public", "news.json")
 STATE = os.path.join(ROOT, "data", "posted_x.json")
@@ -110,10 +110,12 @@ def hashtags(c, text):
         if re.search(rx, text) and t not in tags: tags.append(t)   # only from what the post actually says
     return tags[:3]
 def tweet_text(c):
-    somber = re.search(r"\b(died|dies|death|passed away|passes away|funeral|tribute)\b", c["title"], re.I)
-    head = ("🚨 " if score(c) >= BREAKING and not somber else "") + c["title"].strip()
+    # label ONLY for title changes / releases / debuts / returns (breaking.py); nothing else gets a siren
+    title = c["title"].replace("🚨", "").strip()
+    label = breaking.LABEL + "\n" if breaking.kind(title, (c.get("kind") or {}).get("type")) else ""
+    head = label + title
     outro = OUTROS[int(hashlib.md5(c["id"].encode()).hexdigest(), 16) % len(OUTROS)]
-    def build(line): return "\n\n".join([head] + ([line] if line else []) + [" ".join(hashtags(c, head + " " + line)) + "\n" + outro])
+    def build(line): return "\n\n".join([head] + ([line] if line else []) + [" ".join(hashtags(c, title + " " + line)) + "\n" + outro])
     line = ""
     for snt in re.split(r"(?<=[.!?])\s+", (c.get("summary") or "").strip()):
         cand = (line + " " + snt).strip()
@@ -122,6 +124,8 @@ def tweet_text(c):
     text = build(line)
     if has_url(text) or x_len(text) > 280:
         text = build("")                                  # drop the summary line and retry
+    while x_len(text) > 280 and len(title) > 40:          # still too long: trim the headline, never the label
+        title = title[:max(40, len(title) - max(4, x_len(text) - 280))].rsplit(" ", 1)[0].rstrip(",;:-–") + "…"; head = label + title; text = build("")
     if has_url(text) or x_len(text) > 280: return None    # safety: never send anything URL-like or too long
     return text
 
