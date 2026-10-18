@@ -83,6 +83,7 @@ def run():
             code, body, hdr = XP.post_tweet(text)
             if code in (200, 201):
                 tid = body["data"]["id"]; sent += 1; P["n"] += 1
+                XP.xspend.record("post_url" if XP.has_url(text) else "post", "POST /2/tweets", "live_x", ref=tid, note=kind)
                 for m in used:
                     P["posted"][m["id"]] = tid; P["facts"].append({"winner": m["winner"], "loser": m.get("loser", "")})
                 if kind == "combo": P["combo_done"] = True
@@ -91,6 +92,8 @@ def run():
             else:
                 msg = json.dumps(body)[:300] if not isinstance(body, str) else body[:300]
                 S["log"].append({"key": st["key"], "at": int(now), "ok": False, "code": code, "err": msg}); log(f"post failed HTTP {code}: {msg}")
+                if code == 402 or re.search(r"credits.depleted|CreditsDepleted", msg, re.I): XP.xspend.event("credits_depleted", "live_x", f"HTTP {code}: {msg[:200]}")
+                elif code in (403, 429): XP.xspend.event(f"http_{code}", "live_x", msg[:200])
                 if code in (402, 403, 429) or re.search(r"credit|payment|CreditsDepleted", msg, re.I):
                     xs["paused_until"] = now + (900 if code == 429 else 6 * 3600); xs["pause_reason"] = f"live HTTP {code}: {msg[:150]}"; XP.save_state(xs)
                 save(S); return

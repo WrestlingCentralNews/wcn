@@ -136,9 +136,9 @@ def image_overrides(clusters):
     for c in clusters:
         for o in ov.get("items", []):
             if c["link"] in o.get("links", []) or c["id"] in o.get("ids", []):
-                c["image"] = o.get("image"); c["image_credit"] = o.get("credit"); n += 1; break
+                c["image"] = o.get("image"); c["image_credit"] = o.get("credit"); c["image_status"] = "override"; n += 1; break
         else:
-            if c.get("image") in block: c["image"] = None; c["image_credit"] = None; n += 1
+            if c.get("image") in block: c["image"] = None; c["image_credit"] = None; c["image_status"] = "wcn-card"; n += 1
     return n
 def run():
     os.makedirs(os.path.dirname(STORE), exist_ok=True)
@@ -243,7 +243,7 @@ def run():
     todo = clusters
     with ThreadPoolExecutor(8) as ex:
         for c, (img, cr, st) in ex.map(_pick, todo):
-            c["image"] = img; c["image_credit"] = cr; stats_img[st] = stats_img.get(st, 0) + 1
+            c["image"] = img; c["image_credit"] = cr; c["image_status"] = st; stats_img[st] = stats_img.get(st, 0) + 1
     for c in clusters: c.pop("member_images", None)
     n_ov = image_overrides(clusters)
     if n_ov: print("images: manual overrides applied to", n_ov, flush=True)

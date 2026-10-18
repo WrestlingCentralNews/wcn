@@ -6,6 +6,7 @@ Enable with env X_POST_ENABLED=1 (repo variable); anything else = dry run (logs 
 State: data/posted_x.json (saved to the 'data' branch with the rest of the state).
 """
 import os, re, sys, json, time, hmac, base64, hashlib, secrets, ssl, urllib.parse, urllib.request, urllib.error
+import xspend
 ROOT = os.path.dirname(os.path.abspath(__file__))
 NEWS = os.path.join(ROOT, "public", "news.json")
 STATE = os.path.join(ROOT, "data", "posted_x.json")
@@ -133,9 +134,11 @@ def oauth_header(method, url):
     base = "&".join([method.upper(), _q(url), _q("&".join(f"{_q(k)}={_q(v)}" for k, v in sorted(p.items())))])
     p["oauth_signature"] = base64.b64encode(hmac.new(f"{_q(cs)}&{_q(ts)}".encode(), base.encode(), hashlib.sha1).digest()).decode()
     return "OAuth " + ", ".join(f'{_q(k)}="{_q(v)}"' for k, v in sorted(p.items()))
-def post_tweet(text):
+def post_tweet(text, media_ids=None):
     url = "https://api.x.com/2/tweets"
-    req = urllib.request.Request(url, data=json.dumps({"text": text}).encode(), method="POST",
+    payload = {"text": text}
+    if media_ids: payload["media"] = {"media_ids": list(media_ids)}
+    req = urllib.request.Request(url, data=json.dumps(payload).encode(), method="POST",
                                  headers={"Authorization": oauth_header("POST", url), "Content-Type": "application/json"})
     try:
         r = urllib.request.urlopen(req, timeout=30)
@@ -146,6 +149,43 @@ def post_tweet(text):
         except Exception: pass
         return e.code, body, dict(e.headers)
 
+# --- one-time photo test (owner-approved 2026-10-18): the next regular story post carries the card photo -----------------
+# Pending while S["x_photo_test_id"] != PHOTO_TEST_ID; cleared (x_photo_test_pending=False) after one successful photo post.
+PHOTO_TEST_ID = "2026-10-18-first-photo"
+PHOTO_TEST_MAX_TRIES = 3
+PHOTO_OK = re.compile(r"^(?:cached:)?(?:key-|promo-logo:|no-names-promo:|override$)")   # key person confirmed, promotion logo card, or hand-picked
+WCN_CARD = re.compile(r"(?i)/img/(?:og|wcn|default)[^/]*\.(?:png|jpe?g)$")
+UA_IMG = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36", "Accept": "image/jpeg,image/png,image/webp;q=0.9,image/gif;q=0.8"}
+def photo_ok(c):
+    u, st = c.get("image") or "", c.get("image_status") or ""
+    return bool(u) and bool(PHOTO_OK.match(st)) and not WCN_CARD.search(u)
+def fetch_image(u):
+    """-> (bytes, mime) of a JPEG/PNG/WEBP/GIF under 5 MB, or raises."""
+    req = urllib.request.Request(u, headers=UA_IMG)
+    b = urllib.request.urlopen(req, timeout=30).read(5 * 1024 * 1024 + 1)
+    if len(b) > 5 * 1024 * 1024: raise ValueError("image over 5 MB")
+    if b[:3] == b"\xff\xd8\xff": return b, "image/jpeg"
+    if b[:8] == b"\x89PNG\r\n\x1a\n": return b, "image/png"
+    if b[:4] == b"RIFF" and b[8:12] == b"WEBP": return b, "image/webp"
+    if b[:6] in (b"GIF87a", b"GIF89a"): return b, "image/gif"
+    raise ValueError("not a jpeg/png/webp/gif: " + repr(b[:12]))
+def upload_media(u, src="x_poster"):
+    """One-shot v2 upload (POST /2/media/upload, JSON body, base64): 1 media request. -> (media_id or None, error or None)."""
+    try: b, mime = fetch_image(u)
+    except Exception as ex: return None, "image fetch failed: " + repr(ex)[:200]
+    url = "https://api.x.com/2/media/upload"
+    req = urllib.request.Request(url, data=json.dumps({"media": base64.b64encode(b).decode(), "media_category": "tweet_image", "media_type": mime}).encode(),
+                                 method="POST", headers={"Authorization": oauth_header("POST", url), "Content-Type": "application/json"})
+    try:
+        r = urllib.request.urlopen(req, timeout=60); code = r.status; body = json.load(r)
+    except urllib.error.HTTPError as e:
+        code = e.code; body = e.read().decode("utf8", "ignore")[:400]
+    except Exception as ex:
+        xspend.record("media", "POST /2/media/upload", src, ok=False, note="network error: " + repr(ex)[:150]); return None, "upload error: " + repr(ex)[:200]
+    mid = (body.get("data") or {}).get("id") if isinstance(body, dict) else None
+    xspend.record("media", "POST /2/media/upload", src, ref=mid, note=f"HTTP {code} {mime} {len(b)}B", ok=True)   # counted even on failure (X may bill the request)
+    if code in (200, 201) and mid: return mid, None
+    return None, f"upload HTTP {code}: " + (json.dumps(body)[:300] if not isinstance(body, str) else body[:300])
 def run(test_top=False):
     enabled = os.environ.get("X_POST_ENABLED", "0") == "1"
     have_keys = all(os.environ.get(k) for k in ("X_API_KEY", "X_API_SECRET", "X_ACCESS_TOKEN", "X_ACCESS_TOKEN_SECRET"))
@@ -184,10 +224,28 @@ def run(test_top=False):
             log("skipped (URL-like text or too long):", c["title"]); S["links"] += [c["link"]]; continue
         if not (enabled or test_top) or not have_keys:
             log(f"DRY RUN (enabled={enabled}, keys={have_keys}) score={score(c)}:", text.replace("\n", " ⏎ ")); continue
-        code, body, hdr = post_tweet(text)
+        media, photo_try = None, False
+        if not test_top and S.get("x_photo_test_id") != PHOTO_TEST_ID and S.get("x_photo_test_tries", 0) < PHOTO_TEST_MAX_TRIES:
+            S["x_photo_test_pending"] = True
+            if photo_ok(c):
+                photo_try = True; S["x_photo_test_tries"] = S.get("x_photo_test_tries", 0) + 1
+                media, merr = upload_media(c["image"])
+                if not media:
+                    log("photo test: media upload failed, posting text-only:", merr); xspend.event("media_upload_failed", "x_poster", merr)
+                    S.setdefault("x_photo_test_log", []).append({"at": int(now), "id": c["id"], "image": c["image"], "err": merr})
+            else: log(f"photo test: '{c['title']}' photo not eligible (status={c.get('image_status')}); text-only, test stays pending")
+        code, body, hdr = post_tweet(text, [media] if media else None)
         entry = {"id": c["id"], "at": int(now), "code": code, "score": score(c)}
+        if media: entry["media"] = media
         if code in (200, 201):
             tid = body["data"]["id"]; entry.update(ok=True, tweet=tid)
+            xspend.record("post_url" if has_url(text) else "post", "POST /2/tweets", "x_poster", ref=tid, note="with photo" if media else None)
+            if media:
+                S["x_photo_test_id"] = PHOTO_TEST_ID; S["x_photo_test_pending"] = False
+                S["x_photo_test_result"] = {"at": int(now), "tweet": tid, "url": f"https://x.com/wrestlingWCN/status/{tid}", "media_id": media,
+                                            "image": c["image"], "image_status": c.get("image_status"), "media_requests": 1, "tries": S.get("x_photo_test_tries")}
+                log(f"photo test done: media {media} attached (1 media request)")
+            elif photo_try: S.setdefault("x_photo_test_log", []).append({"at": int(now), "id": c["id"], "posted_text_only": tid})
             S["posted"][c["id"]] = {"tweet": tid, "at": int(now), "title": c["title"]}
             S.pop("paused_until", None); S.pop("pause_reason", None)   # credits/limits are fine again
             S["links"] += [c["link"]] + [u["link"] for u in c.get("updates", [])]
@@ -195,6 +253,8 @@ def run(test_top=False):
         else:
             msg = json.dumps(body)[:400] if not isinstance(body, str) else body[:400]
             entry.update(ok=False, err=msg); log(f"post failed HTTP {code}: {msg}")
+            if code == 402 or re.search(r"credits.depleted|CreditsDepleted", msg, re.I): xspend.event("credits_depleted", "x_poster", f"HTTP {code}: {msg[:200]}")
+            elif code in (403, 429): xspend.event(f"http_{code}", "x_poster", msg[:200])
             if code in (402, 403) or re.search(r"credit|payment|CreditsDepleted|client-not-enrolled", msg, re.I):
                 S["paused_until"] = now + PAUSE_ON_PAYMENT_H * 3600; S["pause_reason"] = f"HTTP {code}: {msg[:200]}"
             elif code == 429:
@@ -205,5 +265,6 @@ def run(test_top=False):
     save_state(S)
 
 if __name__ == "__main__":
+    xspend.ensure()
     try: run(test_top="--test-top" in sys.argv)
     except Exception as e: log("error (ignored):", repr(e)[:300])   # never fail the workflow because of X

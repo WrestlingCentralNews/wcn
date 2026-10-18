@@ -1,0 +1,4 @@
+{"note": "X API pay-per-use credit loads. Add one object per top-up; xspend.py sums them into loaded_total_usd.",
+ "top_ups": [
+  {"date": "2026-10-17", "usd": 5.00, "note": "initial load (first successful post 2026-10-17 06:48 UTC)"}
+ ]}

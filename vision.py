@@ -268,7 +268,7 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     cands = list(dict.fromkeys([u for u in [c.get("image")] + member_images if u]))
     k = "choice3|" + c["id"] + "|" + key + "|" + hashlib.md5("|".join(cands).encode()).hexdigest()[:8]; C = cache()
     bf = rank >= VISION_TOP and budget_ok and not guessed and backfill_on() # one-time backlog pass
-    if k in C and not (bf and not str(C[k].get("st", "")).startswith("key")): return C[k]["image"], C[k].get("credit"), "cached"
+    if k in C and not (bf and not str(C[k].get("st", "")).startswith("key")): return C[k]["image"], C[k].get("credit"), "cached:" + str(C[k].get("st", ""))
     if bf: rank = 0; fetch = True; _tl.bf = True # treated like a top card for this pass; checks counted against the backfill cap
     def done(img, st, cr=None, keep=True):
         if keep: C[k] = {"image": img, "credit": cr, "st": st, "key": key}
