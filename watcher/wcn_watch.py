@@ -117,13 +117,14 @@ def poll(S):
         fresh = [i for i in items if i["key"] not in f["seen"]]
         for i in items: f["seen"][i["key"]] = int(now)
         if len(f["seen"]) > 600: f["seen"] = dict(sorted(f["seen"].items(), key=lambda kv: -kv[1])[:600])
-        if not f["baseline"]: f["baseline"] = True; continue          # first sight of a source: remember, don't trigger
         T = S.setdefault("titles", {})
+        tid = lambda i: hashlib.md5(re.sub(r"\W", "", i["title"].lower()).encode()).hexdigest()[:12]   # aggregator's article id
+        dups = {i["key"] for i in fresh if kind == "rss" and tid(i) in T}   # already seen via another feed (Google re-listing a Fightful post)
+        if kind == "rss":
+            for i in items: T.setdefault(tid(i), int(now))
+        if not f["baseline"]: f["baseline"] = True; continue          # first sight of a source: remember, don't trigger
         for i in fresh:
-            tid = hashlib.md5(re.sub(r"\W", "", i["title"].lower()).encode()).hexdigest()[:12]   # aggregator's article id
-            if kind == "rss":
-                dup = tid in T; T[tid] = int(now)
-                if dup: continue          # same story already seen via another feed (e.g. Google News re-listing a Fightful post)
+            if i["key"] in dups: continue
             src = i["src"] or name
             trusted = tier(src) <= 2
             if i["ts"] and i["ts"] < now - FRESH_H * 3600: continue
