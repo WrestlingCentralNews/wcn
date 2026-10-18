@@ -1,4 +1,7 @@
 import os,json,urllib.request,urllib.parse,sys
+import socket
+_g=socket.getaddrinfo
+socket.getaddrinfo=lambda *a,**k:[x for x in _g(*a,**k) if x[0]==socket.AF_INET]
 T=os.environ["YANDEX_WEBMASTER_TOKEN"];B="https://api.webmaster.yandex.net/v4"
 def req(m,p,body=None):
     r=urllib.request.Request(B+p,method=m,headers={"Authorization":"OAuth "+T,"Content-Type":"application/json"},data=json.dumps(body).encode() if body else None)
