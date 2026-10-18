@@ -227,7 +227,16 @@ def run():
             c["image"] = img; c["image_credit"] = cr; stats_img[st] = stats_img.get(st, 0) + 1
     vision.save(); llm.save_usage()
     print("images:", stats_img, f"month spend ${llm._U['usd']:.3f}", flush=True)
-    pages.assign_urls(clusters); pages.build(clusters); llm.save_usage()   # build() runs the Spanish translations: record their spend
+    try:   # live results for shows on air / just finished (no-op outside show windows; no AI spend)
+        import live; ch = live.update(arts)
+        if ch: print("live: updated", ch, flush=True)
+    except Exception as ex: print("live: error (ignored)", repr(ex)[:200], flush=True)
+    pages.assign_urls(clusters); pages.build(clusters); llm.save_usage()
+    try:
+        import hubs, live
+        lv = [{"key": k, "name": (live.load(k) or {}).get("name", k), "en": v.get("en"), "es": v.get("es")} for k, v in hubs.LIVE_PAGES.items()]
+        json.dump({"updated": int(time.time()), "live": lv}, open(os.path.join(os.path.dirname(OUT), "live.json"), "w"), ensure_ascii=False)
+    except Exception as ex: print("live.json: error (ignored)", repr(ex)[:200], flush=True)   # build() runs the Spanish translations: record their spend
     for c in clusters: c.pop("long", None)
     tmp = OUT + ".tmp"
     json.dump({"updated": int(time.time()), "count": len(clusters), "articles": len(arts), "items": clusters}, open(tmp, "w"))

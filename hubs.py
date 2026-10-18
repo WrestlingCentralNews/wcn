@@ -1,9 +1,11 @@
 """Show & event hub pages: /shows/<show>/ (evergreen, latest episode), /events/<date>-<show>/ (per episode),
 /events/<date>-<ple>/ (premium live events / PPVs), /upcoming/ (schedule), /shows/ (index) and Spanish mirrors under /es/.
 Built every run from the stories the pipeline already has: stories are tagged to a show episode or event by name + date.
-Only sourced dates (events.json) and regular weekly slots are shown; no card or result is ever written here that isn't in a WCN story."""
+Only sourced dates (events.json) and regular weekly slots are shown. Match results come only from live.py (trusted results pages,
+facts rewritten in WCN wording, each result credited and linked to its sources)."""
 import os, re, json, time, datetime, hashlib
 import chrome as C
+import live as LIVE
 from chrome import e, SITE, ET
 ROOT = os.path.dirname(os.path.abspath(__file__)); PUB = os.path.join(ROOT, "public")
 CFG = json.load(open(os.path.join(ROOT, "events.json")))
@@ -216,17 +218,36 @@ def show_desc(show, lang):
     s = SHOWS[show]; h, m = _hm(s["time"])
     if lang == "es": return f'{s["name"]} se emite {C.DIAS_PL[s["weekday"]]} a las {C.tfmt(h, m, lang)} por {s["network"]} (EE. UU.).'
     return f'{s["name"]} airs {C.DAYS_PL[s["weekday"]]} at {C.tfmt(h, m, lang)} on {s["network"]} (US).'
+LIVE_PAGES = {}
+def _live(key, lang, path, nm, dl, title, h1, body, ld):
+    """Turn an event/episode page into a live results post (LIVE badge + match list + LiveBlogPosting) when we have live data."""
+    try: r = LIVE.render(key, lang, SITE + path)
+    except Exception as ex: print("[live] render failed", key, ex, flush=True); r = None
+    if not r: return title, h1, body, ld
+    badge, sec, lld = r
+    st = LIVE.page_state(key)
+    if st["is_live"]:
+        title = (f"EN VIVO: resultados de {nm} ({dl})" if lang == "es" else f"LIVE: {nm} Results ({dl})")
+        LIVE_PAGES.setdefault(key, {})[lang] = path
+        sm = re.search(r"<small>.*</small>", h1)
+        h1 = (f"Resultados en vivo de {e(nm)}" if lang == "es" else f"{e(nm)} Live Results") + (" " + sm.group(0) if sm else "")
+    elif st["shown"]:
+        title = (f"Resultados {nm} ({dl})" if lang == "es" else f"{nm} Results ({dl})")
+    return title, badge + h1, sec + body, ld + lld
 def build(clusters, tr_es=None):
     """Write all hub pages for en + es. Returns {path: content-hash} for sitemaps/IndexNow."""
     import shutil
     global BUILD
-    _WRITTEN.clear()
+    _WRITTEN.clear(); LIVE_PAGES.clear()
     now = datetime.datetime.now(ET); today = now.date(); cutoff = today - datetime.timedelta(days=RETENTION_DAYS)
     by_ep, by_ev = {}, {}
     for c in clusters:
         h = c.get("hub")
         if not h: continue
         (by_ev if h["k"] == "event" else by_ep).setdefault((h["slug"], h["date"]) if h["k"] == "show" else h["slug"], []).append(c)
+    for f in (os.listdir(LIVE.LIVE_DIR) if os.path.isdir(LIVE.LIVE_DIR) else []):   # live-results episodes even before any story is tagged
+        k = f[:-5]; ds, show = k[:10], k[11:]
+        if f.endswith(".json") and show in SHOWS: by_ep.setdefault((show, ds), [])
     stage = os.path.join(ROOT, ".hubs.new"); shutil.rmtree(stage, ignore_errors=True); BUILD = stage
     for lang in ("en", "es"):
         t = L[lang]; T = C.T[lang]
@@ -240,7 +261,7 @@ def build(clusters, tr_es=None):
             d = _d(ds)
             if d < cutoff: continue
             st = L_(cs)
-            if not st: continue
+            if not st and not LIVE.page_state(f"{ds}-{show}"): continue
             info = airings(show, d, d).get(d) or {"time": SHOWS[show]["time"], "network": SHOWS[show]["network"], "note": None, "note_es": None}
             aired = now > start_dt(d, info["time"]) + datetime.timedelta(hours=2, minutes=30)
             nm = SHOWS[show]["name"]; dl = C.dlong(d, lang); h, m = _hm(info["time"])
@@ -263,6 +284,7 @@ def build(clusters, tr_es=None):
             crumbs = [home, shows_c, (nm, SITE + hub_path(show, lang)), (dl, SITE + path)]
             ld = [sports_event(f"{nm} ({dl})", d, info["time"], path, SHOWS[show]["brand"], aired, desc=desc, lang=lang), itemlist(st, lang)]
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
+            title, h1, body, ld = _live(f"{ds}-{show}", lang, path, nm, dl, title, h1, body, ld)
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, image=img)
             eps.setdefault(show, []).append((d, path, len(st), aired, st))
         # ---- PLE / PPV event pages ----
@@ -292,6 +314,7 @@ def build(clusters, tr_es=None):
             crumbs = [home, (t["events"], SITE + UP[lang]), (nm, SITE + path)]
             ld = [sports_event(nm, d, hhmm, path, ev["brand"], aired, ev["venue"], ev["city"], desc, lang)] + ([itemlist(st, lang)] if st else [])
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
+            title, h1, body, ld = _live(f"{ev['date']}-{ev['slug']}", lang, path, nm, dl, title, h1, body, ld)
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, active="upcoming", image=img)
             evs.append((ev, d, path, len(st), aired))
         # ---- evergreen show hubs ----

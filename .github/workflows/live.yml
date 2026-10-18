@@ -1,0 +1,24 @@
+name: Live results (5-min, show windows only)
+# Every 5 minutes during the evening/overnight US show hours (+ weekend afternoons for PPVs), a ~10-second gate job checks
+# events.json; only inside a show window (start -> +3.5h PPV / +2.5h weekly) does it run the full update & deploy.
+# Slots at :00/:15/:30/:45 are skipped: the regular 15-minute run covers them.
+on:
+  schedule:
+    - {cron: "5,10,20,25,35,40,50,55 22,23,0-5 * * *"}
+    - {cron: "5,10,20,25,35,40,50,55 14-21 * * 0,6"}
+  workflow_dispatch:
+permissions: {contents: write, pages: write, id-token: write}
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs: {live: "${{ steps.w.outputs.live }}"}
+    steps:
+      - uses: actions/checkout@v4
+        with: {sparse-checkout: "live.py\nevents.json", sparse-checkout-cone-mode: false}
+      - id: w
+        run: echo "live=$(python3 live.py --in-window)" >> "$GITHUB_OUTPUT"
+  update:
+    needs: gate
+    if: needs.gate.outputs.live == 'yes' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/update.yml
+    secrets: inherit

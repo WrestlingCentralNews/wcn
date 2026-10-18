@@ -5,6 +5,7 @@ on:
     inputs:
       x_test_top: {description: 'Post the current top story to X once (test)', type: boolean, default: false}
   push: {branches: [main]}
+  workflow_call: {}
 permissions: {contents: write, pages: write, id-token: write}
 concurrency: {group: wcn-update, cancel-in-progress: false}
 jobs:
@@ -40,6 +41,15 @@ jobs:
           X_ACCESS_TOKEN: "${{ secrets.X_ACCESS_TOKEN }}"
           X_ACCESS_TOKEN_SECRET: "${{ secrets.X_ACCESS_TOKEN_SECRET }}"
         run: sleep 20; python x_poster.py ${{ github.event.inputs.x_test_top == 'true' && '--test-top' || '' }}
+      - name: Post confirmed live match results to X (link-free, never fails the run)
+        continue-on-error: true
+        env:
+          X_POST_ENABLED: "${{ vars.X_POST_ENABLED }}"
+          X_API_KEY: "${{ secrets.X_API_KEY }}"
+          X_API_SECRET: "${{ secrets.X_API_SECRET }}"
+          X_ACCESS_TOKEN: "${{ secrets.X_ACCESS_TOKEN }}"
+          X_ACCESS_TOKEN_SECRET: "${{ secrets.X_ACCESS_TOKEN_SECRET }}"
+        run: python live_x.py
       - name: Push breaking news via OneSignal (never fails the run)
         continue-on-error: true
         env:
