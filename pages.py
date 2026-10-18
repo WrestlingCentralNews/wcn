@@ -62,6 +62,40 @@ def build_feeds(clusters):
         its = [c for c in srt if c["categories"][0] == cat][:30]
         open(os.path.join(PUB, "feed", slug + ".xml"), "w").write(
             rss(its, f"{SITE}feed/{slug}.xml", title=f"Wrestling Central News: {cat}", desc=f"The latest {cat} news from Wrestling Central News. " + TAGLINE))
+SN_MAX, SN_DAYS = 60, 30
+def sn_item(c):
+    """SmartFormat v2.2 item: full text (our own wording only) with the lead image first, WCN Staff byline, media:thumbnail."""
+    url = SITE + c["url"]; img = c.get("image") or ""
+    if not img.startswith("https://"): img = SITE + "og-image.jpg"
+    paras = c.get("long") or [c.get("summary") or ""]
+    desc = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", c.get("summary") or "")).strip()
+    cr = c.get("image_credit") or {}
+    body = f'<figure><img src="{e(img)}" alt="{e(c["title"])}">' + (f'<figcaption>{e(cr.get("text"))}</figcaption>' if cr.get("text") else "") + "</figure>"
+    k = c.get("kind") or {}
+    if k.get("type") == "quote" and k.get("who") and k.get("quote"): body += f'<blockquote><p>“{e(k["quote"])}”</p><cite>— {e(k["who"])}</cite></blockquote>'
+    body += "".join(f"<p>{e(p)}</p>" for p in paras if p)
+    srcs = list(dict.fromkeys([(c.get("source"), c.get("link"))] + [(u.get("source"), u.get("link")) for u in c.get("updates", [])]))
+    srcs = [(n, l) for n, l in srcs if n and l and l.startswith("http")][:8]
+    if srcs: body += "<p><small>Sources: " + ", ".join(f'<a href="{e(l)}">{e(n)}</a>' for n, l in srcs) + "</small></p>"
+    cats = ",".join(dict.fromkeys(list(c["categories"]) + ["wrestling"]))
+    return (f"<item><title>{xe(c['title'])}</title><link>{xe(url)}</link><guid isPermaLink=\"true\">{xe(url)}</guid>"
+            f"<description>{xe(desc)}</description><pubDate>{rfc822(c.get('first_ts', c['ts']))}</pubDate>"
+            f"<content:encoded><![CDATA[{body.replace(']]>', ']]&gt;')}]]></content:encoded>"
+            f"<category>{xe(cats)}</category><dc:creator>WCN Staff</dc:creator><dc:language>en</dc:language>"
+            f'<media:thumbnail url="{xe(img)}"/><media:status>active</media:status></item>')
+def build_smartnews(clusters):
+    """SmartNews SmartFormat v2.2 feed: /feed/smartnews.xml (English stories first published in the last 30 days, newest first)."""
+    now = time.time()
+    its = sorted([c for c in clusters if now - int(c.get("first_ts", c["ts"])) < SN_DAYS * 86400], key=lambda c: -int(c.get("first_ts", c["ts"])))[:SN_MAX]
+    xml = ('<?xml version="1.0" encoding="utf-8"?>\n<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" '
+           'xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/" xmlns:snf="http://www.smartnews.be/snf"><channel>'
+           f"<title>Wrestling Central News</title><link>{SITE}</link><description>Pro wrestling news, 24/7</description>"
+           f"<pubDate>{rfc822(max([int(c['ts']) for c in its] or [int(now)]))}</pubDate><language>en</language>"
+           f"<copyright>© {time.gmtime().tm_year} Wrestling Central News</copyright><ttl>15</ttl>"
+           f"<snf:logo><url>{SITE}img/smartnews/logo.png</url></snf:logo><snf:darkModeLogo><url>{SITE}img/smartnews/logo-dark.png</url></snf:darkModeLogo>"
+           + "".join(sn_item(c) for c in its) + "</channel></rss>\n")
+    os.makedirs(os.path.join(PUB, "feed"), exist_ok=True)
+    open(os.path.join(PUB, "feed", "smartnews.xml"), "w").write(xml)
 def feed_links(cat=None):
     s = f'<link rel="alternate" type="application/rss+xml" title="Wrestling Central News" href="{SITE}feed.xml">'
     if cat in FEED_CATS: s += f'<link rel="alternate" type="application/rss+xml" title="Wrestling Central News: {cat}" href="{SITE}feed/{FEED_CATS[cat]}.xml">'
@@ -263,6 +297,7 @@ def build(clusters):
     hub_pages = hubs.build(clusters, tr)
     build_newsletter_page(clusters)
     build_feeds(clusters)
+    build_smartnews(clusters)
     # Spanish feed
     es_items = [c for c in sorted(clusters, key=lambda c: -int(c.get("first_ts", c["ts"]))) if c["id"] in tr][:50]
     def es_rss_item(c):
