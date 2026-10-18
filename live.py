@@ -40,7 +40,7 @@ def shows_on(day):
         cs = _dt(day, pre) if pre else st
         out.append({"key": f"{ev['date']}-{ev['slug']}", "kind": "ppv", "slug": ev["slug"], "date": ev["date"], "name": ev["name"], "brand": ev["brand"],
                     "start": cs, "main": st, "end": st + datetime.timedelta(hours=ev.get("hours", PPV_H)), "rx": ev.get("match") or re.escape(ev["name"]),
-                    "tag": ev.get("hashtag") or "#" + re.sub(r"[^A-Za-z0-9]", "", re.sub(r"\s*\d{4}$", "", ev["name"]))})
+                    "results_pages": ev.get("results_pages", []), "tag": ev.get("hashtag") or "#" + re.sub(r"[^A-Za-z0-9]", "", re.sub(r"\s*\d{4}$", "", ev["name"]))})
     for show, s in CFG["shows"].items():
         skip = {x["date"] for x in CFG.get("skips", {}).get(show, [])}
         slots = []
@@ -120,7 +120,7 @@ def clean_side(s):
     return s
 def split_method(rest):
     """rest = text after the loser -> (loser, method_text)."""
-    m = re.search(r"(?i)\s+(?:via|by|with|when|after|following|to (?:retain|win|capture|become|advance|earn)|in\s+\d|\(\d|- |– |— )", rest)
+    m = re.search(r"(?i)\s+(?:via|by|with|when|after|following|to (?:retain|win|capture|become|advance|earn)|in\s+\d|\(\d|\d\s*-\s*\d|- |– |— )", rest)
     if not m: return rest, ""
     return rest[:m.start()], rest[m.start():].strip()
 def finish(method, line):
@@ -139,7 +139,7 @@ def parse_line(line):
     if not m: return None
     w = clean_side(m.group("w")); loser, method = split_method(m.group("rest")); loser = clean_side(loser)
     if not w or not loser or len(w) > 140 or len(loser) > 200: return None
-    if re.search(r"(?i)\b(will|would|could|should|next week|last week|previously|earlier this|on (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|at (?:all out|all in))\b", l): return None
+    if re.search(r"\b(will|would|could|should|next week|last week|previously|earlier this|on (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|at (?:all out|all in))\b", l): return None
     if re.search(r"(?i)^(?:the |and |but |after |when |as |in |this |with |following )", w) and not re.match(r"(?i)^the [A-Z]", w): return None
     stip = clean_side(m.group("stip") or "")
     if stip and re.search(r"(?i)\b(?:says|said|note|update)\b", stip): return None
@@ -147,25 +147,90 @@ def parse_line(line):
     if title is None and stip and TITLE_RX.search(stip) and re.search(r"\(c\)", m.group("w")): title = "retain"
     if title is None and stip and TITLE_RX.search(stip) and re.search(r"\(c\)", m.group("rest")) and not re.search(r"\(c\)", m.group("w")): title = "change"
     fen, fes = finish(method, l)
+    mv = re.match(r"(?i)^(?:with|after|via|by|following)\s+(?:a|an|the|his|her|their)\s+([A-Z][\w'’.-]*(?:\s+[A-Z0-9][\w'’.-]*){0,3})", method)
+    move = mv.group(1) if mv and not re.search(r"(?i)pinfall|submission|disqualif|count", mv.group(1)) else ""
     pin = re.search(r"\b([A-Z][\w'.-]+(?: [A-Z][\w'.-]+)?) (pinned|submitted|made) ([A-Z][\w'.-]+(?: [A-Z][\w'.-]+)?)", method)
     return {"winner": re.sub(r"\s*\(c\)", "", w).strip(), "loser": re.sub(r"\s*\(c\)", "", loser).strip(), "stip": stip, "title": title,
-            "fin_en": fen, "fin_es": fes, "who": f"{pin.group(1)} {'pinned' if pin.group(2) == 'pinned' else 'submitted'} {pin.group(3)}" if pin else ""}
+            "fin_en": fen, "fin_es": fes, "move": move, "who": f"{pin.group(1)} {'pinned' if pin.group(2) == 'pinned' else 'submitted'} {pin.group(3)}" if pin else ""}
+PRE_RX = r"(?i:pre-?show|kickoff|kick-off|zero hour|countdown to|tailgate brawl|buy-?in|dark match)"
+def card_of(lines):
+    """Announced matches from the card lists sources print: '[Stip:] A (c) vs. B vs. C' -> [{stip, sides, champ}]."""
+    out = []
+    for l in lines:
+        if len(l) > 400 or not re.search(r"\bvs\.?\s", l) or re.search(rf"(?i)\b{DEF}\b|def\.", l): continue
+        m = re.match(r"^(?:(?P<stip>[^:]{3,120}):\s+)?(?P<rest>.+)$", l)
+        stip = clean_side(m.group("stip") or ""); rest = m.group("rest")
+        if stip and re.search(r"(?i)\b(?:says|said|update|tonight|watch)\b", stip): continue
+        sides = [x.strip() for x in re.split(r"\s+vs\.?\s+", rest) if x.strip()]
+        if len(sides) < 2 or any(len(x) > 160 or len(x.split()) > 18 for x in sides): continue
+        if re.search(r"(?i)headlined|results are|listed below|will (?:face|take on)|\bcard\b", rest): continue
+        if re.search(r"(?i)^(?:video|promo|package|backstage|vignette)|is shown|later tonight", " ".join(sides)): continue
+        pre = bool(re.search(PRE_RX, l))
+        sides = [re.sub(r"\s*\((?:" + PRE_RX + r")[^)]*\)", "", x, flags=re.I) for x in sides]
+        sides = [re.sub(r"\s+[-–—]\s+.*$", "", x) for x in sides]
+        champ = next((clean_side(re.sub(r"\s*\(c\.?\)", "", x)) for x in sides if re.search(r"\(c\.?\)", x)), None)
+        out.append({"stip": stip, "sides": [clean_side(re.sub(r"\s*\(c\.?\)", "", x)) for x in sides], "champ": champ, "pre": pre})
+    return out
+def card_match(card, r):
+    """Best card entry for result r (winner must overlap one side; loser, if known, another)."""
+    best, bs = None, 0
+    W, Lo = toks(r["winner"]), toks(r.get("loser"))
+    for c in card:
+        sc = 0
+        for sd in c["sides"]:
+            T = toks(sd)
+            if W and T and len(W & T) / min(len(W), len(T)) >= 0.5: sc += 2
+            elif Lo and T and len(Lo & T) / min(len(Lo), len(T)) >= 0.5: sc += 1
+        if sc >= 2: sc += 0.5 if (c["stip"] or c["champ"]) else 0
+        if sc >= 2 and sc > bs: best, bs = c, sc
+    return best
+def apply_card(r, card):
+    c = card_match(card, r)
+    if not c: return
+    r["card"] = True
+    if not r.get("loser"):
+        W = toks(r["winner"])
+        others = [sd for sd in c["sides"] if not (toks(sd) and W and len(toks(sd) & W) / min(len(toks(sd)), len(W)) >= 0.5)]
+        if 0 < len(others) <= 2: r["loser"] = " and ".join(others) if len(others) == 2 and len(c["sides"]) == 3 else others[0] if len(others) == 1 else ", ".join(others)
+        elif len(others) > 2: r["field"] = len(c["sides"])
+    if c["stip"] and not r.get("stip"): r["stip"] = c["stip"]
+    if c.get("pre"): r["pre"] = True
+    if c["champ"] and TITLE_RX.search(c["stip"] or "Championship") and r.get("title") is None:
+        CT = toks(c["champ"]); W = toks(r["winner"])
+        r["title"] = "retain" if CT and W and len(CT & W) / min(len(CT), len(W)) >= 0.5 else "change"
+CARD = {}
 def parse_page(page):
     out, seen = [], set()
     lines = lines_of(page)
+    card = card_of(lines); pre_sec = False
     for i, line in enumerate(lines):
         r = None
+        if len(line) < 70:
+            if re.search(PRE_RX, line) and not re.search(rf"(?i)\b{DEF}\b|def\.|\bvs\b", line): pre_sec = True
+            elif re.search(r"(?i)^(?:main (?:card|show)|pay-?per-?view|ppv|main event)\b", line): pre_sec = False
         if re.search(rf"(?i)\b{DEF}\b|def\.", line): r = parse_line(line)
+        if r is None and len(line) < 220:
+            m = re.match(r"^(?:[^:]{3,60}:\s+)?(?P<w>[A-Z][^,:;]{2,70}?) (?:wins|won|retains|retained|captures|captured|is the new|are the new|become the new|becomes the new)\b(?P<rest>.*)$", NOTE.sub("", line).strip())
+            if m and not re.search(r"\b(will|would|could|if|last week|previously)\b", line):
+                w = clean_side(m.group("w")); rest = m.group("rest")
+                if CHANGE_RX.search(line) and TITLE_RX.search(line): ti = "change"
+                elif RETAIN_RX.search(line): ti = "retain"
+                else: ti = None
+                fen, fes = finish(rest, line)
+                r = {"winner": w, "loser": "", "stip": "", "title": ti, "fin_en": fen, "fin_es": fes, "who": "", "need_card": True}
         if r is None:
             m = re.match(r"(?i)^winners?\s*:\s*(.{3,120})$", line)                 # Wrestling Inc: "Winner(s): X" after the play-by-play
             if m:
                 ctx = " ".join(lines[max(0, i - 3):i])
-                w = clean_side(m.group(1))
+                w = clean_side(re.split(r"(?i),? (?:and|&) (?:new|still)\b|,\s*(?:new|still)\b", m.group(1))[0])
                 fen, fes = finish("", ctx[-400:])
                 r = {"winner": re.sub(r"\s*\(c\)", "", w), "loser": "", "stip": "", "title": None, "fin_en": fen, "fin_es": fes, "who": ""}
                 if re.search(r"(?i)\b(?:new|and new) (?:\w+ )*champions?\b", m.group(1) + " " + ctx[-300:]): r["title"] = "change"
                 elif re.search(r"(?i)\b(?:and still|retain)", m.group(1) + " " + ctx[-200:]): r["title"] = "retain"
         if r:
+            if pre_sec: r["pre"] = True
+            apply_card(r, card + CARD.get("cur", []))
+            if r.pop("need_card", False) and not r.get("card"): continue   # 'X wins…' lines only count for announced matches
             k = norm(r["winner"]) + "|" + norm(r["loser"])
             if k not in seen: seen.add(k); r["pos"] = i; out.append(r)
     return out
@@ -191,22 +256,24 @@ def contradicts(a, b):
 
 def text_en(m):
     w, l = m["winner"], m["loser"]
-    s = f"{w} beat {l}" if l else f"{w} won"
+    s = f"{w} beat {l}" if l else (f"{w} won the {m['field']}-way match" if m.get("field") else f"{w} won")
     if m.get("fin_en"): s += " " + m["fin_en"]
+    if m.get("move"): s += f" with the {m['move']}"
     if m.get("who") and m["who"].split()[0].lower() not in (m.get("fin_en") or ""): s += f" ({m['who']})"
     if m.get("title") == "change": s += " — NEW CHAMPION" + ("S" if re.search(r"&| and |,", w) else "")
     elif m.get("title") == "retain": s += " to retain"
-    return s + "."
+    return s if s.endswith("!") else s + "."
 def text_es(m):
     w, l = m["winner"], m["loser"]
     pl = bool(re.search(r"&| and | y |,", w))
-    s = (f"{w} {'vencieron' if pl else 'venció'} a {l}") if l else f"{w} {'ganaron' if pl else 'ganó'}"
+    s = (f"{w} {'vencieron' if pl else 'venció'} a {l}") if l else (f"{w} {'ganaron' if pl else 'ganó'} el combate a {m['field']} bandas" if m.get("field") else f"{w} {'ganaron' if pl else 'ganó'}")
     if m.get("fin_es"): s += " " + m["fin_es"]
+    if m.get("move"): s += f" (remate: {m['move']})"
     if m.get("who"):
         s += " (" + m["who"].replace(" pinned ", " cubrió a ").replace(" submitted ", " rindió a ") + ")"
-    if m.get("title") == "change": s += " — ¡NUEVO" + ("S CAMPEONES" if re.search(r"&| and |,", w) else " CAMPEÓN") + "!"
-    elif m.get("title") == "retain": s += " y retuvo el título"
-    return s + "."
+    if m.get("title") == "change": s += " — ¡CAMBIO DE TÍTULO!"
+    elif m.get("title") == "retain": s += (" y retuvieron el título" if re.search(r"&| and | y |,", w) else " y retuvo el título")
+    return s if s.endswith("!") else s + "."
 
 def path(key): return os.path.join(LIVE_DIR, key + ".json")
 def load(key):
@@ -223,9 +290,17 @@ def update(store_articles=(), now=None):
         try: pages = discover(w, store_articles)
         except Exception as ex: log("discover failed", ex); pages = {}
         st["pages"].update({u: s for u, s in pages.items()})
-        reports = []
+        for u in w.get("results_pages", []):
+            if source_of(u): st["pages"].setdefault(u, source_of(u))
+        reports = []; htmls = {}
+        for url in st["pages"]:
+            try: htmls[url] = get(url)
+            except Exception as ex: log(f"fetch {st['pages'][url]} failed: {str(ex)[:80]}")
+        CARD["cur"] = [c for h in htmls.values() for c in card_of(lines_of(h))]
+        st["card"] = CARD["cur"][:40]
         for url, src in st["pages"].items():
-            try: rs = parse_page(get(url))
+            if url not in htmls: continue
+            try: rs = parse_page(htmls[url])
             except Exception as ex: log(f"fetch {src} failed: {str(ex)[:80]}"); continue
             log(f"{w['key']}: {src} -> {len(rs)} results")
             for r in rs: r["src"] = src; r["url"] = url; reports.append(r)
@@ -233,13 +308,14 @@ def update(store_articles=(), now=None):
         nowi = int(time.time())
         for r in reports:
             m = next((x for x in st["matches"] if same(x, r)), None)
-            if m is None and not r.get("loser") and any(x.get("loser") for x in reports): continue   # winner-only lines just corroborate
+            if m is None and not r.get("loser") and not r.get("field") and any(x.get("loser") for x in reports): continue   # winner-only lines just corroborate
             if m is None:
-                m = {k: r[k] for k in ("winner", "loser", "stip", "title", "fin_en", "fin_es", "who")}
+                m = {k: r.get(k) for k in ("winner", "loser", "stip", "title", "fin_en", "fin_es", "who", "field", "move")}
                 m.update(id=f"m{len(st['matches']) + 1}", first_seen=nowi, updated=nowi, sources=[], order=r["pos"] + 10000 * list(st["pages"]).index(r["url"]))
                 st["matches"].append(m)
             # enrich with facts another source has (loser, finish, title flag, stipulation)
-            for k in ("loser", "stip", "fin_en", "fin_es", "who"):
+            if r.get("pre") and not m.get("pre"): m["pre"] = True; m["updated"] = nowi
+            for k in ("loser", "stip", "fin_en", "fin_es", "who", "move"):
                 if not m.get(k) and r.get(k): m[k] = r[k]; m["updated"] = nowi
             if r.get("title") and m.get("title") != r["title"] and (m.get("title") is None or r["title"] == "change"): m["title"] = r["title"]; m["updated"] = nowi
             if len(r.get("winner", "")) > len(m["winner"]) and same(r, m): m["winner"] = r["winner"]
@@ -293,7 +369,8 @@ def render(key, lang, url):
         flag = ""
         if m.get("title") == "change": flag = f'<span class="tc">{"¡CAMBIO DE TÍTULO!" if es else "TITLE CHANGE"}</span> '
         elif m.get("title") == "retain": flag = f'<span class="tr">{"RETIENE" if es else "RETAINED"}</span> '
-        stip = f'<b class="stip">{_e(m["stip"])}</b> ' if m.get("stip") else ""
+        stip = f'<b class="stip">{_e(m["stip"])}:</b> ' if m.get("stip") else ""
+        if m.get("pre"): stip = f'<span class="pre">{"PREVIA" if es else "PRE-SHOW"}</span> ' + stip
         rows.append(f'<li id="{m["id"]}"><time datetime="{datetime.datetime.fromtimestamp(m["first_seen"], datetime.timezone.utc).isoformat()}">{_hhmm(m["first_seen"], lang)}</time>'
                     f'<p>{flag}{stip}{_e(m["es"] if es else m["en"])}</p><small>{"Fuente" if es else "Source"}{"s" if len(m["sources"]) > 1 else ""}: {srcs}</small></li>')
     if not rows: rows.append(f'<li class="wait"><p>{"Aún no hay resultados confirmados. Esta página se actualiza cada 5 minutos durante el programa." if es else "No confirmed results yet. This page updates every 5 minutes while the show is on."}</p></li>')

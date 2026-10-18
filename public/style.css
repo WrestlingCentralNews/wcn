@@ -225,3 +225,4 @@ footer .nl-link{color:#F26A14;font-weight:700}
 .live-list time{font-size:.8em;opacity:.7}.live-list p{margin:.25rem 0;font-size:1.05em;line-height:1.4}.live-list small{opacity:.75}
 .live-list .tc{background:#f5c518;color:#111;font-weight:800;padding:.1em .45em;border-radius:4px;font-size:.8em}.live-list .tr{background:rgba(255,255,255,.15);padding:.1em .45em;border-radius:4px;font-size:.8em}
 .live-list .stip{opacity:.85}.live-note{font-size:.82em;opacity:.7;margin-top:.8rem}
+.live-list .pre{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);padding:.05em .4em;border-radius:4px;font-size:.75em;letter-spacing:.04em}
