@@ -333,6 +333,13 @@ def update(store_articles=(), now=None):
             if r.get("title") and m.get("title") != r["title"] and (m.get("title") is None or r["title"] == "change"): m["title"] = r["title"]; m["updated"] = nowi
             if len(r.get("winner", "")) > len(m["winner"]) and same(r, m): m["winner"] = r["winner"]
             if not any(s["name"] == r["src"] for s in m["sources"]): m["sources"].append({"name": r["src"], "url": r["url"]}); m["updated"] = nowi
+        hit = {id(m) for r in reports for m in st["matches"] if same(m, r)}
+        if len(htmls) == len(st["pages"]) and reports:   # every source fetched fine: drop entries no source reports any more (parser fixes / retractions)
+            st["matches"] = [m for m in st["matches"] if id(m) in hit or m.get("keep") or len(m.get("sources", [])) >= 2]
+        for r in reports:
+            if r.get("card"):
+                for m in st["matches"]:
+                    if same(m, r): m["card"] = True
         merged = []                                     # fold duplicates that slipped in earlier into the first-seen entry
         for m in sorted(st["matches"], key=lambda x: x["first_seen"]):
             t = next((x for x in merged if same(x, m)), None)
@@ -346,7 +353,7 @@ def update(store_articles=(), now=None):
             v = m.pop("_pre_votes", None)
             if v is not None: m["pre"] = any(v.values()) and sum(v.values()) * 2 >= len(v)
             m["conflict"] = any(contradicts(m, o) for o in st["matches"] if o is not m)
-            m["confirmed"] = not m["conflict"] and (len(m["sources"]) >= 2 or nowi - m["first_seen"] >= 600)
+            m["confirmed"] = not m["conflict"] and (len(m["sources"]) >= 2 or (m.get("card") and nowi - m["first_seen"] >= 600))
             m["en"], m["es"] = text_en(m), text_es(m)
         # order: by position in the source with the most results (show order), new unknowns at the end
         cnt = {}
