@@ -213,7 +213,7 @@ def parse_page(page):
         r = None
         if len(line) < 70:
             if re.search(PRE_RX, line) and not re.search(rf"(?i)\b{DEF}\b|def\.|\bvs\b", line): pre_sec = True
-            elif re.search(r"(?i)^(?:main (?:card|show)|pay-?per-?view|ppv|main event)\b", line) or \
+            elif re.search(r"(?i)^(?:(?:the )?main (?:card|show|broadcast|event)|pay-?per-?view|ppv|broadcast)\b", line) or \
                     (CARD.get("main_rx") and re.fullmatch(r"(?i)(?:AEW |WWE |TNA |NXT )?(?:" + CARD["main_rx"] + r")(?: \d{4})?(?: results| main card| begins)?", line)): pre_sec = False
         if re.search(rf"(?i)\b{DEF}\b|def\.", line): r = parse_line(line)
         if r is None and len(line) < 220:
@@ -357,7 +357,7 @@ def update(store_articles=(), now=None):
         st["matches"] = merged
         for m in st["matches"]:
             v = m.pop("_pre_votes", None)
-            if v is not None: m["pre"] = any(v.values()) and sum(v.values()) * 2 >= len(v)
+            if v is not None: m["pre"] = sum(v.values()) * 2 > len(v)   # strict majority of the sources reporting it
             m["conflict"] = any(contradicts(m, o) for o in st["matches"] if o is not m)
             m["confirmed"] = not m["conflict"] and (len(m["sources"]) >= 2 or (m.get("card") and nowi - m["first_seen"] >= 600))
             m["en"], m["es"] = text_en(m), text_es(m)
