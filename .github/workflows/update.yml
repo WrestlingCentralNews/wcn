@@ -5,8 +5,7 @@ on:
     inputs:
       x_test_top: {description: 'Post the current top story to X once (test)', type: boolean, default: false}
   push: {branches: [main]}
-  workflow_call: {}
-permissions: {contents: write, pages: write, id-token: write}
+permissions: {contents: write, pages: write, id-token: write, actions: write}
 concurrency: {group: wcn-update, cancel-in-progress: false}
 jobs:
   update:
@@ -60,6 +59,14 @@ jobs:
       - name: Ping IndexNow with new story URLs (never fails the run)
         continue-on-error: true
         run: python indexnow.py
+      - name: Start the live-results driver if a show is on and no driver is running (never fails the run)
+        continue-on-error: true
+        env: {GH_TOKEN: "${{ github.token }}", GH_REPO: "${{ github.repository }}"}
+        run: |
+          if [ "$(python3 live.py --in-window 2>/dev/null)" = "yes" ]; then
+            act=$(gh run list --workflow live.yml --limit 5 --json status --jq '[.[] | select(.status=="queued" or .status=="in_progress")] | length')
+            [ "$act" = "0" ] && gh workflow run live.yml && echo "live driver started" || echo "live driver already running"
+          fi
       - name: Save state to 'data' branch (single orphan commit, force-pushed)
         if: always() && steps.agg.outcome == 'success'
         run: |
