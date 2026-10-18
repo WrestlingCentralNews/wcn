@@ -1,7 +1,7 @@
-name: Live results driver (5-min updates during show windows)
+name: Live results driver (2-min updates during show windows)
 # GitHub's cron is often late or skips slots, so one cheap runner "drives" each show window: once any trigger lands
 # inside a window (these cron slots, the regular 15-min run, or a manual run), this job stays up for the window and
-# dispatches the normal "Update news & deploy" workflow every 5 minutes, then exits. Outside windows the gate exits in seconds.
+# dispatches the normal "Update news & deploy" workflow every 2 minutes (never while one is queued/running), then exits. Outside windows the gate exits in seconds.
 on:
   schedule:
     - {cron: "5,20,35,50 22,23,0-3 * * *"}
@@ -16,13 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {sparse-checkout: "live.py\nevents.json", sparse-checkout-cone-mode: false}
-      - name: Dispatch an update every 5 minutes while a show is on
+      - name: Dispatch an update every 2 minutes while a show is on (only when none is queued or running)
         env: {GH_TOKEN: "${{ github.token }}", GH_REPO: "${{ github.repository }}"}
         run: |
           n=0
           while [ "$(python3 live.py --in-window 2>/dev/null)" = "yes" ]; do
             busy=$(gh run list --workflow update.yml --limit 5 --json status --jq '[.[] | select(.status=="queued" or .status=="in_progress" or .status=="pending" or .status=="waiting")] | length')
             if [ "$busy" = "0" ]; then gh workflow run update.yml && n=$((n+1)) && echo "$(date -u +%T) dispatched update #$n"; else echo "$(date -u +%T) update already running/queued"; fi
-            sleep 300
+            sleep 120
           done
           echo "window over; dispatched $n updates"

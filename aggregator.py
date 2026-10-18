@@ -25,7 +25,14 @@ FEEDS = {
  "Official: NJPW": G("site:njpw1972.com when:7d"),
  "PWInsider (via Google)": G("site:pwinsider.com when:7d"),
  "Google News: Global": G("NJPW OR Stardom OR CMLL OR \"Lucha Libre AAA\" OR wXw OR RevPro wrestling"),
+ # official promotion feeds read directly (minutes faster than Google News' index); source name = the promotion (tier 1)
+ "AEW": "https://www.allelitewrestling.com/blog-feed.xml",
+ "MLW": "https://mlw.com/feed/",
+ "Google News: AAA": G("\"Lucha Libre AAA\" OR \"AAA Worldwide\" when:7d"),   # AAA's own site is now only a store, no news feed
 }
+# promotions' own feeds: every item is about that promotion even when the title doesn't say so (e.g. AEW blog posts)
+FEED_CAT = {"AEW": "AEW", "MLW": "Indie", "Google News: AAA": "Global"}
+# + pagesrc.LISTINGS: PWInsider, WWE.com, TNA Wrestling, STARDOM, Bleacher Report (news listing pages, no RSS)
 KW = {
  "WWE": r"\bWWE\b|\bRaw\b|SmackDown|\bNXT\b|WrestleMania|Royal Rumble|SummerSlam|Survivor Series|Triple H|Roman Reigns|Cody Rhodes|CM Punk|Rhea Ripley|Seth Rollins|Saturday Night'?s Main Event",
  "AEW": r"\bAEW\b|All Elite|Dynamite|Collision|Rampage|Tony Khan|Double or Nothing|All In\b|Full Gear|Revolution|MJF|Kenny Omega|Jon Moxley|Swerve",
@@ -105,6 +112,7 @@ def parse(name, url):
         if name.endswith(": TNA"): cats = cats or ["TNA"]
         if name.endswith(": Indie"): cats = cats or ["Indie"]
         if name.endswith(": Global"): cats = cats or ["Global"]
+        if name in FEED_CAT: cats = cats or [FEED_CAT[name]]
         if not cats: cats = ["Indie"] if re.search(r"wrestl", title + desc, re.I) else []
         if not cats or not title: continue
         items.append({"id": hashlib.md5(re.sub(r"\W", "", title.lower()).encode()).hexdigest()[:12],
@@ -150,6 +158,14 @@ def run():
     with ThreadPoolExecutor(8) as ex:
         for n, r, err in ex.map(job, FEEDS.items()):
             status[n] = {"ok": err is None and len(r) > 0, "items": len(r), "error": err}; fresh += r
+    try:   # listing-page sources (no RSS): only links that are new since the last run come back
+        import pagesrc
+        for i in pagesrc.fetch_all(status):
+            cats = classify(i["title"] + " " + i["summary"]) or ([i["cat"]] if i.pop("cat") else [])
+            if not cats: continue
+            fresh.append({**i, "id": hashlib.md5(re.sub(r"\W", "", i["title"].lower()).encode()).hexdigest()[:12],
+                          "summary": summarize(strip(i["summary"]), i["title"]), "title": strip(i["title"]), "categories": cats})
+    except Exception as e: print("pagesrc: error (ignored)", repr(e)[:200], flush=True)
     cutoff = time.time() - RETENTION_DAYS*86400
     # items whose feed date was missing/unparseable get the time we FIRST saw them (remembered across runs), never "now" on every run
     fs_path = os.path.join(os.path.dirname(STORE), "first_seen.json")

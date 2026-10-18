@@ -19,6 +19,11 @@ MIN_GAP_MIN = 25          # minutes between posting runs (breaking news may skip
 FRESH_H = 8               # only stories whose first report is younger than this
 MIN_SCORE = 14            # importance threshold
 BREAKING = 26
+# BREAKING-labelled posts (breaking.kind: title change / release / debut / return, owner rule 2026-10-18) skip DAILY_CAP and
+# MIN_GAP; only normal posts count toward the cap. Safety limits so a misfire can't drain credits: trusted source required,
+# at most BREAKING_PER_RUN per run and BREAKING_MAX_24H per rolling 24h (at $0.015 each that's <= $0.18/day).
+BREAKING_PER_RUN = 2
+BREAKING_MAX_24H = 12
 PAUSE_ON_PAYMENT_H = 6    # back off after credit/payment errors
 CAT_BONUS = {"WWE": 4, "AEW": 4, "TNA": 2, "Global": 1, "Indie": 0}
 KIND_BONUS = {"news": 3, "match": 3, "quote": 1, "results": 1}
@@ -78,6 +83,7 @@ def save_state(s):
     s["links"] = s["links"][-3000:]; s["log"] = s["log"][-200:]
     os.makedirs(os.path.dirname(STATE), exist_ok=True); json.dump(s, open(STATE, "w"), indent=0)
 
+def is_breaking(c): return bool(breaking.kind(c["title"], (c.get("kind") or {}).get("type")))
 def score(c):
     s = 2 * min(c.get("sources", 1), 8) + 2 * min(c.get("trusted", 0), 4)
     s += max(CAT_BONUS.get(k, 0) for k in c["categories"])
@@ -213,15 +219,24 @@ def run(test_top=False):
         n_allowed = 1
     else:
         recent = [t for t in S["log"] if t.get("ok") and now - t["at"] < 86400]
-        if len(recent) >= DAILY_CAP: log(f"daily cap {DAILY_CAP} reached"); return
-        cands = [c for c in items if not seen(c) and now - c.get("first_ts", c["ts"]) < FRESH_H * 3600 and score(c) >= MIN_SCORE]
-        cands.sort(key=lambda c: -score(c))
-        last = max([t["at"] for t in recent] or [0])
-        if cands and now - last < MIN_GAP_MIN * 60 and score(cands[0]) < BREAKING:
-            log(f"min gap {MIN_GAP_MIN}m: next post later ({len(cands)} waiting)"); return
-        n_allowed = PER_RUN_BREAKING if len(cands) > 1 and score(cands[1]) >= BREAKING else PER_RUN
-        n_allowed = min(n_allowed, DAILY_CAP - len(recent))
-    if not cands: log("nothing new worth posting"); save_state(S) if _skipped else None; return
+        rec_brk = [t for t in recent if t.get("breaking")]; rec_norm = [t for t in recent if not t.get("breaking")]
+        allc = [c for c in items if not seen(c) and now - c.get("first_ts", c["ts"]) < FRESH_H * 3600 and score(c) >= MIN_SCORE]
+        allc.sort(key=lambda c: -score(c))
+        brk = [c for c in allc if is_breaking(c) and c.get("trusted", 0) >= 1]
+        normal = [c for c in allc if c not in brk]
+        nb = max(0, min(BREAKING_PER_RUN, BREAKING_MAX_24H - len(rec_brk)))
+        if brk and not nb: log(f"breaking safety limit {BREAKING_MAX_24H}/24h reached ({len(brk)} waiting)")
+        last = max([t["at"] for t in rec_norm] or [0])
+        if not normal: nn = 0
+        elif len(rec_norm) >= DAILY_CAP: nn = 0; log(f"daily cap {DAILY_CAP} reached for normal posts ({len(normal)} waiting; BREAKING posts are exempt)")
+        elif now - last < MIN_GAP_MIN * 60 and score(normal[0]) < BREAKING:
+            nn = 0; log(f"min gap {MIN_GAP_MIN}m: next normal post later ({len(normal)} waiting)")
+        else:
+            nn = PER_RUN_BREAKING if len(normal) > 1 and score(normal[1]) >= BREAKING else PER_RUN
+            nn = min(nn, DAILY_CAP - len(rec_norm))
+        cands = brk[:nb] + normal[:nn]
+        n_allowed = len(cands)
+    if not cands: log("nothing new worth posting (or waiting on cap/gap)"); save_state(S) if _skipped else None; return
     for c in cands[:n_allowed]:
         text = tweet_text(c)
         if not text or has_url(text):
@@ -240,6 +255,7 @@ def run(test_top=False):
             else: log(f"photo test: '{c['title']}' photo not eligible (status={c.get('image_status')}); text-only, test stays pending")
         code, body, hdr = post_tweet(text, [media] if media else None)
         entry = {"id": c["id"], "at": int(now), "code": code, "score": score(c)}
+        if is_breaking(c): entry["breaking"] = True     # exempt from DAILY_CAP / MIN_GAP (counted in BREAKING_MAX_24H)
         if media: entry["media"] = media
         if code in (200, 201):
             tid = body["data"]["id"]; entry.update(ok=True, tweet=tid)

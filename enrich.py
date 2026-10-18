@@ -19,6 +19,8 @@ def meta(h, prop):
         re.search(r'<meta[^>]+content=["\']([^"\']+)["\'][^>]*(?:property|name)=["\']%s["\']' % prop, h)
     return html.unescape(m.group(1)) if m else None
 JUNK = re.compile(r"subscribe|newsletter|cookie|click here|sign up|follow us|advertis|copyright|all rights|©|share this|related:|read more|you can (?:watch|listen)|podcast|patreon|share facebook|whatsapp|linkedin|watch [\w ]+ live on|preferred source|add [\w. ]+ on google|google discover|stale|my throat|lol\b|loading…|comment|connect with us|bluesky|ugh|this article|photo credit|getty|discord|affiliate", re.I)
+PAYWALL = re.compile(r"(?i)class=[\"'][^\"']*\b(paywall|premium-content|members?-only|subscriber-only|pmpro_content_message|mepr-unauthorized|piano-offer|tp-container)\b|"
+                     r"this (content|article|post) is (only )?(available )?(for|to) (subscribers|members)|subscribe to (read|continue|unlock)")
 def fetch_article(it):
     url = it["link"]
     if "news.google.com" in url:
@@ -29,6 +31,9 @@ def fetch_article(it):
     if not it.get("image"):
         img = meta(h, "og:image") or meta(h, "twitter:image")
         if img and not re.search(r"logo|default|placeholder|favicon", img, re.I): it["image"] = urllib.parse.urljoin(url, img)
+    if PAYWALL.search(h) or re.search(r"fightful\.com/(select|premium)", url):
+        # subscriber content (Fightful Select, F4W/Observer members, any paywall): never copy it - public description only
+        it["paywalled"] = True; it["body"] = clean(meta(h, "og:description") or ""); return
     body = re.sub(r"(?is)<(script|style|nav|footer|header|aside|figure|form)[^>]*>.*?</\1>", " ", h)
     paras = [clean(p) for p in re.findall(r"(?is)<p[^>]*>(.*?)</p>", body)]
     paras = [p for p in paras if len(p) > 60 and not JUNK.search(p)]
@@ -191,20 +196,36 @@ def _sim(a, b):
     j = len(ta & tb) / len(ta | tb)
     shared = ea & eb
     return j >= .5 or (len(shared) >= 2 and j >= .3) or (len(shared) >= 1 and j >= .42)
+_WIN = 72*3600   # similar() is always False for reports more than 72h apart (_sim's first check) - used to skip pairs safely
+def _gsim(gi, gj):
+    return any(similar(x, y) for x in (gi[0], gi[-1]) for y in (gj[0], gj[-1]))
 def cluster(articles):
+    """Same result as the original greedy pass + restart-from-the-top merge loop, without the O(merges x groups^2) rescans:
+    groups stay ordered by their oldest report, so a scan for group i stops once group j starts >72h after i's newest report,
+    and after a merge only the pairs involving the changed group are re-checked, in the order the full restart would reach them."""
     arts = sorted(articles, key=lambda x: x["ts"]); groups = []
     for a in arts:
         for g in groups:
+            if g[-1]["ts"] < a["ts"] - _WIN: continue    # every candidate in g is older than the window
             if similar(a, g[0]) or any(similar(a, m) for m in g[-3:]): g.append(a); break
         else: groups.append([a])
-    merged = True
-    while merged:
-        merged = False
-        for i in range(len(groups)):
-            for j in range(i + 1, len(groups)):
-                if any(similar(x, y) for x in (groups[i][0], groups[i][-1]) for y in (groups[j][0], groups[j][-1])):
-                    groups[i] = sorted(groups[i] + groups.pop(j), key=lambda x: x["ts"]); merged = True; break
-            if merged: break
+    def merge(i, j): groups[i] = sorted(groups[i] + groups.pop(j), key=lambda x: x["ts"])
+    def first_j(i, start):
+        lim = groups[i][-1]["ts"] + _WIN
+        for j in range(start, len(groups)):
+            if groups[j][0]["ts"] > lim: return None
+            if _gsim(groups[i], groups[j]): return j
+        return None
+    i = 0
+    while i < len(groups):
+        j = first_j(i, i + 1)
+        if j is None: i += 1; continue
+        merge(i, j)
+        # a full restart would now re-check (k, i) for k < i first (only pairs with the changed group i can be new)
+        while True:
+            k = next((k for k in range(i) if groups[i][0]["ts"] - groups[k][-1]["ts"] <= _WIN and _gsim(groups[k], groups[i])), None)
+            if k is None: break
+            merge(k, i); i = k
     out = []
     for g in groups:
         g = sorted(g, key=lambda x: -x["ts"]); main = min(g, key=lambda x: (TIER(x["source"]) if TIER else 0, -x["ts"]))

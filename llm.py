@@ -11,6 +11,7 @@ CATS = ["WWE", "AEW", "TNA", "Indie", "Global"]
 TYPES = ["news", "results", "match", "quote", "opinion", "rumor", "listicle", "off-topic"]
 SYS = ("You are the editor of Wrestling Central News. Rewrite a pro-wrestling story in entirely your own words. "
  "Rules: never copy phrases from the source; never invent facts, names, numbers or quotes; no clickbait or questions. "
+ "If the text says the information comes from Fightful Select, credit it as \"per Fightful Select\" (likewise name the Wrestling Observer or PWInsider when it is their report). "
  "Return JSON: {\"headline\": <=14 words, engaging and accurate>, \"summary\": <2-3 sentences, all key facts, fresh wording>, "
  "\"type\": one of news|results|match|quote|opinion|rumor|listicle|off-topic, \"speaker\": name if type=quote else null, "
  "\"quote\": short exact quote from the text if type=quote else null, \"categories\": subset of [WWE,AEW,TNA,Indie,Global]}. "
