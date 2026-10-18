@@ -6,6 +6,7 @@ facts rewritten in WCN wording, each result credited and linked to its sources).
 import os, re, json, time, datetime, hashlib
 import chrome as C
 import live as LIVE
+import stale
 from chrome import e, SITE, ET
 ROOT = os.path.dirname(os.path.abspath(__file__)); PUB = os.path.join(ROOT, "public")
 CFG = json.load(open(os.path.join(ROOT, "events.json")))
@@ -40,7 +41,7 @@ def airings(show, start, end):
         if start <= dd <= end: out[dd] = {"time": x.get("time", s["time"]), "network": x.get("network", s["network"]), "note": x.get("note"), "note_es": x.get("note_es")}
     return dict(sorted(out.items()))
 def start_dt(d, hhmm): h, m = _hm(hhmm); return datetime.datetime(d.year, d.month, d.day, h, m, tzinfo=ET)
-def explicit_dates(text, ref):
+def explicit_dates(text, ref, span=10):
     out = []
     for m, d in re.findall(r"\b(1[0-2]|0?[1-9])/([12]\d|3[01]|0?[1-9])(?:/\d{2,4})?\b", text): out.append((int(m), int(d)))
     for mo, d in re.findall(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.? (\d{1,2})(?:st|nd|rd|th)?\b", text, re.I): out.append((_MON[mo[:3].lower()], int(d)))
@@ -54,16 +55,29 @@ def explicit_dates(text, ref):
         for y in (ref.year - 1, ref.year, ref.year + 1):
             try: dd = datetime.date(y, m, d)
             except ValueError: continue
-            if abs((dd - ref).days) <= 10: res.append(dd)
+            if abs((dd - ref).days) <= span: res.append(dd)
     return res
 def text_of(c): return " ".join([c.get("title", ""), c.get("raw_title", "")] + [u.get("title", "") for u in c.get("updates", [])[:3]])
+def ref_ts(show, c):
+    """When the story about THIS show was first reported: the earliest report whose own headline names the show.
+    A cluster's first_ts can be an earlier, looser report folded in (a Tuesday preview on a Friday-night injury story),
+    which used to pin the story to the previous week's episode. Falls back to first_ts."""
+    rx = SHOW_RX[show]; ts = []
+    if rx.search((c.get("raw_title") or "") + " " + (c.get("title") or "")): ts.append(c.get("lead_ts") or c["ts"])
+    ts += [u["ts"] for u in c.get("updates", []) if u.get("ts") and rx.search(u.get("title") or "")]
+    return min(ts) if ts else c.get("first_ts", c["ts"])
 def episode_for(show, c):
     """Which airing of `show` a story is about (date) or None."""
-    ts = c.get("first_ts", c["ts"]); t = datetime.datetime.fromtimestamp(ts, ET); txt = text_of(c)
+    ts = ref_ts(show, c); t = datetime.datetime.fromtimestamp(ts, ET); txt = text_of(c)
     window = airings(show, t.date() - datetime.timedelta(days=12), t.date() + datetime.timedelta(days=12))
     if not window: return None
-    for dd in explicit_dates(c.get("raw_title", "") + " " + c.get("title", ""), t.date()):
-        if dd in window: return dd
+    named = explicit_dates(c.get("raw_title", "") + " " + c.get("title", ""), t.date(), span=45)
+    for dd in named:
+        if dd in window or airings(show, dd, dd): return dd
+    for dd in named:   # outlets dating a show by the next day (UK time / upload date): '9/4 Results' for a Thursday 9/3 iMPACT
+        for x in (dd - datetime.timedelta(days=1), dd + datetime.timedelta(days=1)):
+            if x in window: return x
+    if named: return None   # the title names a date that isn't one of these airings ('9/30 Dynamite' on Oct 18, '10/17 NXT live event', 'Direct set for 11/5')
     past = [d for d, i in window.items() if start_dt(d, i["time"]) <= t]
     fut = [d for d, i in window.items() if start_dt(d, i["time"]) > t]
     prev = past[-1] if past else None; nxt = fut[0] if fut else None
@@ -77,6 +91,8 @@ def episode_for(show, c):
     live = prev and t <= start_dt(prev, window[prev]["time"]) + datetime.timedelta(hours=3, minutes=30)
     if live and not (kind == "match" and not re.search(r"tonight", title, re.I)): return prev
     if live: return next((d for d in fut if d >= t.date() + datetime.timedelta(days=4)), None)
+    if kind == "match" and PREV.search(title) and not re.search(r"results?\b", title, re.I):   # 'dark match announced for Monday's Raw' is forward-looking
+        return nxt if nxt and (nxt - t.date()).days <= 7 else None
     if kind == "results" or RES.search(txt): return prev if prev and (t.date() - prev).days <= 6 else None
     if kind == "match" or PREV.search(txt): return nxt if nxt and (nxt - t.date()).days <= 7 else None
     if prev and t - start_dt(prev, window[prev]["time"]) <= datetime.timedelta(hours=30): return prev
@@ -90,14 +106,22 @@ def event_for(c):
         if not (-4 <= (d - day).days <= 35 and re.search(ev["match"], txt, re.I)): continue
         # after the event, a weekly show's episode story that mentions it ("Bound for Glory fallout") belongs to the show
         if day > d and not re.search(ev["match"], title, re.I): continue
+        # before the event, results of some OTHER show ('Ospreay Retains ... at All Out' that merely mentions WrestleDream) aren't this event's
+        if day < d and (c.get("kind") or {}).get("type") == "results" and not re.search(ev["match"], title, re.I): continue
         if day > d and any(rx.search(title) for sh, rx in SHOW_RX.items() if SHOWS[sh]["brand"] in c.get("categories", [])) and re.search(r"fallout|after|following|go-home", title, re.I): continue
         return ev
     return None
+HUB_OV = os.path.join(ROOT, "hub_overrides.json")   # {"exclude": [{"links": [...], "why": "..."}]}: hand-removed from every event/show page
+def _excluded():
+    try: return {l for x in json.load(open(HUB_OV)).get("exclude", []) for l in x.get("links", [])}
+    except Exception: return set()
 def tag(clusters):
     """Sets c['hub'] = {'k': 'show'|'event', 'slug', 'date', 'path'} on stories about a specific episode or event."""
-    n = 0
+    n = 0; ex = _excluded()
     for c in clusters:
         c.pop("hub", None)
+        if ex and ({c.get("link")} | {u.get("link") for u in c.get("updates", [])}) & ex: continue
+        if stale.reason(c): continue   # an old article re-dated by a feed is never attached to a current episode/event page
         if c.get("kind", {}).get("type") == "quote" and not EP_HINT.search(c.get("raw_title", "")): continue
         ev = event_for(c)
         if ev:

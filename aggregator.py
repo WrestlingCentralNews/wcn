@@ -126,7 +126,7 @@ def on_topic(a):
     t = a["raw_title"]; b = (a.get("body") or "") + " " + (a.get("summary_src") or "")
     if classify(re.sub(r"\b(Mexico|Japan|Australia)\b", "", t)) or SIG.search(t): return True
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
-import enrich, editorial, llm, pages, vision, breaking
+import enrich, editorial, llm, pages, vision, breaking, stale
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
 IMG_CHECK_TOP = 60
 LONG_MAX_PER_RUN = 400
@@ -214,6 +214,9 @@ def run():
             if r and a.get("drop") != r: editorial.log_drop(a, r)
             a["drop"] = r; a["title"] = enrich.headline(a["raw_title"], a["kind"]["type"]); a["summary"] = enrich.summarize(a)
             a["ev"] = editorial.VERSION
+    for a in arts:   # an OLD article a feed re-dated (Google News re-indexing wwe.com/.../2017/...): never published, never on an event page
+        r = None if a.get("drop") else stale.reason(a)
+        if r: editorial.log_drop(a, r); a["drop"] = r; print("stale:", a["raw_title"][:70], "->", r, flush=True)
     # LLM rewrite pass: only articles without a cached rewrite, trusted/mid-tier, not rule-dropped; newest first
     todo = sorted([a for a in arts if not a.get("drop") and "llm" not in a and editorial.tier(a["source"]) < 3], key=lambda x: -x["ts"])[:LLM_MAX_PER_RUN]
     if todo and llm.budget_left() > 0:

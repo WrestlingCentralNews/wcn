@@ -1,0 +1,26 @@
+{
+ "_note": "Stories hand-removed from every show/event hub page (hubs.tag). Matched on any report link of the story. Keep 'why'.",
+ "exclude": [
+  {
+   "links": [
+    "https://www.pwinsider.com/article/212839/injury-at-wwe-nxt-last-night.html?p=1"
+   ],
+   "why": "NXT Sudbury live-event (house show) injury, not a TV episode",
+   "title": "Stacks Injured During NXT Main Event"
+  },
+  {
+   "links": [
+    "https://www.pwinsider.com/article/212771/wwe-adding-dark-matches-to-tv-tapings.html?p=1"
+   ],
+   "why": "generic 'WWE adding dark matches to TV tapings' note (+ NXT dark-match results folded in), not about one Raw",
+   "title": "WWE Adds Star Dark Match To Raw Taping"
+  },
+  {
+   "links": [
+    "https://www.allelitewrestling.com/post/aew-all-out-results-september-26-2026"
+   ],
+   "why": "AEW All Out (Sep 26) results, only mentions a WrestleDream match being set",
+   "title": "Ospreay Retains AEW World Title at All Out"
+  }
+ ]
+}
