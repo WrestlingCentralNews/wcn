@@ -25,6 +25,14 @@ SLUG_OK = {"Bleacher Report": r"wwe|aew|tna|nxt|\braw\b|-raw-|smackdown|wrestlem
 ACR = set("WWE AEW TNA NXT ROH NJPW AAA CMLL MLW GCW NWA PWG IWGP DDT NOAH AJPW TJPW PPV PLE TV US UK USA UFC WWF WCW ECW NCAA ESPN TBS TNT CEO NBC FOX".split())
 def get(url, t=15):
     return urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=t).read()[:2500000].decode("utf8", "ignore")
+def anchors(name, h):
+    """link -> longest anchor text seen for it on the listing page (the headline; used if the article page can't be read)"""
+    out = {}
+    for href, txt in re.findall(r'(?is)<a\b[^>]*href="([^"#]+)"[^>]*>(.*?)</a>', h):
+        l = urllib.parse.urljoin(LISTINGS[name][0], html.unescape(href)).split("?")[0]
+        t = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", txt))).strip()
+        if len(t) > len(out.get(l, "")): out[l] = t
+    return out
 def links(name, h):
     base, rx = LISTINGS[name][0], LISTINGS[name][1]
     out = []
@@ -67,8 +75,10 @@ def save(st):
 def fetch_all(status=None):
     """-> list of new items (aggregator.parse() shape minus id/categories, plus 'cat'), one pass over every listing."""
     st, now, out = load(), int(time.time()), []
+    A = {}
     def one(name):
-        try: return name, links(name, get(LISTINGS[name][0])), None
+        try:
+            h = get(LISTINGS[name][0]); A[name] = anchors(name, h); return name, links(name, h), None
         except Exception as e: return name, [], str(e)[:120]
     with ThreadPoolExecutor(5) as ex: res = list(ex.map(one, LISTINGS))
     todo = []
@@ -82,16 +92,23 @@ def fetch_all(status=None):
         fresh = [l for l in ls if l not in s["seen"]][:MAX_NEW_PER_RUN]
         for l in fresh: s["seen"][l] = now
         todo += [(name, l) for l in fresh]
+    nfail = [0]
     def art(nl):
         try: return nl, article(*nl)
         except Exception: return nl, None
     with ThreadPoolExecutor(8) as ex:
         for (name, l), a in ex.map(art, todo):
-            if not a: continue
+            if not a: nfail[0] += 1
+            if not a:   # article page unreadable (blocked/timeout): fall back to the listing's headline text
+                t = (A.get(name) or {}).get(l, "")
+                if len(t) < 15: continue
+                if t.isupper(): t = re.sub(r"[A-Za-z][A-Za-z']*", lambda m: m.group(0) if m.group(0) in ACR else m.group(0).capitalize(), t)
+                a = {"title": t, "desc": "", "image": None, "ts": _date(l, "")}
             if a["ts"] and a["ts"] < now - MAX_AGE_H * 3600: continue      # an old article newly linked from the page
             out.append({"title": a["title"], "summary": a["desc"], "link": l, "source": name, "ts": int(a["ts"]) if a["ts"] and a["ts"] <= now else None,
                         "image": a["image"], "cat": LISTINGS[name][2]})
     save(st)
+    if todo: print(f"pagesrc: {len(todo)} new links, {len(out)} items, {nfail[0]} article pages unreadable (listing headline used)", flush=True)
     return out
 if __name__ == "__main__":
     for name in LISTINGS:
