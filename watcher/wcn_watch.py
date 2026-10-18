@@ -47,7 +47,7 @@ def sources():
     for m in (editorial, pagesrc, aggregator): importlib.reload(m)
     out = [(n, u, "rss") for n, u in aggregator.FEEDS.items()]
     out += [(n, v[0], "page") for n, v in pagesrc.LISTINGS.items()]
-    return out, editorial.tier, pagesrc
+    return out, editorial, pagesrc
 def cget(url, meta):
     """conditional GET -> (status, body or None, new meta)"""
     h = {"User-Agent": UA, "Accept-Encoding": "identity"}
@@ -88,7 +88,7 @@ def active_runs():
     for x in runs: x["created"] = dt.datetime.fromisoformat(x["createdAt"].replace("Z", "+00:00")).timestamp()
     return [x for x in runs if x["status"] in ("queued", "in_progress", "pending", "waiting", "requested")]
 def poll(S):
-    srcs, tier, pagesrc = sources()
+    srcs, editorial, pagesrc = sources(); tier = editorial.tier
     F = S.setdefault("feeds", {}); now = time.time(); new = []
     def one(s):
         name, url, kind = s; m = F.get(name, {})
@@ -129,6 +129,10 @@ def poll(S):
             trusted = tier(src) <= 2
             if i["ts"] and i["ts"] < now - FRESH_H * 3600: continue
             if not trusted: continue
+            try:
+                why = editorial.verdict({"raw_title": i["title"]}) if kind == "rss" else None
+            except Exception: why = None
+            if why: log("  skip", f"({why})", f"[{src}]", i["title"][:100]); continue    # the site's rules would drop it anyway
             new.append({"feed": name, "source": src, "title": i["title"][:140], "link": i["link"], "ts": i["ts"], "seen_at": int(now)})
     T = S.get("titles", {})
     if len(T) > 5000: S["titles"] = dict(sorted(T.items(), key=lambda kv: -kv[1])[:4000])
