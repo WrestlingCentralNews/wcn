@@ -218,6 +218,50 @@ def show_desc(show, lang):
     s = SHOWS[show]; h, m = _hm(s["time"])
     if lang == "es": return f'{s["name"]} se emite {C.DIAS_PL[s["weekday"]]} a las {C.tfmt(h, m, lang)} por {s["network"]} (EE. UU.).'
     return f'{s["name"]} airs {C.DAYS_PL[s["weekday"]]} at {C.tfmt(h, m, lang)} on {s["network"]} (US).'
+def _isod(ts): return datetime.datetime.fromtimestamp(int(ts), datetime.timezone.utc).strftime("%Y-%m-%d")
+def _isot(ts): return datetime.datetime.fromtimestamp(int(ts), datetime.timezone.utc).isoformat(timespec="seconds")
+def cite(key, path, title, st, lang, aired=True, extra_src=None):
+    """'Cite this page' block for wiki editors + WebPage JSON-LD (datePublished/dateModified/citation). -> (html, [ld]) or ('', []).
+    Published = first live result or first story on the page (stable); updated = latest live update or story change.
+    Sources = every outlet behind the live results and the stories listed (name + link)."""
+    lv = LIVE.page_state(key) if LIVE else None
+    if not aired and not (lv and lv.get("shown")): return "", []   # previews aren't results: no citation block yet
+    pubs, mods, src = [], [], []
+    if lv and lv.get("shown"):
+        pubs.append(min(int(m["first_seen"]) for m in lv["shown"])); mods.append(int(lv.get("updated") or lv.get("checked") or lv["start"]))
+        for m in lv["shown"]: src += [(x.get("name"), x.get("url")) for x in m.get("sources", [])]
+    for x in st:
+        c = x["c"]; pubs.append(int(c.get("first_ts", c["ts"]))); mods.append(int(c["ts"]))
+        src += [(c.get("source"), c.get("link"))] + [(u.get("source"), u.get("link")) for u in c.get("updates", [])]
+    if not pubs: return "", []
+    if lv and lv.get("shown"): pubs = [int(lv["start"])]   # results page: published when the show's live coverage began (matches LiveBlogPosting)
+    else:
+        d0 = datetime.datetime.strptime(key[:10], "%Y-%m-%d").replace(tzinfo=ET).timestamp()
+        pubs = [p for p in pubs if p >= d0] or pubs          # results/coverage of the night itself, not earlier preview stories
+    if extra_src: src.append(extra_src)
+    seen, out = set(), []
+    for n, u in src:
+        if n and u and u.startswith("http") and u not in seen: seen.add(u); out.append((n, u))
+    out = out[:40]; pub, mod = min(pubs), max(mods + pubs); url = SITE + path
+    es = lang == "es"; tt = re.sub(r"\s*\|\s*WCN$", "", title)
+    cw = (f"{{{{cite web |url={url} |title={tt} |website=Wrestling Central News |date={_isod(pub)}"
+          + (f" |language=es" if es else "") + "}}")
+    lab = {"h": "Citar esta página", "t": "Título", "p": "Publicado", "u": "Actualizado", "l": "Enlace permanente", "s": "Fuentes originales", "w": "Plantilla de wiki"} if es else \
+          {"h": "Cite this page", "t": "Title", "p": "Published", "u": "Last updated", "l": "Permanent URL", "s": "Original sources", "w": "Wiki template"}
+    by = {}
+    for n, u in out: by.setdefault(n, []).append(u)
+    srcs = "".join(f'<li><b>{e(n)}</b>: ' + ", ".join(f'<a href="{e(u)}" rel="nofollow noopener" target="_blank">{e(re.sub(r"^https?://(www[.])?", "", u)[:70])}</a>' for u in us) + "</li>" for n, us in by.items())
+    h = (f'<section class="cite" id="cite"><h2>{lab["h"]}</h2><dl>'
+         f'<div><dt>{lab["t"]}</dt><dd>{e(tt)}</dd></div><div><dt>{"Publicación" if es else "Publisher"}</dt><dd>Wrestling Central News (WCN)</dd></div>'
+         f'<div><dt>{lab["p"]}</dt><dd><time datetime="{_isot(pub)}">{_isod(pub)}</time></dd></div>'
+         f'<div><dt>{lab["u"]}</dt><dd><time datetime="{_isot(mod)}">{_isod(mod)}</time></dd></div>'
+         f'<div><dt>{lab["l"]}</dt><dd><a href="{e(url)}">{e(url)}</a></dd></div></dl>'
+         f'<p class="cite-w"><small>{lab["w"]}:</small><code>{e(cw)}</code></p>'
+         + (f'<h3>{lab["s"]}</h3><ul class="cite-src">{srcs}</ul>' if srcs else "") + "</section>")
+    ld = {"@context": "https://schema.org", "@type": "WebPage", "name": tt, "url": url, "inLanguage": lang, "datePublished": _isot(pub), "dateModified": _isot(mod),
+          "publisher": {"@type": "Organization", "name": "Wrestling Central News", "url": SITE, "logo": {"@type": "ImageObject", "url": SITE + "logo.png"}},
+          "citation": [{"@type": "CreativeWork", "name": n, "url": u} for n, u in out]}
+    return h, [ld]
 LIVE_PAGES = {}
 def _live(key, lang, path, nm, dl, title, h1, body, ld):
     """Turn an event/episode page into a live results post (LIVE badge + match list + LiveBlogPosting) when we have live data."""
@@ -285,6 +329,7 @@ def build(clusters, tr_es=None):
             ld = [sports_event(f"{nm} ({dl})", d, info["time"], path, SHOWS[show]["brand"], aired, desc=desc, lang=lang), itemlist(st, lang)]
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             title, h1, body, ld = _live(f"{ds}-{show}", lang, path, nm, dl, title, h1, body, ld)
+            ch, cl = cite(f"{ds}-{show}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, image=img)
             eps.setdefault(show, []).append((d, path, len(st), aired, st))
         # ---- PLE / PPV event pages ----
@@ -315,6 +360,7 @@ def build(clusters, tr_es=None):
             ld = [sports_event(nm, d, hhmm, path, ev["brand"], aired, ev["venue"], ev["city"], desc, lang)] + ([itemlist(st, lang)] if st else [])
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             title, h1, body, ld = _live(f"{ev['date']}-{ev['slug']}", lang, path, nm, dl, title, h1, body, ld)
+            ch, cl = cite(f"{ev['date']}-{ev['slug']}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, active="upcoming", image=img)
             evs.append((ev, d, path, len(st), aired))
         # ---- evergreen show hubs ----

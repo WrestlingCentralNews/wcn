@@ -229,3 +229,10 @@ footer .nl-link{color:#F26A14;font-weight:700}
 
 /* mobile: keep social icons visible (wrap under language/live row) */
 @media(max-width:440px){.bar-r{flex-wrap:wrap;justify-content:flex-end;row-gap:6px;max-width:62%}.bar-r .social{display:flex;order:3}}
+
+.cite{margin:28px 0 8px;padding:16px 18px;background:var(--card);border:1px solid var(--line);border-radius:14px}
+.cite h2{font-size:1.05em;margin:0 0 10px}.cite h3{font-size:.95em;margin:14px 0 6px}
+.cite dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:0}
+.cite dt{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--mut)}.cite dd{margin:2px 0 0;word-break:break-all}
+.cite-w code{display:block;margin-top:4px;padding:8px 10px;border-radius:8px;background:rgba(0,0,0,.35);font-size:.8em;white-space:pre-wrap;word-break:break-all;user-select:all}
+.cite-src{margin:0;padding-left:18px;font-size:.85em}.cite-src li{margin:3px 0;word-break:break-all}
