@@ -238,8 +238,10 @@ def promotion(key, c):
         except re.error: pass
         return re.search(r"(?<![a-z])" + re.escape(k) + r"(?![a-z])", re.sub(r"\[[^]]*\]", "e", n).lower()) is not None
     brands = [b for b, v in editorial.ROSTER.items() if any(hit(n) for n in v.split("|"))]
-    if not brands: return None
     tp = promo_in(t)
+    if not brands:   # not on our roster lists (lists lag behind signings): the story itself says they compete/signed there
+        if tp and tp in ("wwe", "aew", "tna", "nxt", "roh") and re.search(r"(?i)\b(retains?|wins?|won|beats?|defeats?|debuts?|signs?|signed|captures?|crowned|champions?)\b", t): return tp
+        return None
     named = {k_ for k_, rx in PROMO_TXT if re.search(rx, t, re.I)}
     own = {b.lower() for b in brands} | ({"nxt"} if "WWE" in brands else set()) | ({"roh"} if "AEW" in brands else set())
     if tp and not named & own and re.search(r"(?i)\b(results?|card|tag match|show|event|tour|episode|teams? with|appears? (at|in|on))\b", t):
@@ -268,7 +270,12 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     cands = list(dict.fromkeys([u for u in [c.get("image")] + member_images if u]))
     k = "choice3|" + c["id"] + "|" + key + "|" + hashlib.md5("|".join(cands).encode()).hexdigest()[:8]; C = cache()
     bf = rank >= VISION_TOP and budget_ok and not guessed and backfill_on() # one-time backlog pass
-    if k in C and not (bf and not str(C[k].get("st", "")).startswith("key")): return C[k]["image"], C[k].get("credit"), "cached:" + str(C[k].get("st", ""))
+    if k in C and not (bf and not str(C[k].get("st", "")).startswith("key")):
+        if C[k].get("st") == "wcn-card" and not C[k].get("image") and not guessed:   # roster lists updated since: free re-check for the promotion card
+            pr = promotion(key, c)
+            if pr:
+                C[k] = {"image": PROMO_CARD.format(pr), "credit": None, "st": "promo-logo:" + pr, "key": key}; return C[k]["image"], None, "promo-logo:" + pr
+        return C[k]["image"], C[k].get("credit"), "cached:" + str(C[k].get("st", ""))
     if bf: rank = 0; fetch = True; _tl.bf = True # treated like a top card for this pass; checks counted against the backfill cap
     def done(img, st, cr=None, keep=True):
         if keep: C[k] = {"image": img, "credit": cr, "st": st, "key": key}
