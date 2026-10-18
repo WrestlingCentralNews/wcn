@@ -205,15 +205,21 @@ def redirects(clusters, tr, old_tr):
         x = old_tr.get(p["id"])
         if x: olds.append((f"es/noticias/{x.get('sl') or translate.slug_es(x['t'])}-{p['id']}.html", True))
         for u, es in olds:
-            if u not in (cur_es if es else cur_en) and u not in R: R[u] = {"links": _members(p), "lead": p["link"], "es": es, "at": now}
+            if u not in (cur_es if es else cur_en) and u not in R:
+                R[u] = {"links": _members(p), "lead": p["link"], "es": es, "at": now}
+                if es and p["id"] in tr and tr[p["id"]]["url"] != u:   # same id, new Spanish slug: the old slug names the OLD story
+                    ot = x.get("en") or x["t"]       # English headline the old translation was made from (newer cache entries), else the Spanish one
+                    best = max(clusters, key=lambda c: translate.topic_score(ot, c["title"]))
+                    if translate.topic_score(ot, best["title"]) >= 0.3: R[u]["to_id"] = best["id"]
+                    else: R[u]["to_id"] = "-"       # no confident match: Spanish home page, never a different story
     by_link = {}
     for c in clusters:
         for l in _members(c): by_link.setdefault(l, c)
     out = {}
     for u, r in R.items():
         if now - r.get("at", now) > REDIRECT_DAYS * 86400 or u in cur_en or u in cur_es: continue   # expired, or the URL is live again
-        c = by_link.get(r.get("lead"))
-        if not c:
+        c = None if r.get("to_id") == "-" else next((x for x in clusters if x["id"] == r.get("to_id")), None) or by_link.get(r.get("lead"))
+        if not c and r.get("to_id") != "-":
             cnt = {}
             for l in r.get("links", []):
                 if l in by_link: cnt[by_link[l]["id"]] = cnt.get(by_link[l]["id"], 0) + 1
