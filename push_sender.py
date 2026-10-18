@@ -204,7 +204,7 @@ def main():
     items = json.load(open(NEWS)).get("items", [])
     try: items = live_candidates(now) + items
     except Exception as ex: log(f"live candidates error (ignored): {ex}")
-    pool = sorted([c for c in items if c.get("url") and fresh(c, now)], key=score, reverse=True)
+    pool = sorted([c for c in items if c.get("url") and fresh(c, now) and not c.get("resplit")], key=score, reverse=True)   # re-clustered, not new
     recent = sorted(v["ts"] for v in s["pushed"].values() if v.get("sent") and now - v["ts"] < 86400)
     lt = local(now)
     gate = None

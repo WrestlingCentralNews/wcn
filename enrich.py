@@ -170,6 +170,8 @@ def _recap(t): return bool(_SHOW_RECAP.search(t))
 def _pp(raw, title): return persons(canon(raw)) | persons(canon(title))
 def similar(a, b):
     if _different_match(a, b): return False
+    sa, sb = shows(a["raw_title"]), shows(b["raw_title"])
+    if sa and sb and not sa & sb: return False   # different shows/events ('TNA Destination X' vs 'NJPW Power Struggle')
     if _sim(a, b): return True
     if a.get('llm') and b.get('llm'): return _sim({**a, 'raw_title': a['title']}, {**b, 'raw_title': b['title']})
     return False

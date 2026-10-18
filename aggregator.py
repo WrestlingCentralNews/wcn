@@ -249,6 +249,16 @@ def run():
         import live; ch = live.update(arts)
         if ch: print("live: updated", ch, flush=True)
     except Exception as ex: print("live: error (ignored)", repr(ex)[:200], flush=True)
+    # previous run's stories: redirect stubs for URLs that change, and 'resplit' flags. A story whose id is new but whose every
+    # report was already on the site (a split/re-cluster, not news) must never trigger an X post or push alert; the flag is sticky.
+    try: prev = json.load(open(OUT)).get("items", [])
+    except Exception: prev = []
+    if prev:
+        pl = {l for p in prev for l in pages._members(p)}; pid = {p["id"]: p for p in prev}
+        for c in clusters:
+            p = pid.get(c["id"])
+            if (p and p.get("resplit")) or (not p and all(l in pl for l in pages._members(c))): c["resplit"] = True
+    pages.PREV = prev
     pages.assign_urls(clusters); pages.build(clusters); llm.save_usage()
     try:
         import hubs, live

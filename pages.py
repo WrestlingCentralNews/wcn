@@ -186,14 +186,62 @@ def build_newsletter_page(clusters):
 <script src="/newsletter.js" defer></script><script src="/pwa.js" defer></script><script src="/push.js" defer></script></body></html>'''
     os.makedirs(os.path.join(PUB, "newsletter"), exist_ok=True)
     open(os.path.join(PUB, "newsletter", "index.html"), "w").write(html_)
+# ---------- redirect stubs for story URLs that changed (re-clustering splits/merges, new lead headline) ----------
+PREV = []            # previous run's news.json items (set by aggregator before build)
+REDIRECTS = os.path.join(ROOT, "data", "redirects.json")   # {old_rel_url: {links, lead, es, at, to}}
+REDIRECT_DAYS = 60
+def _members(c): return [c["link"]] + [u["link"] for u in c.get("updates", [])]
+def redirects(clusters, tr, old_tr):
+    """Record every story URL (EN + ES) from the previous run that no longer exists and point it at the best matching current
+    story: the one holding the old lead report, else the most shared reports, else the home page. Stubs never enter sitemaps."""
+    import translate
+    try: R = json.load(open(REDIRECTS))
+    except Exception: R = {}
+    now = int(time.time())
+    cur_en = {c["url"] for c in clusters}; cur_es = {x["url"] for x in tr.values()}
+    for p in PREV:
+        if not p.get("url"): continue
+        olds = [(p["url"], False)]
+        x = old_tr.get(p["id"])
+        if x: olds.append((f"es/noticias/{x.get('sl') or translate.slug_es(x['t'])}-{p['id']}.html", True))
+        for u, es in olds:
+            if u not in (cur_es if es else cur_en) and u not in R: R[u] = {"links": _members(p), "lead": p["link"], "es": es, "at": now}
+    by_link = {}
+    for c in clusters:
+        for l in _members(c): by_link.setdefault(l, c)
+    out = {}
+    for u, r in R.items():
+        if now - r.get("at", now) > REDIRECT_DAYS * 86400 or u in cur_en or u in cur_es: continue   # expired, or the URL is live again
+        c = by_link.get(r.get("lead"))
+        if not c:
+            cnt = {}
+            for l in r.get("links", []):
+                if l in by_link: cnt[by_link[l]["id"]] = cnt.get(by_link[l]["id"], 0) + 1
+            if cnt: k = max(cnt, key=cnt.get); c = next(x for x in clusters if x["id"] == k)
+        if c: to = (tr[c["id"]]["url"] if r["es"] and c["id"] in tr else c["url"])
+        else: to = "es/" if r["es"] else ""
+        out[u] = {**r, "to": to}
+    os.makedirs(os.path.dirname(REDIRECTS), exist_ok=True); json.dump(out, open(REDIRECTS, "w"))
+    return out
+def stub(to):
+    t = SITE + to
+    return (f'<!doctype html><html><head><meta charset="utf-8"><title>Moved | Wrestling Central News</title>'
+            f'<link rel="canonical" href="{e(t)}"><meta http-equiv="refresh" content="0; url=/{e(to)}">'
+            f'<script>location.replace("/{e(to)}"+location.hash)</script></head>'
+            f'<body><p>This story moved: <a href="/{e(to)}">{e(t)}</a></p></body></html>')
 def build(clusters):
     import translate, extras
     build_sw()
     imgmeta.run(clusters); imgmeta.apply(clusters)   # cards, story heroes, og:image and NewsArticle use the largest version of each photo
     nh = hubs.tag(clusters)
+    old_tr = translate.load()      # before run() prunes ids that no longer exist (needed for the old Spanish URLs)
     tr = translate.run(clusters)   # {cluster_id: {t, s, url, p}} Spanish, cached; only new/changed stories cost anything
     tmp = SD + ".new"; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
     ESD = os.path.join(PUB, "es", "noticias"); etmp = ESD + ".new"; shutil.rmtree(etmp, ignore_errors=True); os.makedirs(etmp)
+    red = redirects(clusters, tr, old_tr)
+    for u, r in red.items():
+        d = etmp if u.startswith("es/noticias/") else tmp if u.startswith("story/") else None
+        if d and not os.path.exists(os.path.join(d, os.path.basename(u))): open(os.path.join(d, os.path.basename(u)), "w").write(stub(r["to"]))
     bycat = {}
     for c in clusters: bycat.setdefault(c["categories"][0], []).append(c)
     for c in clusters:
@@ -234,5 +282,7 @@ def build(clusters):
     idx = {p: h for p, h in hub_pages.items()}
     idx.update({p: "static" for p in static}); idx.update({tr[c["id"]]["url"]: "story" for c in clusters if c["id"] in tr})
     idx.update({"es/feed.xml": "feed", "sitemap-news.xml": "news-" + str(int(time.time() // 21600))})
+    idx.update({u: "redirect:" + r["to"] for u, r in red.items()})   # moved story URLs: pinged once, and again if their target changes
     os.makedirs(os.path.join(ROOT, "data"), exist_ok=True); json.dump(idx, open(os.path.join(ROOT, "data", "indexnow_pages.json"), "w"))
+    print(f"pages: redirect stubs {len(red)}", flush=True)
     print(f"pages: hubs tagged {nh} stories, {len(hub_pages)} hub pages, es stories {len(tr)}, news sitemap {n_news}", flush=True)
