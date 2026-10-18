@@ -75,14 +75,21 @@ def sn_item(c):
     if k.get("type") == "quote" and k.get("who") and k.get("quote"): body += f'<blockquote><p>“{e(k["quote"])}”</p><cite>— {e(k["who"])}</cite></blockquote>'
     body += "".join(f"<p>{e(p)}</p>" for p in paras if p)
     srcs = list(dict.fromkeys([(c.get("source"), c.get("link"))] + [(u.get("source"), u.get("link")) for u in c.get("updates", [])]))
-    srcs = [(n, l) for n, l in srcs if n and l and l.startswith("http")][:8]
+    srcs = [(n, l) for n, l in srcs if n and l and l.startswith("http")][:3]   # validator warns on too many links
     if srcs: body += "<p><small>Sources: " + ", ".join(f'<a href="{e(l)}">{e(n)}</a>' for n, l in srcs) + "</small></p>"
     cats = ",".join(dict.fromkeys(list(c["categories"]) + ["wrestling"]))
     return (f"<item><title>{xe(c['title'])}</title><link>{xe(url)}</link><guid isPermaLink=\"true\">{xe(url)}</guid>"
             f"<description>{xe(desc)}</description><pubDate>{rfc822(c.get('first_ts', c['ts']))}</pubDate>"
             f"<content:encoded><![CDATA[{body.replace(']]>', ']]&gt;')}]]></content:encoded>"
             f"<category>{xe(cats)}</category><dc:creator>WCN Staff</dc:creator><dc:language>en</dc:language>"
-            f'<media:thumbnail url="{xe(img)}"/><media:status>active</media:status></item>')
+            f'<media:thumbnail url="{xe(img)}"/><media:status>active</media:status>'
+            f"<snf:analytics><![CDATA[{sn_ga(url, c['title'])}]]></snf:analytics></item>")
+SN_GA = "G-VXM9BRSC0B"   # public GA4 measurement id (same as the site); SmartView pageviews tagged source=smartnews
+def sn_ga(url, title):
+    j = lambda v: json.dumps(v).replace("</", "<\\/").replace("]]>", "]]\\u003e")
+    return (f"<script>(function(){{var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id={SN_GA}';document.head.appendChild(s)}})();window.dataLayer=window.dataLayer||[];"
+            f"function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{SN_GA}',{{page_location:{j(url)},page_title:{j(title)},"
+            "campaign_source:'smartnews',campaign_medium:'referral',campaign_name:'smartview'});</script>")
 def build_smartnews(clusters):
     """SmartNews SmartFormat v2.2 feed: /feed/smartnews.xml (English stories first published in the last 30 days, newest first)."""
     now = time.time()
