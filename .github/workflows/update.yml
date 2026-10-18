@@ -49,15 +49,6 @@ jobs:
           X_ACCESS_TOKEN: "${{ secrets.X_ACCESS_TOKEN }}"
           X_ACCESS_TOKEN_SECRET: "${{ secrets.X_ACCESS_TOKEN_SECRET }}"
         run: python live_x.py
-      - name: One-time owner-approved X posts (each posts once ever; never fails the run)
-        continue-on-error: true
-        env:
-          X_POST_ENABLED: "${{ vars.X_POST_ENABLED }}"
-          X_API_KEY: "${{ secrets.X_API_KEY }}"
-          X_API_SECRET: "${{ secrets.X_API_SECRET }}"
-          X_ACCESS_TOKEN: "${{ secrets.X_ACCESS_TOKEN }}"
-          X_ACCESS_TOKEN_SECRET: "${{ secrets.X_ACCESS_TOKEN_SECRET }}"
-        run: python x_oneoff.py
       - name: Push breaking news via OneSignal (never fails the run)
         continue-on-error: true
         env:
