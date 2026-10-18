@@ -16,7 +16,7 @@ try:
     from zoneinfo import ZoneInfo; ET = ZoneInfo("America/New_York")
 except Exception: ET = datetime.timezone(datetime.timedelta(hours=-4))
 UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36 WCN-results/1.0"}
-PPV_H, WEEKLY_H, PRE_MIN = 3.5, 2.5, 15
+PPV_H, WEEKLY_H, PRE_MIN = 4, 2.5, 15   # PPVs often run ~4h from the main-card start (WrestleDream 2026 main event started 11:45 PM ET)
 COLLECT_H = 8          # keep collecting (on the normal 15-min runs) this long after start so the permanent page is complete
 FEEDS = {"Wrestling Observer": "https://www.f4wonline.com/feed", "Wrestling Inc": "https://www.wrestlinginc.com/feed/",
          "Fightful": "https://www.fightful.com/rss.xml"}
@@ -109,7 +109,7 @@ def lines_of(page):
     t = html.unescape(re.sub(r"<[^>]+>", " ", s))
     return [re.sub(r"\s+", " ", l).strip() for l in t.split("\n") if l.strip()]
 DEF = r"(?:def\.|defeated|defeats)"
-TITLE_RX = re.compile(r"(?i)\b(champion(?:ship)?s?|title)\b")
+TITLE_RX = re.compile(r"(?i)\b(champion(?:ship)?s?|titles?)\b")
 CHANGE_RX = re.compile(r"(?i)\b(new (?:\w+ )?champions?|to (?:win|capture|become)|wins? the|captur(?:e|es|ed)|crowned|title change|dethron)")
 RETAIN_RX = re.compile(r"(?i)\b(retain(?:s|ed)?|successful(?:ly)? defen[cs]e|still (?:the )?champion)")
 NOTE = re.compile(r"(?i)^(?:result|match result|winner|winners)\s*:")
@@ -120,7 +120,7 @@ def clean_side(s):
     return s
 def split_method(rest):
     """rest = text after the loser -> (loser, method_text)."""
-    m = re.search(r"(?i)\s+(?:via|by|with|when|after|following|to (?:retain|win|capture|become|advance|earn)|in\s+\d|\(\d|\d\s*-\s*\d|- |– |— )", rest)
+    m = re.search(r"(?i)\s+(?:via|by|with|when|after|following|to (?:retain|win|capture|become|advance|earn)|in\s+\d|\(\d|\d\s*-\s*\d|\d\s+falls?\s+to\s+\d|- |– |— )", rest)
     if not m: return rest, ""
     return rest[:m.start()], rest[m.start():].strip()
 def finish(method, line):
@@ -164,6 +164,12 @@ def card_of(lines):
         stip = clean_side(m.group("stip") or ""); rest = m.group("rest")
         if stip and re.search(r"(?i)\b(?:says|said|update|tonight|watch)\b", stip): continue
         sides = [x.strip() for x in re.split(r"\s+vs\.?\s+", rest) if x.strip()]
+        if len(sides) >= 2:   # drop "... in a 2-out-of-3 Falls Match for the AEW Trios Titles" tails before the length check
+            ft0 = re.search(r"(?i)\s+(?:for|with) (?:the |his |her |their )?((?:[\w'’.-]+ ){0,6}(?:title|championship)s?)\b.*$", sides[-1])
+            if ft0:
+                if not stip: stip = clean_side(ft0.group(1))
+                sides[-1] = sides[-1][:ft0.start()]
+            sides[-1] = re.sub(r"(?i)\s+in an? [^()]{0,60}?match$", "", sides[-1]).strip()
         if len(sides) < 2 or any(len(x) > 160 or len(x.split()) > 18 for x in sides): continue
         if re.search(r"(?i)headlined|results are|listed below|will (?:face|take on)|\bcard\b", rest): continue
         if re.search(r"(?i)^(?:video|promo|package|backstage|vignette)|is shown|later tonight", " ".join(sides)): continue
@@ -226,14 +232,17 @@ def parse_page(page):
                 fen, fes = finish(rest, line)
                 r = {"winner": w, "loser": "", "stip": "", "title": ti, "fin_en": fen, "fin_es": fes, "who": "", "need_card": True}
         if r is None:
-            m = re.match(r"(?i)^winners?\s*:\s*(.{3,120})$", line)                 # Wrestling Inc: "Winner(s): X" after the play-by-play
+            m = re.match(r"(?i)^winners?(?P<fall>\s+of\s+(?:the\s+)?(?:fall|round)\s+[\w-]+)?\s*(?P<par>\((?:and\s+)?(?:still|new)[^)]*\))?\s*:\s*(.{3,120})$", line)   # Wrestling Inc: "Winner(s) [(and still|new)]: X"
+            if m and m.group("fall") and not m.group("par"): m = None   # an intermediate fall, not the match result
             if m:
                 ctx = " ".join(lines[max(0, i - 3):i])
-                w = clean_side(re.split(r"(?i),? (?:and|&) (?:new|still)\b|,\s*(?:new|still)\b", m.group(1))[0])
-                fen, fes = finish("", ctx[-400:])
-                r = {"winner": re.sub(r"\s*\(c\)", "", w), "loser": "", "stip": "", "title": None, "fin_en": fen, "fin_es": fes, "who": ""}
-                if re.search(r"(?i)\b(?:new|and new) (?:\w+ )*champions?\b", m.group(1) + " " + ctx[-300:]): r["title"] = "change"
-                elif re.search(r"(?i)\b(?:and still|retain)", m.group(1) + " " + ctx[-200:]): r["title"] = "retain"
+                w = clean_side(re.split(r"(?i),? (?:and|&) (?:new|still)\b|,\s*(?:new|still)\b", m.group(3))[0])
+                last = re.split(r"(?<=[.!?])\s+", ctx.strip())[-1] if ctx.strip() else ""   # only the finishing sentence: earlier play-by-play mentions near-falls, "the referee stops him" etc.
+                fen, fes = finish("", last)
+                r = {"winner": re.sub(r"\s*\(c\)", "", w), "loser": "", "stip": "", "title": None, "fin_en": fen, "fin_es": fes, "who": "", "wl": True}
+                par = m.group("par") or ""
+                if re.search(r"(?i)\band new\b", par) or re.search(r"(?i)\b(?:new|and new) (?:\w+ )*champions?\b", m.group(3) + " " + ctx[-300:]): r["title"] = "change"
+                elif re.search(r"(?i)\band still\b", par) or re.search(r"(?i)\b(?:and still|retain)", m.group(3) + " " + ctx[-200:]): r["title"] = "retain"
         if r:
             if pre_sec: r["pre"] = True
             local = [c for c in card if c["idx"] < i and i - c["idx"] <= 80]
@@ -325,6 +334,9 @@ def update(store_articles=(), now=None):
         nowi = int(time.time())
         for r in reports:
             m = next((x for x in st["matches"] if same(x, r)), None)
+            if m is None and r.get("wl"):   # "Winner(s): X" lines take the loser from the match header, which may use a team name ("The Don Callis Family")
+                m = next((x for x in st["matches"] if _ov(x["winner"], r["winner"]) >= 0.5), None)
+                if m is None and any(x.get("loser") and not x.get("wl") for x in reports): continue   # new matches come from full result lines
             if m is None and not r.get("loser") and not r.get("field") and any(x.get("loser") for x in reports): continue   # winner-only lines just corroborate
             if m is None:
                 m = {k: r.get(k) for k in ("winner", "loser", "stip", "title", "fin_en", "fin_es", "who", "field", "move")}
@@ -336,6 +348,8 @@ def update(store_articles=(), now=None):
             m.setdefault("pos", {})[r["src"]] = r["pos"]
             for k in ("loser", "stip", "fin_en", "fin_es", "who", "move"):
                 if not m.get(k) and r.get(k): m[k] = r[k]; m["updated"] = nowi
+            if r.get("loser") and m.get("loser", "").startswith(r["loser"]) and len(m["loser"]) > len(r["loser"]):   # parser fix trimmed junk ("... 2 falls to 1")
+                m["loser"] = r["loser"]; m["updated"] = nowi
             if r.get("title") and m.get("title") != r["title"] and (m.get("title") is None or r["title"] == "change"): m["title"] = r["title"]; m["updated"] = nowi
             if len(r.get("winner", "")) > len(m["winner"]) and same(r, m): m["winner"] = r["winner"]
             if not any(s["name"] == r["src"] for s in m["sources"]): m["sources"].append({"name": r["src"], "url": r["url"]}); m["updated"] = nowi
