@@ -226,3 +226,6 @@ footer .nl-link{color:#F26A14;font-weight:700}
 .live-list .tc{background:#f5c518;color:#111;font-weight:800;padding:.1em .45em;border-radius:4px;font-size:.8em}.live-list .tr{background:rgba(255,255,255,.15);padding:.1em .45em;border-radius:4px;font-size:.8em}
 .live-list .stip{opacity:.85}.live-note{font-size:.82em;opacity:.7;margin-top:.8rem}
 .live-list .pre{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);padding:.05em .4em;border-radius:4px;font-size:.75em;letter-spacing:.04em}
+
+/* mobile: keep social icons visible (wrap under language/live row) */
+@media(max-width:440px){.bar-r{flex-wrap:wrap;justify-content:flex-end;row-gap:6px;max-width:62%}.bar-r .social{display:flex;order:3}}
