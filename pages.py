@@ -103,6 +103,42 @@ def build_smartnews(clusters):
            + "".join(sn_item(c) for c in its) + "</channel></rss>\n")
     os.makedirs(os.path.join(PUB, "feed"), exist_ok=True)
     open(os.path.join(PUB, "feed", "smartnews.xml"), "w").write(xml)
+LIVE_AFTER_H = 6
+def live_target(lv, now=None):
+    """Where /live/ sends people: the show that's live now, else a show that ended < LIVE_AFTER_H ago (its results page), else None (homepage).
+    -> {"path", "name", "key", "until"} ('until' = unix time after which the homepage is right again; the page JS honours it even if a build is late)."""
+    import live
+    now = time.time() if now is None else now
+    if lv:
+        x = lv[0]; st = live.load(x["key"]) or {}
+        return {"path": x["en"], "name": x["name"], "key": x["key"], "until": int(st.get("end", now) + LIVE_AFTER_H * 3600), "live": True}
+    best = None
+    for f in (os.listdir(live.LIVE_DIR) if os.path.isdir(live.LIVE_DIR) else []):
+        if not f.endswith(".json"): continue
+        st = live.load(f[:-5]) or {}
+        if not st.get("start") or not (st["start"] <= now <= st.get("end", st["start"]) + LIVE_AFTER_H * 3600): continue
+        if not any(m.get("sources") and not m.get("conflict") for m in st.get("matches", [])): continue
+        path = f"events/{st['key']}/"
+        if not os.path.exists(os.path.join(PUB, path, "index.html")): continue
+        if not best or st["start"] > best[0]: best = (st["start"], {"path": path, "name": st.get("name", st["key"]), "key": st["key"], "until": int(st["end"] + LIVE_AFTER_H * 3600), "live": False})
+    return best[1] if best else None
+def build_live_redirect(target):
+    """/live/: permanent 'link in bio' URL. Baked target (meta refresh + canonical) + JS that re-checks /live.json so it's right between builds."""
+    url = SITE + (target["path"] if target else "")
+    lab = (f"Go to tonight's results: {target['name']}" if target else "Go to the WCN homepage")
+    tj = json.dumps({"p": "/" + target["path"], "u": target["until"]} if target else None)
+    js = ("(function(){var b=" + tj + ",go=function(p){location.replace(p+location.hash)},n=Date.now()/1000,"
+          "pick=function(t){return t&&t.until>n?'/'+t.path:'/'},done=0,fb=function(){if(!done){done=1;go(b&&b.u>n?b.p:'/')}};"
+          "setTimeout(fb,1500);fetch('/live.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(!done){done=1;go(pick(d.target))}}).catch(fb)})();")
+    h = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+         '<meta name="robots" content="noindex,follow"><title>WCN Live Results</title>'
+         f'<link rel="canonical" href="{e(url)}"><meta http-equiv="refresh" content="3;url={e(url)}">'
+         '<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0d10;color:#eee;font:16px/1.4 system-ui,sans-serif;text-align:center}'
+         'a{color:#7cd618;font-weight:700}</style>'
+         f'<script>{js}</script></head><body><main><p>Taking you to live results…</p><p><a href="{e(url)}">{e(lab)}</a></p>'
+         f'<p><a href="{SITE}" style="color:#aaa;font-weight:400">WCN homepage</a></p></main></body></html>')
+    os.makedirs(os.path.join(PUB, "live"), exist_ok=True)
+    open(os.path.join(PUB, "live", "index.html"), "w").write(h)
 def feed_links(cat=None):
     s = f'<link rel="alternate" type="application/rss+xml" title="Wrestling Central News" href="{SITE}feed.xml">'
     if cat in FEED_CATS: s += f'<link rel="alternate" type="application/rss+xml" title="Wrestling Central News: {cat}" href="{SITE}feed/{FEED_CATS[cat]}.xml">'

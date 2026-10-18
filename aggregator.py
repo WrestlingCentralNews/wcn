@@ -272,7 +272,9 @@ def run():
     try:
         import hubs, live
         lv = [{"key": k, "name": (live.load(k) or {}).get("name", k), "en": v.get("en"), "es": v.get("es")} for k, v in hubs.LIVE_PAGES.items()]
-        json.dump({"updated": int(time.time()), "live": lv}, open(os.path.join(os.path.dirname(OUT), "live.json"), "w"), ensure_ascii=False)
+        target = pages.live_target(lv)
+        json.dump({"updated": int(time.time()), "live": lv, "target": target}, open(os.path.join(os.path.dirname(OUT), "live.json"), "w"), ensure_ascii=False)
+        pages.build_live_redirect(target)
     except Exception as ex: print("live.json: error (ignored)", repr(ex)[:200], flush=True)   # build() runs the Spanish translations: record their spend
     for c in clusters: c.pop("long", None)
     tmp = OUT + ".tmp"
