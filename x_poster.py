@@ -178,35 +178,75 @@ def post_tweet(text, media_ids=None):
         except Exception: pass
         return e.code, body, dict(e.headers)
 
-# --- one-time photo test (owner-approved 2026-10-18): the next regular story post carries the card photo -----------------
-# Pending while S["x_photo_test_id"] != PHOTO_TEST_ID; cleared (x_photo_test_pending=False) after one successful photo post.
-PHOTO_TEST_ID = "2026-10-18-first-photo"
-PHOTO_TEST_MAX_TRIES = 3
+# (the one-time photo test of 2026-10-18 is done: tweet 2111693639889899743; every post now carries a photo, see below)
 PHOTO_OK = re.compile(r"^(?:cached:)?(?:key-|promo-logo:|no-names-promo:|override$)")   # key person confirmed, promotion logo card, or hand-picked
 WCN_CARD = re.compile(r"(?i)/img/(?:og|wcn|default)[^/]*\.(?:png|jpe?g)$")
 UA_IMG = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36", "Accept": "image/jpeg,image/png,image/webp;q=0.9,image/gif;q=0.8"}
+# --- photo on EVERY post (owner rule 2026-10-18 06:20 UTC): the image the site shows for that story --------------------------
+# Only the site's own image when it is known to match the story (key person confirmed/labelled, the promotion logo card, show
+# art, hand-picked, or a no-names story's own report photo). A photo the site could NOT confirm shows the story's key person
+# ('person-photo-unverified' - the Austin Creed/Kofi mix-up kind) is never posted: the promotion logo card is used instead,
+# else the site's default WCN card. If every download fails, or the upload fails, the post goes out text-only (never skipped).
+SITE_IMG_OK = re.compile(r"^(?:cached:)?(?:key-|promo-logo:|no-names-promo|no-names$|override$|event-art$)")
+SITE_DEFAULT_IMG = "https://wrestlingcentralnews.com/og-image.jpg"
+def photo_candidates(c, extra_text=""):
+    """-> [(url, why)] in order of preference for this card (deduped)."""
+    import vision
+    out = []
+    u, st = c.get("image") or "", c.get("image_status") or ""
+    if u and SITE_IMG_OK.match(st) and not WCN_CARD.search(u): out.append((u, "site:" + st))
+    pr = vision.promo_in(" ".join([c.get("title") or "", c.get("raw_title") or "", extra_text]))
+    if pr: out.append((vision.PROMO_CARD.format(pr), "promo-logo:" + pr))
+    out.append((SITE_DEFAULT_IMG, "site-default"))
+    seen = set(); return [x for x in out if not (x[0] in seen or seen.add(x[0]))]
+PHOTO_BUDGET_S = 30   # owner rule: download + upload together get 30 s, then the post goes out text-only (all posts, BREAKING too)
+def attach_photo(cands, src="x_poster", budget=None):
+    """Download the first candidate that works (downloads are free), upload it once (1 media request, logged in the ledger),
+    all within PHOTO_BUDGET_S seconds in total. -> (media_id or None, url, why, error or None)"""
+    import threading
+    budget = PHOTO_BUDGET_S if budget is None else budget
+    deadline = time.time() + budget; res = {}
+    def work():
+        errs = []
+        for u, why in cands:
+            left = deadline - time.time()
+            if left <= 1: errs.append("time budget used up"); break
+            try: data = fetch_image(u, timeout=left)
+            except Exception as ex: errs.append(f"{why}: {repr(ex)[:120]}"); continue
+            left = deadline - time.time()
+            if left <= 1: errs.append("time budget used up before upload"); break
+            mid, err = upload_media(u, src, data, timeout=left)
+            res["r"] = (mid, u, why, err); return
+        res["r"] = (None, None, None, "no image could be downloaded: " + "; ".join(errs)[:300])
+    th = threading.Thread(target=work, daemon=True); th.start(); th.join(max(0.0, deadline - time.time()))
+    if th.is_alive() or "r" not in res:
+        return None, None, None, f"photo download+upload exceeded {budget:.0f}s - text-only"
+    if time.time() > deadline + 0.5: return None, None, None, f"photo exceeded {budget:.0f}s - text-only"
+    return res["r"]
 def photo_ok(c):
     u, st = c.get("image") or "", c.get("image_status") or ""
     return bool(u) and bool(PHOTO_OK.match(st)) and not WCN_CARD.search(u)
-def fetch_image(u):
+def fetch_image(u, timeout=30):
     """-> (bytes, mime) of a JPEG/PNG/WEBP/GIF under 5 MB, or raises."""
     req = urllib.request.Request(u, headers=UA_IMG)
-    b = urllib.request.urlopen(req, timeout=30).read(5 * 1024 * 1024 + 1)
+    b = urllib.request.urlopen(req, timeout=timeout).read(5 * 1024 * 1024 + 1)
     if len(b) > 5 * 1024 * 1024: raise ValueError("image over 5 MB")
     if b[:3] == b"\xff\xd8\xff": return b, "image/jpeg"
     if b[:8] == b"\x89PNG\r\n\x1a\n": return b, "image/png"
     if b[:4] == b"RIFF" and b[8:12] == b"WEBP": return b, "image/webp"
     if b[:6] in (b"GIF87a", b"GIF89a"): return b, "image/gif"
     raise ValueError("not a jpeg/png/webp/gif: " + repr(b[:12]))
-def upload_media(u, src="x_poster"):
+def upload_media(u, src="x_poster", data=None, timeout=60):
     """One-shot v2 upload (POST /2/media/upload, JSON body, base64): 1 media request. -> (media_id or None, error or None)."""
-    try: b, mime = fetch_image(u)
-    except Exception as ex: return None, "image fetch failed: " + repr(ex)[:200]
+    if data: b, mime = data
+    else:
+        try: b, mime = fetch_image(u)
+        except Exception as ex: return None, "image fetch failed: " + repr(ex)[:200]
     url = "https://api.x.com/2/media/upload"
     req = urllib.request.Request(url, data=json.dumps({"media": base64.b64encode(b).decode(), "media_category": "tweet_image", "media_type": mime}).encode(),
                                  method="POST", headers={"Authorization": oauth_header("POST", url), "Content-Type": "application/json"})
     try:
-        r = urllib.request.urlopen(req, timeout=60); code = r.status; body = json.load(r)
+        r = urllib.request.urlopen(req, timeout=timeout); code = r.status; body = json.load(r)
     except urllib.error.HTTPError as e:
         code = e.code; body = e.read().decode("utf8", "ignore")[:400]
     except Exception as ex:
@@ -261,34 +301,23 @@ def run(test_top=False):
         if not text or has_url(text):
             log("skipped (URL-like text or too long):", c["title"]); S["links"] += [c["link"]]; continue
         if not (enabled or test_top) or not have_keys:
-            log(f"DRY RUN (enabled={enabled}, keys={have_keys}) score={score(c)}:", text.replace("\n", " ⏎ ")); continue
-        media, photo_try = None, False
-        if not test_top and S.get("x_photo_test_id") != PHOTO_TEST_ID and S.get("x_photo_test_tries", 0) < PHOTO_TEST_MAX_TRIES:
-            S["x_photo_test_pending"] = True
-            if photo_ok(c):
-                photo_try = True; S["x_photo_test_tries"] = S.get("x_photo_test_tries", 0) + 1
-                media, merr = upload_media(c["image"])
-                if not media:
-                    log("photo test: media upload failed, posting text-only:", merr); xspend.event("media_upload_failed", "x_poster", merr)
-                    S.setdefault("x_photo_test_log", []).append({"at": int(now), "id": c["id"], "image": c["image"], "err": merr})
-            else: log(f"photo test: '{c['title']}' photo not eligible (status={c.get('image_status')}); text-only, test stays pending")
+            log(f"DRY RUN (enabled={enabled}, keys={have_keys}) score={score(c)} photo={photo_candidates(c)[0][1]}:", text.replace("\n", " ⏎ ")); continue
+        media, img_url, img_why, merr = attach_photo(photo_candidates(c))
+        if not media:
+            log("photo: none attached, posting text-only:", merr); xspend.event("media_upload_failed", "x_poster", merr or "")
         code, body, hdr = post_tweet(text, [media] if media else None)
         entry = {"id": c["id"], "at": int(now), "code": code, "score": score(c)}
         if is_breaking(c): entry["breaking"] = True     # exempt from DAILY_CAP / MIN_GAP (counted in BREAKING_MAX_24H)
-        if media: entry["media"] = media
+        if media: entry.update(media=media, image=img_url, image_why=img_why)
         if code in (200, 201):
             tid = body["data"]["id"]; entry.update(ok=True, tweet=tid)
-            xspend.record("post_url" if has_url(text) else "post", "POST /2/tweets", "x_poster", ref=tid, note="with photo" if media else None)
-            if media:
-                S["x_photo_test_id"] = PHOTO_TEST_ID; S["x_photo_test_pending"] = False
-                S["x_photo_test_result"] = {"at": int(now), "tweet": tid, "url": f"https://x.com/wrestlingWCN/status/{tid}", "media_id": media,
-                                            "image": c["image"], "image_status": c.get("image_status"), "media_requests": 1, "tries": S.get("x_photo_test_tries")}
-                log(f"photo test done: media {media} attached (1 media request)")
-            elif photo_try: S.setdefault("x_photo_test_log", []).append({"at": int(now), "id": c["id"], "posted_text_only": tid})
+            xspend.record("post_url" if has_url(text) else "post", "POST /2/tweets", "x_poster", ref=tid, note=f"with photo ({img_why})" if media else "text-only")
+            if media and not S.get("first_photo_post"):
+                S["first_photo_post"] = {"at": int(now), "tweet": tid, "url": f"https://x.com/wrestlingWCN/status/{tid}", "image": img_url, "why": img_why, "title": c["title"]}
             S["posted"][c["id"]] = {"tweet": tid, "at": int(now), "title": c["title"]}
             S.pop("paused_until", None); S.pop("pause_reason", None)   # credits/limits are fine again
             S["links"] += [c["link"]] + [u["link"] for u in c.get("updates", [])]
-            log(f"posted https://x.com/wrestlingWCN/status/{tid} score={score(c)} {c['title']}")
+            log(f"posted https://x.com/wrestlingWCN/status/{tid} score={score(c)} photo={img_why if media else 'none'} {c['title']}")
         else:
             msg = json.dumps(body)[:400] if not isinstance(body, str) else body[:400]
             entry.update(ok=False, err=msg); log(f"post failed HTTP {code}: {msg}")

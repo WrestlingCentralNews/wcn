@@ -45,6 +45,32 @@ def combo_text(st, ms):
         lines = cand
     if not lines: return None, []
     return f"More from {show_name(st)}:\n" + "\n".join(lines) + f"\n\n{tags}\n{OUTRO}", ms[:len(lines)]
+# photo on every result post (owner rule 2026-10-18): a site story card about THIS match whose photo is confirmed to show the
+# key person (same show, names the winner) - else the promotion's logo card (what the site uses as its fallback) - else the
+# WCN default card. Text-only only if nothing can be downloaded/uploaded.
+def _names(w):
+    w = re.sub(r"\(.*?\)", " ", w or "")
+    return [n.strip() for n in re.split(r",|&|\band\b", w) if len(n.strip()) > 3]
+def photo_candidates(st, m, cards=None):
+    import vision
+    out = []
+    if cards is None:
+        try: cards = json.load(open(XP.NEWS)).get("items", [])
+        except Exception: cards = []
+    show = re.sub(r"\s+\d{4}$", "", st.get("name") or "")
+    show_words = [w for w in re.findall(r"[A-Za-z]{4,}", show) if w.lower() not in ("night", "week")]
+    names = _names(m.get("winner"))
+    for c in cards[:200]:
+        t = (c.get("title") or "") + " " + (c.get("raw_title") or "")
+        stt = c.get("image_status") or ""
+        if not c.get("image") or not re.match(r"^(?:cached:)?(?:key-|override$)", stt): continue
+        if names and any(re.search(r"(?<![A-Za-z])" + re.escape(n) + r"(?![A-Za-z])", t, re.I) for n in names) and \
+           (not show_words or any(re.search(r"(?i)\b" + re.escape(w) + r"\b", t) for w in show_words)):
+            out.append((c["image"], "site-card:" + c["id"])); break
+    pr = vision.promo_in((st.get("name") or "") + " " + (st.get("brand") or ""))
+    if pr: out.append((vision.PROMO_CARD.format(pr), "promo-logo:" + pr))
+    out.append((XP.SITE_DEFAULT_IMG, "site-default"))
+    return out
 def run():
     enabled = os.environ.get("X_POST_ENABLED", "0") == "1"
     have_keys = all(os.environ.get(k) for k in ("X_API_KEY", "X_API_SECRET", "X_ACCESS_TOKEN", "X_ACCESS_TOKEN_SECRET"))
@@ -79,15 +105,17 @@ def run():
             if not text or XP.has_url(text):
                 log("skipped (too long / URL-like):", ms[0]["en"]); P["posted"].update({m["id"]: "skipped" for m in ms}); continue
             if not enabled or not have_keys:
-                log(f"DRY RUN (enabled={enabled}, keys={have_keys}):", text.replace("\n", " ⏎ ")); continue
-            code, body, hdr = XP.post_tweet(text)
+                log(f"DRY RUN (enabled={enabled}, keys={have_keys}) photo={photo_candidates(st, used[0])[0][1]}:", text.replace("\n", " ⏎ ")); continue
+            media, img_url, img_why, merr = XP.attach_photo(photo_candidates(st, used[0]), "live_x")
+            if not media: log("photo: none attached, posting text-only:", merr); XP.xspend.event("media_upload_failed", "live_x", merr or "")
+            code, body, hdr = XP.post_tweet(text, [media] if media else None)
             if code in (200, 201):
                 tid = body["data"]["id"]; sent += 1; P["n"] += 1
-                XP.xspend.record("post_url" if XP.has_url(text) else "post", "POST /2/tweets", "live_x", ref=tid, note=kind)
+                XP.xspend.record("post_url" if XP.has_url(text) else "post", "POST /2/tweets", "live_x", ref=tid, note=kind + (f", photo {img_why}" if media else ", text-only"))
                 for m in used:
                     P["posted"][m["id"]] = tid; P["facts"].append({"winner": m["winner"], "loser": m.get("loser", "")})
                 if kind == "combo": P["combo_done"] = True
-                S["log"].append({"key": st["key"], "ids": [m["id"] for m in used], "tweet": tid, "at": int(now), "ok": True})
+                S["log"].append({"key": st["key"], "ids": [m["id"] for m in used], "tweet": tid, "at": int(now), "ok": True, "media": media, "image": img_url if media else None, "image_why": img_why if media else None})
                 log(f"posted https://x.com/wrestlingWCN/status/{tid} :: {text.splitlines()[0]} {used[0]['en']}")
             else:
                 msg = json.dumps(body)[:300] if not isinstance(body, str) else body[:300]
