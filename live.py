@@ -134,18 +134,20 @@ def finish(method, line):
     return "", ""
 def parse_line(line):
     l = NOTE.sub("", line).strip()
+    l = re.sub(r"\s*\(\d{1,2}\)(?=[\s,&]|$)", "", l)   # Clockwork Carnage / iron-man fall scores: "Will Ospreay (3) defeats Adam Copeland (2), ..."
     if len(l) > 330 or len(l) < 8: return None
     m = re.match(rf"(?i)^(?:(?P<stip>[^:]{{3,80}}):\s+)?(?P<w>.+?)\s+{DEF}\s+(?P<rest>.+)$", l)
     if not m: return None
     w = clean_side(m.group("w")); loser, method = split_method(m.group("rest")); loser = clean_side(loser)
     if not w or not loser or len(w) > 140 or len(loser) > 200: return None
-    if len(re.sub(r"\([^)]*\)", "", w).split()) > 9 or len(re.sub(r"\([^)]*\)", "", loser).split()) > 14: return None
+    if len(re.sub(r"\([^)]*\)", "", w).split()) > 9 or len(re.sub(r"\([^)]*\)", "", loser).split()) > 20: return None
     if re.search(r"\b(?:crawls|grabs|hits|connects|ascends|spits|sends|tries|goes|gets|takes|rolls|kicks|delivers)\b", w + " " + loser): return None
     if re.search(r"\b(will|would|could|should|next week|last week|previously|earlier this|on (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|at (?:all out|all in))\b", l): return None
     if re.search(r"(?i)^(?:the |and |but |after |when |as |in |this |with |following )", w) and not re.match(r"(?i)^the [A-Z]", w): return None
     stip = clean_side(m.group("stip") or "")
     if stip and re.search(r"(?i)\b(?:says|said|note|update)\b", stip): return None
-    title = "change" if CHANGE_RX.search(method + " " + l) and TITLE_RX.search(l + " " + stip) else ("retain" if RETAIN_RX.search(l) else None)
+    if RETAIN_RX.search(l) and not re.search(r"(?i)\bnew (?:\w+ )?champions?\b|dethron|title change", l): title = "retain"   # "to win Clockwork Carnage and retain the title"
+    else: title = "change" if CHANGE_RX.search(method + " " + l) and TITLE_RX.search(l + " " + stip) else ("retain" if RETAIN_RX.search(l) else None)
     if title is None and stip and TITLE_RX.search(stip) and re.search(r"\(c\)", m.group("w")): title = "retain"
     if title is None and stip and TITLE_RX.search(stip) and re.search(r"\(c\)", m.group("rest")) and not re.search(r"\(c\)", m.group("w")): title = "change"
     fen, fes = finish(method, l)
