@@ -3,7 +3,7 @@ import unittest, json, os, tempfile, time, io, contextlib
 import x_poster as XP
 def card(i, title, kind="news"):
     now = time.time()
-    return {"id": f"c{i}", "title": title, "link": f"https://example.org/{i}", "ts": now - 60, "first_ts": now - 60, "categories": ["AEW"],
+    return {"id": f"c{i}", "title": title, "raw_title": title, "link": f"https://example.org/{i}", "ts": now - 60, "first_ts": now - 60, "categories": ["AEW"],
             "kind": {"type": kind}, "sources": 4, "trusted": 2, "image": None, "updates": []}
 BRK = "Ilja Dragunov Debuts As All Elite At WrestleDream"
 NRM = "Tony Khan Says Dragunov Contract Talks Went Smoothly"

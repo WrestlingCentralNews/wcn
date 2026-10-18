@@ -78,12 +78,31 @@ def live_dup(c, L):
 def load_state():
     try: s = json.load(open(STATE))
     except Exception: s = {}
-    s.setdefault("posted", {}); s.setdefault("links", []); s.setdefault("log", []); return s
+    s.setdefault("posted", {}); s.setdefault("links", []); s.setdefault("log", []); apply_manual(s); return s
+MANUAL = os.path.join(ROOT, "x_manual.json")
+def apply_manual(s):
+    """Tweets deleted by hand (x_manual.json): keep the story marked posted (never re-post it) but flag the tweet deleted so it
+    no longer counts as live or toward the daily cap. Idempotent."""
+    try: dels = json.load(open(MANUAL)).get("deleted_tweets", [])
+    except Exception: return
+    for d in dels:
+        tid = str(d.get("tweet") or "")
+        if not tid: continue
+        mark = {"deleted": True, "deleted_at": d.get("at"), "deleted_reason": d.get("reason")}
+        hit = [k for k, p in s["posted"].items() if str(p.get("tweet")) == tid]
+        if not hit and d.get("card"): s["posted"][d["card"]] = {"tweet": tid, "at": d.get("at"), "title": "(deleted)"}; hit = [d["card"]]
+        for k in hit: s["posted"][k].update(mark)
+        for e in s["log"]:
+            if str(e.get("tweet")) == tid: e.update(mark)
+        s.setdefault("deleted", {})[tid] = {"card": hit[0] if hit else d.get("card"), "at": d.get("at"), "reason": d.get("reason")}
 def save_state(s):
     s["links"] = s["links"][-3000:]; s["log"] = s["log"][-200:]
     os.makedirs(os.path.dirname(STATE), exist_ok=True); json.dump(s, open(STATE, "w"), indent=0)
 
-def is_breaking(c): return bool(breaking.kind(c["title"], (c.get("kind") or {}).get("type")))
+def source_text(c):
+    """the lead source's OWN title + summary (never our AI rewrite): breaking.kind needs the event stated there too"""
+    return ((c.get("raw_title") or "") + "\n" + (c.get("src_summary") or "")).strip()
+def is_breaking(c): return bool(breaking.kind(c["title"], (c.get("kind") or {}).get("type"), source_text(c)))
 def score(c):
     s = 2 * min(c.get("sources", 1), 8) + 2 * min(c.get("trusted", 0), 4)
     s += max(CAT_BONUS.get(k, 0) for k in c["categories"])
@@ -118,7 +137,7 @@ def hashtags(c, text):
 def tweet_text(c):
     # label ONLY for title changes / releases / debuts / returns (breaking.py); nothing else gets a siren
     title = c["title"].replace("🚨", "").strip()
-    label = breaking.LABEL + "\n" if breaking.kind(title, (c.get("kind") or {}).get("type")) else ""
+    label = breaking.LABEL + "\n" if breaking.kind(title, (c.get("kind") or {}).get("type"), source_text(c)) else ""
     head = label + title
     outro = OUTROS[int(hashlib.md5(c["id"].encode()).hexdigest(), 16) % len(OUTROS)]
     def build(line): return "\n\n".join([head] + ([line] if line else []) + [" ".join(hashtags(c, title + " " + line)) + "\n" + outro])
@@ -218,7 +237,7 @@ def run(test_top=False):
         cands = [c for c in items if not seen(c) and c.get("trusted", 0) >= 1][:1]
         n_allowed = 1
     else:
-        recent = [t for t in S["log"] if t.get("ok") and now - t["at"] < 86400]
+        recent = [t for t in S["log"] if t.get("ok") and not t.get("deleted") and now - t["at"] < 86400]
         rec_brk = [t for t in recent if t.get("breaking")]; rec_norm = [t for t in recent if not t.get("breaking")]
         allc = [c for c in items if not seen(c) and now - c.get("first_ts", c["ts"]) < FRESH_H * 3600 and score(c) >= MIN_SCORE]
         allc.sort(key=lambda c: -score(c))
@@ -286,5 +305,8 @@ def run(test_top=False):
 
 if __name__ == "__main__":
     xspend.ensure()
+    try:   # persist manual deletion flags even when this run posts nothing (run() can return before saving)
+        _S = load_state(); save_state(_S)
+    except Exception as e: log("manual state apply error (ignored):", repr(e)[:200])
     try: run(test_top="--test-top" in sys.argv)
     except Exception as e: log("error (ignored):", repr(e)[:300])   # never fail the workflow because of X

@@ -179,7 +179,7 @@ def track(S):
             if a and b and len(a & b) / len(a | b) >= .6: return cid
         return None
     code, xs, S["x_meta"] = jget(XSTATE_RAW, S.get("x_meta", {}))
-    if xs: S["x_posted"] = {k: v.get("at") for k, v in (xs.get("posted") or {}).items()}
+    if xs: S["x_posted"] = {k: v.get("at") for k, v in (xs.get("posted") or {}).items() if not v.get("deleted")}
     xp = S.get("x_posted") or {}
     keep = []
     for t in T:

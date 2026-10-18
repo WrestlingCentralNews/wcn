@@ -28,13 +28,44 @@ NOT_DEBUT = re.compile(r"(?i)\bto debut\b|\bdebut (?:date|set|match set)\b|\bbef
 RETURN = [re.compile(r"(?i)\breturns\b(?!\s+to\s+(?:the\s+)?(?:city|arena|venue))|\breturned\b|\bmakes? (?:[\w-]+\s+){0,3}return\b|\bmade (?:[\w-]+\s+){0,3}return\b|\bis back\b|\bback in action\b")]
 NOT_RETURN = re.compile(r"(?i)^(?:the\s+)?" + PROMOS + r"(?:\s+[\w'’]+){0,3}\s+returns\b|\b(?:show|event|tour|ppv|tournament|series|brand|card|match(?:es)?|stipulation|title)\s+returns\b|"
                         r"\breturns? (?:date|timeline)\b|\bto return\b|\breturns? home\b|\breturns? as (?:a\s+)?(?:guest|commentator|host|analyst|producer|coach)\b|\breturns? to (?:australia|japan|mexico|uk|london|saudi|europe|puerto rico|\w+ city)\b")
-def kind(title, story_kind=None):
-    """-> 'title-change' | 'release' | 'debut' | 'return' | None (headline only)."""
-    t = (title or "").replace("🚨", "").strip()
-    if not t or (story_kind or "") in ("quote", "rumor", "preview"): return None
-    if BLOCK.search(t): return None
+def _headline_kind(t):
     if any(rx.search(t) for rx in CHANGE) and not NOT_CHANGE.search(t): return "title-change"
     if any(rx.search(t) for rx in RELEASE) and not NOT_RELEASE.search(t): return "release"
     if any(rx.search(t) for rx in DEBUT) and not NOT_DEBUT.search(t): return "debut"
     if any(rx.search(t) for rx in RETURN) and not NOT_RETURN.search(t): return "return"
     return None
+# --- source check: our headline is an AI rewrite, so the label also needs the SOURCE's own title/summary to state the event ---
+# (2026-10-18: Fightful 'La Catalina Appears, Tag Title Bout' was rewritten 'La Catalina Debuts in Tag Title Match' and labelled.)
+# 'appears' / 'appearance' / 'shows up' is never evidence of a debut; a 'title bout/match' is never evidence of a title change.
+SPEC = re.compile(r"(?i)\?|\brumou?r\w*|\bcould\b|\bmight\b|\bwould\b|\bexpect\w*|\bset (?:to|for)\b|\bplans?\b|\bplanned\b|\bpossible\b|\bpotential\b|"
+                  r"\bhopes?\b|\bwants?\b|\bteases?\b|\bhints?\b|\bwill\b|\bin talks\b|\bconsider\w*|\bopen to\b|\bahead of\b|\bpreview\w*|\bif\b")
+EVID = {
+ "title-change": ([re.compile(r"(?i)\b(?:wins?|won|captures?|captured|claims?|claimed|regains?|regained|reclaims?|reclaimed|lifts?|takes?|took|winning|capturing)\b(?:\s+[\w'’.&-]+){0,6}?\s+" + TITLE + r"\b"),
+                   re.compile(r"(?i)\bnew\s+(?:[\w'’.-]+\s+){0,4}champions?\b|\bcrowned\b|\bdethron\w+|\btitle change\b|\bvacate[sd]?\b|\brelinquish\w*|\bstripped of\b")],
+                  re.compile(r"(?i)\bretain\w*|\bsuccessful(?:ly)? defen\w*|\btitle shot\b|\bcontender\w*|\bqualif\w*|\beliminator\b")),
+ "release":      (RELEASE + [re.compile(r"(?i)\b(?:another|latest|more|new)\s+(?:[\w-]+\s+){0,3}releases?\b|\breleased\b|\bfired\b(?!\s+(?:up|back|off|shots?))|\bcut from\b|\bparted ways\b|\bpart ways\b")],
+                  NOT_RELEASE),
+ "debut":        ([re.compile(r"(?i)\bdebut(?:s|ed|ing)?\b|\bfirst(?:-ever)?\s+(?:\w+\s+)?appearance\b|\bis all elite\b")],
+                  re.compile(r"(?i)\bto (?:make (?:\w+\s+){0,3})?debut\b|\bdebut (?:date|set|match set)\b|\bbefore (?:his|her|their) debut\b|\bsince (?:his|her|their) debut\b|\banniversary\b|\byears? ago\b|\brecalls?\b")),
+ "return":       ([re.compile(r"(?i)\breturns\b|\breturned\b|\bmakes? (?:[\w-]+\s+){0,3}return\b|\bmade (?:[\w-]+\s+){0,3}return\b|\bis back\b|\bback in action\b|\bfirst (?:\w+\s+){0,2}(?:match|appearance) (?:since|in)\b")],
+                  NOT_RETURN),
+}
+def _segments(src):
+    return [x for x in re.split(r"(?<=[.!?])\s+|\s+[|•]\s+|\n+", src or "") if x.strip()]
+def source_supports(k, src):
+    """True if any sentence of the source title/summary states event k in completed terms (no speculation)."""
+    pos, neg = EVID[k]
+    for seg in _segments(src):
+        if SPEC.search(seg): continue
+        if any(rx.search(seg) for rx in pos) and not neg.search(seg): return True
+    return False
+def kind(title, story_kind=None, source=None):
+    """-> 'title-change' | 'release' | 'debut' | 'return' | None.
+    title = our (AI-rewritten) headline; source = the source article's OWN title + summary. When source is given (x_poster always
+    passes it), the event must also be stated there - the AI headline alone can never earn the label."""
+    t = (title or "").replace("🚨", "").strip()
+    if not t or (story_kind or "") in ("quote", "rumor", "preview"): return None
+    if BLOCK.search(t): return None
+    k = _headline_kind(t)
+    if k and source is not None and not source_supports(k, source): return None
+    return k

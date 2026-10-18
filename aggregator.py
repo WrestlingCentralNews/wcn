@@ -126,7 +126,7 @@ def on_topic(a):
     t = a["raw_title"]; b = (a.get("body") or "") + " " + (a.get("summary_src") or "")
     if classify(re.sub(r"\b(Mexico|Japan|Australia)\b", "", t)) or SIG.search(t): return True
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
-import enrich, editorial, llm, pages, vision
+import enrich, editorial, llm, pages, vision, breaking
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
 IMG_CHECK_TOP = 60
 LONG_MAX_PER_RUN = 400
@@ -148,6 +148,22 @@ def image_overrides(clusters):
         else:
             if c.get("image") in block: c["image"] = None; c["image_credit"] = None; c["image_status"] = "wcn-card"; n += 1
     return n
+def claim_guard(a):
+    """AI rewrite may not ADD a debut / return / title change / release the source doesn't state ('appears' -> 'debuts')."""
+    # never let the rewrite ADD a debut / return / title change / release the source doesn't state ('appears' -> 'debuts'):
+    # headline: breaking.py's source check; summary: debut / new-champion wording only ('released a video' is too ambiguous)
+    src_all = (a.get("raw_title") or "") + "\n" + (a.get("summary_src") or "") + "\n" + (a.get("body") or "")
+    hk = breaking._headline_kind(a["title"])
+    if hk and not breaking.source_supports(hk, src_all):
+        print(f"llm guard: '{a['title']}' claims {hk}, source doesn't -> rule-based headline", flush=True)
+        a["title"] = enrich.headline(a["raw_title"], (a.get("kind") or {}).get("type")); a["ai_claim_fixed"] = hk
+    for rx, ev in ((r"\b(?:makes?|made|making|marks?|marked) (?:[\w'’-]+\s+){0,3}debut\b|\bdebut(?:s|ed)\b|\bin-ring debut\b",
+                    r"\bdebut\w*|\bfirst(?:-ever)?\s+(?:\w+\s+)?appearance\b|\bis all elite\b"),
+                   (r"\bnew (?:[\w'’-]+\s+){0,3}champions?\b|\bcrowned\b|\bdethron\w*",
+                    r"\bnew (?:\S+\s+){0,4}champions?\b|\bcrowned\b|\bdethron\w*|\bwins?\b|\bwon\b|\bcaptur\w*|\bregain\w*")):
+        if re.search(rx, a["summary"], re.I) and not re.search(ev, src_all, re.I):
+            print(f"llm guard: summary of '{a['raw_title'][:60]}' adds a claim the source lacks -> rule-based summary", flush=True)
+            a["summary"] = enrich.summarize(a); a["ai_claim_fixed"] = a.get("ai_claim_fixed") or "summary"; break
 def run():
     os.makedirs(os.path.dirname(STORE), exist_ok=True)
     old = {i["id"]: i for i in json.load(open(STORE))} if os.path.exists(STORE) else {}
@@ -206,13 +222,20 @@ def run():
                 if out: a["llm"] = out
         llm.save_usage()
         print(f"llm: rewrote {sum(1 for a in todo if 'llm' in a)}/{len(todo)}, month spend ${llm._U['usd']:.3f}", flush=True)
+    try: TEXT_OV = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "text_overrides.json"))).get("items", {})
+    except Exception: TEXT_OV = {}
     for a in arts:
+        if a["id"] in TEXT_OV and not a.get("llm"):
+            o = TEXT_OV[a["id"]]; a["title"] = o.get("headline") or a["title"]; a["summary"] = o.get("summary") or a["summary"]; a["pinned"] = True
         L = a.get("llm")
         if not L or a.get("drop") and not str(a["drop"]).startswith("llm:"): continue
         a["title"], a["summary"] = L["headline"].strip(), L["summary"].strip()
         src_txt = (a.get("raw_title") or "") + " " + (a.get("body") or "")
         for y in set(re.findall(r"\b(?:19|20)\d\d\b", a["title"])):   # rewrite added a year the source never says ('Bound For Glory 2024 Results' for 2026): drop it
             if y not in src_txt and y != time.strftime("%Y", time.gmtime(int(a.get("ts") or time.time()))): a["title"] = re.sub(r"\s*\b" + y + r"\b", "", a["title"]).strip(" ,:-")
+        claim_guard(a)
+        if a["id"] in TEXT_OV:   # pinned hand correction (text_overrides.json) beats the cached AI rewrite on every build
+            o = TEXT_OV[a["id"]]; a["title"] = o.get("headline") or a["title"]; a["summary"] = o.get("summary") or a["summary"]; a["pinned"] = True
         if L["categories"]: a["categories"] = L["categories"]
         t = L["type"]
         a["kind"] = {"type": "quote", "who": L.get("speaker") or "", "quote": L.get("quote")} if t == "quote" and L.get("speaker") else {"type": t if t in ("results", "match") else "news"}

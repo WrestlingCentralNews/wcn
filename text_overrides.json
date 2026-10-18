@@ -1,0 +1,7 @@
+{"note": "Hand corrections of an article's headline/summary (pinned: applied after the AI rewrite on every build, so rebuilds never regenerate the wrong text). Key = article id (data/articles.json).",
+ "items": {
+  "322c9d922994": {
+   "headline": "AAA on FOX Results: La Catalina Appears, Wagner Brothers Defend Tag Titles",
+   "summary": "Lucha Libre AAA aired its latest AAA on FOX episode on October 17 on Fox Latin America and YouTube. Reigning AAA Reina de Reinas Champion La Catalina appeared on the show, and the Wagner Brothers defended the AAA World Tag Team Championship. Full results are in Fightful's results section.",
+   "date": "2026-10-18", "reason": "AI rewrite said 'Debuts' / 'in-ring debut appearance'; the source (Fightful) only says she appears; the tag title bout was the Wagner Brothers"}
+ }}

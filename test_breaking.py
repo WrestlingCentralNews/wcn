@@ -43,7 +43,7 @@ class T(unittest.TestCase):
     def test_quote_never(self): self.assertIsNone(breaking.kind("Jay White Returns at AEW WrestleDream", "quote"))
     def test_x_text(self):
         import x_poster as X
-        c = {"id": "t1", "title": "Ilja Dragunov Debuts As All Elite At WrestleDream " + "x" * 200, "summary": "A long summary. " * 20, "categories": ["AEW"], "sources": 9, "trusted": 4, "kind": {"type": "news"}}
+        c = {"id": "t1", "title": "Ilja Dragunov Debuts As All Elite At WrestleDream " + "x" * 200, "raw_title": "Ilja Dragunov Makes AEW Debut At WrestleDream", "summary": "A long summary. " * 20, "categories": ["AEW"], "sources": 9, "trusted": 4, "kind": {"type": "news"}}
         t = X.tweet_text(c); self.assertTrue(t.startswith("BREAKING🚨🚨🚨\n")); self.assertEqual(t.count("🚨"), 3); self.assertLessEqual(X.x_len(t), 280)
         c2 = dict(c, title="Moxley Retains Continental Title Over Davis At WrestleDream", id="t2")
         self.assertNotIn("🚨", X.tweet_text(c2))
@@ -53,4 +53,50 @@ class T(unittest.TestCase):
         t = live_x.match_text(st, {"en": "Bandido, Hangman Page and Brody King defeated Swerve Strickland, Austin Creed and Kofi to win the AEW Trios Titles.", "title": "change"})
         self.assertTrue(t.startswith("BREAKING🚨🚨🚨\n")); self.assertEqual(t.count("🚨"), 3)
         t = live_x.match_text(st, {"en": "Moxley defeated Davis to retain.", "title": "retain"}); self.assertNotIn("🚨", t)
+# source check (2026-10-18): the AI headline alone never earns the label; the source's own title/summary must state the event
+SRC_CASES = [  # (AI headline, source title + summary, expected)
+ ("AAA on FOX Results: La Catalina Debuts in Tag Title Match",
+  "AAA on FOX Results (10/17): La Catalina Appears, Tag Title Bout\nLucha Libre AAA aired the latest episode of AAA on FOX on October 17. The event aired on Fox Latin America and YouTube. Full results are below.", None),
+ ("Ilja Dragunov Debuts As All Elite At WrestleDream", "Ilja Dragunov Makes AEW Debut At WrestleDream", "debut"),
+ ("Ilja Dragunov Debuts As All Elite At WrestleDream", "Ilja Dragunov shows up at AEW WrestleDream", None),
+ ("Mike Bailey Makes His NJPW Debut In Korakuen Hall", "Speedball makes first appearance for NJPW in Korakuen Hall", "debut"),
+ ("Yota Tsuji Debuts In MLW", "NJPW's Yota Tsuji to Make MLW Debut at Saturday Night SuperFight", None),
+ ("Bandido, Hangman & Brody King regain AEW Trios titles", "Hangman Adam Page And Brodido Win AEW World Trios Title At AEW WrestleDream", "title-change"),
+ ("Wagner Brothers Win AAA Tag Titles", "AAA on FOX Results (10/17): La Catalina Appears, Tag Title Bout", None),
+ ("Moose Wins TNA World Title", "Moose Gets TNA World Title Shot At Bound For Glory", None),
+ ("PJ Vasa Released by WWE NXT", "ANOTHER WWE NXT RELEASE", "release"),
+ ("Max Caster Released By TNA", "Backstage News On Max Caster's TNA Deal", None),
+ ("AEW Star Fired After Incident In Chicago", "AEW has fired a wrestler after an incident in Chicago, per Fightful Select.", "release"),
+ ("Jay White Returns at AEW WrestleDream", "Jay White returned at AEW WrestleDream to confront Ospreay", "return"),
+ ("Jay White Returns at AEW WrestleDream", "Jay White could return at AEW WrestleDream", None),
+ ("Rhea Ripley Returns to WWE Programming", "Daily Update: Rhea Ripley, AAA, Lucha Kingdom", None),
+]
+class S(unittest.TestCase):
+    def test_source_check(self):
+        for h, src, exp in SRC_CASES: self.assertEqual(breaking.kind(h, None, src), exp, (h, src))
+    def test_no_source_given_is_headline_only(self): self.assertEqual(breaking.kind("Jay White Returns at AEW WrestleDream"), "return")
+    def test_x_card_la_catalina(self):
+        import x_poster as X
+        c = {"id": "c11f0df54e806", "title": "AAA on FOX Results: La Catalina Debuts in Tag Title Match", "raw_title": "AAA on FOX Results (10/17): La Catalina Appears, Tag Title Bout",
+             "src_summary": "Lucha Libre AAA aired the latest episode of AAA on FOX on October 17. The event aired on Fox Latin America and YouTube. Full results are below.",
+             "summary": "x", "categories": ["Global"], "sources": 2, "trusted": 1, "kind": {"type": "results"}}
+        self.assertFalse(X.is_breaking(c)); self.assertNotIn("🚨", X.tweet_text(c))
+        c2 = dict(c, title="AAA on FOX Results: La Catalina Appears, Wagner Brothers Defend Tag Titles"); self.assertFalse(X.is_breaking(c2))
+
+class Guard(unittest.TestCase):
+    def test_la_catalina_rewrite_reverted(self):
+        import aggregator
+        a = {"id": "322c9d922994", "source": "Fightful", "raw_title": "AAA on FOX Results (10/17): La Catalina Appears, Tag Title Bout", "kind": {"type": "results"},
+             "summary_src": "Lucha Libre AAA aired the latest episode of AAA on FOX on October 17. The event aired on Fox Latin America and YouTube. Full results are below.",
+             "body": "Lucha Libre AAA aired the latest episode of AAA on FOX on October 17.",
+             "title": "AAA on FOX Results: La Catalina Debuts in Tag Title Match",
+             "summary": "Lucha Libre AAA presented its latest episode on October 17. The show featured the in-ring debut appearance of La Catalina along with a tag team title match."}
+        aggregator.claim_guard(a)
+        self.assertNotIn("debut", a["title"].lower()); self.assertNotIn("debut", a["summary"].lower())
+    def test_supported_debut_kept(self):
+        import aggregator
+        a = {"id": "x", "source": "Fightful", "raw_title": "Ilja Dragunov Makes AEW Debut At WrestleDream", "kind": {"type": "news"}, "summary_src": "", "body": "",
+             "title": "Ilja Dragunov Debuts For AEW At WrestleDream", "summary": "Ilja Dragunov made his AEW debut at WrestleDream."}
+        aggregator.claim_guard(a); self.assertEqual(a["title"], "Ilja Dragunov Debuts For AEW At WrestleDream"); self.assertIn("debut", a["summary"])
+
 if __name__ == "__main__": unittest.main(verbosity=1)

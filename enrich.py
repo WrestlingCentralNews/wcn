@@ -234,7 +234,7 @@ def cluster(articles):
         out.append({"id": "c" + g[-1]["id"], "title": main["title"], "summary": main["summary"], "link": main["link"],
             "source": main["source"], "first_ts": g[-1]["ts"], "image": best_img, "categories": main["categories"],
             "added": max(m.get("added", 0) for m in g),
-            "raw_title": main["raw_title"], "kind": main.get("kind", {"type": "news"}),
+            "raw_title": main["raw_title"], "src_summary": (main.get("summary_src") or "")[:500], "kind": main.get("kind", {"type": "news"}),
             "ts": g[0]["ts"],   # latest activity (newest report) -> feed sort order; first_ts = when the story was first reported
             "updates": [{"ts": m["ts"], "line": update_line(m), "source": m["source"], "link": m["link"], "title": m["title"]} for m in g if m is not main]})
     return sorted(out, key=lambda c: -c["ts"])
