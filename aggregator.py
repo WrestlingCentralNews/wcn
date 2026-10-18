@@ -194,6 +194,9 @@ def run():
         L = a.get("llm")
         if not L or a.get("drop") and not str(a["drop"]).startswith("llm:"): continue
         a["title"], a["summary"] = L["headline"].strip(), L["summary"].strip()
+        src_txt = (a.get("raw_title") or "") + " " + (a.get("body") or "")
+        for y in set(re.findall(r"\b(?:19|20)\d\d\b", a["title"])):   # rewrite added a year the source never says ('Bound For Glory 2024 Results' for 2026): drop it
+            if y not in src_txt and y != time.strftime("%Y", time.gmtime(int(a.get("ts") or time.time()))): a["title"] = re.sub(r"\s*\b" + y + r"\b", "", a["title"]).strip(" ,:-")
         if L["categories"]: a["categories"] = L["categories"]
         t = L["type"]
         a["kind"] = {"type": "quote", "who": L.get("speaker") or "", "quote": L.get("quote")} if t == "quote" and L.get("speaker") else {"type": t if t in ("results", "match") else "news"}
