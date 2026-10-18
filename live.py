@@ -165,6 +165,10 @@ def card_of(lines):
         if len(sides) < 2 or any(len(x) > 160 or len(x.split()) > 18 for x in sides): continue
         if re.search(r"(?i)headlined|results are|listed below|will (?:face|take on)|\bcard\b", rest): continue
         if re.search(r"(?i)^(?:video|promo|package|backstage|vignette)|is shown|later tonight", " ".join(sides)): continue
+        ft = re.search(r"(?i)\s+(?:for|with) (?:the |his |her |their )?((?:[\w'’.-]+ ){0,6}(?:title|championship)s?)\b.*$", sides[-1])
+        if ft:
+            sides[-1] = sides[-1][:ft.start()]
+            if not stip: stip = clean_side(ft.group(1))
         pre = bool(re.search(PRE_RX, l))
         sides = [re.sub(r"\s*\((?:" + PRE_RX + r")[^)]*\)", "", x, flags=re.I) for x in sides]
         sides = [re.sub(r"\s+[-–—]\s+.*$", "", x) for x in sides]
@@ -207,7 +211,8 @@ def parse_page(page):
         r = None
         if len(line) < 70:
             if re.search(PRE_RX, line) and not re.search(rf"(?i)\b{DEF}\b|def\.|\bvs\b", line): pre_sec = True
-            elif re.search(r"(?i)^(?:main (?:card|show)|pay-?per-?view|ppv|main event)\b", line): pre_sec = False
+            elif re.search(r"(?i)^(?:main (?:card|show)|pay-?per-?view|ppv|main event)\b", line) or \
+                    (CARD.get("main_rx") and re.fullmatch(r"(?i)(?:AEW |WWE |TNA |NXT )?(?:" + CARD["main_rx"] + r")(?: \d{4})?(?: results| main card| begins)?", line)): pre_sec = False
         if re.search(rf"(?i)\b{DEF}\b|def\.", line): r = parse_line(line)
         if r is None and len(line) < 220:
             m = re.match(r"^(?:[^:]{3,60}:\s+)?(?P<w>[A-Z][^,:;]{2,70}?) (?:wins|won|retains|retained|captures|captured|is the new|are the new|become the new|becomes the new)\b(?P<rest>.*)$", NOTE.sub("", line).strip())
@@ -295,7 +300,7 @@ def update(store_articles=(), now=None):
         for url in st["pages"]:
             try: htmls[url] = get(url)
             except Exception as ex: log(f"fetch {st['pages'][url]} failed: {str(ex)[:80]}")
-        CARD["cur"] = [c for h in htmls.values() for c in card_of(lines_of(h))]
+        CARD["cur"] = [c for h in htmls.values() for c in card_of(lines_of(h))]; CARD["main_rx"] = w["rx"]
         st["card"] = CARD["cur"][:40]
         for url, src in st["pages"].items():
             if url not in htmls: continue
@@ -303,6 +308,11 @@ def update(store_articles=(), now=None):
             except Exception as ex: log(f"fetch {src} failed: {str(ex)[:80]}"); continue
             log(f"{w['key']}: {src} -> {len(rs)} results")
             for r in rs: r["src"] = src; r["url"] = url; reports.append(r)
+        seen_ids = set()
+        for x in sorted(st["matches"], key=lambda q: q["first_seen"]):
+            if x["id"] in seen_ids:
+                st["next_id"] = max([st.get("next_id", 0)] + [int(q["id"][1:]) for q in st["matches"] if q["id"][1:].isdigit()]) + 1; x["id"] = f"m{st['next_id']}"
+            seen_ids.add(x["id"])
         before = json.dumps(st["matches"], sort_keys=True)
         nowi = int(time.time())
         for r in reports:
@@ -310,10 +320,11 @@ def update(store_articles=(), now=None):
             if m is None and not r.get("loser") and not r.get("field") and any(x.get("loser") for x in reports): continue   # winner-only lines just corroborate
             if m is None:
                 m = {k: r.get(k) for k in ("winner", "loser", "stip", "title", "fin_en", "fin_es", "who", "field", "move")}
-                m.update(id=f"m{len(st['matches']) + 1}", first_seen=nowi, updated=nowi, sources=[], order=r["pos"] + 10000 * list(st["pages"]).index(r["url"]))
+                st["next_id"] = max([st.get("next_id", 0)] + [int(x["id"][1:]) for x in st["matches"] if x["id"][1:].isdigit()]) + 1
+                m.update(id=f"m{st['next_id']}", first_seen=nowi, updated=nowi, sources=[], order=r["pos"] + 10000 * list(st["pages"]).index(r["url"]))
                 st["matches"].append(m)
             # enrich with facts another source has (loser, finish, title flag, stipulation)
-            if r.get("pre") and not m.get("pre"): m["pre"] = True; m["updated"] = nowi
+            m.setdefault("_pre_votes", {})[r["src"]] = bool(r.get("pre"))
             for k in ("loser", "stip", "fin_en", "fin_es", "who", "move"):
                 if not m.get(k) and r.get(k): m[k] = r[k]; m["updated"] = nowi
             if r.get("title") and m.get("title") != r["title"] and (m.get("title") is None or r["title"] == "change"): m["title"] = r["title"]; m["updated"] = nowi
@@ -329,6 +340,8 @@ def update(store_articles=(), now=None):
                 if not t.get(k) and m.get(k): t[k] = m[k]
         st["matches"] = merged
         for m in st["matches"]:
+            v = m.pop("_pre_votes", None)
+            if v is not None: m["pre"] = any(v.values()) and sum(v.values()) * 2 >= len(v)
             m["conflict"] = any(contradicts(m, o) for o in st["matches"] if o is not m)
             m["confirmed"] = not m["conflict"] and (len(m["sources"]) >= 2 or nowi - m["first_seen"] >= 600)
             m["en"], m["es"] = text_en(m), text_es(m)
