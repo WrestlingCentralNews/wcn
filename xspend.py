@@ -3,12 +3,15 @@
 Ledger: data/x_spend.json on the 'data' branch (saved with the rest of the state every run). Top-level fields first:
   remaining_usd, spent_usd, loaded_total_usd, low_balance (True at <= LOW_USD), counts {kind: n}, top_ups, events, entries.
 Top-ups: add {"date": "YYYY-MM-DD", "usd": 5.00, "note": "..."} to x_topups.json in the repo (main branch); every run merges it in.
+Rebase: x_topups.json "rebase" {at, total_usd, paid_usd, free_usd} pins the real console balance at a moment; from then on
+remaining = total_usd + later top-ups - estimated spend logged after 'at' (free credits are drawn first).
 Prices are X's published pay-per-use rates (estimates; the developer console is the source of truth).
 """
 import os, json, time
 ROOT = os.path.dirname(os.path.abspath(__file__))
 LEDGER = os.path.join(ROOT, "data", "x_spend.json")
 TOPUPS = os.path.join(ROOT, "x_topups.json")
+MANUAL = os.path.join(ROOT, "x_manual.json")   # owner-approved actions done by hand (e.g. a tweet deletion): charges merged once by id
 LOW_USD = 2.00
 PRICES = {"post": 0.015, "post_url": 0.20, "delete": 0.010, "read": 0.005, "media": 0.005}   # read = per post returned; media = per media request
 CREDITS_START = 1792219725   # 2026-10-17 06:48:45Z: first successful post after the $5 load (06:26 was still 402 credits-depleted)
@@ -16,6 +19,11 @@ MAX_ENTRIES = 3000
 def _topups():
     try: return [t for t in json.load(open(TOPUPS)).get("top_ups", []) if float(t.get("usd", 0)) > 0]
     except Exception: return [{"date": "2026-10-17", "usd": 5.00, "note": "initial load"}]
+def _rebase():
+    """Console recalibration (x_topups.json 'rebase'): the real balance at a point in time, paid and free credits separately."""
+    try: r = json.load(open(TOPUPS)).get("rebase")
+    except Exception: r = None
+    return r if r and r.get("at") and r.get("total_usd") is not None else None
 def _seed():
     """Historical tally from the post logs (only successful calls since credits started)."""
     E = []
@@ -36,6 +44,14 @@ def load():
     try: L = json.load(open(LEDGER))
     except Exception: L = _seed()
     L.setdefault("entries", []); L.setdefault("events", []); L.setdefault("archived", {"usd": 0.0, "counts": {}})
+    try: manual = json.load(open(MANUAL)).get("charges", [])
+    except Exception: manual = []
+    have = set(L.get("manual_ids", [])) | {e.get("manual_id") for e in L["entries"] if e.get("manual_id")}
+    for m in manual:
+        if m.get("id") and m["id"] not in have and float(m.get("usd", 0)) > 0:
+            L["entries"].append({"at": int(m.get("at") or time.time()), "kind": m.get("kind", "manual"), "usd": round(float(m["usd"]), 4),
+                                 "endpoint": m.get("endpoint", ""), "src": m.get("src", "manual"), "ref": m.get("ref"), "note": m.get("note"), "manual_id": m["id"]})
+            L.setdefault("manual_ids", []).append(m["id"])
     return L
 def _summ(L):
     tu = _topups(); loaded = round(sum(float(t["usd"]) for t in tu), 4)
@@ -43,11 +59,23 @@ def _summ(L):
     for e in L["entries"]: counts[e["kind"]] = counts.get(e["kind"], 0) + e.get("n", 1)
     spent = round(L["archived"].get("usd", 0.0) + sum(e["usd"] for e in L["entries"]), 4)
     rem = round(loaded - spent, 4)
-    out = {"remaining_usd": rem, "spent_usd": spent, "loaded_total_usd": loaded, "low_balance": rem <= LOW_USD, "low_threshold_usd": LOW_USD,
+    rb = _rebase(); extra = {}
+    if rb:   # balance = console figure at rebase time + later top-ups - estimated spend logged after it (free credits first)
+        since = round(sum(e["usd"] for e in L["entries"] if e["at"] > rb["at"]), 4)
+        later = round(sum(float(t["usd"]) for t in tu if float(t.get("at") or 0) > rb["at"]), 4)
+        free0, paid0 = float(rb.get("free_usd") or 0), float(rb.get("paid_usd") or 0)
+        free_rem = round(max(0.0, free0 - since), 4); paid_rem = round(paid0 + later - max(0.0, since - free0), 4)
+        rem = round(float(rb["total_usd"]) + later - since, 4); loaded = round(float(rb["total_usd"]) + later, 4)
+        extra = {"rebased": {k: rb.get(k) for k in ("time", "at", "total_usd", "paid_usd", "free_usd", "note")},
+                 "spent_since_rebase_usd": since, "free_remaining_usd": free_rem, "paid_remaining_usd": paid_rem,
+                 "spent_before_rebase_estimate_usd": round(spent - since, 4)}
+    out = {"remaining_usd": rem, "spent_usd": spent, "loaded_total_usd": loaded, "low_balance": rem <= LOW_USD, "low_threshold_usd": LOW_USD, **extra,
            "counts": counts, "updated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "estimate_note": "estimated from our own call log; X console is the source of truth",
            "prices": PRICES, "top_ups": tu, "how_to_top_up": "add {date, usd, note} to x_topups.json on main",
            "events": L["events"][-200:], "archived": L["archived"], "entries": L["entries"]}
     if L.get("seeded_at"): out["seeded_at"] = L["seeded_at"]
+    if L.get("manual_ids"): out["manual_ids"] = L["manual_ids"]   # survives entries being folded into 'archived'
+
     return out
 def save(L):
     if len(L["entries"]) > MAX_ENTRIES:   # fold the oldest entries into the archived totals so the file stays small
@@ -79,4 +107,4 @@ def ensure():
     try: save(load())
     except Exception as ex: print("[x-spend] ledger error (ignored):", repr(ex)[:200], flush=True)
 if __name__ == "__main__":
-    L = _summ(load()); print(json.dumps({k: L[k] for k in ("remaining_usd", "spent_usd", "loaded_total_usd", "low_balance", "counts", "updated")}, indent=1))
+    L = _summ(load()); print(json.dumps({k: L.get(k) for k in ("remaining_usd", "free_remaining_usd", "paid_remaining_usd", "spent_since_rebase_usd", "spent_usd", "loaded_total_usd", "low_balance", "counts", "updated")}, indent=1))

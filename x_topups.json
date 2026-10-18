@@ -1,4 +1,18 @@
-{"note": "X API pay-per-use credit loads. Add one object per top-up; xspend.py sums them into loaded_total_usd.",
+{
+ "note": "X API pay-per-use credit loads. Add one object per top-up; xspend.py sums them into loaded_total_usd. After a rebase, only top-ups with an 'at' (unix time) later than rebase.at are added on top of the rebased balance.",
  "top_ups": [
-  {"date": "2026-10-17", "usd": 5.00, "note": "initial load (first successful post 2026-10-17 06:48 UTC)"}
- ]}
+  {
+   "date": "2026-10-17",
+   "usd": 5.0,
+   "note": "initial load (first successful post 2026-10-17 06:48 UTC)"
+  }
+ ],
+ "rebase": {
+  "at": 1792304280,
+  "time": "2026-10-18T06:18:00Z",
+  "total_usd": 9.62,
+  "paid_usd": 5.0,
+  "free_usd": 4.62,
+  "note": "Recalibrated to the X developer console (owner screenshot ~06:18 UTC Oct 18): Total Balance $9.62 = paid Credits $5.00 (untouched) + Free Credits $4.62; X spends free credits first. Console usage (last 30 days): only 2 billable events (~$0.01), 27 requests - our per-post estimate (24 posts x $0.015 + media + delete = $0.37) overcounted. From this point remaining = $9.62 minus estimated spend logged after rebase.at (free credits drawn first); entries before it are kept for history only. low_balance stays true at <= $2.00 total."
+ }
+}
