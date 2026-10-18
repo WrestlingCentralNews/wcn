@@ -27,6 +27,48 @@ TAGS = [(r"\bNXT\b", "#WWENXT"), (r"\bROH\b|Ring of Honor", "#ROH"), (r"\bNJPW\b
 CAT_TAG = {"WWE": "#WWE", "AEW": "#AEW", "TNA": "#TNA", "Indie": "#IndieWrestling", "Global": "#ProWrestling"}
 
 def log(*a): print("[x]", *a, flush=True)
+
+# --- don't repeat a match result that live_x.py already posted for the same show -----------------
+LIVE_STATE = os.path.join(ROOT, "data", "posted_live_x.json")
+LIVE_DIR = os.path.join(ROOT, "data", "live")
+RESULT_RX = re.compile(r"\b(retain\w*|beat\w*|def\.|defeat\w*|wins?|won|tops?|topped|over|outlast\w*|pins?|pinned|submit\w*|leads?|crowned|new champion|captures?|dethrones?)\b", re.I)
+def _fold(t):
+    import unicodedata
+    return "".join(ch for ch in unicodedata.normalize("NFKD", t or "") if not unicodedata.combining(ch)).lower()
+def _side_names(side):
+    """'The Young Bucks (Matt Jackson and Nick Jackson)' -> ['young bucks', 'matt jackson', 'nick jackson']"""
+    parts = [re.sub(r"\(.*?\)", "", side)] + re.split(r",|&|\band\b|\bw/", " ".join(re.findall(r"\((.*?)\)", side)))
+    out = []
+    for p in parts:
+        p = _fold(re.sub(r"(?i)^\s*the\s+", "", p.strip()).strip(" .\"“”"))
+        if len(p) >= 4: out.append(p)
+    return out
+def live_posted():
+    """[(show_state, [facts already posted by live_x])] for shows with posted results."""
+    try: S = json.load(open(LIVE_STATE))
+    except Exception: return []
+    out = []
+    for key, P in S.get("shows", {}).items():
+        if not P.get("facts"): continue
+        try: st = json.load(open(os.path.join(LIVE_DIR, key + ".json")))
+        except Exception: st = {"key": key, "name": key}
+        out.append((st, P["facts"]))
+    return out
+def live_dup(c, L):
+    """(show key, fact) if story c is just a match result live_x already posted for that show, else None."""
+    if not L: return None
+    title = c.get("title", "") + " " + c.get("raw_title", "")
+    if (c.get("kind") or {}).get("type") != "results" and not RESULT_RX.search(title): return None
+    t = _fold(title); h = c.get("hub") or {}
+    for st, facts in L:
+        key = st.get("key", "")
+        word = _fold(re.sub(r"^(WWE|AEW|TNA|NXT|ROH|NJPW)\s+|\s+\d{4}$", "", st.get("name", ""))).strip()
+        on_show = (h.get("date") and f"{h['date']}-{h.get('slug')}" == key) or (len(word) >= 4 and word in t)
+        if not on_show: continue
+        if st.get("start") and not any(st["start"] - 3 * 3600 <= ts <= st.get("end", st["start"]) + 2 * 86400 for ts in (c.get("first_ts", c["ts"]), c["ts"])): continue
+        for f in facts:
+            if any(re.search(r"(?<![a-z])" + re.escape(n) + r"(?![a-z])", t) for n in _side_names(f.get("winner", ""))): return key, f
+    return None
 def load_state():
     try: s = json.load(open(STATE))
     except Exception: s = {}
@@ -113,6 +155,15 @@ def run(test_top=False):
     items = json.load(open(NEWS))["items"]
     posted_links = set(S["links"])
     def seen(c): return c["id"] in S["posted"] or c["link"] in posted_links or any(u["link"] in posted_links for u in c.get("updates", []))
+    L = live_posted(); _skipped = []
+    def live_seen(c):
+        d = live_dup(c, L)
+        if d and c["id"] not in _skipped:
+            _skipped.append(c["id"]); log(f"skip (result already posted by live_x for {d[0]}: {d[1].get('winner')}):", c["title"])
+            S.setdefault("live_dups", {})[c["id"]] = {"show": d[0], "at": int(now), "title": c["title"]}
+        return bool(d)
+    _seen = seen
+    def seen(c): return _seen(c) or live_seen(c)
     if test_top:
         cands = [c for c in items if not seen(c) and c.get("trusted", 0) >= 1][:1]
         n_allowed = 1
@@ -126,7 +177,7 @@ def run(test_top=False):
             log(f"min gap {MIN_GAP_MIN}m: next post later ({len(cands)} waiting)"); return
         n_allowed = PER_RUN_BREAKING if len(cands) > 1 and score(cands[1]) >= BREAKING else PER_RUN
         n_allowed = min(n_allowed, DAILY_CAP - len(recent))
-    if not cands: log("nothing new worth posting"); return
+    if not cands: log("nothing new worth posting"); save_state(S) if _skipped else None; return
     for c in cands[:n_allowed]:
         text = tweet_text(c)
         if not text or has_url(text):
