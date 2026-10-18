@@ -118,12 +118,19 @@ def poll(S):
         for i in items: f["seen"][i["key"]] = int(now)
         if len(f["seen"]) > 600: f["seen"] = dict(sorted(f["seen"].items(), key=lambda kv: -kv[1])[:600])
         if not f["baseline"]: f["baseline"] = True; continue          # first sight of a source: remember, don't trigger
+        T = S.setdefault("titles", {})
         for i in fresh:
+            tid = hashlib.md5(re.sub(r"\W", "", i["title"].lower()).encode()).hexdigest()[:12]   # aggregator's article id
+            if kind == "rss":
+                dup = tid in T; T[tid] = int(now)
+                if dup: continue          # same story already seen via another feed (e.g. Google News re-listing a Fightful post)
             src = i["src"] or name
             trusted = tier(src) <= 2
             if i["ts"] and i["ts"] < now - FRESH_H * 3600: continue
             if not trusted: continue
             new.append({"feed": name, "source": src, "title": i["title"][:140], "link": i["link"], "ts": i["ts"], "seen_at": int(now)})
+    T = S.get("titles", {})
+    if len(T) > 5000: S["titles"] = dict(sorted(T.items(), key=lambda kv: -kv[1])[:4000])
     log(f"poll: {len(srcs)} sources in {time.time() - t0:.1f}s - 200:{stats['200']} 304:{stats['304']} err:{stats['err']} new trusted items: {len(new)}")
     for i in new: log("  NEW", f"[{i['source']}]", i["title"], "|", i["link"][:120])
     return new

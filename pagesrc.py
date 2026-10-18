@@ -19,6 +19,9 @@ LISTINGS = {
  "STARDOM":         ("https://wwr-stardom.com/en/news/", r"/en/news/\d{6,8}[a-z0-9-]*/", "Global", r"\s*[|｜]\s*STARDOM.*$"),
  "Bleacher Report": ("https://bleacherreport.com/wrestling", r"/articles/\d+-[a-z0-9-]+", None, r"\s*\|\s*Bleacher Report.*$"),
 }
+# listing pages that also link other sports: keep only links whose URL slug names pro wrestling
+SLUG_OK = {"Bleacher Report": r"wwe|aew|tna|nxt|\braw\b|-raw-|smackdown|wrestlemania|summerslam|royal-rumble|survivor-series|crown-jewel|wrestledream|"
+                              r"full-gear|all-in|dynamite|collision|njpw|-roh-|stardom|aaa|cmll|pro-wrestling|wrestling-"}
 ACR = set("WWE AEW TNA NXT ROH NJPW AAA CMLL MLW GCW NWA PWG IWGP DDT NOAH AJPW TJPW PPV PLE TV US UK USA UFC WWF WCW ECW NCAA ESPN TBS TNT CEO NBC FOX".split())
 def get(url, t=15):
     return urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=t).read()[:2500000].decode("utf8", "ignore")
@@ -28,6 +31,7 @@ def links(name, h):
     for l in re.findall(r'href="([^"#]+)"', h):
         l = urllib.parse.urljoin(base, html.unescape(l)).split("?")[0]
         if re.search(rx, urllib.parse.urlparse(l).path) and urllib.parse.urlparse(l).netloc.endswith(urllib.parse.urlparse(base).netloc.replace("www.", "")):
+            if name in SLUG_OK and not re.search(SLUG_OK[name], l.rsplit("/", 1)[-1]): continue
             if l not in out: out.append(l)
     return out
 def _meta(h, p):
