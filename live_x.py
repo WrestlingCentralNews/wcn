@@ -55,8 +55,14 @@ def run():
         st = json.load(open(f))
         if not (st["start"] <= now <= st["start"] + POST_WINDOW_H * 3600): continue
         P = S["shows"].setdefault(st["key"], {"posted": {}, "combined": [], "n": 0})
+        if "facts" not in P:   # backfill from already-posted ids
+            P["facts"] = [{"winner": m["winner"], "loser": m.get("loser", "")} for m in st["matches"] if P["posted"].get(m["id"]) not in (None, "skipped", "dup")]
         ready = [m for m in st["matches"] if m.get("confirmed") and not m.get("conflict") and m["id"] not in P["posted"] and m["id"] not in P["combined"]
                  and now - m["first_seen"] < MAX_AGE_H * 3600]
+        P.setdefault("facts", [])
+        dup = [m for m in ready if any(live.same(m, f) for f in P["facts"])]
+        for m in dup: P["posted"][m["id"]] = "dup"; log("skip duplicate of an already-posted result:", m["en"])
+        ready = [m for m in ready if m not in dup]
         jobs = []
         for m in ready:
             left = CAP_PER_SHOW - P["n"] - len(jobs)
@@ -77,7 +83,8 @@ def run():
             code, body, hdr = XP.post_tweet(text)
             if code in (200, 201):
                 tid = body["data"]["id"]; sent += 1; P["n"] += 1
-                for m in used: (P["posted"] if kind == "one" else P["posted"]).__setitem__(m["id"], tid)
+                for m in used:
+                    P["posted"][m["id"]] = tid; P["facts"].append({"winner": m["winner"], "loser": m.get("loser", "")})
                 if kind == "combo": P["combo_done"] = True
                 S["log"].append({"key": st["key"], "ids": [m["id"] for m in used], "tweet": tid, "at": int(now), "ok": True})
                 log(f"posted https://x.com/wrestlingWCN/status/{tid} :: {text.splitlines()[0]} {used[0]['en']}")
