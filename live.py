@@ -158,7 +158,7 @@ PRE_RX = r"(?i:pre-?show|kickoff|kick-off|zero hour|countdown to|tailgate brawl|
 def card_of(lines):
     """Announced matches from the card lists sources print: '[Stip:] A (c) vs. B vs. C' -> [{stip, sides, champ}]."""
     out = []
-    for l in lines:
+    for idx, l in enumerate(lines):
         if len(l) > 400 or not re.search(r"\bvs\.?\s", l) or re.search(rf"(?i)\b{DEF}\b|def\.", l): continue
         m = re.match(r"^(?:(?P<stip>[^:]{3,120}):\s+)?(?P<rest>.+)$", l)
         stip = clean_side(m.group("stip") or ""); rest = m.group("rest")
@@ -175,7 +175,7 @@ def card_of(lines):
         sides = [re.sub(r"\s*\((?:" + PRE_RX + r")[^)]*\)", "", x, flags=re.I) for x in sides]
         sides = [re.sub(r"\s+[-–—]\s+.*$", "", x) for x in sides]
         champ = next((clean_side(re.sub(r"\s*\(c\.?\)", "", x)) for x in sides if re.search(r"\(c\.?\)", x)), None)
-        out.append({"stip": stip, "sides": [clean_side(re.sub(r"\s*\(c\.?\)", "", x)) for x in sides], "champ": champ, "pre": pre})
+        out.append({"stip": stip, "sides": [clean_side(re.sub(r"\s*\(c\.?\)", "", x)) for x in sides], "champ": champ, "pre": pre, "idx": idx})
     return out
 def card_match(card, r):
     """Best card entry for result r (winner must overlap one side; loser, if known, another)."""
@@ -236,7 +236,13 @@ def parse_page(page):
                 elif re.search(r"(?i)\b(?:and still|retain)", m.group(1) + " " + ctx[-200:]): r["title"] = "retain"
         if r:
             if pre_sec: r["pre"] = True
-            apply_card(r, card + CARD.get("cur", []))
+            local = [c for c in card if c["idx"] < i and i - c["idx"] <= 80]
+            near = None
+            for c in reversed(local):                      # the match header just above this result line
+                if card_match([c], r): near = c; break
+            if near: apply_card(r, [near])
+            elif r.get("loser"): apply_card(r, CARD.get("cur", []) + card)
+            elif r.get("need_card") or not r.get("loser"): continue   # winner-only line with no header above it: ignore
             if r.pop("need_card", False) and not r.get("card"): continue   # 'X wins…' lines only count for announced matches
             k = norm(r["winner"]) + "|" + norm(r["loser"])
             if k not in seen: seen.add(k); r["pos"] = i; out.append(r)
