@@ -100,15 +100,20 @@ def choose(c, member_images, budget_ok=True):
     if not names: names = names_in(c.get("raw_title", "")); guessed = names_in.guessed
     if not names: return c.get("image"), None, "no-names"
     k = "choice2|" + c["id"] + "|" + "|".join(names); C = cache()
-    if k in C: return C[k]["image"], C[k].get("credit"), "cached"
     cands = list(dict.fromkeys([u for u in [c.get("image")] + member_images if u]))
+    if k in C:
+        x = C[k]
+        # a cached pick is only reused while it is still one of this card's on-topic photos (clusters change as reports arrive),
+        # a placeholder, a Wikipedia photo, or an inline photo of the current lead article
+        if x["image"] is None or x.get("credit") or x["image"] in cands or x.get("inline_of") == c["link"]:
+            return x["image"], x.get("credit"), "cached"
     unknown = False
     for u in cands[:4]:
         r = check(u, names)
         if r: C[k] = {"image": u}; return u, None, "verified" if u == c.get("image") else "replaced-cluster"
         unknown |= r is None
     for u in inline_images(c["link"], names):
-        if check(u, names): C[k] = {"image": u}; return u, None, "replaced-inline"
+        if check(u, names): C[k] = {"image": u, "inline_of": c["link"]}; return u, None, "replaced-inline"
     for n in names:
         w = wikipedia(n)
         if w and check(w["url"], [n]):

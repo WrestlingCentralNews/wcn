@@ -1,0 +1,10 @@
+{
+ "_doc": "Hand-picked card photos, applied every run by aggregator.image_overrides(). An item applies when the card's LEAD article link is in 'links' (or its id in 'ids'). image null = WCN default card. 'block' = image URLs never shown on any card.",
+ "items": [
+  {"note": "2026-10-18: card showed a Dynamite backstage Jericho/Nick Wayne photo from an off-topic WrestleDream preview in the cluster. POST Wrestling's own photo of Persephone with the TBS title.",
+   "links": ["https://www.postwrestling.com/2026/10/17/persephone-retains-tbs-championship-in-four-way-match-at-aew-wrestledream/",
+             "https://www.fightful.com/wrestling-news/persephone-wins-four-way-match-to-retain-tbs-championship-at-aew-wrestledream"],
+   "image": "https://www.postwrestling.com/wp-content/uploads/2026/10/AEW-WrestleDream-Persephone.jpg"}
+ ],
+ "block": []
+}

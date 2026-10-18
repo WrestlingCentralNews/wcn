@@ -125,6 +125,21 @@ LONG_MAX_PER_RUN = 400
 LLM_MAX_PER_RUN = 700  # steady state is ~5-30 per run; high cap allows one-time backfill
 RETENTION_DAYS = 60  # prune stories older than this each run
 DROPPED_CL = set()
+OVERRIDES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "image_overrides.json")
+def image_overrides(clusters):
+    """Hand-picked card photos (repo file image_overrides.json, survives every run): {"items": [{"links": [...], "image": url|null}]}.
+    Applied when the card's lead article is one of `links` (so it can't leak onto a different story that later absorbs it).
+    image null = WCN default card. Also "block": image URLs never to show on any card."""
+    try: ov = json.load(open(OVERRIDES))
+    except Exception: return 0
+    n = 0; block = set(ov.get("block", []))
+    for c in clusters:
+        for o in ov.get("items", []):
+            if c["link"] in o.get("links", []) or c["id"] in o.get("ids", []):
+                c["image"] = o.get("image"); c["image_credit"] = o.get("credit"); n += 1; break
+        else:
+            if c.get("image") in block: c["image"] = None; c["image_credit"] = None; n += 1
+    return n
 def run():
     os.makedirs(os.path.dirname(STORE), exist_ok=True)
     old = {i["id"]: i for i in json.load(open(STORE))} if os.path.exists(STORE) else {}
@@ -219,12 +234,15 @@ def run():
     # image relevance (vision-verified) for top cards and every new card; results cached per card+names
     stats_img = {}
     def _pick(c):
-        mem = [bylink[u["link"]].get("image") for u in c.get("updates", []) if u["link"] in bylink]
-        return c, vision.choose(c, [m for m in mem if m])
+        # only photos of members that are about the same people as the lead (enrich.cluster), never an off-topic neighbour's
+        return c, vision.choose(c, [m for m in c.get("member_images", []) if m])
     todo = [c for i, c in enumerate(clusters) if i < IMG_CHECK_TOP or c["ts"] > time.time() - 3*86400]
     with ThreadPoolExecutor(6) as ex:
         for c, (img, cr, st) in ex.map(_pick, todo):
             c["image"] = img; c["image_credit"] = cr; stats_img[st] = stats_img.get(st, 0) + 1
+    for c in clusters: c.pop("member_images", None)
+    n_ov = image_overrides(clusters)
+    if n_ov: print("images: manual overrides applied to", n_ov, flush=True)
     vision.save(); llm.save_usage()
     print("images:", stats_img, f"month spend ${llm._U['usd']:.3f}", flush=True)
     try:   # live results for shows on air / just finished (no-op outside show windows; no AI spend)

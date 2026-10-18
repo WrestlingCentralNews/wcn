@@ -138,6 +138,8 @@ canon = functools.lru_cache(maxsize=None)(_canon)
 EVENT = re.compile(r"\b(died|death|passed away|cause of death|medical examiner|injur\w*|surgery|retire\w*|signs?|signed|released?|departs?|exit|lawsuit|sued|arrest\w*|suspend\w*|returns?|debut\w*|wins?|crowned|vacate\w*|cancel\w*|postpon\w*|crowned)\b", re.I)
 EVN = {"died":"death","death":"death","passed":"death","cause":"death","medical":"death","examiner":"death","retire":"retire","retires":"retire","retirement":"retire","retiring":"retire","sued":"lawsuit","lawsuit":"lawsuit"}
 import editorial as _ed
+# two different matches from the same show must not merge (e.g. "Persephone retains TBS title" vs "Nick Wayne beats Jericho",
+# or a multi-match card preview bridging them): see _different_match() used by similar()
 from aliases import ALIASES as _AL
 _EXEC = {"tony khan","triple h","nick khan","paul levesque","nick aldis","adam pearce","michael cole","pat mcafee","dave meltzer","carlos silva","santino marella","scott d'amore","vince mcmahon","stephanie mcmahon","shawn michaels","eric bischoff","jim ross","jim cornette","bully ray","paul heyman","bruce prichard","tony schiavone","excalibur","taz"}
 _PNAMES = sorted({x.strip() for x in ("|".join(_ed.ROSTER.values()) + "|" + _ed.FIG + "|" + "|".join(_AL)).split("|") if len(x.strip()) > 2 and x.strip().lower() not in _EXEC and not re.search(r"[\\\[\]()]", x)}, key=len, reverse=True)
@@ -154,7 +156,20 @@ def dates(t):
     out = {f"{int(m)}/{int(d)}" for m, d in re.findall(r"\b(1[0-2]|0?[1-9])[/-]([12]\d|3[01]|0?[1-9])\b", t)}
     out |= {f"{_MON[m[:3].lower()]}/{int(d)}" for m, d in re.findall(r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.? (\d{1,2})\b", t, re.I)}
     return frozenset(out)
+_SHOW_RECAP = re.compile(r"(?i)^(?=.*\b(raw|smackdown|nxt|dynamite|collision|impact|rampage)\b)(?=.*\b(results?|recap|review|live updates|report|preview)\b)")
+def _different_match(a, b):
+    """A results report vs. an article naming none of its wrestlers (checked on the source titles AND our rewritten headlines,
+    which can drop first names: 'Jericho-Wayne 3')."""
+    if "results" not in ((a.get("kind") or {}).get("type"), (b.get("kind") or {}).get("type")): return False
+    if _recap(a["raw_title"]) or _recap(b["raw_title"]): return False   # weekly-show recaps ('SmackDown Results 10/16') keep the old rules
+    pa = _pp(a["raw_title"], a.get("title") or ""); pb = _pp(b["raw_title"], b.get("title") or "")
+    return bool(pa and pb and not pa & pb)
+@functools.lru_cache(maxsize=None)
+def _recap(t): return bool(_SHOW_RECAP.search(t))
+@functools.lru_cache(maxsize=None)
+def _pp(raw, title): return persons(canon(raw)) | persons(canon(title))
 def similar(a, b):
+    if _different_match(a, b): return False
     if _sim(a, b): return True
     if a.get('llm') and b.get('llm'): return _sim({**a, 'raw_title': a['title']}, {**b, 'raw_title': b['title']})
     return False
@@ -209,10 +224,48 @@ def img_score(u, src):
     if re.search(r"logo|graphic|banner|poster", u, re.I): s -= 1
     return s
 _old_cluster = cluster
+JUNK_IMG = re.compile(r"(?i)click[-_]?to[-_]?unlock|placeholder|default[-_](image|thumb|og)|no[-_]image|fallback")
+_SHOWS = [("raw", r"\braw\b"), ("smackdown", r"smackdown"), ("nxt", r"\bnxt\b"), ("dynamite", r"dynamite"), ("collision", r"collision"),
+          ("rampage", r"rampage"), ("impact", r"\bimpact\b|\btna\b"), ("roh", r"\broh\b|ring of honor"), ("wrestledream", r"wrestledream"),
+          ("crownjewel", r"crown jewel"), ("mitb", r"money in the bank|\bmitb\b"), ("survivor", r"survivor series"), ("fullgear", r"full gear"),
+          ("njpw", r"\bnjpw\b|new japan"), ("cmll", r"\bcmll\b"), ("aaa", r"\baaa\b"), ("mlw", r"\bmlw\b"), ("nwa", r"\bnwa\b")]
+@functools.lru_cache(maxsize=None)
+def shows(t): return frozenset(k for k, rx in _SHOWS if re.search(rx, t, re.I))
+def about_same(m, main):
+    """True if cluster member m is really about the lead article's story (not just a same-show/same-night neighbour)."""
+    if m is main: return True
+    sm, sM = shows(m["raw_title"]), shows(main["raw_title"])
+    if sm and sM and not sm & sM: return False      # 'TNA Impact taping spoiler' photo on a 'next week's SmackDown' card
+    pm, pM = persons(canon(m["raw_title"])), persons(canon(main["raw_title"]))
+    if pm and pM: return bool(pm & pM)
+    if sM and not sm & sM: return False             # lead is about a show; member names neither that show nor the lead's people
+    return True                                     # otherwise it's in the cluster: trust the clustering
 def cluster(articles):
-    out = _old_cluster(articles); by = {a["id"]: a for a in articles}
+    """Card image: the LEAD article's own photo first; another member's photo only if that member is about the same people/story
+    and its photo scores better (bigger/non-thumbnail). Before this, ties went to the OLDEST member (max() keeps the first), so a
+    WrestleDream card preview's Jericho photo became the image of the Persephone TBS-title result. c['member_images'] (lead first,
+    on-topic members only) feeds the vision check; aggregator pops it before writing news.json."""
+    out = _old_cluster(articles); bylink = {}
+    for a in articles: bylink.setdefault(a["link"], a)
+    # stock/promo photos an outlet puts on many unrelated articles (podcast 'click to unlock' art, show logos, file photos)
+    use = {}; cl_of = {}
     for c in out:
-        members = [by[c["id"][1:]]] + [a for a in articles if a["link"] in {u["link"] for u in c["updates"]}] + [a for a in articles if a["link"] == c["link"]]
-        best = max(members, key=lambda a: img_score(a.get("image"), a["source"]))
-        if best.get("image"): c["image"] = best["image"]
+        for l in [c["link"]] + [u["link"] for u in c["updates"]]: cl_of[l] = c["id"]
+    for a in bylink.values():
+        if a.get("image"): use.setdefault(a["image"].split("?")[0], set()).add(cl_of.get(a["link"], a["link"]))
+    generic = {u for u, cs in use.items() if len(cs) >= 3}   # same photo on 3+ different stories (an event poster on 3 reports of ONE story is fine)
+    def sc(m):
+        u = m.get("image") or ""
+        return img_score(u, m["source"]) - (6 if u.split("?")[0] in generic or JUNK_IMG.search(u) else 0)
+    for c in out:
+        main = bylink.get(c["link"])
+        if not main: continue
+        others = [bylink[u["link"]] for u in sorted(c["updates"], key=lambda u: -u["ts"]) if u["link"] in bylink]
+        pool = [main] + [m for m in others if m is not main and about_same(m, main)]
+        pool = list({id(m): m for m in pool}.values())
+        withimg = [m for m in pool if m.get("image") and not JUNK_IMG.search(m["image"])]
+        best = max(withimg, key=sc) if withimg else None
+        if best and main in withimg and sc(main) >= sc(best) - (0 if re.search(r"(?i)logo|graphic|poster", main["image"]) else 2): best = main
+        c["image"] = best["image"] if best else None
+        c["member_images"] = list(dict.fromkeys(m["image"] for m in ([best] if best else []) + withimg if m.get("image")))
     return out
