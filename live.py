@@ -239,21 +239,20 @@ def parse_page(page):
 STOP = set("the and of vs w with team family champion champions c aew wwe tna".split())
 def toks(s): return {t for t in re.findall(r"[a-z0-9]+", (s or "").lower().replace("é", "e").replace("í", "i").replace("ó", "o").replace("á", "a")) if t not in STOP and len(t) > 1}
 def norm(s): return " ".join(sorted(toks(s)))
+def _ov(a, b):
+    a, b = toks(a), toks(b)
+    return len(a & b) / min(len(a), len(b)) if a and b else 0
 def same(a, b):
-    wa, wb = toks(a["winner"]), toks(b["winner"])
-    if not wa or not wb: return False
-    j = len(wa & wb) / min(len(wa), len(wb))
-    if j < 0.5: return False
-    if a.get("loser") and b.get("loser"):
-        la, lb = toks(a["loser"]), toks(b["loser"])
-        if la and lb and len(la & lb) / min(len(la), len(lb)) < 0.34: return False
+    if a.get("loser") and b.get("loser") and len(toks(a["loser"])) >= 3 and len(toks(b["loser"])) >= 3 and _ov(a["loser"], b["loser"]) >= 0.6 \
+            and _ov(a["winner"], b["loser"]) < 0.34 and _ov(b["winner"], a["loser"]) < 0.34:
+        return True                                     # same beaten opponents, winner just named differently (e.g. "DCF" vs "The Don Callis Family")
+    if _ov(a["winner"], b["winner"]) < 0.5: return False
+    if a.get("loser") and b.get("loser") and toks(a["loser"]) and toks(b["loser"]) and _ov(a["loser"], b["loser"]) < 0.34: return False
     return True
 def contradicts(a, b):
-    """Same match (losers overlap strongly) but different winner -> conflicting reports."""
+    """Two reports where one's winner is the other's loser in the same pairing -> conflicting reports."""
     if not (a.get("loser") and b.get("loser")): return False
-    pa, pb = toks(a["winner"]) | toks(a["loser"]), toks(b["winner"]) | toks(b["loser"])
-    return len(pa & pb) / max(1, min(len(pa), len(pb))) > 0.7 and not same(a, b)
-
+    return _ov(a["winner"], b["loser"]) >= 0.5 and _ov(b["winner"], a["loser"]) >= 0.5
 def text_en(m):
     w, l = m["winner"], m["loser"]
     s = f"{w} beat {l}" if l else (f"{w} won the {m['field']}-way match" if m.get("field") else f"{w} won")
@@ -320,6 +319,15 @@ def update(store_articles=(), now=None):
             if r.get("title") and m.get("title") != r["title"] and (m.get("title") is None or r["title"] == "change"): m["title"] = r["title"]; m["updated"] = nowi
             if len(r.get("winner", "")) > len(m["winner"]) and same(r, m): m["winner"] = r["winner"]
             if not any(s["name"] == r["src"] for s in m["sources"]): m["sources"].append({"name": r["src"], "url": r["url"]}); m["updated"] = nowi
+        merged = []                                     # fold duplicates that slipped in earlier into the first-seen entry
+        for m in sorted(st["matches"], key=lambda x: x["first_seen"]):
+            t = next((x for x in merged if same(x, m)), None)
+            if t is None: merged.append(m); continue
+            for sx in m["sources"]:
+                if not any(q["name"] == sx["name"] for q in t["sources"]): t["sources"].append(sx)
+            for k in ("loser", "stip", "fin_en", "fin_es", "who", "move", "title", "pre"):
+                if not t.get(k) and m.get(k): t[k] = m[k]
+        st["matches"] = merged
         for m in st["matches"]:
             m["conflict"] = any(contradicts(m, o) for o in st["matches"] if o is not m)
             m["confirmed"] = not m["conflict"] and (len(m["sources"]) >= 2 or nowi - m["first_seen"] >= 600)
