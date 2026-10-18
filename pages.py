@@ -106,27 +106,33 @@ def build_smartnews(clusters):
 LIVE_CUTOFF_HOUR = 5   # 5:00 AM America/Puerto_Rico (AST, UTC-4, no DST) the morning after the show
 def live_target(lv=None, now=None):
     """Where /live/ sends people: that night's results page from the FIRST confirmed match result until 5:00 AM Puerto Rico
-    time the next morning; homepage (None) otherwise. Overlapping shows: a PPV beats a weekly show, then the most recent
-    confirmed result wins. -> {"path", "name", "key", "until", "since"}; the page JS honours 'until' even if a build is late."""
-    import live
+    time the next morning; homepage (None) otherwise. 2+ eligible shows: conflicts.choose (live_overrides.json, then the
+    fixed priority WWE PLE > AEW > AAA > NXT > TNA, else unresolved -> most recent confirmed result).
+    -> {"path", "name", "key", "until", "since", "how"}; the page JS honours 'until' even if a build is late."""
+    import live, conflicts
     try: from zoneinfo import ZoneInfo; PR = ZoneInfo("America/Puerto_Rico")
     except Exception: PR = datetime.timezone(datetime.timedelta(hours=-4))
     now = time.time() if now is None else now
-    best = None
+    cands = []
     for f in (os.listdir(live.LIVE_DIR) if os.path.isdir(live.LIVE_DIR) else []):
         if not f.endswith(".json"): continue
         st = live.load(f[:-5]) or {}
         conf = [int(m["first_seen"]) for m in st.get("matches", []) if m.get("confirmed") and not m.get("conflict") and m.get("first_seen")]
+        conf = [c for c in conf if c <= now]
         if not conf or not st.get("date"): continue
         d = datetime.date.fromisoformat(st["date"]) + datetime.timedelta(days=1)
         until = int(datetime.datetime(d.year, d.month, d.day, LIVE_CUTOFF_HOUR, 0, tzinfo=PR).timestamp())
         if not (min(conf) <= now < until): continue
         path = f"events/{st['key']}/"
         if not os.path.exists(os.path.join(PUB, path, "index.html")): continue
-        rank = (st.get("kind") == "ppv", max(c for c in conf if c <= now) if any(c <= now for c in conf) else 0)
-        if not best or rank > best[0]:
-            best = (rank, {"path": path, "name": st.get("name", st["key"]), "key": st["key"], "since": min(conf), "until": until, "ppv": st.get("kind") == "ppv"})
-    return best[1] if best else None
+        cands.append({"key": st["key"], "slug": st.get("slug"), "name": st.get("name", st["key"]), "brand": st.get("brand"), "kind": st.get("kind"),
+                      "date": st["date"], "last": max(conf), "since": min(conf), "until": until, "path": path})
+    pr_date = datetime.datetime.fromtimestamp(now - LIVE_CUTOFF_HOUR * 3600, PR).date().isoformat()   # the PR "night" (before 5 AM = previous date)
+    c, how = conflicts.choose(cands, pr_date)
+    if not c: return None
+    out = {k: c[k] for k in ("path", "name", "key", "since", "until")}; out.update(how=how, ppv=c.get("kind") == "ppv")
+    if len(cands) > 1: out["others"] = [x["key"] for x in cands if x is not c]
+    return out
 def build_live_redirect(target):
     """/live/: permanent 'link in bio' URL. Baked target (meta refresh + canonical) + JS that re-checks /live.json so it's right between builds."""
     url = SITE + (target["path"] if target else "")
