@@ -224,5 +224,6 @@ def main():
         except Exception as e:
             log("cycle error:", repr(e)[:300])
         if once: break
-        while time.time() < min(nxt, time.time() + TRACK_S): time.sleep(2)   # wall-clock steps: a box pause/resume can't stall it
+        wake = min(nxt, time.time() + (TRACK_S if S.get("tracking") or S.get("pending") else POLL_S))
+        while time.time() < wake: time.sleep(2)   # wall-clock steps: a box pause/resume can't stall it
 if __name__ == "__main__": main()
