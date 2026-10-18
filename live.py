@@ -108,7 +108,7 @@ def lines_of(page):
     s = re.sub(r"(?i)<(br|/p|/li|/h\d|/div|/tr|/blockquote)[^>]*>", "\n", s)
     t = html.unescape(re.sub(r"<[^>]+>", " ", s))
     return [re.sub(r"\s+", " ", l).strip() for l in t.split("\n") if l.strip()]
-DEF = r"(?:def\.|defeated|defeats|beat|beats|over)"
+DEF = r"(?:def\.|defeated|defeats)"
 TITLE_RX = re.compile(r"(?i)\b(champion(?:ship)?s?|title)\b")
 CHANGE_RX = re.compile(r"(?i)\b(new (?:\w+ )?champions?|to (?:win|capture|become)|wins? the|captur(?:e|es|ed)|crowned|title change|dethron)")
 RETAIN_RX = re.compile(r"(?i)\b(retain(?:s|ed)?|successful(?:ly)? defen[cs]e|still (?:the )?champion)")
@@ -139,6 +139,8 @@ def parse_line(line):
     if not m: return None
     w = clean_side(m.group("w")); loser, method = split_method(m.group("rest")); loser = clean_side(loser)
     if not w or not loser or len(w) > 140 or len(loser) > 200: return None
+    if len(re.sub(r"\([^)]*\)", "", w).split()) > 9 or len(re.sub(r"\([^)]*\)", "", loser).split()) > 14: return None
+    if re.search(r"\b(?:crawls|grabs|hits|connects|ascends|spits|sends|tries|goes|gets|takes|rolls|kicks|delivers)\b", w + " " + loser): return None
     if re.search(r"\b(will|would|could|should|next week|last week|previously|earlier this|on (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|at (?:all out|all in))\b", l): return None
     if re.search(r"(?i)^(?:the |and |but |after |when |as |in |this |with |following )", w) and not re.match(r"(?i)^the [A-Z]", w): return None
     stip = clean_side(m.group("stip") or "")
@@ -183,8 +185,8 @@ def card_match(card, r):
         sc = 0
         for sd in c["sides"]:
             T = toks(sd)
-            if W and T and len(W & T) / min(len(W), len(T)) >= 0.5: sc += 2
-            elif Lo and T and len(Lo & T) / min(len(Lo), len(T)) >= 0.5: sc += 1
+            if W and T and (len(W & T) / len(W) >= 0.6 or len(W & T) / len(T) >= 0.6): sc += 2
+            elif Lo and T and (len(Lo & T) / len(Lo) >= 0.6 or len(Lo & T) / len(T) >= 0.6): sc += 1
         if sc >= 2: sc += 0.5 if (c["stip"] or c["champ"]) else 0
         if sc >= 2 and sc > bs: best, bs = c, sc
     return best
@@ -269,7 +271,7 @@ def text_en(m):
     return s if s.endswith("!") else s + "."
 def text_es(m):
     w, l = m["winner"], m["loser"]
-    pl = bool(re.search(r"&| and | y |,", w))
+    pl = bool(re.search(r"&| and | y |,", w)) or bool(re.match(r"(?i)^the .+s$", w.split(" (")[0]))
     s = (f"{w} {'vencieron' if pl else 'venció'} a {l}") if l else (f"{w} {'ganaron' if pl else 'ganó'} el combate a {m['field']} bandas" if m.get("field") else f"{w} {'ganaron' if pl else 'ganó'}")
     if m.get("fin_es"): s += " " + m["fin_es"]
     if m.get("move"): s += f" (remate: {m['move']})"
@@ -325,6 +327,7 @@ def update(store_articles=(), now=None):
                 st["matches"].append(m)
             # enrich with facts another source has (loser, finish, title flag, stipulation)
             m.setdefault("_pre_votes", {})[r["src"]] = bool(r.get("pre"))
+            m.setdefault("pos", {})[r["src"]] = r["pos"]
             for k in ("loser", "stip", "fin_en", "fin_es", "who", "move"):
                 if not m.get(k) and r.get(k): m[k] = r[k]; m["updated"] = nowi
             if r.get("title") and m.get("title") != r["title"] and (m.get("title") is None or r["title"] == "change"): m["title"] = r["title"]; m["updated"] = nowi
@@ -346,7 +349,17 @@ def update(store_articles=(), now=None):
             m["confirmed"] = not m["conflict"] and (len(m["sources"]) >= 2 or nowi - m["first_seen"] >= 600)
             m["en"], m["es"] = text_en(m), text_es(m)
         # order: by position in the source with the most results (show order), new unknowns at the end
-        st["matches"].sort(key=lambda m: m.get("order", 0))
+        cnt = {}
+        for m in st["matches"]:
+            for k in m.get("pos", {}): cnt[k] = cnt.get(k, 0) + 1
+        lead = max(cnt, key=cnt.get) if cnt else None    # the source covering the most matches defines show order
+        snap = list(st["matches"])                      # list.sort() empties the list while sorting; look up neighbours in a copy
+        def okey(m):
+            if lead and lead in m.get("pos", {}): return (0, m["pos"][lead], m["first_seen"])
+            prev = [x for x in snap if lead in x.get("pos", {}) and x["first_seen"] <= m["first_seen"]]
+            return (0, max([x["pos"][lead] for x in prev] or [-1]) + 0.5, m["first_seen"])
+        st["matches"].sort(key=okey)
+        if os.environ.get("LIVE_DEBUG"): log("order", lead, [(x["id"], okey(x)) for x in st["matches"]])
         if json.dumps(st["matches"], sort_keys=True) != before: st["updated"] = nowi; changed.append(w["key"])
         st["checked"] = nowi
         json.dump(st, open(path(w["key"]), "w"), indent=0)
