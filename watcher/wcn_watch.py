@@ -188,7 +188,8 @@ def track(S):
             cid = links.get(t["link"]) or (by_title(t["title"]) if "news.google." in t["link"] or t["feed"] in ("PWInsider", "WWE.com", "TNA Wrestling", "STARDOM", "Bleacher Report") else None)
             if cid:
                 t["site_at"] = int(now); t["card"] = cid
-                log(f"ON SITE after {t['site_at'] - t['seen_at']}s (detect->dispatch {(t['dispatched_at'] - t['seen_at']) if t.get('dispatched_at') else 'covered by a running build'}): [{t['source']}] {t['title'][:90]}")
+                pub = f", source published->site {int(t['site_at'] - t['ts'])}s" if t.get("ts") and t["ts"] > t["seen_at"] - 6 * 3600 else ""
+                log(f"ON SITE after {t['site_at'] - t['seen_at']}s{pub} (detect->dispatch {(t['dispatched_at'] - t['seen_at']) if t.get('dispatched_at') else 'covered by a running build'}): [{t['source']}] {t['title'][:90]}")
         if t.get("card") and not t.get("x_at") and t["card"] in xp:
             t["x_at"] = int(xp[t["card"]]); log(f"ON X after {t['x_at'] - t['seen_at']}s: [{t['source']}] {t['title'][:90]}")
         done = t.get("site_at") and (t.get("x_at") or now - base > 1800)
