@@ -2,6 +2,8 @@
 
 Priority when 2+ shows are eligible for /live at once (each eligible from its first confirmed result until 5:00 AM
 Puerto Rico the next morning): 1 WWE PPV/PLE, 2 AEW (PPVs + weekly), 3 AAA, 4 NXT (weekly + PLEs), 5 TNA (weekly + PPVs).
+AEW Collision loses its AEW rank whenever it overlaps any PPV/PLE/major special from any promotion: the PPV wins
+(Collision vs another weekly show keeps the normal rank/reach logic).
 Anything the priority can't settle:
   - 2+ IMPORTANT non-ranked shows (any non-ranked promotion's PPV/special: NJPW majors, ROH PPVs, CMLL/Stardom/GCW/PWG big
     events...) -> needs_user=true: the owner decides via live_overrides.json ({"<PR date YYYY-MM-DD>": "<event key or slug>"},
@@ -42,6 +44,13 @@ def needs_user(shows):
     return not priority_resolves(shows) and sum(1 for s in shows if important(s)) >= 2
 def reach_hint(shows):
     return [{"key": s["key"], "promotion": promo(s)[0], "reach_tier": promo(s)[1], "ppv": s.get("kind") == "ppv"} for s in sorted(shows, key=lambda s: reach(s), reverse=True)]
+def is_collision(s): return (s.get("slug") or "") == "aew-collision" or bool(re.search(r"\bCollision\b", s.get("name") or ""))
+def collision_yields(shows):
+    """Owner rule: AEW Collision loses its AEW rank whenever it overlaps any PPV/PLE/major special (any promotion): the PPV wins.
+    -> shows without Collision when that applies, else the list unchanged. Collision vs weekly shows keeps the normal logic."""
+    if any(is_collision(s) for s in shows) and any(s.get("kind") == "ppv" and not is_collision(s) for s in shows):
+        return [s for s in shows if not is_collision(s)]
+    return shows
 def overrides():
     try: return {k: v for k, v in json.load(open(OVERRIDES)).items() if not k.startswith("_")}
     except Exception: return {}
@@ -54,7 +63,7 @@ def priority_resolves(shows):
     return sorted(rs).count(min(rs)) == 1 and sorted(rs)[0] < sorted(rs)[1]
 def choose(cands, pr_date=None, ovr=None):
     """cands: eligible shows, each with key/slug/name/brand/kind and 'last' (latest confirmed result ts).
-    -> (show, how): how = only | override | priority | reach | unresolved-default."""
+    -> (show, how): how = only | override | collision-yields | priority | reach | unresolved-default."""
     if not cands: return None, None
     if len(cands) == 1: return cands[0], "only"
     ovr = overrides() if ovr is None else ovr
@@ -62,6 +71,10 @@ def choose(cands, pr_date=None, ovr=None):
         v = ovr.get(d)
         hit = next((c for c in cands if _match(c, v)), None)
         if hit: return hit, "override"
+    rest = collision_yields(cands)
+    if rest is not cands:
+        if len(rest) == 1: return rest[0], "collision-yields"
+        cands = rest
     if priority_resolves(cands): return min(cands, key=lambda c: rank(c)), "priority"
     if needs_user(cands): return max(cands, key=lambda c: c.get("last", 0)), "unresolved-default"   # owner decides; temp: newest result
     return max(cands, key=lambda c: reach(c) + (c.get("last", 0),)), "reach"
@@ -74,18 +87,20 @@ def upcoming(days=7, now=None):
         shows = live.shows_on(day)
         if len(shows) < 2: continue
         d = day.isoformat(); v = ovr.get(d)
-        ok = priority_resolves(shows); nu = needs_user(shows)
-        win = min(shows, key=rank) if ok else (None if nu else max(shows, key=reach))
+        rest = collision_yields(shows); cy = rest is not shows
+        ok = priority_resolves(rest); nu = needs_user(rest)
+        win = rest[0] if len(rest) == 1 else min(rest, key=rank) if ok else (None if nu else max(rest, key=reach))
         oh = next((s for s in shows if _match(s, v)), None)
         is_ppv = lambda s, b: s["kind"] == "ppv" and rank(s) == ({"WWE": 1, "AEW": 2}[b])
         out.append({"date": d, "shows": [{"key": s["key"], "name": s["name"], "kind": s["kind"], "rank": rank(s), "rank_name": RANK_NAMES.get(rank(s), "unranked"),
                                           "start_utc": s["start"].astimezone(datetime.timezone.utc).isoformat(timespec="minutes"),
                                           "started": now >= s["start"]} for s in sorted(shows, key=lambda s: s["start"])],
-                    "resolved_by_priority": ok, "resolved_by": "override" if oh else "priority" if ok else None if nu else "reach",
+                    "resolved_by_priority": ok, "resolved_by": "override" if oh else "collision-yields" if cy and len(rest) == 1 else "priority" if ok else None if nu else "reach",
+                    "collision_yields": cy,
                     "auto_pick": (oh or win)["key"] if (oh or win) else None,
                     "override": oh["key"] if oh else (v or None), "override_valid": bool(oh) if v else None,
                     "needs_user": nu and not oh,
-                    **({"reach_hint": reach_hint(shows)} if nu else {}),
+                    **({"reach_hint": reach_hint(rest)} if nu else {}),
                     "any_started": any(now >= s["start"] for s in shows),
                     "both_ppv_wwe_aew": any(is_ppv(s, "WWE") for s in shows) and any(is_ppv(s, "AEW") for s in shows)})
     return out
