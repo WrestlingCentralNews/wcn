@@ -186,8 +186,11 @@ def track(S):
         base = t.get("dispatched_at") or t["seen_at"]
         if not t.get("site_at"):
             cid = links.get(t["link"]) or (by_title(t["title"]) if "news.google." in t["link"] or t["feed"] in ("PWInsider", "WWE.com", "TNA Wrestling", "STARDOM", "Bleacher Report") else None)
-            if cid: t["site_at"] = int(now); t["card"] = cid
-        if t.get("card") and not t.get("x_at") and t["card"] in xp: t["x_at"] = int(xp[t["card"]])
+            if cid:
+                t["site_at"] = int(now); t["card"] = cid
+                log(f"ON SITE after {t['site_at'] - t['seen_at']}s (detect->dispatch {(t['dispatched_at'] - t['seen_at']) if t.get('dispatched_at') else 'covered by a running build'}): [{t['source']}] {t['title'][:90]}")
+        if t.get("card") and not t.get("x_at") and t["card"] in xp:
+            t["x_at"] = int(xp[t["card"]]); log(f"ON X after {t['x_at'] - t['seen_at']}s: [{t['source']}] {t['title'][:90]}")
         done = t.get("site_at") and (t.get("x_at") or now - base > 1800)
         if done or now - base > TRACK_MAX_S:
             d = lambda k: f"{t[k] - t['seen_at']}s" if t.get(k) else "n/a"
