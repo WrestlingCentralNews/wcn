@@ -23,6 +23,7 @@ def check(img, names):
     key = os.environ.get("AI_API_KEY")
     if not key or llm.budget_left() < VISION_RESERVE_USD or not llm.pace_ok(): return None
     if getattr(_tl, "n", 0) >= MAX_CHECKS_PER_CARD: return None
+    if getattr(_tl, "bf", False) and not backfill_room(): return None
     _tl.n = getattr(_tl, "n", 0) + 1
     prompt = ("Pro-wrestling photo check. Expected people: " + ", ".join(names) +
               ". Answer true ONLY if an expected person is the clear main focus of the photo: shown solo, or dominant/central and largest. "
@@ -36,7 +37,10 @@ def check(img, names):
             headers=llm.HDR(key, "wcn-vision")), timeout=45)
         d = json.load(r)
         with llm._lock:
-            llm._U["usd"] += d.get("usage", {}).get("cost_in_usd_ticks", 0) / 1e10; llm._U["vision"] = llm._U.get("vision", 0) + 1
+            cost = d.get("usage", {}).get("cost_in_usd_ticks", 0) / 1e10
+            llm._U["usd"] += cost; llm._U["vision"] = llm._U.get("vision", 0) + 1
+            if getattr(_tl, "bf", False):
+                B = c.setdefault(BACKFILL_KEY, {"usd": 0.0, "calls": 0}); B["usd"] += cost; B["calls"] += 1
         out = json.loads(d["choices"][0]["message"]["content"])
         c[k] = {"ok": bool(out.get("shows_expected")), "who": out.get("who"), "at": int(time.time())}
         return c[k]["ok"]
@@ -44,6 +48,26 @@ def check(img, names):
         msg = str(e)[:100]
         if "400" in msg or "image" in msg.lower(): c[k] = {"ok": False, "who": "unloadable", "at": int(time.time())}
         print("vision error:", msg, flush=True); return None
+# ---------- one-time paid backlog check (owner-approved 2026-10-18): vision for EVERY card that fell back to a logo/unverified
+# photo, not just the top VISION_TOP. Cheapest path (detail=low, 60 tokens), every verdict cached; stops at BACKFILL_CAP_USD total
+# (tracked in the cache across runs) or when the month would pass the $8 pace target. Runs once, then marks itself done.
+BACKFILL_KEY = "backfill|2026-10-18-backlog"
+BACKFILL_CAP_USD = 0.30
+_bf_lock = threading.Lock()
+def backfill_on():
+    B = cache().get(BACKFILL_KEY) or {}
+    return not B.get("done")
+def backfill_room():
+    with _bf_lock:
+        B = cache().setdefault(BACKFILL_KEY, {"usd": 0.0, "calls": 0})
+        if B.get("done"): return False
+        per = 0.0012 # worst-case cost of one more low-detail check
+        if B["usd"] + per > BACKFILL_CAP_USD or llm._U["usd"] + per > llm.PACE_TARGET_USD: B["capped"] = True; return False
+        return True
+def backfill_finish():
+    B = cache().get(BACKFILL_KEY)
+    if B is not None and not B.get("done") and B.get("calls"): B["done"] = int(time.time()); return B
+    return None
 def inline_images(url, names):
     """Article-page images whose alt/caption/filename mentions one of the names."""
     try: h = _get(url, 10)[:900000].decode("utf8", "ignore")
@@ -235,7 +259,7 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     their free-licence Wikipedia photo -> best unlabelled on-topic photo / show or event art -> none (WCN default card).
     A photo labelled with a DIFFERENT wrestler, or that vision says shows someone else, is never used.
     Returns (image or None, credit dict or None, status)."""
-    _tl.n = 0
+    _tl.n = 0; _tl.bf = False
     key, names, guessed = key_person(c)
     if not key:
         if c.get("image"): return c["image"], None, "no-names"
@@ -243,7 +267,9 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
         return (PROMO_CARD.format(pr), None, "no-names-promo:" + pr) if pr else (None, None, "no-names")
     cands = list(dict.fromkeys([u for u in [c.get("image")] + member_images if u]))
     k = "choice3|" + c["id"] + "|" + key + "|" + hashlib.md5("|".join(cands).encode()).hexdigest()[:8]; C = cache()
-    if k in C: return C[k]["image"], C[k].get("credit"), "cached"
+    bf = rank >= VISION_TOP and budget_ok and not guessed and backfill_on() # one-time backlog pass
+    if k in C and not (bf and not str(C[k].get("st", "")).startswith("key")): return C[k]["image"], C[k].get("credit"), "cached"
+    if bf: rank = 0; fetch = True; _tl.bf = True # treated like a top card for this pass; checks counted against the backfill cap
     def done(img, st, cr=None, keep=True):
         if keep: C[k] = {"image": img, "credit": cr, "st": st, "key": key}
         return img, cr, st

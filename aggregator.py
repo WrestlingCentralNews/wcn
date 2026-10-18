@@ -247,6 +247,8 @@ def run():
     for c in clusters: c.pop("member_images", None)
     n_ov = image_overrides(clusters)
     if n_ov: print("images: manual overrides applied to", n_ov, flush=True)
+    bf = vision.backfill_finish()
+    if bf: print("images: one-time backlog vision pass done:", bf, flush=True)
     vision.save(); llm.save_usage()
     print("images:", stats_img, f"month spend ${llm._U['usd']:.3f}", flush=True)
     try:   # live results for shows on air / just finished (no-op outside show windows; no AI spend)
