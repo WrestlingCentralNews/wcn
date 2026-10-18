@@ -27,6 +27,7 @@ MIN_GAP_S = 60
 FRESH_H = 6                # items dated older than this never trigger a build
 TRACK_MAX_S = 45 * 60
 GOOGLE_BACKOFF_S = 15 * 60
+EVERY = {"Bleacher Report": 3}   # heavy pages (BR's listing is ~2 MB, no validators): every Nth cycle only (6 min)
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36 WCN-watcher/1.0"
 sys.path.insert(0, REPO_DIR)
 def log(*a):
@@ -92,6 +93,7 @@ def poll(S):
     def one(s):
         name, url, kind = s; m = F.get(name, {})
         if "news.google.com" in url and now < S.get("google_backoff_until", 0): return s, "backoff", None, m
+        if S.get("cycle", 0) % EVERY.get(name, 1): return s, "backoff", None, m
         code, b, meta = cget(url, m.get("meta", {}))
         return s, code, b, meta
     t0 = time.time()
@@ -188,7 +190,7 @@ def main():
             if now >= nxt:
                 nxt = now + POLL_S
                 git_pull(S)
-                S.setdefault("pending", []).extend(poll(S))
+                S.setdefault("pending", []).extend(poll(S)); S["cycle"] = S.get("cycle", 0) + 1
                 S["last_poll"] = int(now)
             maybe_dispatch(S)
             track(S)
