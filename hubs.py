@@ -244,6 +244,7 @@ def cite(key, path, title, st, lang, aired=True, extra_src=None):
         if n and u and u.startswith("http") and u not in seen: seen.add(u); out.append((n, u))
     out = out[:40]; pub, mod = min(pubs), max(mods + pubs); url = SITE + path
     es = lang == "es"; tt = re.sub(r"\s*\|\s*WCN$", "", title)
+    tt = re.sub(r"^LIVE:\s*", "", re.sub(r"^EN VIVO: resultados de\s+", "Resultados ", tt))   # stable citation title (no live prefix)
     cw = (f"{{{{cite web |url={url} |title={tt} |website=Wrestling Central News |date={_isod(pub)}"
           + (f" |language=es" if es else "") + "}}")
     lab = {"h": "Citar esta página", "t": "Título", "p": "Publicado", "u": "Actualizado", "l": "Enlace permanente", "s": "Fuentes originales", "w": "Plantilla de wiki"} if es else \
