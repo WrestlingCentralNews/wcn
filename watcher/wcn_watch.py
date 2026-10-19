@@ -10,10 +10,16 @@ wasn't there before shows up from a trusted source (editorial tier 1-2), it is q
   - at most MAX_PER_HOUR dispatches per rolling hour and MIN_GAP_S between dispatches.
 It then follows each dispatched item until its link shows up in the live site's news.json and in the X poster state
 (data branch posted_x.json, read from GitHub - the X API is never called), logging detection -> site / X latency.
-No secrets are read or printed (gh uses its own stored login). State + log: ~/.wcn/ (watcher.json, watcher.log)."""
-import json, os, re, sys, time, hashlib, subprocess, urllib.request, urllib.error, email.utils, datetime as dt, html
+No secrets are read or printed (gh uses its own stored login). State + log: ~/.wcn/ (watcher.json, watcher.log).
+Liveness: beat() rewrites ~/.wcn/watcher.heartbeat ("<CLOCK_BOOTTIME s> <pid> <phase> <wall s>") at every step and every 2 s
+of sleep; supervise.sh kills + restarts the watcher when it goes stale (a hang while alive, not only a crash). Every network
+call has a hard TOTAL deadline (not just a per-socket-op timeout), the feed pool is abandoned after POLL_DEADLINE_S, and
+SIGUSR1 dumps all thread stacks to ~/.wcn/watcher.stacks (the watchdog does that before killing, so a stall is diagnosable).
+CLOCK_BOOTTIME stops while the box VM is paused/snapshotted, so a pause/resume never looks like a hang; beat() logs each
+pause it notices (wall clock jumped while the VM was frozen - nothing on the box, cron included, runs then)."""
+import json, os, re, sys, time, hashlib, subprocess, signal, faulthandler, urllib.request, urllib.error, email.utils, datetime as dt, html
 import xml.etree.ElementTree as ET
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, wait as fwait
 HOME = os.path.expanduser("~/.wcn"); os.makedirs(HOME, exist_ok=True)
 STATE = os.path.join(HOME, "watcher.json"); LOGF = os.path.join(HOME, "watcher.log")
 REPO_DIR = os.environ.get("WCN_REPO", os.path.join(HOME, "repo"))
@@ -27,6 +33,11 @@ MIN_GAP_S = 60
 FRESH_H = 6                # items dated older than this never trigger a build
 TRACK_MAX_S = 45 * 60
 GOOGLE_BACKOFF_S = 15 * 60
+HTTP_TIMEOUT_S = 20        # per socket operation (connect / each read)
+HTTP_DEADLINE_S = 45       # whole request incl. a slow-drip body
+POLL_DEADLINE_S = 90       # whole feed sweep; sources still running after this count as errors this cycle
+HANG_TEST = os.path.join(HOME, "watcher.hang-test")
+HBF = os.path.join(HOME, "watcher.heartbeat"); STACKS = os.path.join(HOME, "watcher.stacks")
 EVERY = {"Bleacher Report": 3}   # heavy pages (BR's listing is ~2 MB, no validators): every Nth cycle only (6 min)
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36 WCN-watcher/1.0"
 sys.path.insert(0, REPO_DIR)
@@ -35,6 +46,18 @@ def log(*a):
     with open(LOGF, "a") as f: f.write(line + "\n")
     if os.path.getsize(LOGF) > 5_000_000:      # keep the log bounded
         os.replace(LOGF, LOGF + ".1")
+_hb = {}
+def boot_s(): return time.clock_gettime(time.CLOCK_BOOTTIME)
+def beat(phase):
+    """liveness for the watchdog; also notices box pauses (wall clock advanced far more than the boot clock)"""
+    b, w = boot_s(), time.time()
+    if _hb and (w - _hb["w"]) - (b - _hb["b"]) > 60:
+        log(f"box was paused ~{((w - _hb['w']) - (b - _hb['b'])) / 60:.0f} min (VM suspended: no process on the box ran; resuming now)")
+    _hb.update(b=b, w=w)
+    try:
+        with open(HBF + ".tmp", "w") as f: f.write(f"{b:.1f} {os.getpid()} {phase} {w:.0f}\n")
+        os.replace(HBF + ".tmp", HBF)
+    except OSError: pass
 def load():
     try: return json.load(open(STATE))
     except Exception: return {}
@@ -54,8 +77,15 @@ def cget(url, meta):
     if meta.get("etag"): h["If-None-Match"] = meta["etag"]
     if meta.get("lm"): h["If-Modified-Since"] = meta["lm"]
     try:
-        r = urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=20)
-        b = r.read(4_000_000); m = {"etag": r.headers.get("ETag"), "lm": r.headers.get("Last-Modified")}
+        end = time.monotonic() + HTTP_DEADLINE_S
+        r = urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=HTTP_TIMEOUT_S)
+        parts, n = [], 0
+        while n < 4_000_000:
+            if time.monotonic() > end: r.close(); return 0, None, meta     # slow-drip server: give up, try next cycle
+            c = r.read1(min(65536, 4_000_000 - n))   # read1: returns what has arrived (read(n) would wait for n bytes)
+            if not c: break
+            parts.append(c); n += len(c)
+        b = b"".join(parts); m = {"etag": r.headers.get("ETag"), "lm": r.headers.get("Last-Modified")}
         return r.status, b, {k: v for k, v in m.items() if v}
     except urllib.error.HTTPError as e:
         if e.code == 304: return 304, None, meta
@@ -97,7 +127,11 @@ def poll(S):
         code, b, meta = cget(url, m.get("meta", {}))
         return s, code, b, meta
     t0 = time.time()
-    with ThreadPoolExecutor(10) as ex: res = list(ex.map(one, srcs))
+    ex = ThreadPoolExecutor(10); futs = [ex.submit(one, s) for s in srcs]
+    done, late = fwait(futs, timeout=POLL_DEADLINE_S)
+    ex.shutdown(wait=False, cancel_futures=True)        # never block on a stuck source
+    res = [f.result() if f in done else (s, 0, None, F.get(s[0], {}).get("meta", {})) for f, s in zip(futs, srcs)]
+    if late: log("poll: abandoned", len(late), "source(s) still running after", POLL_DEADLINE_S, "s:", ", ".join(s[0] for f, s in zip(futs, srcs) if f in late)[:200])
     stats = {"200": 0, "304": 0, "err": 0}
     for (name, url, kind), code, b, meta in res:
         f = F.setdefault(name, {"seen": {}, "baseline": False})
@@ -170,6 +204,7 @@ def track(S):
     code, news, S["site_meta"] = jget(SITE_JSON + "?t=" + str(int(now)), {})
     if news:
         S["site_links"] = {l: c["id"] for c in news.get("items", []) for l in [c.get("link")] + [u.get("link") for u in c.get("updates", [])] if l}
+        S["site_added"] = {c["id"]: c.get("added") for c in news.get("items", []) if c.get("added")}
         S["site_titles"] = [[c["id"], t] for c in news.get("items", [])[:150] for t in [c.get("raw_title"), c.get("title")] + [u.get("title") for u in c.get("updates", [])] if t]
     links = S.get("site_links") or {}
     def by_title(title):    # Google News items carry news.google.com links; the site stores the resolved article URL
@@ -188,7 +223,9 @@ def track(S):
             cid = links.get(t["link"]) or (by_title(t["title"]) if "news.google." in t["link"] or t["feed"] in ("PWInsider", "WWE.com", "TNA Wrestling", "STARDOM", "Bleacher Report") else None)
             if cid:
                 t["site_at"] = int(now); t["card"] = cid
-                pub = f", source published->site {int(t['site_at'] - t['ts'])}s" if t.get("ts") and t["ts"] > t["seen_at"] - 6 * 3600 else ""
+                added = (S.get("site_added") or {}).get(cid)    # when the build actually put it on the site (a box pause delays only our noticing)
+                if added and added < t["site_at"]: t["site_at"] = int(max(added, t["seen_at"]))
+                pub = f", source published->site {int((added or t['site_at']) - t['ts'])}s" if t.get("ts") and t["ts"] > t["seen_at"] - 6 * 3600 else ""
                 log(f"ON SITE after {t['site_at'] - t['seen_at']}s{pub} (detect->dispatch {(t['dispatched_at'] - t['seen_at']) if t.get('dispatched_at') else 'covered by a running build'}): [{t['source']}] {t['title'][:90]}")
         if t.get("card") and not t.get("x_at") and t["card"] in xp:
             t["x_at"] = int(xp[t["card"]]); log(f"ON X after {t['x_at'] - t['seen_at']}s: [{t['source']}] {t['title'][:90]}")
@@ -210,21 +247,25 @@ def git_pull(S):
 def main():
     once = "--once" in sys.argv
     log(f"watcher start pid={os.getpid()} poll={POLL_S}s repo={REPO_DIR}")
-    S = load(); nxt = 0
+    try: faulthandler.register(signal.SIGUSR1, file=open(STACKS, "w"), all_threads=True)
+    except Exception: pass
+    beat("start"); S = load(); nxt = 0
     while True:
         try:
             now = time.time()
             if now >= nxt:
                 nxt = now + POLL_S
-                git_pull(S)
-                S.setdefault("pending", []).extend(poll(S)); S["cycle"] = S.get("cycle", 0) + 1
+                beat("git_pull"); git_pull(S)
+                if os.path.exists(HANG_TEST):     # watchdog self-test: `touch ~/.wcn/watcher.hang-test` = hang here while alive
+                    os.remove(HANG_TEST); log("hang-test: blocking forever in the poll step"); beat("hang-test"); time.sleep(10 ** 7)
+                beat("poll"); S.setdefault("pending", []).extend(poll(S)); S["cycle"] = S.get("cycle", 0) + 1
                 S["last_poll"] = int(now)
-            maybe_dispatch(S)
-            track(S)
-            save(S)
+            beat("dispatch"); maybe_dispatch(S)
+            beat("track"); track(S)
+            beat("save"); save(S)
         except Exception as e:
             log("cycle error:", repr(e)[:300])
         if once: break
         wake = min(nxt, time.time() + (TRACK_S if S.get("tracking") or S.get("pending") else POLL_S))
-        while time.time() < wake: time.sleep(2)   # wall-clock steps: a box pause/resume can't stall it
+        while time.time() < wake: beat("sleep"); time.sleep(2)   # wall-clock steps: a box pause/resume can't stall it
 if __name__ == "__main__": main()
