@@ -46,7 +46,7 @@ document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
  const so=/(^|\.)(x|twitter)\.com$/.test(host(a))?'x':/(^|\.)facebook\.com$/.test(host(a))?'facebook':'';
  if(so&&/wrestlingWCN|Wrestling-Central-News/i.test(a.href)){track('social_click',{network:so,placement:place(a),page_type:pt()});return}
  const c=a.closest('.card'),rel=a.closest('.rel'),ns=a.closest('.nl-sample');
- if(c||rel||ns){const u=!!a.closest('.upd'),list=c?(u?'feed_update':'feed'):rel?'related':'newsletter_sample';
+ if(c||rel||ns){const u=!!a.closest('.upd'),list=c?(u?'feed_update':c.closest('#lead')?'top':'feed'):rel?'related':'newsletter_sample';
   const items=rel?[...document.querySelectorAll('.rel')]:ns?[...ns.querySelectorAll('a')]:null;
   track('story_click',{story_title:((c?c.querySelector('h2'):a).innerText||'').trim().slice(0,100),story_slug:slug(a.href),brand:c?c.dataset.cat:rel?((document.querySelector('.story .tag:not(.conf)')||{}).textContent||''):((a.nextElementSibling||{}).textContent||''),position:c?+c.dataset.pos+1:items.indexOf(rel||a)+1,list,link_type:a.classList.contains('img')?'image':a.closest('.meta')?'read_more':'headline',outbound:ext,page_type:pt()})}
  if(ext&&(c||a.closest('.credit,.pcredit')))track('source_click',{source_domain:host(a),link_type:a.closest('.pcredit')?'image_credit':c?'feed_card':'source_link',story_slug:slug(location.pathname),page_type:pt()});

@@ -126,7 +126,7 @@ def on_topic(a):
     t = a["raw_title"]; b = (a.get("body") or "") + " " + (a.get("summary_src") or "")
     if classify(re.sub(r"\b(Mexico|Japan|Australia)\b", "", t)) or SIG.search(t): return True
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
-import enrich, editorial, llm, pages, vision, breaking, stale
+import enrich, editorial, llm, pages, vision, breaking, stale, toppick
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
 IMG_CHECK_TOP = 60
 LONG_MAX_PER_RUN = 400
@@ -310,6 +310,7 @@ def run():
             p = pid.get(c["id"])
             if (p and p.get("resplit")) or (not p and all(l in pl for l in pages._members(c))): c["resplit"] = True
     pages.PREV = prev
+    toppick.annotate(clusters)   # homepage Top stories: c['imp'] / c['brk'] into news.json (and es/news.json)
     pages.assign_urls(clusters); pages.build(clusters); llm.save_usage()
     try:
         import hubs, live

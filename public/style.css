@@ -236,3 +236,37 @@ footer .nl-link{color:#F26A14;font-weight:700}
 .cite dt{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--mut)}.cite dd{margin:2px 0 0;word-break:break-all}
 .cite-w code{display:block;margin-top:4px;padding:8px 10px;border-radius:8px;background:rgba(0,0,0,.35);font-size:.8em;white-space:pre-wrap;word-break:break-all;user-select:all}
 .cite-src{margin:0;padding-left:18px;font-size:.85em}.cite-src li{margin:3px 0;word-break:break-all}
+/* ---- Homepage Top stories (lead + 4 secondary), 2026-10-19 ---- */
+.mid{min-width:0;display:flex;flex-direction:column;gap:22px}
+.lead{display:flex;flex-direction:column;gap:16px}
+.lead:empty{display:none}
+.lead.wait{display:block;min-height:calc(100vh - 120px)}   /* English shell: reserve the block until app.js fills it, so nothing below jumps (CLS) */
+.top-h{margin:0;font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:26px;letter-spacing:2px;color:var(--txt);display:flex;align-items:center;gap:12px}
+.top-h:after{content:'';flex:1;height:2px;background:linear-gradient(90deg,var(--acc2),transparent)}
+.lead .card.hero{border-width:2px;border-color:var(--c,#7cd618)}
+.lead .card.hero .img{aspect-ratio:2/1}
+.lead .card.hero h2{font-size:32px;line-height:1.2}
+.lead .card.hero p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tag.brk{background:#e8202a;color:#fff}
+.minis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.card.mini{border-radius:14px}
+.card.mini .img{aspect-ratio:16/10;max-height:none}
+.card.mini .img img.fg{object-fit:cover}
+.card.mini .ph{font-size:26px;letter-spacing:2px}
+.card.mini .ph:after{inset:8px;border-width:2px}
+.card.mini .body{padding:12px 12px 14px;gap:8px;flex:1}
+.card.mini .tags .tag{font-size:9px;padding:2px 7px}
+.card.mini h2{font-size:15px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.card.mini .meta{font-size:11px}
+@media(max-width:700px){
+.mid{gap:18px}
+.lead{gap:12px}
+.top-h{font-size:22px}
+.lead .card.hero .img{aspect-ratio:16/9}
+.lead .card.hero h2{font-size:24px}
+.minis{grid-template-columns:1fr;gap:10px}
+.card.mini{display:grid;grid-template-columns:118px minmax(0,1fr);align-items:stretch}
+.card.mini .img{aspect-ratio:auto;height:100%;min-height:84px}
+.card.mini .body{padding:10px 12px;gap:6px}
+.card.mini h2{font-size:15px;-webkit-line-clamp:3}
+}

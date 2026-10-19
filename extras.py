@@ -101,22 +101,40 @@ def build_trust(clusters, tr):
         out += simple(rel, lang, title, desc, h1, intro + f'<ol class="stafflist">{lis}</ol>', alt, ld)
     return out
 # ---------- Spanish home ----------
-def card_html(c, L, n):
+BRK_ES = '<span class="tag brk">ÚLTIMA HORA</span>'
+def card_html(c, L, n, hero=False):
     col = CATC.get(c["categories"][0]); img = c.get("image") or ""
-    ld = 'fetchpriority="high"' if n == 0 else 'loading="lazy"'   # lead card is the LCP image: load it first, never lazily
+    ld = 'fetchpriority="high"' if hero else 'loading="lazy"'   # lead card is the LCP image: load it first, never lazily
     wh = f' width="{c["img_w"]}" height="{c["img_h"]}"' if c.get("img_w") and c.get("img_h") else ""
     im = (f'<img class="bg" {ld} referrerpolicy="no-referrer" src="{e(img)}" alt="" aria-hidden="true"><img class="fg" {ld}{wh} referrerpolicy="no-referrer" src="{e(img)}" alt="">' if img else "")
     u = L["url"][3:]   # relative to /es/
-    return (f'<article class="card {"hero" if n == 0 else ""} in" style="--c:{col}" data-cat="{c["categories"][0]}" data-pos="{n}"><a class="img" href="{e(u)}" aria-hidden="true" tabindex="-1"><div class="ph">{c["categories"][0]}</div>{im}</a><div class="body">'
-            f'<div class="tags">{"".join(f"<span class=tag style=--c:{CATC[k]}>{k}</span>" for k in c["categories"])}</div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><p>{e(L["s"])}</p>'
+    return (f'<article class="card {"hero" if hero else ""} in" style="--c:{col}" data-cat="{c["categories"][0]}" data-pos="{n}"><a class="img" href="{e(u)}" aria-hidden="true" tabindex="-1"><div class="ph">{c["categories"][0]}</div>{im}</a><div class="body">'
+            f'<div class="tags">{BRK_ES if hero and c.get("brk") else ""}{"".join(f"<span class=tag style=--c:{CATC[k]}>{k}</span>" for k in c["categories"])}</div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><p>{e(L["s"])}</p>'
             f'<div class="meta"><span>{e(c["source"])}</span><a href="{e(u)}">Leer más →</a></div></div></article>')
+def _ago_es(t):   # same wording as app.js ago() (es); app.js re-renders it on load
+    m = max(0, time.time() - int(t)) / 60
+    return "hace " + (f"{max(1, int(m))} min" if m < 60 else f"{int(m // 60)}h" if m < 1440 else f"{int(m // 1440)}d")
+def mini_html(c, L, n):
+    col = CATC.get(c["categories"][0]); img = c.get("image") or ""; u = L["url"][3:]
+    im = f'<img class="fg" loading="lazy" referrerpolicy="no-referrer" src="{e(img)}" alt="">' if img else ""
+    return (f'<article class="card mini in" style="--c:{col}" data-cat="{c["categories"][0]}" data-pos="{n}"><a class="img" href="{e(u)}" aria-hidden="true" tabindex="-1"><div class="ph">{c["categories"][0]}</div>{im}</a><div class="body">'
+            f'<div class="tags">{BRK_ES if c.get("brk") else ""}<span class="tag" style="--c:{col}">{c["categories"][0]}</span></div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><div class="meta"><span>{_ago_es(c["ts"])}</span></div></div></article>')
+def top_html(items):
+    """Top stories block (lead + 4), same pick as app.js for the default all-promotions view."""
+    import toppick
+    lead, sec = toppick.pick([c for c, L in items])
+    if not lead: return "", items
+    T = [lead] + sec; Lm = {id(c): L for c, L in items}
+    h = f'<h2 class="top-h">Lo más importante</h2>{card_html(lead, Lm[id(lead)], 0, True)}<div class="minis">{"".join(mini_html(c, Lm[id(c)], k + 1) for k, c in enumerate(sec))}</div>'
+    return h, [(c, L) for c, L in items if all(c is not t for t in T)]
 def build_es_home(clusters, tr):
     items = [(c, tr[c["id"]]) for c in clusters if c["id"] in tr]
     title = "Noticias de lucha libre: WWE, AEW, TNA y más | Wrestling Central News en español"
     desc = "Noticias de lucha libre en español: WWE, AEW, TNA, la escena independiente, CMLL, AAA y NJPW. Resultados de Raw, SmackDown, Dynamite y más, actualizados cada 15 minutos."
     ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": "Wrestling Central News en español", "url": SITE + "es/", "inLanguage": "es", "publisher": C.PUBLISHER},
           {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": SITE + L["url"]} for i, (c, L) in enumerate(items[:20])]}]
-    first = "".join(card_html(c, L, i) for i, (c, L) in enumerate(items[:12]))
+    top, rest = top_html(items); o = 5 if top else 0
+    first = "".join(card_html(c, L, i + o, hero=not top and i == 0) for i, (c, L) in enumerate(rest[:12]))
     tick = "".join(f'<span><b>{c["categories"][0]}</b> {e(L["t"])}</span>' for c, L in items[:15])
     s = (C.head(title, desc, SITE + "es/", "es", alts={"en": SITE, "es": SITE + "es/"}, ld=ld, ads=True) +
          f'''<body><div class="spot s1"></div><div class="spot s2"></div>
@@ -125,7 +143,7 @@ def build_es_home(clusters, tr):
 <div class="ticker"><div id="ticker">{tick}</div></div>
 <h1 class="es-h1">Noticias de lucha libre en español</h1>
 <main class="layout"><aside class="side"><div class="ad ad-sky" data-slot="leftSkyscraper" data-size="300×600 Half-page"></div></aside>
-<section id="feed" class="feed">{first}</section>
+<div class="mid"><section id="lead" class="lead" aria-label="Lo más importante">{top}</section><section id="feed" class="feed">{first}</section></div>
 <aside class="side"><div class="ad ad-sky" data-slot="rightSkyscraper" data-size="300×600 Half-page"></div></aside></main>
 <button id="more" class="more">Cargar más noticias</button>
 <div class="ad ad-footer" data-slot="footer" data-size="970×90 Footer Banner"></div>

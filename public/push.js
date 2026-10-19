@@ -1,4 +1,5 @@
 /* WCN breaking-news web push (OneSignal v16, Custom Code). Never auto-prompts: the header bell asks only on tap.
+   The bell (and the OneSignal SDK) only appear from a reader's 2nd visit (wcnVisits, shared with pwa.js).
    OneSignal's worker lives at /push/onesignal/ (its own scope) so the PWA sw.js keeps '/'. */
 (function(){
   var APP_ID = '50ded3cc-5465-43f5-9e31-4c229a84abde';
@@ -7,6 +8,15 @@
   var iosNeedsInstall = isIOS && !standalone;              // iOS only allows web push from a Home Screen app
   var canPush = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
   if (!canPush && !iosNeedsInstall) return;               // unsupported browser: no bell at all
+  // Visit counter (owner rule 2026-10-19): no install / alerts prompts on a reader's first visit, only from the 2nd visit on.
+  // A visit = a browser session (sessionStorage flag); readers from before the counter existed count as returning.
+  // Shared with push.js (whichever runs first counts the visit; the other reuses it).
+  window.wcnVisits = window.wcnVisits || function(){ try { var S = localStorage, s = sessionStorage, n = +S.getItem('wcn_visits') || 0;
+    if (!s.getItem('wcn_vs')) { if (!n && (S.getItem('wcn_seen') || S.getItem('wcn_consent') || S.getItem('wcn_filters') || S.getItem('wcn_lang') || S.getItem('wcn_install_dismissed') || S.getItem('wcn_ios_hint_shown'))) n = 1;
+      n++; S.setItem('wcn_visits', String(n)); s.setItem('wcn_vs', '1'); }
+    return n; } catch (e) { return 1; } };
+  // first visit: no alerts bell and no OneSignal SDK at all (also keeps the first page lighter). Readers already opted in keep it.
+  if (wcnVisits() < 2 && !standalone && !(canPush && Notification.permission === 'granted')) return;
   var OS = null, ready = false;
   window.OneSignalDeferred = window.OneSignalDeferred || [];
   if (canPush) {

@@ -1,7 +1,16 @@
-/* WCN PWA: service worker registration, install button (Android/desktop), one-time iOS hint, offline notice. */
+/* WCN PWA: service worker registration, install button (Android/desktop), one-time iOS hint, offline notice.
+   Install bar and iOS hint only from a reader's 2nd visit (wcnVisits). */
 (function(){
   if ('serviceWorker' in navigator) addEventListener('load', function(){ navigator.serviceWorker.register('/sw.js', {scope: '/'}).catch(function(e){ console.warn('WCN SW', e); }); });
   var LS = window.localStorage, K = 'wcn_install_dismissed', IOS = 'wcn_ios_hint_shown';
+  // Visit counter (owner rule 2026-10-19): no install / alerts prompts on a reader's first visit, only from the 2nd visit on.
+  // A visit = a browser session (sessionStorage flag); readers from before the counter existed count as returning.
+  // Shared with push.js (whichever runs first counts the visit; the other reuses it).
+  window.wcnVisits = window.wcnVisits || function(){ try { var S = localStorage, s = sessionStorage, n = +S.getItem('wcn_visits') || 0;
+    if (!s.getItem('wcn_vs')) { if (!n && (S.getItem('wcn_seen') || S.getItem('wcn_consent') || S.getItem('wcn_filters') || S.getItem('wcn_lang') || S.getItem('wcn_install_dismissed') || S.getItem('wcn_ios_hint_shown'))) n = 1;
+      n++; S.setItem('wcn_visits', String(n)); s.setItem('wcn_vs', '1'); }
+    return n; } catch (e) { return 1; } };
+  var returning = wcnVisits() >= 2;
   var standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
   function get(k){ try { return LS.getItem(k); } catch(e){ return null; } }
   function set(k){ try { LS.setItem(k, String(Date.now())); } catch(e){} }
@@ -13,7 +22,7 @@
   function track(n, p){ try { if (window.gtag) gtag('event', n, p || {}); } catch (e) {} }
   var installed = false;
   function close(d, key){ d.classList.remove('in'); setTimeout(function(){ d.remove(); }, 300); if (key) set(key); }
-  if (!standalone) {
+  if (!standalone && returning) {   // first visit: no install bar / iOS hint (the service worker still registers above)
     var deferred = null;
     addEventListener('beforeinstallprompt', function(e){
       e.preventDefault(); deferred = e;
