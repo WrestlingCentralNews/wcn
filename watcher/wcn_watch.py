@@ -7,6 +7,8 @@ wasn't there before shows up from a trusted source (editorial tier 1-2), it is q
   - never dispatch while an update run is already queued (the concurrency group then holds at most 1 running + 1 waiting,
     and only one deploy is ever in flight);
   - if a run is in progress that started AFTER the item was seen, it will pick the item up: no extra dispatch;
+  - items already on the live site (news.json) are dropped; if a run started up to COVER_S BEFORE the item was seen (the
+    Actions poller / the other watcher saw it first), wait for that run and dispatch only if the item still isn't on the site;
   - at most MAX_PER_HOUR dispatches per rolling hour and MIN_GAP_S between dispatches (counted from GitHub workflow_dispatch runs so the Cloudflare Worker in cfworker/ shares the same cap);
 It then follows each dispatched item until its link shows up in the live site's news.json and in the X poster state
 (data branch posted_x.json, read from GitHub - the X API is never called), logging detection -> site / X latency.
@@ -30,6 +32,7 @@ POLL_S = 120
 TRACK_S = 20               # follow-up checks of the site/X state while dispatched items are pending
 MAX_PER_HOUR = 20
 MIN_GAP_S = 60
+COVER_S = 150             # a run created up to this long BEFORE an item was seen (the other watcher/poller saw it first) gets to finish first
 FRESH_H = 6                # items dated older than this never trigger a build
 TRACK_MAX_S = 45 * 60
 GOOGLE_BACKOFF_S = 15 * 60
@@ -191,6 +194,8 @@ def maybe_dispatch(S):
         act = active_runs()
         recent = recent_dispatches(3600)   # shared with cfworker via GitHub (not local D alone)
     except Exception as e: log("dispatch check failed:", e); return
+    drop_on_site(S)
+    if not P: return
     oldest = min(p["seen_at"] for p in P)
     queued = [r for r in act if r["status"] != "in_progress"]
     running = [r for r in act if r["status"] == "in_progress"]
@@ -199,6 +204,12 @@ def maybe_dispatch(S):
         log(f"{len(P)} item(s) covered by run {covering[0]['databaseId']} ({covering[0]['status']}, {covering[0]['event']}) - no dispatch")
         S.setdefault("tracking", []).extend({**p, "run": covering[0]["databaseId"], "dispatched_at": None} for p in P); P.clear(); return
     if queued: log(f"{len(P)} pending - a run is already queued; waiting"); return
+    near = [r for r in act if r["created"] >= oldest - COVER_S]   # started just before we saw the item: likely the box watcher / Actions poller saw it first
+    if near:
+        if not any(p.get("near_run") == near[0]["databaseId"] for p in P):
+            log(f"{len(P)} pending - run {near[0]['databaseId']} ({near[0]['event']}) started {int(oldest - near[0]['created'])}s before the item was seen; waiting for it to finish, then dispatching only if the item is not on the site")
+        for p in P: p["near_run"] = near[0]["databaseId"]
+        return
     n_hour = len(recent)
     if n_hour >= MAX_PER_HOUR: log(f"{len(P)} pending - hourly cap {MAX_PER_HOUR} reached ({n_hour} workflow_dispatch in last hour, shared with cfworker); waiting"); return
     latest = max((r["created"] for r in recent), default=0)
@@ -209,6 +220,22 @@ def maybe_dispatch(S):
     D.append({"at": now, "n": len(P)})
     log(f"DISPATCHED update.yml for {len(P)} new item(s)" + (f" (queued behind running run {running[0]['databaseId']})" if running else ""))
     S.setdefault("tracking", []).extend({**p, "dispatched_at": int(now)} for p in P); P.clear()
+def drop_on_site(S):
+    """drop pending items the live site already has (another watcher's build, or a regular run, published them): no build needed"""
+    P = S.get("pending") or []
+    if not P: return
+    try: code, news, _ = jget(SITE_JSON + "?t=" + str(int(time.time())), {})
+    except Exception: return
+    if not news: return
+    links = {l for c in news.get("items", []) for l in [c.get("link")] + [u.get("link") for u in c.get("updates", [])] if l}
+    titles = [_toks(t) for c in news.get("items", [])[:150] for t in [c.get("raw_title"), c.get("title")] + [u.get("title") for u in c.get("updates", [])] if t]
+    def on(p):
+        if p["link"] in links: return True
+        a = _toks(p["title"])
+        return bool(a) and any(b and len(a & b) / len(a | b) >= .6 for b in titles)
+    gone = [p for p in P if on(p)]
+    for p in gone: log("  already on site - no build needed:", f"[{p['source']}]", p["title"][:100])
+    if gone: P[:] = [p for p in P if p not in gone]
 def jget(url, meta):
     code, b, meta2 = cget(url, meta)
     return code, (json.loads(b) if code == 200 and b else None), meta2

@@ -9,8 +9,7 @@ Runs for --minutes (default 330 = 5h30m, under the 6 h job limit) and then exits
 Log goes to stdout (the job log): a HEARTBEAT line every cycle. Status: ~/.wcn/poller-status.json, force-pushed
 every STATUS_EVERY_S to the orphan branch `poller-status` (one commit, never grows).
 --simulate-new N: on cycle N inject one synthetic trusted item (test only; goes through the normal dispatch rules).
-Extra (poller only): before dispatching, pending items already on the live site (news.json) are dropped, so an item the box
-watcher (or a regular build) already published doesn't cost a second build.
+The 'already on the live site' + 'wait for a run started just before the item was seen' rules live in wcn_watch.maybe_dispatch.
 No secrets are read or printed: gh uses GH_TOKEN from the environment (the job's GITHUB_TOKEN)."""
 import os, sys, time, json, argparse, subprocess
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
@@ -31,24 +30,6 @@ def log(*a):
     except Exception: pass
 W.log = log
 W.git_pull = lambda S: None     # the job checks out the current main at start; each run is <6 h
-def drop_on_site(S):
-    """pending items the live site already has (e.g. the box watcher dispatched first, or a regular build got them) need no build"""
-    P = S.get("pending") or []
-    if not P: return
-    try:
-        code, news, _ = W.jget(W.SITE_JSON + "?t=" + str(int(time.time())), {})
-    except Exception: return
-    if not news: return
-    links = {l for c in news.get("items", []) for l in [c.get("link")] + [u.get("link") for u in c.get("updates", [])] if l}
-    titles = [W._toks(t) for c in news.get("items", [])[:150] for t in [c.get("raw_title"), c.get("title")] + [u.get("title") for u in c.get("updates", [])] if t]
-    def on_site(p):
-        if p["link"] in links: return True
-        a = W._toks(p["title"])
-        return bool(a) and any(b and len(a & b) / len(a | b) >= .6 for b in titles)
-    gone = [p for p in P if on_site(p)]
-    if gone:
-        for p in gone: log("  already on site - no build needed:", f"[{p['source']}]", p["title"][:100])
-        S["pending"] = [p for p in P if p not in gone]
 def push_status(st):
     """one orphan commit on branch poller-status (force-pushed; token never printed)"""
     tok, repo = os.environ.get("GH_TOKEN"), os.environ.get("GITHUB_REPOSITORY")
@@ -84,7 +65,7 @@ def main():
                                 "ts": int(now), "seen_at": int(now)})
                     log("  SIMULATED new trusted item injected (test)")
                 S.setdefault("pending", []).extend(new)
-                drop_on_site(S); nd = len(S.get("dispatches", []))
+                nd = len(S.get("dispatches", []))
                 W.maybe_dispatch(S)
                 if len(S.get("dispatches", [])) > nd: dispatched += 1
                 hour = [d for d in S.get("dispatches", []) if now - d["at"] < 3600]
@@ -97,7 +78,7 @@ def main():
                 json.dump(st, open(STATUS, "w"), indent=1)
                 if now - pushed >= STATUS_EVERY_S or cycles == 1: push_status(st); pushed = now
             elif S.get("pending"):
-                drop_on_site(S); nd = len(S.get("dispatches", [])); W.maybe_dispatch(S)
+                nd = len(S.get("dispatches", [])); W.maybe_dispatch(S)
                 if len(S.get("dispatches", [])) > nd: dispatched += 1
             W.track(S); W.save(S)
         except Exception as e:
