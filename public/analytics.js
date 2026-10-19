@@ -19,9 +19,11 @@ window.wcnCookieSettings=banner;
 // Microsoft Clarity (heatmaps + session recordings). Loaded ONLY when analytics consent is granted
 // (default outside EEA/UK/CH, or after Accept in the banner). Consent is passed with Clarity's consentv2 API;
 // a later Decline revokes it (Clarity deletes its cookies) and stops recording; the tag is not loaded on later pages.
+// NEVER pass a 'source' key: it is reserved for Microsoft-issued CMP IDs, and an unknown value made p.clarity.ms/collect
+// answer 400 to the session's first upload, so Clarity recorded 0 sessions (Oct 17-19 2026).
 const CLARITY_ID='yzbrkdw45p';let clarityOn=false;
 window.clarity=window.clarity||function(){(window.clarity.q=window.clarity.q||[]).push(arguments)};
-function clarityConsent(ok){const v=ok?'granted':'denied';try{clarity('consentv2',{source:'wcn-banner',analytics_Storage:v,ad_Storage:'denied'})}catch(e){}}
+function clarityConsent(ok){const v=ok?'granted':'denied';try{clarity('consentv2',{ad_Storage:'denied',analytics_Storage:v})}catch(e){}}
 function loadClarity(){if(clarityOn)return;clarityOn=true;clarityConsent(true);try{clarity('set','page_type',pt())}catch(e){}
  const t=document.createElement('script');t.async=1;t.src='https://www.clarity.ms/tag/'+CLARITY_ID;const f=document.getElementsByTagName('script')[0];(f&&f.parentNode?f.parentNode:document.head).insertBefore(t,f||null)}
 function clearClarity(){const h=location.hostname,ds=['',h,'.'+h.replace(/^www\./,'')];['_clck','_clsk'].forEach(n=>ds.forEach(d=>{document.cookie=n+'=; Max-Age=0; path=/'+(d?'; domain='+d:'')}))}
