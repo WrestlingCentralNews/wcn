@@ -7,10 +7,10 @@ main = "src/index.js"
 compatibility_date = "2026-10-01"
 workers_dev = true
 
-# Fill in after: wrangler kv namespace create WCN_WATCHER
-# [[kv_namespaces]]
-# binding = "STATE"
-# id = "REPLACE_WITH_NAMESPACE_ID"
+# KV namespace WCN_WATCHER (created with: wrangler kv namespace create WCN_WATCHER)
+[[kv_namespaces]]
+binding = "STATE"
+id = "8a21a7750af04b7794b63e6043612fcc"
 
 [triggers]
 crons = ["*/2 * * * *"]
