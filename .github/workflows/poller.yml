@@ -47,8 +47,8 @@ jobs:
         run: |
           m="${{ inputs.minutes }}"; [ -z "$m" ] && m=330; [ "${m%.*}" -gt 330 ] 2>/dev/null && m=330
           python3 -u watcher/gha_poller.py --minutes "$m" --simulate-new "${{ inputs.simulate_new || 0 }}"
-      - name: Save last-seen state
-        if: ${{ !cancelled() }}
+      - name: Save last-seen state (also when cancelled - the poller rewrites the file every cycle)
+        if: always()
         uses: actions/cache/save@v4
         with: {path: ~/.wcn/watcher.json, key: "wcn-poller-${{ github.run_id }}-${{ github.run_attempt }}"}
       - name: Hand off to the next poller run
