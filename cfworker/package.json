@@ -1,0 +1,15 @@
+{
+  "name": "wcn-cfworker",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Always-on 2-minute WCN source poller (Cloudflare Worker cron)",
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "wrangler": "^4.40.0"
+  }
+}

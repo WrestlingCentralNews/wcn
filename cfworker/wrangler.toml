@@ -1,0 +1,20 @@
+# WCN always-on source poller. Free-plan friendly:
+#   - cron every 2 min (~720 invocations/day, well under 100k)
+#   - single KV key written only when state changes (<<1000 writes/day)
+#   - <= ~30 subrequests/run (sources + GitHub + KV), under the free 50 cap
+name = "wcn-watcher"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+# Fill in after: wrangler kv namespace create WCN_WATCHER
+# [[kv_namespaces]]
+# binding = "STATE"
+# id = "REPLACE_WITH_NAMESPACE_ID"
+
+[triggers]
+crons = ["*/2 * * * *"]
+
+# Account id is read from CLOUDFLARE_ACCOUNT_ID (env) or `wrangler login`.
+# Secrets (set with `wrangler secret put`, never commit):
+#   GITHUB_TOKEN  fine-grained PAT: WrestlingCentralNews/wcn only, Actions: Read and write

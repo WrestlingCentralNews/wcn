@@ -7,7 +7,7 @@ wasn't there before shows up from a trusted source (editorial tier 1-2), it is q
   - never dispatch while an update run is already queued (the concurrency group then holds at most 1 running + 1 waiting,
     and only one deploy is ever in flight);
   - if a run is in progress that started AFTER the item was seen, it will pick the item up: no extra dispatch;
-  - at most MAX_PER_HOUR dispatches per rolling hour and MIN_GAP_S between dispatches.
+  - at most MAX_PER_HOUR dispatches per rolling hour and MIN_GAP_S between dispatches (counted from GitHub workflow_dispatch runs so the Cloudflare Worker in cfworker/ shares the same cap);
 It then follows each dispatched item until its link shows up in the live site's news.json and in the X poster state
 (data branch posted_x.json, read from GitHub - the X API is never called), logging detection -> site / X latency.
 No secrets are read or printed (gh uses its own stored login). State + log: ~/.wcn/ (watcher.json, watcher.log).
@@ -117,6 +117,16 @@ def active_runs():
     runs = json.loads(r.stdout)
     for x in runs: x["created"] = dt.datetime.fromisoformat(x["createdAt"].replace("Z", "+00:00")).timestamp()
     return [x for x in runs if x["status"] in ("queued", "in_progress", "pending", "waiting", "requested")]
+def recent_dispatches(window_s=3600):
+    """workflow_dispatch runs of update.yml in the last window (shared cap with the Cloudflare Worker)."""
+    r = gh("run", "list", "--workflow", "update.yml", "--limit", "40", "--json", "databaseId,status,createdAt,event")
+    if r.returncode: raise RuntimeError("gh run list failed: " + r.stderr.strip()[:200])
+    now = time.time(); out = []
+    for x in json.loads(r.stdout):
+        if x.get("event") != "workflow_dispatch": continue
+        created = dt.datetime.fromisoformat(x["createdAt"].replace("Z", "+00:00")).timestamp()
+        if now - created < window_s: out.append({"databaseId": x["databaseId"], "created": created, "status": x["status"]})
+    return out
 def poll(S):
     srcs, editorial, pagesrc = sources(); tier = editorial.tier
     F = S.setdefault("feeds", {}); now = time.time(); new = []
@@ -177,7 +187,9 @@ def maybe_dispatch(S):
     P = S.setdefault("pending", [])
     if not P: return
     now = time.time(); D = S.setdefault("dispatches", []); D[:] = [d for d in D if now - d["at"] < 3600]
-    try: act = active_runs()
+    try:
+        act = active_runs()
+        recent = recent_dispatches(3600)   # shared with cfworker via GitHub (not local D alone)
     except Exception as e: log("dispatch check failed:", e); return
     oldest = min(p["seen_at"] for p in P)
     queued = [r for r in act if r["status"] != "in_progress"]
@@ -187,8 +199,11 @@ def maybe_dispatch(S):
         log(f"{len(P)} item(s) covered by run {covering[0]['databaseId']} ({covering[0]['status']}, {covering[0]['event']}) - no dispatch")
         S.setdefault("tracking", []).extend({**p, "run": covering[0]["databaseId"], "dispatched_at": None} for p in P); P.clear(); return
     if queued: log(f"{len(P)} pending - a run is already queued; waiting"); return
-    if len(D) >= MAX_PER_HOUR: log(f"{len(P)} pending - hourly cap {MAX_PER_HOUR} reached; the next allowed dispatch picks them up"); return
-    if D and now - D[-1]["at"] < MIN_GAP_S: return
+    n_hour = len(recent)
+    if n_hour >= MAX_PER_HOUR: log(f"{len(P)} pending - hourly cap {MAX_PER_HOUR} reached ({n_hour} workflow_dispatch in last hour, shared with cfworker); waiting"); return
+    latest = max((r["created"] for r in recent), default=0)
+    if latest and now - latest < MIN_GAP_S: return
+    if D and now - D[-1]["at"] < MIN_GAP_S: return   # local floor too (gh list can lag a few seconds)
     r = gh("workflow", "run", "update.yml")
     if r.returncode: log("dispatch failed:", r.stderr.strip()[:200]); return
     D.append({"at": now, "n": len(P)})
