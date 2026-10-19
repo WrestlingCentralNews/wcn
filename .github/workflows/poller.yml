@@ -1,0 +1,59 @@
+name: Source poller (always-on 2-min checks)
+# One long job (~5h30m, under the 6 h limit) runs watcher/gha_poller.py: the box watcher's own detection + dispatch code
+# (watcher/wcn_watch.py + pagesrc.py) polling every 2 minutes and dispatching update.yml when a new trusted item appears
+# (never while an update run is queued; shared cap 20 workflow_dispatch runs/hour + 60 s gap, counted via the GitHub API,
+# so the box watcher and this poller coordinate). At the end it saves its last-seen state to the Actions cache and
+# dispatches the next poller run (it waits in the concurrency group until this one has finished, so the cache is saved).
+# Backup: the 30-min cron only runs the "gate" job, which starts a poller if none is queued/running.
+# Kill switch: repo variable POLLER_ENABLED=false (the chain and the gate both stop).
+run-name: ${{ (github.event_name == 'schedule' || inputs.mode == 'gate') && format('poller gate ({0})', github.event_name) || 'WCN poller' }}
+on:
+  schedule: [{cron: "7,37 * * * *"}]
+  workflow_dispatch:
+    inputs:
+      mode: {description: 'poll = run the poller; gate = only start one if none is running', type: choice, options: [poll, gate], default: poll}
+      minutes: {description: 'Poll for this many minutes (max 330)', type: number, default: 330}
+      simulate_new: {description: 'TEST: inject one synthetic trusted item on this cycle (0 = off)', type: number, default: 0}
+permissions: {contents: write, actions: write}
+jobs:
+  gate:
+    if: github.event_name == 'schedule' || inputs.mode == 'gate'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env: {GH_TOKEN: "${{ github.token }}", GH_REPO: "${{ github.repository }}"}
+    steps:
+      - name: Start a poller only if none is queued or running
+        run: |
+          if [ "${{ vars.POLLER_ENABLED }}" = "false" ]; then echo "POLLER_ENABLED=false - not starting"; exit 0; fi
+          act=$(gh run list --workflow poller.yml --limit 30 --json databaseId,status,displayTitle \
+                --jq "[.[] | select(.databaseId != ${GITHUB_RUN_ID} and .displayTitle == \"WCN poller\" and (.status==\"queued\" or .status==\"in_progress\" or .status==\"pending\" or .status==\"waiting\" or .status==\"requested\"))] | length")
+          if [ "$act" = "0" ]; then gh workflow run poller.yml -f mode=poll && echo "$(date -u +%T) no poller running - started one (chain was broken)"
+          else echo "$(date -u +%T) poller already active ($act run(s)) - nothing to do"; fi
+  poll:
+    if: github.event_name == 'workflow_dispatch' && inputs.mode != 'gate'
+    runs-on: ubuntu-latest
+    timeout-minutes: 345
+    concurrency: {group: wcn-poller, cancel-in-progress: false}
+    env: {GH_TOKEN: "${{ github.token }}", GH_REPO: "${{ github.repository }}"}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Restore last-seen state
+        uses: actions/cache/restore@v4
+        with: {path: ~/.wcn/watcher.json, key: "wcn-poller-${{ github.run_id }}", restore-keys: "wcn-poller-"}
+      - name: Poll sources every 2 minutes
+        id: poll
+        run: |
+          m="${{ inputs.minutes }}"; [ -z "$m" ] && m=330; [ "${m%.*}" -gt 330 ] 2>/dev/null && m=330
+          python3 -u watcher/gha_poller.py --minutes "$m" --simulate-new "${{ inputs.simulate_new || 0 }}"
+      - name: Save last-seen state
+        if: ${{ !cancelled() }}
+        uses: actions/cache/save@v4
+        with: {path: ~/.wcn/watcher.json, key: "wcn-poller-${{ github.run_id }}-${{ github.run_attempt }}"}
+      - name: Hand off to the next poller run
+        if: ${{ !cancelled() && steps.poll.outcome == 'success' && vars.POLLER_ENABLED != 'false' }}   # a crashed poller is restarted by the cron gate instead (no tight failure loop)
+        run: gh workflow run poller.yml -f mode=poll && echo "$(date -u +%T) next poller dispatched (starts when this run ends)"
+      - name: Status summary
+        if: always()
+        run: '[ -f ~/.wcn/poller-status.json ] && { echo "### WCN poller"; echo; echo "\`\`\`json"; cat ~/.wcn/poller-status.json; echo "\`\`\`"; } >> "$GITHUB_STEP_SUMMARY" || true'

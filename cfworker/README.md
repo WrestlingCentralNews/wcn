@@ -1,5 +1,7 @@
 # WCN Cloudflare Worker watcher
 
+> **ON HOLD (Oct 19, 2026):** not deployed. Cloudflare requires a verified account email to deploy Workers (error 10034) and its verification mail never reaches the WCN inbox. The always-on 2-minute check runs on GitHub Actions instead (`.github/workflows/poller.yml`). Revisit once the email is verified; if deployed, it shares the same 20/hour + 60 s dispatch cap.
+
 Always-on 2-minute source poller. Same job as `watcher/wcn_watch.py` on the box: conditional-GET the site's feeds and listing pages, and when a new **trusted** (editorial tier 1–2) item appears, `workflow_dispatch` `update.yml` on `WrestlingCentralNews/wcn`.
 
 Exists so builds still fire while the box VM is paused (nothing on the box runs then).
