@@ -242,7 +242,8 @@ def run():
         if L["categories"]: a["categories"] = L["categories"]
         t = L["type"]
         a["kind"] = {"type": "quote", "who": L.get("speaker") or "", "quote": L.get("quote")} if t == "quote" and L.get("speaker") else {"type": t if t in ("results", "match") else "news"}
-        if t in ("opinion", "rumor", "listicle", "off-topic"):
+        if t != "evergreen" and editorial.evergreen(L["headline"]): t = "evergreen"   # rewrite headline reads as an explainer ('X explained')
+        if t in ("opinion", "rumor", "listicle", "evergreen", "off-topic"):
             if a.get("drop") != "llm:" + t: editorial.log_drop(a, "llm:" + t)
             a["drop"] = "llm:" + t
     json.dump(arts, open(STORE, "w"))

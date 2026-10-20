@@ -14,21 +14,22 @@ class T(unittest.TestCase):
     def tearDown(self): shutil.rmtree(self.d)
     def test_charge_once(self):
         xspend.ensure(); xspend.ensure()
-        L = json.load(open(xspend.LEDGER)); m = [e for e in L["entries"] if e.get("manual_id")]
+        L = json.load(open(xspend.LEDGER)); m = [e for e in L["entries"] if e.get("manual_id") and e.get("ref") == "2111693641613725907"]
         self.assertEqual(len(m), 1); self.assertEqual(m[0]["usd"], 0.005); self.assertEqual(m[0]["ref"], "2111693641613725907")
-        self.assertAlmostEqual(L["spent_usd"], 0.02, places=4); self.assertEqual(L["counts"].get("content_mgmt"), 1)
+        self.assertAlmostEqual(L["spent_usd"], 0.03, places=4); self.assertEqual(L["counts"].get("content_mgmt"), 1)
+        self.assertEqual(len([e for e in L["entries"] if e.get("manual_id")]), 2); self.assertEqual(L["counts"].get("delete"), 1)   # + Crown Jewel explainer delete ($0.010)
     def test_deleted_flag(self):
         S = XP.load_state(); XP.save_state(S); S = json.load(open(XP.STATE))
         p = S["posted"]["c11f0df54e806"]; self.assertTrue(p["deleted"])            # still in 'posted' -> never re-posted
         self.assertTrue(S["log"][0]["deleted"]); self.assertIn("2111693641613725907", S["deleted"])
     def test_rebase(self):
         xspend.ensure(); L = json.load(open(xspend.LEDGER))
-        self.assertEqual(L["remaining_usd"], 9.62); self.assertEqual(L["free_remaining_usd"], 4.62); self.assertEqual(L["paid_remaining_usd"], 5.0)
+        self.assertEqual(L["remaining_usd"], 9.61); self.assertEqual(L["free_remaining_usd"], 4.61); self.assertEqual(L["paid_remaining_usd"], 5.0)
         self.assertFalse(L["low_balance"])
         rb = xspend._rebase()["at"]; D = json.load(open(xspend.LEDGER)); D["entries"].append({"at": rb + 60, "kind": "post", "usd": 4.70, "endpoint": "x", "src": "t"})
         json.dump(D, open(xspend.LEDGER, "w")); xspend.ensure(); L = json.load(open(xspend.LEDGER))
-        self.assertAlmostEqual(L["remaining_usd"], 4.92); self.assertEqual(L["free_remaining_usd"], 0.0); self.assertAlmostEqual(L["paid_remaining_usd"], 4.92)
+        self.assertAlmostEqual(L["remaining_usd"], 4.91); self.assertEqual(L["free_remaining_usd"], 0.0); self.assertAlmostEqual(L["paid_remaining_usd"], 4.91)
         D = json.load(open(xspend.LEDGER)); D["entries"].append({"at": rb + 120, "kind": "post", "usd": 3.0, "endpoint": "x", "src": "t"})
         json.dump(D, open(xspend.LEDGER, "w")); xspend.ensure(); L = json.load(open(xspend.LEDGER))
-        self.assertTrue(L["low_balance"])   # 1.92 <= 2.00
+        self.assertTrue(L["low_balance"])   # 1.91 <= 2.00 (incl. the 2026-10-20 $0.010 delete)
 if __name__ == "__main__": unittest.main()

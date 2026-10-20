@@ -14,16 +14,30 @@ DROP = [
  ("opinion", r"\bopinion\b|\bcolumn\b|\bop-ed\b|\bhot take|\bmy (thoughts|take)|\bwe need to talk|\bthe case for\b|\bis wrong\b|\bdeserves? better\b|\bdraws? & duds\b|\bgrades?\b|\bratings? (and|&) review\b|\bstock (up|down)\b|\bwinners? (and|&) losers?\b|\bhits? (and|&) misses\b|\bpodcast\b|\bep(isode)?\.? ?\d+\b|\bmailbag\b|\bdebate\b|\bvs\.? (wwe|aew)\b.*\bwhich\b|\b(roundtable|discussion)\b"),
  ("podcast/roundup", r"^(WOL|WOR|POST NEWS|Bryan & Vinny|Rasslin)\s*:|—\s*(WOL|POST NEWS|WOR)\b|wrestling observer (live|radio)|\bpodcast\b|\bradio\b|\bpost news\b|\bnews (and|&) notes\b|\bweekly roundup\b"),
  ("poll/quiz", r"\bpoll\b|\bvote\b|\bquiz\b|what do you think|\bsound off\b|\byou decide\b|\bfan reactions?\b|\bfans react\b|twitter reacts|social media reacts|\bmemes?\b"),
- ("gossip/other", r"\bon this day\b|\bthrowback\b|\bwhere are they now\b|\blooking back\b|\bhistory of\b|\bdating\b|\bgirlfriend\b|\bboyfriend\b|\bbikini\b|\bphotos?\b.*\b(stuns?|hot)\b|\bnet worth\b|\bhoroscope\b|\bfull list\b.*\bfree agents\b|\brumor roundup\b|\bclickbait\b|\bstreaming guide\b|\bhow to watch\b|\bstart time\b|\bwatch .* live\b"),
+ ("evergreen/explainer", r"\bexplained\s*(?:$|[:\-–—|,(])|\b(?:rules?|history|meaning|controversy|format|stipulations?|titles?|championships?|belts?|ending|finish|rivalry|feud|storyline|lore|origins?)\s+explained\b|\bexplainer\b|^(?:what|who)\s+(?:is|are|was|were)\b|[:|–—-]\s*(?:what|who)\s+(?:is|are|was|were)\b|\b(?:everything|all|what)\s+you\s+(?:need|want|should)\s+to\s+know\b|\bhow\s+(?:does|do|did)\s+[\w'’ .-]{1,50}\bwork\b|\bhow\s+(?:the\s+|a\s+|an\s+)?[\w'’ .-]{1,50}\bworks\b|\b(?:a|taking a|take a)\s+look\s+back\b|\blooking\s+back\s+(?:at|on)\b|\btimeline\s+of\b|\b(?:full|complete|brief|quick)\s+(?:history|timeline)\b|\bwhy\s+[\w'’ .,-]{1,60}\bmatters?\b|\b(?:best|worst|greatest)\s+(?:[\w'’-]+\s+){0,3}(?:matches|wrestlers|superstars|stars|moments|promos|feuds|rivalries|champions|title reigns|reigns|entrances|finishers|gimmicks|pay-per-views|ppvs|ples|events|shows|storylines|teams|tag teams|factions|heels|babyfaces|debuts|returns|runs)\s+(?:ever|of all[- ]time|in (?:wwe|aew|tna|wrestling) history)\b|\bon this (?:day|date)\b|\byears? ago today\b|\b\d+(?:st|nd|rd|th)?\s+anniversary\s+of\b|\banniversary\s+(?:retrospective|look back|tribute)\b|\bretrospective\b|\bremember when\b|\bflashback\b|\bevery (?:past|previous|former) (?:winner|champion)s?\b|\b(?:full|complete) list of (?:past|all|every|former)\b|\blist of (?:all|every)\b|\b(?:beginner'?s|fan'?s|viewer'?s|complete|ultimate) guide\b|\bthings you (?:didn'?t|might not|may not) know\b|\bfacts about\b|\bhow old is\b|\breal name\b|\bwhat happened to\b|\bwhere are they now\b|\bthrowback\b|(?<!in the )(?<!in )\bhistory of\b"),
+ ("gossip/other", r"\bon this day\b|\bthrowback\b|\bwhere are they now\b|\blooking back\b|(?<!in the )(?<!in )\bhistory of\b|\bdating\b|\bgirlfriend\b|\bboyfriend\b|\bbikini\b|\bphotos?\b.*\b(stuns?|hot)\b|\bnet worth\b|\bhoroscope\b|\bfull list\b.*\bfree agents\b|\brumor roundup\b|\bclickbait\b|\bstreaming guide\b|\bhow to watch\b|\bstart time\b|\bwatch .* live\b"),
 ]
 DROP = [(n, re.compile(p, re.I)) for n, p in DROP]
+NEWS_EVENT = re.compile(r"\b(?:signs?|signed|signing|released|releases?|returns?|returned|debuts?|debuted|wins?|won|crowned|captures?|arrested|charged|suspended|fired|retires?|retired|announce[sd]?|joins?|joined|hired|injured|injury|vacate[sd]?|stripped|cancel(?:s|ed|led)?|moved|relocated)\b", re.I)
+EVERGREEN = next(rx for n, rx in DROP if n == "evergreen/explainer")
+def evergreen(title):
+    """True for explainer / background / history / anniversary / SEO-definition pieces that report no new event (owner rule 2026-10-20).
+    Also run on the AI rewrite's headline (aggregator) so a rewrite that turns 'What is X?' into 'X explained' is caught too."""
+    t = re.sub(r"[\"“‘'][^\"”’]{3,140}[\"”’]", " ", title or "")
+    m = EVERGREEN.search(t)
+    if not m: return False
+    # 'Who is Necro Butcher? Hardcore legend signs WWE deal': a 'who/what is' intro on a headline that reports a new event stays
+    if re.match(r"\W*(?:what|who)\s", m.group(0), re.I) and NEWS_EVENT.search(t[m.end():] + " " + t[:m.start()]): return False
+    return True
 def verdict(a):
     t = re.sub(r"[\"“‘'][^\"”’]{3,140}[\"”’]", " ", a["raw_title"])
     official = re.search(r"\bresults\b", t, re.I) and not re.search(r"grades|reaction|discussion|winners", t, re.I)
     if official: return None
     if t.strip().endswith("?"): return "question headline (speculative)"
     for n, rx in DROP:
-        if rx.search(t): return n
+        if n == "evergreen/explainer":
+            if evergreen(t): return n
+        elif rx.search(t): return n
     lead = (a.get("summary_src") or "")[:300] + " " + (a.get("body") or "")[:300]
     if re.search(r"\bin my opinion\b|\bi think\b.*\bshould\b|\bthis writer\b|\bfantasy booking\b|\bwould love to see\b", lead, re.I): return "opinion (text)"
     return None
@@ -87,4 +101,4 @@ def log_drop(a, reason):
     _SEEN.add((a["raw_title"], reason))
     with open(LOGF, "a") as f:
         f.write(json.dumps({"at": int(time.time()), "reason": reason, "source": a["source"], "title": a["raw_title"], "link": a["link"]}) + "\n")
-VERSION = 6
+VERSION = 7

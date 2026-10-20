@@ -1,7 +1,9 @@
 {"note": "Manual X actions done outside the bots (owner-approved). Applied idempotently on every run: charges -> data/x_spend.json (xspend.py), deleted_tweets -> data/posted_x.json (x_poster.py; the story stays marked as posted so it is never re-posted, but the tweet is flagged deleted and no longer counts as live / toward the daily cap).",
  "charges": [
-  {"id": "manual-2026-10-18-delete-2111693641613725907", "at": 1792304160, "kind": "content_mgmt", "usd": 0.005, "endpoint": "DELETE /2/tweets/:id", "src": "manual (parent agent, owner-approved)", "ref": "2111693641613725907", "note": "deleted the La Catalina post (AI headline wrongly said 'Debuts'); content-management charge"}
+  {"id": "manual-2026-10-18-delete-2111693641613725907", "at": 1792304160, "kind": "content_mgmt", "usd": 0.005, "endpoint": "DELETE /2/tweets/:id", "src": "manual (parent agent, owner-approved)", "ref": "2111693641613725907", "note": "deleted the La Catalina post (AI headline wrongly said 'Debuts'); content-management charge"},
+  {"id": "manual-2026-10-20-delete-2112170014539223117", "at": 1792456470, "kind": "delete", "usd": 0.01, "endpoint": "DELETE /2/tweets/:id", "src": "manual (owner-approved)", "ref": "2112170014539223117", "note": "deleted the 'WWE Crown Jewel Championship explained' post (evergreen explainer, not news)"}
  ],
  "deleted_tweets": [
-  {"tweet": "2111693641613725907", "card": "c11f0df54e806", "article": "322c9d922994", "at": 1792304160, "reason": "inaccurate AI headline: source says La Catalina APPEARS, not debuts; BREAKING label was wrong"}
+  {"tweet": "2111693641613725907", "card": "c11f0df54e806", "article": "322c9d922994", "at": 1792304160, "reason": "inaccurate AI headline: source says La Catalina APPEARS, not debuts; BREAKING label was wrong"},
+  {"tweet": "2112170014539223117", "card": "cd918db8ae042", "article": "d918db8ae042", "at": 1792456470, "reason": "evergreen explainer, not news (owner feedback 2026-10-20)"}
  ]}

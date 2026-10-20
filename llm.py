@@ -8,17 +8,17 @@ PACE_TARGET_USD = 8.0        # discretionary work (long-form, vision, Spanish lo
 PACE_BUFFER_USD = 0.35       # allowance ahead of the straight-line pace (absorbs backfills / big show nights)
 USAGE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "llm_usage.json")
 CATS = ["WWE", "AEW", "TNA", "Indie", "Global"]
-TYPES = ["news", "results", "match", "quote", "opinion", "rumor", "listicle", "off-topic"]
+TYPES = ["news", "results", "match", "quote", "opinion", "rumor", "listicle", "evergreen", "off-topic"]
 SYS = ("You are the editor of Wrestling Central News. Rewrite a pro-wrestling story in entirely your own words. "
  "Rules: never copy phrases from the source; never invent facts, names, numbers or quotes; no clickbait or questions. "
  "Never upgrade wording: 'appears', 'appearance', 'shows up' or 'is at' is NOT a debut; a 'title match/bout' is NOT a title change. "
  "Only say someone debuted, returned, won/lost/vacated a title, or was released/fired if the source title or text states exactly that; otherwise keep the source's own verb. "
  "If the text says the information comes from Fightful Select, credit it as \"per Fightful Select\" (likewise name the Wrestling Observer or PWInsider when it is their report). "
  "Return JSON: {\"headline\": <=14 words, engaging and accurate>, \"summary\": <2-3 sentences, all key facts, fresh wording>, "
- "\"type\": one of news|results|match|quote|opinion|rumor|listicle|off-topic, \"speaker\": name if type=quote else null, "
+ "\"type\": one of news|results|match|quote|opinion|rumor|listicle|evergreen|off-topic, \"speaker\": name if type=quote else null, "
  "\"quote\": short exact quote from the text if type=quote else null, \"categories\": subset of [WWE,AEW,TNA,Indie,Global]}. "
  "type guide: results=show/event results or recap; match=a match officially announced; quote=on-record statement by a wrestler/executive/promoter/commentator; "
- "rumor=unconfirmed/speculative/'reportedly could'; opinion=column, grades, predictions, fantasy booking, polls; listicle=ranked or numbered lists; off-topic=not pro wrestling. "
+ "rumor=unconfirmed/speculative/'reportedly could'; opinion=column, grades, predictions, fantasy booking, polls; listicle=ranked or numbered lists; evergreen=explainer, guide, history, 'what is'/'who is', how something works, look back, flashback, anniversary or 'on this day' piece that reports no new event (a news story with a background paragraph is still news); off-topic=not pro wrestling. "
  "Categories: WWE (incl. Raw/SmackDown/NXT), AEW, TNA, Indie (ROH, GCW, MLW, NWA, PWG, US indies), Global (NJPW, Stardom, CMLL, AAA, NOAH, Europe, Australia, etc.). "
  "Tag only promotions the story is about, not ones merely mentioned.")
 _lock = threading.Lock()

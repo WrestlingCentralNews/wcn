@@ -6,7 +6,7 @@ Enable with env X_POST_ENABLED=1 (repo variable); anything else = dry run (logs 
 State: data/posted_x.json (saved to the 'data' branch with the rest of the state).
 """
 import os, re, sys, json, time, hmac, base64, hashlib, secrets, ssl, urllib.parse, urllib.request, urllib.error
-import xspend, breaking
+import xspend, breaking, editorial
 ROOT = os.path.dirname(os.path.abspath(__file__))
 NEWS = os.path.join(ROOT, "public", "news.json")
 STATE = os.path.join(ROOT, "data", "posted_x.json")
@@ -271,8 +271,10 @@ def run(test_top=False):
             _skipped.append(c["id"]); log(f"skip (result already posted by live_x for {d[0]}: {d[1].get('winner')}):", c["title"])
             S.setdefault("live_dups", {})[c["id"]] = {"show": d[0], "at": int(now), "title": c["title"]}
         return bool(d)
+    def evergreen(c):   # never post explainer / history / 'what is' / anniversary pieces (owner rule 2026-10-20); editorial drops them upstream too
+        return editorial.evergreen(c.get("title")) or editorial.evergreen(c.get("raw_title"))
     _seen = seen
-    def seen(c): return _seen(c) or live_seen(c)
+    def seen(c): return _seen(c) or evergreen(c) or live_seen(c)
     if test_top:
         cands = [c for c in items if not seen(c) and c.get("trusted", 0) >= 1][:1]
         n_allowed = 1
