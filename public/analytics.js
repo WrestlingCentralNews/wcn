@@ -27,11 +27,13 @@ function clarityConsent(ok){const v=ok?'granted':'denied';try{clarity('consentv2
 function loadClarity(){if(clarityOn)return;clarityOn=true;clarityConsent(true);try{clarity('set','page_type',pt())}catch(e){}
  const t=document.createElement('script');t.async=1;t.src='https://www.clarity.ms/tag/'+CLARITY_ID;const f=document.getElementsByTagName('script')[0];(f&&f.parentNode?f.parentNode:document.head).insertBefore(t,f||null)}
 function clearClarity(){const h=location.hostname,ds=['',h,'.'+h.replace(/^www\./,'')];['_clck','_clsk'].forEach(n=>ds.forEach(d=>{document.cookie=n+'=; Max-Age=0; path=/'+(d?'; domain='+d:'')}))}
-function syncClarity(){if(window.wcnConsent())loadClarity();else if(clarityOn){clarityConsent(false);clarityOn=false;setTimeout(()=>{try{clarity('stop')}catch(e){}clearClarity()},300)}}
+// Owner device opt-out (?wcn_me=1, set by the inline head script as window.wcnMe): never load Clarity on that device.
+function syncClarity(){if(window.wcnMe)return;if(window.wcnConsent())loadClarity();else if(clarityOn){clarityConsent(false);clarityOn=false;setTimeout(()=>{try{clarity('stop')}catch(e){}clearClarity()},300)}}
 document.addEventListener('wcn-consent',syncClarity);
 document.addEventListener('DOMContentLoaded',()=>{
  if(EU&&!get())banner();
  const f=document.querySelector('footer');if(f&&!f.querySelector('.cookie-set')){const a=document.createElement('a');a.href='#';a.className='cookie-set';a.textContent='Cookie settings';a.onclick=e=>{e.preventDefault();banner()};f.append(' · ',a)}
+ if(window.wcnMe&&f&&!f.querySelector('.wcn-me')){const m=document.createElement('a');m.href='?wcn_me=0';m.className='wcn-me';m.title='Owner device: GA4 and Clarity are not loaded here. Tap to turn analytics back on.';m.textContent='Analytics off on this device';m.style.opacity='.7';f.append(' · ',m)}
 });
 // scroll depth
 const marks=[25,50,75,100],hit=new Set();addEventListener('scroll',()=>{const p=Math.round((scrollY+innerHeight)/document.body.scrollHeight*100);marks.forEach(m=>{if(p>=m&&!hit.has(m)){hit.add(m);track('scroll_depth',{percent:m})}})},{passive:true});

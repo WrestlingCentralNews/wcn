@@ -12,6 +12,7 @@
   // A visit = a browser session (sessionStorage flag); readers from before the counter existed count as returning.
   // Shared with push.js (whichever runs first counts the visit; the other reuses it).
   window.wcnVisits = window.wcnVisits || function(){ try { var S = localStorage, s = sessionStorage, n = +S.getItem('wcn_visits') || 0;
+    if (window.wcnMe) return n || 1;   // owner device opt-out (?wcn_me=1): never count its visits
     if (!s.getItem('wcn_vs')) { if (!n && (S.getItem('wcn_seen') || S.getItem('wcn_consent') || S.getItem('wcn_filters') || S.getItem('wcn_lang') || S.getItem('wcn_install_dismissed') || S.getItem('wcn_ios_hint_shown'))) n = 1;
       n++; S.setItem('wcn_visits', String(n)); s.setItem('wcn_vs', '1'); }
     return n; } catch (e) { return 1; } };
