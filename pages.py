@@ -352,6 +352,9 @@ def build(clusters):
     build_newsletter_page(clusters)
     build_feeds(clusters)
     build_smartnews(clusters)
+    try:
+        import fb_feed; fb_feed.build(clusters)   # /feed/facebook.xml: <=3 curated picks per PR day for the Zapier -> Facebook Page Zap
+    except Exception as ex: print('[fb] error (ignored)', repr(ex)[:200], flush=True)
     # Spanish feed
     es_items = [c for c in sorted(clusters, key=lambda c: -int(c.get("first_ts", c["ts"]))) if c["id"] in tr][:50]
     def es_rss_item(c):
