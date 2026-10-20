@@ -40,6 +40,16 @@ jobs:
           X_ACCESS_TOKEN: "${{ secrets.X_ACCESS_TOKEN }}"
           X_ACCESS_TOKEN_SECRET: "${{ secrets.X_ACCESS_TOKEN_SECRET }}"
         run: sleep 20; python x_poster.py ${{ github.event.inputs.x_test_top == 'true' && '--test-top' || '' }}
+      - name: Live X thread per show (root + replies for results and segments; pin target -> data/x_pin.json; never fails the run)
+        continue-on-error: true
+        env:
+          X_POST_ENABLED: "${{ vars.X_POST_ENABLED }}"
+          AI_API_KEY: "${{ secrets.AI_API_KEY }}"
+          X_API_KEY: "${{ secrets.X_API_KEY }}"
+          X_API_SECRET: "${{ secrets.X_API_SECRET }}"
+          X_ACCESS_TOKEN: "${{ secrets.X_ACCESS_TOKEN }}"
+          X_ACCESS_TOKEN_SECRET: "${{ secrets.X_ACCESS_TOKEN_SECRET }}"
+        run: python live_thread.py
       - name: Post confirmed live match results to X (link-free, never fails the run)
         continue-on-error: true
         env:

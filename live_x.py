@@ -80,6 +80,10 @@ def run():
     for f in sorted(glob.glob(os.path.join(live.LIVE_DIR, "*.json"))):
         st = json.load(open(f))
         if not (st["start"] <= now <= st["start"] + POST_WINDOW_H * 3600): continue
+        try:
+            import live_thread
+            if live_thread.has_thread(st["key"]): continue   # results go into the show's live thread instead (live_thread.py)
+        except Exception: pass
         P = S["shows"].setdefault(st["key"], {"posted": {}, "combined": [], "n": 0})
         if "facts" not in P:   # backfill from already-posted ids
             P["facts"] = [{"winner": m["winner"], "loser": m.get("loser", "")} for m in st["matches"] if P["posted"].get(m["id"]) not in (None, "skipped", "dup")]
