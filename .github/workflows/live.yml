@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 330
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with: {sparse-checkout: "live.py\nevents.json", sparse-checkout-cone-mode: false}
       - name: Dispatch an update every 2 minutes while a show is on (only when none is queued or running)
         env: {GH_TOKEN: "${{ github.token }}", GH_REPO: "${{ github.repository }}"}

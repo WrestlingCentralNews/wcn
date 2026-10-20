@@ -36,11 +36,11 @@ jobs:
     concurrency: {group: wcn-poller, cancel-in-progress: false}
     env: {GH_TOKEN: "${{ github.token }}", GH_REPO: "${{ github.repository }}"}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: {python-version: "3.12"}
       - name: Restore last-seen state
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with: {path: ~/.wcn/watcher.json, key: "wcn-poller-${{ github.run_id }}", restore-keys: "wcn-poller-"}
       - name: Poll sources every 2 minutes
         id: poll
@@ -49,7 +49,7 @@ jobs:
           python3 -u watcher/gha_poller.py --minutes "$m" --simulate-new "${{ inputs.simulate_new || 0 }}"
       - name: Save last-seen state (also when cancelled - the poller rewrites the file every cycle)
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with: {path: ~/.wcn/watcher.json, key: "wcn-poller-${{ github.run_id }}-${{ github.run_attempt }}"}
       - name: Hand off to the next poller run
         if: ${{ !cancelled() && steps.poll.outcome == 'success' && vars.POLLER_ENABLED != 'false' }}   # a crashed poller is restarted by the cron gate instead (no tight failure loop)

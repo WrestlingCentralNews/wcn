@@ -1,9 +1,20 @@
 name: yandex-sitemaps
+# Dispatched by the box's daily Yandex retry. Transient Yandex/network problems (timeouts, resets, 5xx, 429) are retried
+# with backoff, then the run ends green with a ::warning:: and state=transient in the summary/artifact (no failure email).
+# Only real config problems fail the run: bad/expired token (exit 2), host missing/unverified (3), unexpected API answer (4).
 on: {workflow_dispatch: {}}
+permissions: {contents: read}
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - run: python3 yandex_wm.py
-        env: {YANDEX_WEBMASTER_TOKEN: "${{ secrets.YANDEX_WEBMASTER_TOKEN }}"}
+      - uses: actions/checkout@v5
+        with: {sparse-checkout: yandex_wm.py, sparse-checkout-cone-mode: false}
+      - id: submit
+        run: python3 yandex_wm.py
+        env: {YANDEX_WEBMASTER_TOKEN: "${{ secrets.YANDEX_WEBMASTER_TOKEN }}", YANDEX_STATUS_FILE: yandex_status.json}
+      - uses: actions/upload-artifact@v6
+        if: always()
+        continue-on-error: true
+        with: {name: yandex-status, path: yandex_status.json, retention-days: 14, if-no-files-found: ignore}

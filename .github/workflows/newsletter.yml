@@ -14,11 +14,11 @@ jobs:
   newsletter:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Restore state from 'data' branch
         run: |
           mkdir -p data
-          git fetch --depth=1 origin data && git archive FETCH_HEAD | tar -x -C . && ls data public/news.json
+          for i in 1 2 3; do git fetch --depth=1 origin data && break; sleep $((i*10)); done; git archive FETCH_HEAD | tar -x -C . && ls data public/news.json
       - name: Build and send WCN Weekly (never fails the run)
         id: send
         continue-on-error: true
@@ -29,7 +29,7 @@ jobs:
         run: |
           python3 newsletter.py --preview newsletter-preview.html
           if [ "$MODE" = test ]; then python3 newsletter.py --test; elif [ "$MODE" = dry ]; then NEWSLETTER_ENABLED=0 python3 newsletter.py; else python3 newsletter.py; fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         continue-on-error: true
         with: {name: newsletter-preview, path: newsletter-preview.html, retention-days: 14}
       - name: Save state to 'data' branch (single orphan commit, force-pushed)
@@ -37,4 +37,4 @@ jobs:
           rm -rf /tmp/state && mkdir -p /tmp/state/public && cp -r data /tmp/state/ && cp public/news.json /tmp/state/public/
           cd /tmp/state && git init -q -b data && git config user.name wcn-bot && git config user.email wcn-bot@users.noreply.github.com
           git add -A && git commit -qm "state $(date -u +%FT%TZ) (newsletter)"
-          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data:data
+          for i in 1 2 3; do git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data:data && exit 0; echo "push failed (attempt $i), retrying"; sleep $((i*10)); done; exit 1

@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: {name: github-pages, url: "${{ steps.deploy.outputs.page_url }}"}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: {python-version: "3.12"}
       - run: pip install -r requirements.txt
       - name: Restore state from 'data' branch
@@ -26,11 +26,11 @@ jobs:
         id: agg
         env: {AI_API_KEY: "${{ secrets.AI_API_KEY }}"}
         run: python aggregator.py > agg.log 2>&1 || { tail -n 60 agg.log; exit 1; }; grep -vE '^( |\{|\})' agg.log | tail -n 30; cat data/stats.json data/llm_usage.json
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with: {path: public}
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with: {path: public, include-hidden-files: true}   # v4+ drops dotfiles by default; keep v3 behaviour
       - id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
       - name: Post new stories to X (never fails the run)
         continue-on-error: true
         env:
@@ -83,4 +83,4 @@ jobs:
           rm -rf /tmp/state && mkdir -p /tmp/state/public && cp -r data /tmp/state/ && cp public/news.json /tmp/state/public/
           cd /tmp/state && git init -q -b data && git config user.name wcn-bot && git config user.email wcn-bot@users.noreply.github.com
           git add -A && git commit -qm "state $(date -u +%FT%TZ)"
-          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data:data
+          for i in 1 2 3; do git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" data:data && exit 0; echo "push failed (attempt $i), retrying"; sleep $((i*10)); done; exit 1
