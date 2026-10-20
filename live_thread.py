@@ -3,7 +3,8 @@ result and a 1-2 line summary of each major segment between matches (promos, att
 
 - Shows: every weekly show in events.json (Raw, SmackDown, NXT, Dynamite, Collision, TNA iMPACT) and every PPV/PLE. Overlapping
   shows each get their own thread while the X balance allows (below SEG_MIN_USD only the /live-priority show gets segments).
-- Root: "<Show> LIVE results (<date>)" + the WCN results-page URL (+ show photo/card). URL posts cost $0.20, so the link is only
+- Root: "<Show> LIVE results (<date>)" + "Live results thread with @<promotion>" (official X handle, root only; unmapped -> no tag)
+  + the WCN results-page URL (+ show photo/card). URL posts cost $0.20, so the link is only
   used while the estimated balance is >= ROOT_LINK_MIN_USD; otherwise the root says "link in bio" ($0.015).
 - Results: live.py's 'confirmed' matches only (trusted sources, 2 sources or 1 unchallenged for 10 min). Wording = live.py templates.
 - Segments: AI summary (llm.py budget, ~$0.001/call, max 1 call / SEG_EVERY_S, only when source text changed) of the trusted
@@ -81,10 +82,29 @@ def show_photo(st):
     pr = vision.promo_in((st.get("name") or "") + " " + (st.get("brand") or ""))
     if pr: out.append((vision.PROMO_CARD.format(pr), "promo-logo:" + pr))
     out.append((XP.SITE_DEFAULT_IMG, "site-default")); return out
+# Official promotion X accounts, tagged ONLY in the root (the pinned post), never in replies. Verified 2026-10-20 via X API
+# users lookup (all verified=true): WWE (business), WWENXT (business), AEW (business), ThisIsTNA (blue, official TNA Wrestling),
+# luchalibreaaa (business). Anything not matched here gets no tag -- never guess a handle.
+HANDLES = {"wwe": "@WWE", "nxt": "@WWENXT", "aew": "@AEW", "tna": "@ThisIsTNA", "aaa": "@luchalibreaaa"}
+WWE_MAIN = {"wwe-raw", "wwe-smackdown"}
+def promo_handle(st):
+    slug = (st.get("slug") or re.sub(r"^\d{4}-\d{2}-\d{2}-", "", st.get("key") or "")).lower()
+    name, brand, kind = (st.get("name") or "").lower(), st.get("brand"), st.get("kind")
+    if re.search(r"\bnxt\b", slug.replace("-", " ") + " " + name): return HANDLES["nxt"] if brand == "WWE" or slug.startswith("wwe-") else None
+    if slug.startswith("wwe-") and (slug in WWE_MAIN or kind == "ppv"): return HANDLES["wwe"]      # Raw, SmackDown, WWE PLEs
+    if slug.startswith("aew-"): return HANDLES["aew"]                                              # Dynamite, Collision, AEW PPVs
+    if slug.startswith("tna-"): return HANDLES["tna"]
+    if slug.startswith("aaa-"): return HANDLES["aaa"]
+    return None
 def root_text(st, link):
     d = datetime.date.fromisoformat(st["date"]); ds = d.strftime("%b ") + str(d.day)
     tail = f"Live results: {page_url(st['key'])}" if link else "Live results page: link in bio"
-    return f"🔴 {show_name(st)} LIVE results ({ds})\n\nEvery match result and key segment, added to this thread as it happens.\n\n{tail}\n\n{tags(st)}"
+    h = promo_handle(st); w = f" with {h}" if h else ""
+    head = f"🔴 {show_name(st)} LIVE results ({ds})"
+    for t in (f"{head}\n\nLive results thread{w}: every match result and key segment, added here as it happens.\n\n{tail}\n\n{tags(st)}",
+              f"{head}\n\nLive results thread{w}.\n\n{tail}\n\n{tags(st)}", f"{head}{w}\n\n{tail}"):
+        if XP.x_len(t) <= 280: return t
+    return t
 def match_line(m):
     t = m["en"]
     if m.get("stip") and len(m["stip"]) < 60: t = f"{m['stip']}: {t}"
