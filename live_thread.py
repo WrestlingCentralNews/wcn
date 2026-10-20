@@ -100,7 +100,7 @@ SEG_SYS = ("You summarize live pro-wrestling TV coverage for Wrestling Central N
  "announcements, returns, contract signings, big backstage segments. Skip matches (results are handled elsewhere), recap videos, commentary intros, "
  "short backstage filler, hype packages and anything still in progress. Rules: entirely your own words, never copy phrases; never invent "
  "facts, names or outcomes; only state what the text states; never say debut, return, title change, injury, release or retirement unless the text "
- "says exactly that; present tense; 1-2 short sentences, max 200 characters; no hashtags, no emojis, no links, no quotes longer than 4 words. "
+ "says exactly that; present tense; 1-2 short sentences, max 190 characters; no hashtags, no emojis, no links, no quotes longer than 4 words. "
  "Return JSON {\"segments\": [{\"key\": <2-4 main names, lowercase, comma-separated>, \"after\": <the match it came after, or 'opening'>, "
  "\"summary\": <text>, \"sources\": <how many of the given sources describe it>}]} in show order.")
 def source_text(st):
@@ -130,12 +130,13 @@ def segments(st, P):
         try: llm.save_usage()
         except Exception: pass
     low = txt.lower(); res = []
+    log(f"seg pass: {len(out.get('segments') or [])} segment(s) from {n} source(s)")
     for sg in (out.get("segments") or [])[:20]:
         if not isinstance(sg, dict): continue
         s = re.sub(r"\s+", " ", str(sg.get("summary") or "")).strip(); k = str(sg.get("key") or "").lower().strip()
-        if not s or not k or len(s) > 230 or XP.has_url(s) or "#" in s: continue
+        if not s or not k or len(s) > 255 or XP.has_url(s) or "#" in s: log("seg dropped (format):", s[:120]); continue
         names = [x.strip() for x in k.split(",") if len(x.strip()) > 2]
-        if not names or not all(any(part in low for part in nm.split()) for nm in names): continue      # people must be in the source text
+        if not names or not all(any(part in low for part in nm.split()) for nm in names): log("seg dropped (names not in source):", k); continue      # people must be in the source text
         bad = [w for w in GUARD.findall(s) if w.lower()[:5] not in low]
         if bad: log("seg guard dropped:", s, bad); continue
         res.append({"key": ",".join(sorted(names)), "summary": s, "after": str(sg.get("after") or ""), "src": int(sg.get("sources") or 1), "n_src": n})
