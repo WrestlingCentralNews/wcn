@@ -1,5 +1,5 @@
 """Official roster snapshot (owner rule 2026-10-21): WWE (wwe.com current superstars), AEW (allelitewrestling.com/aew-roster),
-TNA (tnawrestling.com/roster). Fetched at most once per UTC day inside the 15-minute update run (a handful of plain GETs, no AI,
+TNA (tnawrestling.com/roster). Fetched on demand only (ensure), at most once per promotion per UTC day, when a contract-type story about it is gated (a handful of plain GETs, no AI,
 robots.txt allows these paths). data/rosters.json keeps every name with first-seen / last-seen dates.
 Used by pubgate for signing stories:
   * 'released / exits' story while the wrestler is still listed -> held, unless 2+ distinct trusted outlets (tier 1-2) or the
@@ -49,10 +49,11 @@ def key(n):
 def load():
     try: return json.load(open(PATH))
     except Exception: return {}
-def refresh(now=None, fetch=None, log=print):
-    """Once per UTC day: fetch each roster, update first/last seen. A failed or implausibly small fetch changes nothing."""
+def refresh(now=None, fetch=None, log=print, only=None):
+    """At most once per UTC day per promotion: fetch roster(s), update first/last seen. A failed or implausibly small fetch changes nothing."""
     now = int(now or time.time()); day = time.strftime("%Y-%m-%d", time.gmtime(now)); db = load(); fetch = fetch or FETCH
     for p, f in fetch.items():
+        if only and p not in only: continue
         r = db.setdefault(p, {"names": {}, "baseline": None})
         if r.get("tried_day") == day: continue
         r["tried_day"] = day
@@ -67,6 +68,14 @@ def refresh(now=None, fetch=None, log=print):
     try: os.makedirs(os.path.dirname(PATH), exist_ok=True); json.dump(db, open(PATH, "w"), indent=0)
     except Exception: pass
     return db
+def ensure(promo, now=None, fetch=None, log=print):
+    """On demand only (owner rule 2026-10-21 #2): called when a contract-type story (signing, re-signing, release, exit,
+    return, retirement) about this promotion is gated. One fetch per promotion per UTC day, reused by later stories;
+    nothing is fetched otherwise. Fail-open: any error returns the stored snapshot (status() ignores stale ones).
+    Note: first-seen dates now only exist from these on-demand fetches, so the 14-day re-signing rule is weaker."""
+    if promo not in (fetch or FETCH): return load()
+    try: return refresh(now=now, fetch=fetch, log=log, only={promo})
+    except Exception: return load()
 def status(name, promo, db=None, now=None):
     """None (no usable roster / not checked) | {'listed': bool, 'days': days listed (lower bound if since baseline), 'new': bool}"""
     db = load() if db is None else db; now = now or time.time(); r = db.get(promo) or {}

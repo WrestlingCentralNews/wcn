@@ -36,4 +36,18 @@ for title, k in [("Jacy Jayne Feared Release Before NXT Title Win", "release"), 
 d0 = roster.refresh(now=NOW, fetch={"WWE": lambda: (_ for _ in ()).throw(OSError("down"))}, log=lambda *a: None)
 check(d0["WWE"]["ok"] is False, "failed fetch not marked")
 check(roster.key("Edge") == roster.key("Adam Copeland") and roster.key("ADAM COPELAND") == roster.key("Adam Copeland"), "alias/case key")
+# return / retirement
+h, n = pubgate.roster_check(story("WWE Star Dragon Lee Announces Retirement"), None, {}, db); check(h and "retirement" in h[0], "retired-but-listed not held")
+h, n = pubgate.roster_check(story("Bron Breakker Returns To WWE"), None, {}, db); check(not h and "newly added" in n, "return note")
+# on demand: no contract story -> no fetch; contract story -> one fetch per promo per day
+calls = []
+orig = roster.FETCH; roster.FETCH = {"WWE": lambda: calls.append(1) or {f"W{i}" for i in range(150)} | {"Dragon Lee"}}
+pubgate._RDB = None; os.path.exists(roster.PATH) and os.remove(roster.PATH)
+pubgate.roster_check(story("Dragon Lee Wins Title On WWE Raw"), None, {})
+check(calls == [], "fetched for a non-contract story")
+pubgate.roster_check(story("WWE Releases Dragon Lee"), "release", {}); pubgate.roster_check(story("WWE Releases Dragon Lee"), "release", {})
+check(calls == [1], f"expected exactly one fetch, got {len(calls)}")
+roster.FETCH = {"WWE": lambda: (_ for _ in ()).throw(OSError("down"))}; pubgate._RDB = None; os.remove(roster.PATH)
+check(pubgate.roster_check(story("WWE Releases Dragon Lee"), "release", {})[0] == [], "failed on-demand fetch held (must fail open)")
+roster.FETCH = orig
 print("ok", ok, "checks")

@@ -78,34 +78,43 @@ _RDB = None
 # contract stories only (not 'Joins Eight-Man Tag', 'feared release before title win', 'Highspots Virtual Signing')
 _R_REL = re.compile(r"(?i)\b(?:releases?|released|parts? ways|let go|departs?|departed|exits?|exited|leaves|leaving|fired|gone from|done with)\b")
 _R_NEW = re.compile(r"(?i)\b(?:signs?|signed|signing|inks?|inked)\b|\bjoins? (?:the )?(?:WWE|AEW|TNA|NXT)\b|\bis all elite\b|\bofficially (?:joins|a part of)\b")
+_R_RET = re.compile(r"(?i)\b(?:retires|retired|retirement|announces (?:his |her )?retirement|hangs? up (?:the|his|her) boots)\b")
+_R_BACK = re.compile(r"(?i)\b(?:returns? to|returned to|back (?:in|with|to) (?:WWE|AEW|TNA)|makes? (?:his |her )?(?:shocking |surprise )?return)\b")
 _R_NOT = re.compile(r"(?i)\bfear\w*|\bworr\w*|\brumou?r\w*|\bcould\b|\bwould\b|\bmight\b|\bnearly\b|\balmost\b|\bbefore\b|\breflects?\b|\brecalls?\b|"
                     r"\bdenies\b|\bnot\b|\bnever\b|\?|\bautograph|\bvirtual signing\b|\bsigning (?:session|event)|\bmeet (?:and|&) greet\b|\bif\b|\bwhy\b|\bhow\b")
 def roster_check(c, tk, bylink, db=None):
     """(holds, support note). Only for signing/release stories about a named wrestler (not executives) of WWE/AEW/TNA with a
     fresh roster snapshot; a failed/stale roster or an unmatched name never holds."""
     global _RDB
-    if tk not in ("new", "release", "re-sign"): return [], None
     head = (c.get("title") or "") + " | " + (c.get("raw_title") or "")
-    if _R_NOT.search(head) or not (_R_REL if tk == "release" else _R_NEW if tk == "new" else re.compile(r"(?i)re-?sign|extension|new (?:\w+ ){0,3}(?:deal|contract)")).search(head): return [], None
-    if db is None:
-        if _RDB is None: _RDB = roster.load()
-        db = _RDB
+    if tk not in ("new", "release", "re-sign"):
+        tk = "retire" if _R_RET.search(head) else "return" if _R_BACK.search(head) else None
+        if not tk: return [], None
+    if _R_NOT.search(head) or not {"release": _R_REL, "new": _R_NEW, "retire": _R_RET, "return": _R_BACK}.get(tk, re.compile(r"(?i)re-?sign|extension|new (?:\w+ ){0,3}(?:deal|contract)")).search(head): return [], None
+    fetch_p = db is None
     t = c.get("title") or ""
     ppl = (enrich.subjects(t) | enrich.subjects(c.get("raw_title") or "")) - enrich._EXEC
     pr = {x.lower() for x in enrich.promos(t) | enrich.promos(c.get("raw_title") or "")}
     prom = [p for p in ("WWE", "AEW", "TNA") if p.lower() in pr]
     if len(ppl) != 1 or len(prom) != 1: return [], None
     who, p = next(iter(ppl)), prom[0]
+    if fetch_p:   # on-demand: fetch this promotion's roster only now, once per UTC day (cached in data/rosters.json + _RDB)
+        day = time.strftime("%Y-%m-%d", time.gmtime())
+        if _RDB is None or (_RDB.get(p) or {}).get("tried_day") != day:
+            try: _RDB = roster.ensure(p)
+            except Exception: _RDB = _RDB or {}
+        db = _RDB
     st = roster.status(who, p, db)
     if not st: return [], None
     name = who.title()
-    if tk == "release":
+    if tk in ("release", "retire"):
         if not st["listed"]: return [], f"no longer on the {p} roster" if st.get("was_listed") else None
         reps = [{"link": c.get("link"), "source": c.get("source")}] + [u for u in c.get("updates", []) if u.get("link") != c.get("link")]
         if any(roster.official(r.get("link"), p) for r in reps): return [], f"still on the {p} roster (official statement)"
         srcs = {(r.get("source") or "").lower() for r in reps if (editorial.tier(r.get("source")) <= 2)
                 and enrich.signing_kind((bylink.get(r.get("link")) or {}).get("raw_title") or r.get("title") or "") in ("release", None)}
         if len(srcs) >= 2: return [], f"still on the {p} roster ({len(srcs)} trusted outlets report the exit)"
+        if tk == "retire": return [f"retirement story but {name} is still listed on the official {p} roster"], None
         return [f"release/exit story but {name} is still listed on the official {p} roster"], None
     if not st["listed"]: return [], None
     if tk == "new" and st["days"] > roster.LONG_DAYS:

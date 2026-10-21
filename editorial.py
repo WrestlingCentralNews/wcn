@@ -29,7 +29,14 @@ def evergreen(title):
     # 'Who is Necro Butcher? Hardcore legend signs WWE deal': a 'who/what is' intro on a headline that reports a new event stays
     if re.match(r"\W*(?:what|who)\s", m.group(0), re.I) and NEWS_EVENT.search(t[m.end():] + " " + t[:m.start()]): return False
     return True
+# owner rule 2026-10-21 (no filler): podcast-episode listings and generic outlet daily roundups; hand-dropped duplicates
+_POD_LINK = re.compile(r"(?i)fightful\.com/podcasts/|f4wonline\.com/news/daily-updates/|/podcasts?/")
+_POD_TITLE = re.compile(r"(?i)\bthe hump\b|\bdaily update\b|\bdaily (?:news )?(?:roundup|recap)\b|\b\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\b.*\b(?:show|episode|ep\.?)\b")
+_POD_HOST = re.compile(r"\bw/ ?[A-Z]{2,4}\b(?:\s*$|\s*[|,-])")   # '... w/ SRS' episode titles (case-sensitive)
+DUP_LINKS = {"https://www.f4wonline.com/news/aew/aew-dynamite-preview-confirmed-matches-segments-10-20-2026/"}   # = official AEW Oct 21 preview
 def verdict(a):
+    if (a.get("link") or "") in DUP_LINKS: return "duplicate of official preview"
+    if _POD_LINK.search(a.get("link") or "") or _POD_TITLE.search(a.get("raw_title") or "") or _POD_HOST.search(a.get("raw_title") or ""): return "podcast/roundup"
     t = re.sub(r"[\"“‘'][^\"”’]{3,140}[\"”’]", " ", a["raw_title"])
     official = re.search(r"\bresults\b", t, re.I) and not re.search(r"grades|reaction|discussion|winners", t, re.I)
     if official: return None
@@ -118,4 +125,5 @@ def log_drop(a, reason):
     _SEEN.add((a["raw_title"], reason))
     with open(LOGF, "a") as f:
         f.write(json.dumps({"at": int(time.time()), "reason": reason, "source": a["source"], "title": a["raw_title"], "link": a["link"]}) + "\n")
-VERSION = 8   # v8 2026-10-21: 'start times' (plural) and 'This Day In History' are filler
+VERSION = 9   # v9 2026-10-21: podcast episodes (fightful /podcasts/, The Hump, 'w/ SRS') and '<Outlet> Daily Update' roundups are filler
+_V8 = 8   # v8 2026-10-21: 'start times' (plural) and 'This Day In History' are filler

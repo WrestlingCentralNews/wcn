@@ -1,5 +1,5 @@
 {
- "_note": "Story URLs shared while a story was wrongly merged -> the story holding to_link (pages.redirects). 2026-10-21: 'WWE Star Signs New Contract' (cdcbf6730547f / c0448e53fdcdd) was Santino Marella's TNA re-signing merged with Dragon Lee's WWE re-signing. 2026-10-21 (later): nameless teaser 'TNA Signing Confirmed' -> Shotzi Blackheart's TNA signing; 2022 WWE.com 'Dragon Lee Signs with WWE' (NXT) -> Dragon Lee's 2026 re-signing. Nameless/stale stories with no named match fall back to the home page.",
+ "_note": "Story URLs shared while a story was wrongly merged -> the story holding to_link (pages.redirects). 2026-10-21: 'WWE Star Signs New Contract' (cdcbf6730547f / c0448e53fdcdd) was Santino Marella's TNA re-signing merged with Dragon Lee's WWE re-signing. 2026-10-21 (later): nameless teaser 'TNA Signing Confirmed' -> Shotzi Blackheart's TNA signing; 2022 WWE.com 'Dragon Lee Signs with WWE' (NXT) -> Dragon Lee's 2026 re-signing. Nameless/stale stories with no named match fall back to the home page. 2026-10-21 (night): F4W 'Daily Update' roundup -> home page (dropped link); Fightful podcast 'The Hump' Dragunov/Grace -> Tony Khan Dragunov WrestleDream story; F4W 'Dynamite Preview for October 20' (F4W's own dated slug) -> official AEW Oct 21 preview.",
  "urls": {
   "story/wwe-star-signs-new-contract-cdcbf6730547f.html": {
    "to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/"
@@ -30,6 +30,27 @@
   },
   "es/noticias/dragon-lee-firma-con-wwe-cf862a91e5a7c.html": {
    "to_link": "https://www.fightful.com/wrestling-news/report-dragon-lee-re-signs-with-wwe",
+   "es": true
+  },
+  "story/wrestling-observer-daily-update-ce8297bf46f11.html": {
+   "to_link": "https://www.f4wonline.com/news/daily-updates/daily-update-dragon-lee-ilja-dragunov-willow-nightingale/"
+  },
+  "es/noticias/wrestling-observer-daily-update-ce8297bf46f11.html": {
+   "to_link": "https://www.f4wonline.com/news/daily-updates/daily-update-dragon-lee-ilja-dragunov-willow-nightingale/",
+   "es": true
+  },
+  "story/ilja-dragunov-joins-aew-amid-jordynne-grace-mystery-c244c824633ff.html": {
+   "to_link": "https://www.fightful.com/wrestling-news/tony-khan-says-he-didnt-know-ilja-dragunov-would-be-ready-for-wrestledream-until-wednesday"
+  },
+  "es/noticias/wwe-tenia-planes-para-un-equipo-entre-jordynne-grace-e-ivy-nile-c244c824633ff.html": {
+   "to_link": "https://www.fightful.com/wrestling-news/tony-khan-says-he-didnt-know-ilja-dragunov-would-be-ready-for-wrestledream-until-wednesday",
+   "es": true
+  },
+  "story/aew-dynamite-preview-for-october-20-cc7c72efd8cc4.html": {
+   "to_link": "https://www.allelitewrestling.com/post/aew-dynamite-preview-october-21-2026"
+  },
+  "es/noticias/previa-de-aew-dynamite-para-el-20-de-octubre-cc7c72efd8cc4.html": {
+   "to_link": "https://www.allelitewrestling.com/post/aew-dynamite-preview-october-21-2026",
    "es": true
   }
  }
