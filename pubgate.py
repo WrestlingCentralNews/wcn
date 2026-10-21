@@ -14,7 +14,7 @@ Fixes what it safely can, HOLDS (does not publish) the rest:
     long-form that shares no name/number with the headline is dropped.
 Held stories: data/held.json (current holds, for the daily summary) + data/dropped.jsonl."""
 import os, json, time, re
-import enrich, editorial, combat
+import enrich, editorial, combat, roster
 ROOT = os.path.dirname(os.path.abspath(__file__))
 HELD = os.path.join(ROOT, "data", "held.json")
 PROMO_CARD = "https://wrestlingcentralnews.com/img/promo/{}.jpg"
@@ -74,6 +74,43 @@ def box_clash(c):
         except Exception: continue
         if -4 <= (d - day).days <= 35 and re.search(ev["match"], txt, re.I) and not hubs.box_fits(c, ev): return ev.get("name") or ev["slug"]
     return None
+_RDB = None
+# contract stories only (not 'Joins Eight-Man Tag', 'feared release before title win', 'Highspots Virtual Signing')
+_R_REL = re.compile(r"(?i)\b(?:releases?|released|parts? ways|let go|departs?|departed|exits?|exited|leaves|leaving|fired|gone from|done with)\b")
+_R_NEW = re.compile(r"(?i)\b(?:signs?|signed|signing|inks?|inked)\b|\bjoins? (?:the )?(?:WWE|AEW|TNA|NXT)\b|\bis all elite\b|\bofficially (?:joins|a part of)\b")
+_R_NOT = re.compile(r"(?i)\bfear\w*|\bworr\w*|\brumou?r\w*|\bcould\b|\bwould\b|\bmight\b|\bnearly\b|\balmost\b|\bbefore\b|\breflects?\b|\brecalls?\b|"
+                    r"\bdenies\b|\bnot\b|\bnever\b|\?|\bautograph|\bvirtual signing\b|\bsigning (?:session|event)|\bmeet (?:and|&) greet\b|\bif\b|\bwhy\b|\bhow\b")
+def roster_check(c, tk, bylink, db=None):
+    """(holds, support note). Only for signing/release stories about a named wrestler (not executives) of WWE/AEW/TNA with a
+    fresh roster snapshot; a failed/stale roster or an unmatched name never holds."""
+    global _RDB
+    if tk not in ("new", "release", "re-sign"): return [], None
+    head = (c.get("title") or "") + " | " + (c.get("raw_title") or "")
+    if _R_NOT.search(head) or not (_R_REL if tk == "release" else _R_NEW if tk == "new" else re.compile(r"(?i)re-?sign|extension|new (?:\w+ ){0,3}(?:deal|contract)")).search(head): return [], None
+    if db is None:
+        if _RDB is None: _RDB = roster.load()
+        db = _RDB
+    t = c.get("title") or ""
+    ppl = (enrich.subjects(t) | enrich.subjects(c.get("raw_title") or "")) - enrich._EXEC
+    pr = {x.lower() for x in enrich.promos(t) | enrich.promos(c.get("raw_title") or "")}
+    prom = [p for p in ("WWE", "AEW", "TNA") if p.lower() in pr]
+    if len(ppl) != 1 or len(prom) != 1: return [], None
+    who, p = next(iter(ppl)), prom[0]
+    st = roster.status(who, p, db)
+    if not st: return [], None
+    name = who.title()
+    if tk == "release":
+        if not st["listed"]: return [], f"no longer on the {p} roster" if st.get("was_listed") else None
+        reps = [{"link": c.get("link"), "source": c.get("source")}] + [u for u in c.get("updates", []) if u.get("link") != c.get("link")]
+        if any(roster.official(r.get("link"), p) for r in reps): return [], f"still on the {p} roster (official statement)"
+        srcs = {(r.get("source") or "").lower() for r in reps if (editorial.tier(r.get("source")) <= 2)
+                and enrich.signing_kind((bylink.get(r.get("link")) or {}).get("raw_title") or r.get("title") or "") in ("release", None)}
+        if len(srcs) >= 2: return [], f"still on the {p} roster ({len(srcs)} trusted outlets report the exit)"
+        return [f"release/exit story but {name} is still listed on the official {p} roster"], None
+    if not st["listed"]: return [], None
+    if tk == "new" and st["days"] > roster.LONG_DAYS:
+        return [f"'new signing' but {name} has been on the official {p} roster for {int(st['days'])}+ days (likely a re-signing)"], None
+    return [], (f"newly added to the {p} roster" if st["new"] else f"still on the {p} roster")
 def gate(c, bylink):
     fixes, holds = [], []
     # 1. the headline names the person
@@ -111,6 +148,10 @@ def gate(c, bylink):
     elif tk in ("new", "re-sign"):
         opp = "re-sign" if tk == "new" else "new"
         if ks.count(opp) >= 2 and ks.count(opp) > 2 * ks.count(tk): holds.append(f"headline says {tk} but most sources say {opp}")
+    # 4b. official roster cross-check (WWE/AEW/TNA): released-but-still-listed, 'new' signing listed > 14 days, support note
+    rh, note = roster_check(c, tk, bylink)
+    holds += rh
+    if note: c["roster_note"] = note; fixes.append("roster: " + note)
     # 5. body
     if c.get("long") and (enrich.long_mismatch(_art(c), c["long"]) or off_topic_long(c, c["long"])):
         c["long"] = None; fixes.append("long-form about another story dropped")

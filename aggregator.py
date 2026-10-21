@@ -336,6 +336,8 @@ def run():
     for c in clusters: c.pop("member_images", None)
     n_ov = image_overrides(clusters)
     if n_ov: print("images: manual overrides applied to", n_ov, flush=True)
+    try: import roster; roster.refresh(); pubgate._RDB = None   # official WWE/AEW/TNA rosters, at most once per UTC day
+    except Exception as e: print('roster refresh failed:', e)
     clusters = pubgate.run(clusters, bylink)   # pre-publish consistency gate: held stories never reach pages, feeds, X or push
     bf = vision.backfill_finish()
     if bf: print("images: one-time backlog vision pass done:", bf, flush=True)
