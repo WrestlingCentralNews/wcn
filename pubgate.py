@@ -9,9 +9,12 @@ Fixes what it safely can, HOLDS (does not publish) the rest:
     (several say 'signs with', several say 're-signs') the story is held;
   * long-form body about other people/another promotion -> dropped (the summary shows instead);
   * photo whose file name names another wrestler / promotion -> the promotion's card (or the WCN card).
+  * (2026-10-21, UFC 333 / AAA Heroes Inmortales) non-wrestling combat sports (UFC/MMA/boxing...) never publish; a headline whose
+    reports are mostly about other promotions/wrestlers is held; an event coverage box the headline isn't about is held; a
+    long-form that shares no name/number with the headline is dropped.
 Held stories: data/held.json (current holds, for the daily summary) + data/dropped.jsonl."""
 import os, json, time, re
-import enrich, editorial
+import enrich, editorial, combat
 ROOT = os.path.dirname(os.path.abspath(__file__))
 HELD = os.path.join(ROOT, "data", "held.json")
 PROMO_CARD = "https://wrestlingcentralnews.com/img/promo/{}.jpg"
@@ -33,6 +36,44 @@ def kinds(c, bylink):
             k = enrich.kind_of(a)
             if k: out.append(k)
     return out
+_HGEN = set("""start starts times time revealed reveals global audiences audience full card results preview update updates report reports
+news live tonight week weekly night show shows match matches title titles championship champion champions tag team women men world event
+events big major new latest official set confirmed announced announces date dates ticket tickets sales watch stream streaming how what why
+who when where the and for with from into after before vs his her their this that our first last next more says said comments reacts
+breaking exclusive backstage injury return returns debut debuts signs signing deal contract star stars legend""".split())
+def _proper(t):
+    """Distinctive words of a headline: capitalised names/brands and numbers ('UFC', '333', 'Volkanovski'), lower case."""
+    w = re.findall(r"[A-Za-z0-9][\w'’.-]*", enrich.canon(t or ""))
+    out = set()
+    for x in w:
+        k = re.sub(r"(?:'s|’s|[.'’])$", "", x).lower()
+        if len(k) >= 3 and k not in _HGEN and k not in enrich.STOP and (x[0].isupper() or x[0].isdigit()): out.add(k)
+    return out
+def off_topic_long(c, paras):
+    """The write-up names none of the headline's distinctive words (names, brands, event numbers) but names another
+    promotion/event: it was written for a different report."""
+    txt = enrich.canon(" ".join(paras or [])).lower()
+    hp = _proper(c.get("title") or "") | _proper(c.get("raw_title") or "")
+    if len(hp) < 2 or any(re.search(r"(?<![a-z0-9])" + re.escape(k), txt) for k in hp): return False
+    return bool(enrich.promos(" ".join(paras or [])))
+def promo_clash(a, b):
+    """Reports a and b are about different promotions (UFC vs AAA, WWE vs TNA) and don't share a named wrestler."""
+    sa, sb = enrich.subj_of(a), enrich.subj_of(b)
+    if sa and sb and enrich.same_people(sa, sb): return False
+    pa, pb = enrich.promos_of(a), enrich.promos_of(b)
+    return bool(pa and pb and not pa & pb)
+def box_clash(c):
+    """Name of an event whose coverage box this story's reports point to but whose promotion the headline isn't about."""
+    try: import hubs
+    except Exception: return None
+    import datetime
+    ts = c.get("first_ts") or c.get("ts") or time.time()
+    day = datetime.datetime.fromtimestamp(ts, hubs.ET).date(); txt = hubs.text_of(c)
+    for ev in hubs.EVENTS:
+        try: d = datetime.date.fromisoformat(ev["date"])
+        except Exception: continue
+        if -4 <= (d - day).days <= 35 and re.search(ev["match"], txt, re.I) and not hubs.box_fits(c, ev): return ev.get("name") or ev["slug"]
+    return None
 def gate(c, bylink):
     fixes, holds = [], []
     # 1. the headline names the person
@@ -42,8 +83,19 @@ def gate(c, bylink):
             new = enrich.headline(c["raw_title"], (c.get("kind") or {}).get("type"))
             fixes.append(f"nameless headline '{c['title']}' -> '{new}'"); c["title"] = new
         elif T(c.get("raw_title")): holds.append("headline doesn't name who it is about")
+    nw = combat.nonwrestling(c)
+    if nw: holds.append(nw)
     t = c.get("title") or ""; s = c.get("summary") or ""
     pt = enrich.subjects(t)
+    # 2b. the headline must speak for the story's reports: held if it clashes (other promotion / other wrestlers) with at
+    # least half of the other reports, or with the event its coverage box would show
+    lead = bylink.get(c.get("link")) or {"raw_title": c.get("raw_title") or "", "title": t}
+    mem = [bylink[u["link"]] for u in c.get("updates", []) if u.get("link") in bylink and u["link"] != c.get("link")]
+    bad = [m for m in mem if promo_clash(lead, m)]
+    if mem and len(bad) * 2 >= len(mem):
+        holds.append(f"headline is about another promotion than {len(bad)}/{len(mem)} of its reports (e.g. '{(bad[0].get('raw_title') or '')[:60]}')")
+    ev = box_clash(c)
+    if ev: holds.append(f"event box '{ev}' is about another promotion than the headline")
     # 2. headline vs summary
     if pt and enrich.subjects(s) and not names_in(s, pt): holds.append("headline names " + ", ".join(sorted(pt)) + "; summary is about someone else")
     ft, fs = enrich.promos(t), enrich.promos(s)
@@ -60,7 +112,8 @@ def gate(c, bylink):
         opp = "re-sign" if tk == "new" else "new"
         if ks.count(opp) >= 2 and ks.count(opp) > 2 * ks.count(tk): holds.append(f"headline says {tk} but most sources say {opp}")
     # 5. body
-    if c.get("long") and enrich.long_mismatch(_art(c), c["long"]): c["long"] = None; fixes.append("long-form about another story dropped")
+    if c.get("long") and (enrich.long_mismatch(_art(c), c["long"]) or off_topic_long(c, c["long"])):
+        c["long"] = None; fixes.append("long-form about another story dropped")
     # 6. photo
     u = c.get("image")
     if u and "wrestlingcentralnews.com/img/" not in u and c.get("image_status") != "override" and enrich.img_clash(u, pt, ft):

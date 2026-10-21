@@ -109,8 +109,18 @@ def event_for(c):
         # before the event, results of some OTHER show ('Ospreay Retains ... at All Out' that merely mentions WrestleDream) aren't this event's
         if day < d and (c.get("kind") or {}).get("type") == "results" and not re.search(ev["match"], title, re.I): continue
         if day > d and any(rx.search(title) for sh, rx in SHOW_RX.items() if SHOWS[sh]["brand"] in c.get("categories", [])) and re.search(r"fallout|after|following|go-home", title, re.I): continue
+        if not box_fits(c, ev): continue
         return ev
     return None
+def box_fits(c, ev):
+    """The event coverage box must be about what the HEADLINE is about (owner rule 2026-10-21: 'UFC 333 Start Times' got the AAA
+    Heroes Inmortales box because a merged AAA report's title named the event). An event matched only through other reports'
+    titles is kept only if the headline/summary don't point to a different promotion than the event's."""
+    import enrich
+    lead = " ".join([c.get("title") or "", c.get("raw_title") or ""])
+    if re.search(ev["match"], lead, re.I): return True
+    lp = enrich.promos(lead + " " + (c.get("summary") or "")[:400]); ep = enrich.promos(ev.get("name") or "")
+    return not (lp and ep and not lp & ep)
 HUB_OV = os.path.join(ROOT, "hub_overrides.json")   # {"exclude": [{"links": [...], "why": "..."}]}: hand-removed from every event/show page
 def _excluded():
     try: return {l for x in json.load(open(HUB_OV)).get("exclude", []) for l in x.get("links", [])}

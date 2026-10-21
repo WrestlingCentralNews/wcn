@@ -126,7 +126,7 @@ def on_topic(a):
     t = a["raw_title"]; b = (a.get("body") or "") + " " + (a.get("summary_src") or "")
     if classify(re.sub(r"\b(Mexico|Japan|Australia)\b", "", t)) or SIG.search(t): return True
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
-import enrich, editorial, llm, pages, vision, breaking, stale, toppick, freshness, pubgate
+import enrich, editorial, llm, pages, vision, breaking, stale, toppick, freshness, pubgate, combat
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
 IMG_CHECK_TOP = 60
 LONG_MAX_PER_RUN = 400
@@ -137,7 +137,7 @@ MERCH = re.compile(r"(?i)^https?://(?:[\w-]+\.)?(?:shop|euroshop\d*)\.wwe\.com/"
 NOT_NEWS = re.compile(r"(?i)[-|–—]\s*WWE Shop\s*$|\bswimsuit\b|\bbikini\b|\bAI predicts\b")   # shop pages via Google News, photo gossip, AI-guess filler
 def not_news(a):
     """Never a story on its own, never part of one (they used to hide inside wrongly merged stories)."""
-    return bool(MERCH.search(a.get("link") or "") or NOT_NEWS.search(a.get("raw_title") or ""))
+    return bool(MERCH.search(a.get("link") or "") or NOT_NEWS.search(a.get("raw_title") or "") or combat.nonwrestling(a))
 OVERRIDES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "image_overrides.json")
 def image_overrides(clusters):
     """Hand-picked card photos (repo file image_overrides.json, survives every run): {"items": [{"links": [...], "image": url|null}]}.
@@ -233,6 +233,9 @@ def run():
     for a in arts:   # freshness gate: a report that was already old when we first saw it is never news (real publish date, not 'updated')
         r = None if a.get("drop") else freshness.stale_reason(a)
         if r: editorial.log_drop(a, r); a["drop"] = r; print("old report:", a["raw_title"][:70], "->", r, flush=True)
+    for a in arts:   # UFC / MMA / boxing / Bellator / PFL / ONE: not wrestling, never on WCN (owner rule 2026-10-21; checked every run)
+        r = None if a.get("drop") else combat.nonwrestling(a)
+        if r: editorial.log_drop(a, r); a["drop"] = r; print("off-topic:", a["raw_title"][:70], "->", r, flush=True)
     for a in arts:   # an OLD article a feed re-dated (Google News re-indexing wwe.com/.../2017/...): never published, never on an event page
         r = None if a.get("drop") else stale.reason(a)
         if r: editorial.log_drop(a, r); a["drop"] = r; print("stale:", a["raw_title"][:70], "->", r, flush=True)

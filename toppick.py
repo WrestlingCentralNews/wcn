@@ -31,14 +31,17 @@ def annotate(clusters):
         c["imp"], b = importance(c)
         if b: c["brk"] = b
         else: c.pop("brk", None)
+BUMP_H = 48          # a story first reported > 48h ago never counts as fresh activity again (owner rule 2026-10-21)
+def act(c):
+    ts = _i(c.get("ts")); return min(ts, _i(c.get("first_ts"), ts) + BUMP_H * 3600)
 def value(c, now):
-    ts = _i(c.get("ts")); f = _i(c.get("first_ts"), ts)
+    ts = act(c); f = _i(c.get("first_ts"), ts)
     return _i(c.get("imp")) - DECAY * max(0, now - ts) / 3600 - OLD * max(0, ts - f) / 3600
 def pick(items, now=None):
     """items: newest-first list (already filtered). -> (lead, [secondary...]) or (None, [])."""
     now = now or time.time()
     if len(items) < N + 3: return None, []
-    pool = [c for c in items if now - _i(c.get("ts")) < FRESH_H * 3600]
+    pool = [c for c in items if now - act(c) < FRESH_H * 3600]
     if len(pool) < N: pool = items[:40]
     ranked = sorted(pool, key=lambda c: value(c, now), reverse=True)
     quote = lambda c: (c.get("kind") or {}).get("type") == "quote"

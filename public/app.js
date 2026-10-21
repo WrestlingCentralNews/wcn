@@ -19,9 +19,9 @@ ${i.kind&&i.kind.type==='quote'?`<blockquote class="qc"><span class="qm">“</sp
 <p>${esc(i.summary||TX.dflt(i.source))}</p>
 ${(i.updates||[]).length?`<details class="upd"><summary>${TX.upd(i.updates.length)}</summary><ol>${i.updates.map(u=>`<li><time>${ago(u.ts)}</time><a href="${esc(i.url||u.link)}">${esc(u.title)}</a><span>${esc(u.line)} <em>— ${esc(u.source)}</em></span></li>`).join("")}</ol></details>`:""}<div class="meta"><span>${esc(i.source)} · ${when(i)}</span><a href="${esc(i.url||i.link)}">${TX.more}</a></div></div></article>`}
 // Top stories (mirrors toppick.py): importance (news.json 'imp', BREAKING bonus included) minus age; lead needs a photo
-const TP={fresh:24,decay:.75,old:.15,n:5};
-function topPick(L){const now=Date.now()/1000;if(L.length<TP.n+3)return[];let pool=L.filter(i=>now-i.ts<TP.fresh*3600);if(pool.length<TP.n)pool=L.slice(0,40);
- const v=i=>(i.imp||0)-TP.decay*Math.max(0,now-i.ts)/3600-TP.old*Math.max(0,i.ts-(i.first_ts||i.ts))/3600;
+const TP={fresh:24,decay:.75,old:.15,n:5,bump:48};
+function topPick(L){const now=Date.now()/1000;if(L.length<TP.n+3)return[];const act=i=>Math.min(i.ts,(i.first_ts||i.ts)+TP.bump*3600);let pool=L.filter(i=>now-act(i)<TP.fresh*3600);if(pool.length<TP.n)pool=L.slice(0,40);
+ const v=i=>(i.imp||0)-TP.decay*Math.max(0,now-act(i))/3600-TP.old*Math.max(0,act(i)-(i.first_ts||i.ts))/3600;
  const r=pool.map(i=>[v(i),i]).sort((a,b)=>b[0]-a[0]).map(x=>x[1]),lead=r.find(i=>i.image&&!(i.kind&&i.kind.type==='quote'))||r[0],rest=r.filter(i=>i!==lead);
  let sec=rest.filter(i=>i.image).slice(0,TP.n-1);sec=sec.concat(rest.filter(i=>!sec.includes(i)).slice(0,TP.n-1-sec.length));sec.sort((a,b)=>rest.indexOf(a)-rest.indexOf(b));return[lead,...sec]}
 function mini(i,n){const c=CATS[i.categories[0]],u=esc(i.url||i.link);const img=i.image?`<img class="fg" loading="lazy" referrerpolicy="no-referrer" src="${esc(i.image)}" alt="" onerror="this.remove()">`:'';

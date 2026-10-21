@@ -277,7 +277,13 @@ def cluster(articles):
             "ts": g[0]["ts"],   # latest activity (newest report) -> feed sort order; first_ts = when the story was first reported
             "updates": [{"ts": m["ts"], "line": update_line(m), "source": m["source"], "link": m["link"], "title": m["title"]} for m in g if m is not main]})
         if all(teaser(m) for m in g): out[-1]["unnamed"] = True   # no headline names who it's about: not a story (owner rule)
-    return sorted(out, key=lambda c: -c["ts"])
+    return sorted(out, key=lambda c: -feed_ts(c))
+FRESH_BUMP = 48 * 3600
+def feed_ts(c):
+    """Feed position of a story: its latest activity, but never more than 48h after it was first reported, so a story first
+    reported > 48h ago is never bumped back to the top as new by a late report (owner rule 2026-10-21; 'Updated' still shows)."""
+    f = c.get("first_ts") or c["ts"]
+    return min(c["ts"], f + FRESH_BUMP)
 VERSION = 7
 def img_score(u, src):
     if not u: return -99
@@ -379,7 +385,10 @@ _PROMOS = [("wwe", r"\bWWE\b|\bNXT\b|\bRAW\b|SmackDown|WrestleMania|Survivor Ser
            ("aew", r"\bAEW\b|\bROH\b|Ring of Honor|Dynamite|Collision|Rampage|All Elite|WrestleDream|Full Gear|Double or Nothing|Forbidden Door"),
            ("tna", r"\bTNA\b|\biMPACT\b|\bIMPACT\b|Impact Wrestling|Bound for Glory|Destination X|Hard to Kill|Knockouts"),
            ("njpw", r"\bNJPW\b|New Japan|Wrestle Kingdom"), ("cmll", r"\bCMLL\b|Arena M[eé]xico"), ("aaa", r"\bAAA\b|Lucha Libre AAA|Triplemania"),
-           ("mlw", r"\bMLW\b|Major League Wrestling"), ("gcw", r"\bGCW\b"), ("nwa", r"\bNWA\b"), ("stardom", r"\bStardom\b")]
+           ("mlw", r"\bMLW\b|Major League Wrestling"), ("gcw", r"\bGCW\b"), ("nwa", r"\bNWA\b"), ("stardom", r"\bStardom\b"),
+           # non-wrestling combat sports count as their own 'promotion' so a UFC report can never merge with, lead, or lend its
+           # poster/write-up to a wrestling story ('UFC 333 Start Times' + 'AAA Heroes Inmortales Start Times', 2026-10-21)
+           ("combat", r"\bUFC\b|\bMMA\b|\bBellator\b|\bPFL\b|ONE Championship|\bZuffa Boxing\b|\bboxing\b|\bkickboxing\b|\bBKFC\b")]
 _PRO_RX = [(k, re.compile(rx, re.I if k not in ("wwe", "tna") else 0)) for k, rx in _PROMOS]
 _PN = r"(?:WWE|AEW|TNA|NXT|ROH|MLW|NJPW|CMLL|AAA|Impact|IMPACT|GCW|NWA)"
 _FORMER = re.compile(r"(?i)\b(?:former|ex-|ex|one-time|onetime|longtime|then-)\s*(?:" + _PN + r"\s*(?:(?:,|/|&|and)\s*)?)+"
