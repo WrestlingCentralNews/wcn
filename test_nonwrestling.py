@@ -31,10 +31,28 @@ for a, why in [(UFC, "f4w /news/ufc/ section"),
                (art("one", "Big night set for ONE Championship in Bangkok", "https://x/one/", NOW), "ONE Championship"),
                (art("pfl", "PFL Europe card finalized", "https://x/pfl/", NOW), "PFL")]:
     check(combat.nonwrestling(a), "not filtered: " + why)
-for raw in ["Brock Lesnar Teases UFC Return Amid WWE Hiatus", "TKO Reports Record Quarter For WWE And UFC", "From WWE to Boxing: 4 Wrestlers Who Stepped Into the Ring",
+for raw in ["Brock Lesnar Teases UFC Return Amid WWE Hiatus", "From WWE to Boxing: 4 Wrestlers Who Stepped Into the Ring",
             "MLW Fusion preview: MLW Featherweight Championship match", "AAA Heroes Inmortales XVIII card finalized",
             "Former UFC Fighter Signs With AEW", "Observer previews AEW WrestleDream and WWE Saudi issues"]:
     check(not combat.nonwrestling(art("k", raw, "https://www.f4wonline.com/news/wwe/k/", NOW)), "wrongly filtered: " + raw)
+# 1b. crossovers only (owner rule 2026-10-21, second pass): wrestler -> boxing/UFC/MMA or fighter/boxer -> wrestling stays,
+# business news covering both and plain fight news goes (also when it sits in a wrestling section URL)
+for raw in ["Jake Paul Set For WWE Appearance At Crown Jewel", "Logan Paul Announces Boxing Match For Next Year",
+            "Ronda Rousey Open To MMA Return", "Former Boxing Champion Tyson Fury Makes WWE Debut", "Conor McGregor Wants WWE Match",
+            "UFC Fighter Signs With WWE After Performance Center Tryout", "Bobby Lashley Says He'd Fight In MMA Again",
+            "Gable Steveson Eyes UFC Move", "Boxer Joins AEW Roster", "From WWE to Boxing: 4 Wrestlers Who Stepped Into the Ring",
+            "Former UFC Fighter Signs With AEW", "Cain Velasquez Return To AAA Teased", "MLW Fusion preview: MLW Featherweight Championship match",
+            "Octagon Jr. Returns To AAA", "WWE 2K26 & Street Fighter Worlds Collide In First Ever Collaboration"]:
+    check(not combat.nonwrestling(art("x", raw, "https://www.f4wonline.com/news/ufc/x/", NOW)), "crossover/wrestling wrongly filtered: " + raw)
+for raw in ["TKO Reports Record Quarter For WWE And UFC", "WWE And UFC Parent TKO Stock Hits Record High",
+            "TKO Earnings: UFC And WWE Revenue Up 12 Percent", "UFC 334 Ticket Sales Update", "Zuffa Boxing Announces First Card",
+            "Jake Paul Set For Boxing Return In December",             "UFC 333 Results: Volkanovski Retains", "Paramount Signs UFC Media Rights Deal Alongside WWE Talks", "Dana White Talks TKO Boxing Plans",
+            "TKO Boxing And WWE Share Sponsor"]:
+    check(combat.nonwrestling(art("x", raw, "https://www.f4wonline.com/news/wwe/x/", NOW)), "non-crossover kept: " + raw)
+check(combat.nonwrestling(art("c", "Canelo Alvarez vs. Terence Crawford Rematch Talks", "https://x/c/", NOW,
+                               ss="The boxing rematch would headline a Riyadh Season boxing card.")), "boxing story (named only in text) kept")
+check(not combat.nonwrestling(art("sf", "Cody Sits Down With 'Street Fighter' Cast", "https://www.pwinsider.com/article/1/x.html", NOW)), "Street Fighter film news filtered as combat sports")
+check(combat.crossover("Brock Lesnar Teases UFC Return") and not combat.crossover("TKO Reports Record Quarter For WWE And UFC"), "crossover()")
 # 2. clustering: a UFC report never joins a wrestling story (combat counts as its own promotion)
 check(enrich.conflict(UFC, AAA), "UFC vs AAA not a conflict")
 out = enrich.cluster([dict(UFC), dict(AAA)])
@@ -80,7 +98,8 @@ check(toppick.act(old) == NOW - 28 * 3600, "top stories treat a late report on a
 check(toppick.value(dict(old, imp=10), NOW) < toppick.value(dict(new, imp=10), NOW), "old story outranks fresh one in top stories")
 # 6. start-times / this-day-in-history pieces are filler
 for raw in ["UFC 333 Start Times in US, UK, Australia and more", "AAA Heroes Inmortales XVIII Global Start Times: US, UK, Australia",
-            "10/19 This Day In History: Mike Graham Passes Away"]:
-    check(editorial.verdict({"raw_title": raw}) == "gossip/other", "filler not dropped: " + raw)
+            "10/19 This Day In History: Mike Graham Passes Away", "This Day In Wrestling History: Bret Hart Wins First WWF Title",
+            "WWE Crown Jewel 2026 Start Time And How To Watch", "On This Day In 1997: Montreal Screwjob"]:
+    check(editorial.verdict({"raw_title": raw}) in ("gossip/other", "evergreen/explainer"), "filler not dropped: " + raw)
 check(editorial.verdict({"raw_title": "AAA Heroes Inmortales XVIII card finalized"}) is None, "real card news dropped")
 print("ok", ok, "checks")
