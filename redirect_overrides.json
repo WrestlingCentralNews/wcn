@@ -1,8 +1,36 @@
-{"_note": "Story URLs shared while a story was wrongly merged -> the story holding to_link (pages.redirects). 2026-10-21: 'WWE Star Signs New Contract' (cdcbf6730547f / c0448e53fdcdd) was Santino Marella's TNA re-signing merged with Dragon Lee's WWE re-signing.",
+{
+ "_note": "Story URLs shared while a story was wrongly merged -> the story holding to_link (pages.redirects). 2026-10-21: 'WWE Star Signs New Contract' (cdcbf6730547f / c0448e53fdcdd) was Santino Marella's TNA re-signing merged with Dragon Lee's WWE re-signing. 2026-10-21 (later): nameless teaser 'TNA Signing Confirmed' -> Shotzi Blackheart's TNA signing; 2022 WWE.com 'Dragon Lee Signs with WWE' (NXT) -> Dragon Lee's 2026 re-signing. Nameless/stale stories with no named match fall back to the home page.",
  "urls": {
-  "story/wwe-star-signs-new-contract-cdcbf6730547f.html": {"to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/"},
-  "story/wwe-star-signs-new-contract-c0448e53fdcdd.html": {"to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/"},
-  "es/noticias/estrella-de-wwe-firma-nuevo-contrato-cdcbf6730547f.html": {"to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/", "es": true},
-  "es/noticias/estrella-de-wwe-firma-nuevo-contrato-c0448e53fdcdd.html": {"to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/", "es": true},
-  "story/dragon-lee-re-signs-with-wwe-cdcbf6730547f.html": {"to_link": "https://www.fightful.com/wrestling-news/report-dragon-lee-re-signs-with-wwe"}
- }}
+  "story/wwe-star-signs-new-contract-cdcbf6730547f.html": {
+   "to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/"
+  },
+  "story/wwe-star-signs-new-contract-c0448e53fdcdd.html": {
+   "to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/"
+  },
+  "es/noticias/estrella-de-wwe-firma-nuevo-contrato-cdcbf6730547f.html": {
+   "to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/",
+   "es": true
+  },
+  "es/noticias/estrella-de-wwe-firma-nuevo-contrato-c0448e53fdcdd.html": {
+   "to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/",
+   "es": true
+  },
+  "story/dragon-lee-re-signs-with-wwe-cdcbf6730547f.html": {
+   "to_link": "https://www.fightful.com/wrestling-news/report-dragon-lee-re-signs-with-wwe"
+  },
+  "story/tna-signing-confirmed-c5c2e25d2ad9c.html": {
+   "to_link": "https://tnawrestling.com/news/tna-wrestling-signs-shotzi-blackheart"
+  },
+  "es/noticias/tna-confirma-nuevo-fichaje-c5c2e25d2ad9c.html": {
+   "to_link": "https://tnawrestling.com/news/tna-wrestling-signs-shotzi-blackheart",
+   "es": true
+  },
+  "story/dragon-lee-signs-with-wwe-cf862a91e5a7c.html": {
+   "to_link": "https://www.fightful.com/wrestling-news/report-dragon-lee-re-signs-with-wwe"
+  },
+  "es/noticias/dragon-lee-firma-con-wwe-cf862a91e5a7c.html": {
+   "to_link": "https://www.fightful.com/wrestling-news/report-dragon-lee-re-signs-with-wwe",
+   "es": true
+  }
+ }
+}

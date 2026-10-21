@@ -28,6 +28,9 @@ def fetch_article(it):
         except Exception: return
     try: h = _get(url, 12).read()[:900000].decode("utf8", "ignore")
     except Exception: return
+    import freshness
+    it["pubchk"] = 1; p = freshness.page_published(h)   # the page's own publish time (never 'modified'): freshness gate
+    if p: it["pub_ts"] = p
     if not it.get("image"):
         img = meta(h, "og:image") or meta(h, "twitter:image")
         if img and not re.search(r"logo|default|placeholder|favicon", img, re.I): it["image"] = urllib.parse.urljoin(url, img)
@@ -198,8 +201,24 @@ def _sim(a, b):
     shared = ea & eb
     return j >= .5 or (len(shared) >= 2 and j >= .3) or (len(shared) >= 1 and j >= .42)
 _WIN = 72*3600   # similar() is always False for reports more than 72h apart (_sim's first check) - used to skip pairs safely
+GSIM_MAX = 12   # members per group compared when merging groups (oldest + newest first); was only the first and last report
+def _reps(g): return g if len(g) <= GSIM_MAX else g[:GSIM_MAX // 2] + g[-(GSIM_MAX // 2):]
 def _gsim(gi, gj):
-    return any(similar(x, y) for x in (gi[0], gi[-1]) for y in (gj[0], gj[-1])) and not _gclash(gi, gj)
+    """Two groups are one story if ANY of their reports match (not just the oldest/newest pair: the two Shotzi Blackheart
+    'keeps indie dates' reports sat in separate stories because their first/last reports didn't match each other)."""
+    if _gclash(gi, gj): return False
+    if any(similar(x, y) for x in (gi[0], gi[-1]) for y in (gj[0], gj[-1])): return True
+    # beyond the oldest/newest pair, only when both groups are mainly about the same named wrestler (otherwise 'any member
+    # matches any member' chains unrelated stories: a Gowen retirement joining a Copeland retirement)
+    ti, tj = _top_subj(gi), _top_subj(gj)
+    # and at least two cross pairs agree, so one loose match can't chain two angles (Dragunov on Japan / Dragunov on Bandido)
+    return bool(ti) and ti == tj and sum(similar(x, y) for x in _reps(gi) for y in _reps(gj)) >= 2
+def _top_subj(g):
+    from collections import Counter
+    c = Counter(p for m in g for p in subj_of(m))
+    if not c: return None
+    p, n = c.most_common(1)[0]
+    return p if n * 2 >= len(g) else None
 def _gclash(gi, gj):
     """Groups (or a report and a group) are different stories if at least half of their cross pairs clash (different promotion
     or different wrestlers). Half, not any: one tangential report inside a group ('Tony Khan on Steven Borden' among Toni Storm
@@ -238,7 +257,17 @@ def cluster(articles):
             merge(k, i); i = k
     out = []
     for g in groups:
-        g = sorted(g, key=lambda x: -x["ts"]); main = min(g, key=lambda x: (teaser(x), TIER(x["source"]) if TIER else 0, -x["ts"]))
+        g = sorted(g, key=lambda x: -x["ts"]); import freshness as _fr
+        newest = max((_fr.real_ts(x) or 0) for x in g); kinds = [kind_of(x) for x in g if kind_of(x)]
+        dom = max(set(kinds), key=kinds.count) if kinds and kinds.count(max(set(kinds), key=kinds.count)) * 2 >= len(g) else None
+        # lead: names the wrestler > not an old report > says what most reports say (a signing story leads with the signing) > tier > newest
+        toks_ = {id(x): _tk(canon(x["raw_title"])) for x in g}
+        def central(x):   # how typical x's headline is of the story (a signing story leads with 'X Signs With TNA', not a side angle)
+            if len(g) < 6: return 0
+            a = toks_[id(x)]
+            return round(sum(len(a & toks_[id(y)]) / len(a | toks_[id(y)]) for y in g if y is not x and a | toks_[id(y)]) / (len(g) - 1), 1)
+        main = min(g, key=lambda x: (teaser(x), _fr.older_than(x, newest, 48*3600), bool(dom) and kind_of(x) != dom,
+                                     TIER(x["source"]) if TIER else 0, -central(x), -x["ts"]))
         best_img = next((m["image"] for m in g if m.get("image")), None)
         cats = sorted({c for m in g for c in m["categories"]}, key=["WWE","AEW","TNA","Indie","Global"].index)
         out.append({"id": "c" + g[-1]["id"], "title": main["title"], "summary": main["summary"], "link": main["link"],
@@ -247,7 +276,7 @@ def cluster(articles):
             "raw_title": main["raw_title"], "src_summary": (main.get("summary_src") or "")[:500], "kind": main.get("kind", {"type": "news"}),
             "ts": g[0]["ts"],   # latest activity (newest report) -> feed sort order; first_ts = when the story was first reported
             "updates": [{"ts": m["ts"], "line": update_line(m), "source": m["source"], "link": m["link"], "title": m["title"]} for m in g if m is not main]})
-        if all(teaser(m) and not body_subj(m) for m in g): out[-1]["unnamed"] = True   # no report names who signed: not a story
+        if all(teaser(m) for m in g): out[-1]["unnamed"] = True   # no headline names who it's about: not a story (owner rule)
     return sorted(out, key=lambda c: -c["ts"])
 VERSION = 7
 def img_score(u, src):
@@ -375,20 +404,58 @@ _NOTNAME_W = set("""wwe aew tna nxt roh mlw njpw cmll aaa gcw nwa raw smackdown 
  results star stars superstar superstars talent legend legends veteran wrestler wrestlers champion champions championship title titles tag team
  former new major big top latest exclusive breaking official officially reportedly signs signed sign signing re-signs re-signed re resigns
  deal deals contract contracts extension agreement inks inked announces announced confirms confirmed adds added another two three hall fame
- famer world women's women men's men director authority on-air air fan fans favorite favorites spoiler id performance center rookie""".split())
+ famer world women's women men's men director authority on-air air fan fans favorite favorites spoiler id performance center rookie
+ spotted seen sighted talents teases tease end era injury injured announces announcement retirement retires
+ joins joined join dealing deals injury injuries injured surgery netflix series cast show shows exit exits additional dark match matches taping
+ status future health return returns returning debut debuts debuted released release releases arrested suspended provides gives update
+ updates major minor key backstage reported reports say says after before amid following during heading expected set lands landed
+ knockout knockouts luchador free agent personality figure athlete competitor gets got makes made announcement announcements""".split())
 @functools.lru_cache(maxsize=None)
 def _named(t):
     """Headline names someone, even a wrestler not on our lists ('Necro Butcher'): two capitalised non-generic words in a row."""
     w = re.findall(r"[A-Za-z][\w'’.-]*", t or "")
     ok = [x[0].isupper() and x.lower().strip("'’.") not in _NOTNAME_W and x.lower() not in STOP for x in w]
-    return any(ok[i] and ok[i + 1] for i in range(len(ok) - 1))
+    if any(ok[i] and ok[i + 1] for i in range(len(ok) - 1)): return True
+    if any(ok[i] and ok[i + 2] and w[i + 1].lower() in ("and", "&") for i in range(len(ok) - 2)): return True   # 'Borden and Ford'
+    # a lone surname/ring name leading an event verb: 'Gowen Retires After 24-Year Career', 'Danhausen Signs ...'
+    return bool(len(w) > 1 and ok[0] and re.match(r"(?i)(re-?signs?|signs?|signed|retires?|retired|released|injured|returns?|debuts?|joins?|exits?|leaves|wins?|beats?|defeats?|says|reveals?)$", w[1]))
 def _contractish(a): return _fc("c", a, lambda a: bool(_CONTRACT.search((a.get("raw_title") or "") + " | " + (a.get("title") or ""))))
+# nameless person-news (owner rule 2026-10-21): signings, re-signings, injuries, releases, exits, debuts, returns, arrests...
+_VAGUE_EVT = re.compile(r"(?i)\b(injur\w*|surgery|sidelined|health|released?|fired|let go|cut|exits?|departs?|departure|leaves|leaving|"
+                        r"debuts?|debuted|returns?|returning|arrest\w*|charged|suspend\w*|retire\w*|dies|died|passes away|passed away|joins?|joined|"
+                        r"hired|quits?|absent|pulled|replaced|status|future|spoiler|deal|contract|signing|signs?|signed|update)\b")
+_VAGUE_NOUN = re.compile(r"(?i)\b(star|superstar|wrestler|talent|legend|veteran|champion|titleholder|name|performer|knockout|luchador|luchadora|"
+                         r"newcomer|signing|free agent|hall of famer|competitor|fan favou?rite|personality|figure|athlete|grappler)s?\b")
+_SEGMENT = re.compile(r"(?i)contract signing|signing ceremony|autograph|signing session|meet (?:and|&) greet")
 def teaser(a):
-    """A contract headline that names nobody ('WWE Star Signs New Deal', 'TNA Re-Signs Wrestling Legend')."""
+    """A person-news headline that names nobody: 'WWE Star Signs New Deal', 'TNA Announces New Signing', 'TNA Signing Confirmed',
+    'AAA Star Dealing With Injury', 'WWE Signs New ID Talent', 'Exclusive: ...'. Such a report may support a story that names the
+    person (consistency of its own text is checked by _teaser_join) but never leads one or becomes one."""
     def f(a):
         rt, tt = a.get("raw_title") or "", a.get("title") or ""
-        return not subj_of(a) and not _named(rt) and not _named(tt) and bool(_CONTRACT.search(rt + " " + tt))
+        if subj_of(a) or _named(rt) or _named(tt): return False
+        t = rt + " | " + tt
+        if _SEGMENT.search(t): return False
+        if _CONTRACT.search(t): return True
+        if _VAGUE_NOUN.search(t) and _VAGUE_EVT.search(t): return True
+        return bool(re.match(r"(?i)\s*exclusive\b", rt) and not shows(rt) and not _SHOWLEVEL.search(rt))
     return _fc("t", a, f)
+# ---------- signing kind: new signing / re-signing / contract expiring / release ----------
+_K_RE = re.compile(r"(?i)\bre-?sign(?:s|ed|ing)?\b|\bresign(?:s|ed|ing)\b|\bextension\b|\bextends?\b|\bextended\b|\brenew\w*|"
+                   r"\bstay(?:s|ing)? (?:with|in|at)\b|\bremains? with\b|\bnew (?:[\w-]+ ){0,3}(?:deal|contract)\b|\bcontract (?:renewal|extension)")
+_K_EXP = re.compile(r"(?i)contract (?:expires?|expired|expiring|is up|ends|ended|ending|set to expire|has expired|coming up)|\bfree agent\b|\bexpir(?:es|ed|ing)\b")
+_K_REL = re.compile(r"(?i)\breleased?\b|\bdeparts?\b|\bdeparted\b|\bleaves\b|\bleaving\b|\bexits?\b|\bexited\b|\bparts? ways\b|\bpart ways\b|\blet go\b|\bfired\b|\bgets cut\b")
+_K_NEW = re.compile(r"(?i)\bsigns?\b|\bsigned\b|\bsigning\b|\bsignee\b|\bjoins?\b|\bjoined\b|\binks?\b|\binked\b|\bacquires?\b|\bhired\b|\bis all elite\b|\bheading to\b|\bcoming to\b")
+@functools.lru_cache(maxsize=None)
+def signing_kind(t):
+    """'re-sign' | 'expiring' | 'release' | 'new' | None, from a headline's own wording. 'Signs new deal/contract' = re-signing."""
+    t = t or ""
+    if _K_RE.search(t): return "re-sign"
+    if _K_EXP.search(t): return "expiring"
+    if _K_REL.search(t): return "release"
+    if _K_NEW.search(t): return "new"
+    return None
+def kind_of(a): return _fc("k", a, lambda a: signing_kind(a.get("raw_title") or "") or signing_kind(a.get("title") or ""))
 def body_subj(a): return subjects(((a.get("summary_src") or "")[:500] + " " + (a.get("body") or "")[:800]))
 def body_lead(a):
     """First wrestler the report's own text names (who a nameless headline is about)."""
@@ -406,16 +473,27 @@ def conflict(a, b):
     if pa and pb and not pa & pb: return True
     if _recap(a.get("raw_title") or "") or _recap(b.get("raw_title") or ""): return False
     if _SHOWLEVEL.search(a.get("raw_title") or "") or _SHOWLEVEL.search(b.get("raw_title") or ""): return False   # show results/preview names many people
-    return bool(sa and sb)
+    if sa and sb: return True
+    # a wrestler not on our lists leads one headline ('Anya Rune Steps Away From Wrestling') and someone else the other
+    # ('Max Caster Steps Away From Wrestling'): same words, different people
+    na, nb = sa | ({ha} if ha else set()), sb | ({_head(b)} if _head(b) else set())
+    return bool(na and nb and (ha or _head(b)) and not same_people(frozenset(na), frozenset(nb)))
 _SHOWLEVEL = re.compile(r"(?i)\b(results?|recap|review|preview|report|card|line-?up)\b")
 def _teaser_join(a, b):
     """None = no opinion. A nameless contract teaser joins a named contract report only if its own text names that wrestler."""
-    if not (_contractish(a) or _contractish(b)): return None
     ta, tb = teaser(a), teaser(b)
     if not (ta or tb): return None
+    if not (_contractish(a) or _contractish(b)):      # nameless injury / release / debut teaser: own text must name the wrestler
+        if ta and tb: return False
+        T, O = (a, b) if ta else (b, a)
+        lead = body_lead(T)
+        return bool(abs(T["ts"] - O["ts"]) <= 72*3600 and lead and same_people(frozenset([lead]), subj_of(O))
+                    and evkeys(canon(T["raw_title"])) & evkeys(canon(O["raw_title"])))
     if ta and tb: return False                         # two nameless teasers: nothing says they're about the same person
     T, O = (a, b) if ta else (b, a)
     if abs(T["ts"] - O["ts"]) > 72*3600 or not _contractish(O): return False
+    kt, ko = kind_of(T), kind_of(O)
+    if {kt, ko} == {"new", "re-sign"}: return False    # 'TNA Re-Signs Wrestling Legend' is not 'TNA Signs Shotzi Blackheart'
     lead = body_lead(T)
     return bool(lead and same_people(frozenset([lead]), subj_of(O)))
 def _fname_words(u):

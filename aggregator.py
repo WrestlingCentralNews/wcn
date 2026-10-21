@@ -100,7 +100,7 @@ def parse(name, url):
         title = strip(it.findtext("title") or it.findtext(A+"title"))
         link = it.findtext("link") or (it.find(A+"link").get("href") if it.find(A+"link") is not None else "")
         desc = strip(it.findtext("description") or it.findtext(A+"summary") or it.findtext(A+"content") or "")
-        date = it.findtext("pubDate") or it.findtext(A+"updated") or it.findtext(A+"published")
+        date = it.findtext("pubDate") or it.findtext(A+"published") or it.findtext(A+"updated")   # published before updated (freshness)
         ts = parse_date(date)   # None if missing/unparseable -> first-seen time is used in run()
         src = name
         if name.startswith("Google News"):
@@ -117,7 +117,7 @@ def parse(name, url):
         if not cats or not title: continue
         items.append({"id": hashlib.md5(re.sub(r"\W", "", title.lower()).encode()).hexdigest()[:12],
             "title": title, "summary": summarize(desc, title), "link": link.strip(), "source": src,
-            "ts": int(ts) if ts else None, "image": image_of(it), "categories": cats})
+            "ts": int(ts) if ts else None, "image": image_of(it), "categories": cats, "via": name})
     return items
 SIG = re.compile(r"wrestl|lucha|luchador|superstar|\bPLE\b|pay-per-view|\bheel\b|babyface|tag team|ring name|\bpromo\b|W\.W\.E|Backlash|Hall of Fame", re.I)
 def on_topic(a):
@@ -126,7 +126,7 @@ def on_topic(a):
     t = a["raw_title"]; b = (a.get("body") or "") + " " + (a.get("summary_src") or "")
     if classify(re.sub(r"\b(Mexico|Japan|Australia)\b", "", t)) or SIG.search(t): return True
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
-import enrich, editorial, llm, pages, vision, breaking, stale, toppick
+import enrich, editorial, llm, pages, vision, breaking, stale, toppick, freshness, pubgate
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
 IMG_CHECK_TOP = 60
 LONG_MAX_PER_RUN = 400
@@ -184,7 +184,7 @@ def run():
         for i in pagesrc.fetch_all(status):
             cats = classify(i["title"] + " " + i["summary"]) or ([i["cat"]] if i.pop("cat") else [])
             if not cats: continue
-            fresh.append({**i, "id": hashlib.md5(re.sub(r"\W", "", i["title"].lower()).encode()).hexdigest()[:12],
+            fresh.append({**i, "via": "pagesrc", "id": hashlib.md5(re.sub(r"\W", "", i["title"].lower()).encode()).hexdigest()[:12],
                           "summary": summarize(strip(i["summary"]), i["title"]), "title": strip(i["title"]), "categories": cats})
     except Exception as e: print("pagesrc: error (ignored)", repr(e)[:200], flush=True)
     cutoff = time.time() - RETENTION_DAYS*86400
@@ -209,7 +209,18 @@ def run():
         i["title"] = enrich.headline(i["raw_title"]); i["summary"] = enrich.summarize(i); i["body"] = (i.get("body") or "")[:3000]
     for a in old.values():
         if a.get("v") != enrich.VERSION: a["title"] = enrich.headline(a["raw_title"]); a["summary"] = enrich.summarize(a); a["v"] = enrich.VERSION
-    for i in new: i["v"] = enrich.VERSION
+    for i in new: i["v"] = enrich.VERSION; i["fresh_v"] = 1      # freshness gate: 48h limit applies to reports first seen from now on
+    # freshness backfill: stored reports whose feed date isn't trustworthy (official sites via Google News / listing pages,
+    # first-seen guesses) get the page's own publish date once (capped per run)
+    bf = [a for a in old.values() if "pubchk" not in a and a["ts"] > time.time() - 8*86400 and freshness.weak_feed_date(a)][:400]
+    if bf:
+        def _pc(a):
+            try: h = enrich._get(a["link"], 10).read()[:900000].decode("utf8", "ignore")
+            except Exception: h = ""
+            a["pubchk"] = 1; p = freshness.page_published(h)
+            if p: a["pub_ts"] = p
+        with ThreadPoolExecutor(8) as ex: list(ex.map(_pc, bf))
+        print(f"freshness: page dates checked for {len(bf)} stored reports, {sum(1 for a in bf if a.get('pub_ts'))} found", flush=True)
     arts = [a for a in list(old.values()) + new if a["ts"] > cutoff]
     for a in arts:
         if a.get("ev") != editorial.VERSION:
@@ -219,6 +230,9 @@ def run():
             if r and a.get("drop") != r: editorial.log_drop(a, r)
             a["drop"] = r; a["title"] = enrich.headline(a["raw_title"], a["kind"]["type"]); a["summary"] = enrich.summarize(a)
             a["ev"] = editorial.VERSION
+    for a in arts:   # freshness gate: a report that was already old when we first saw it is never news (real publish date, not 'updated')
+        r = None if a.get("drop") else freshness.stale_reason(a)
+        if r: editorial.log_drop(a, r); a["drop"] = r; print("old report:", a["raw_title"][:70], "->", r, flush=True)
     for a in arts:   # an OLD article a feed re-dated (Google News re-indexing wwe.com/.../2017/...): never published, never on an event page
         r = None if a.get("drop") else stale.reason(a)
         if r: editorial.log_drop(a, r); a["drop"] = r; print("stale:", a["raw_title"][:70], "->", r, flush=True)
@@ -253,12 +267,15 @@ def run():
             a["drop"] = "llm:" + t
     json.dump(arts, open(STORE, "w"))
     enrich.TIER = editorial.tier
-    clusters = []
+    clusters = []; _BYLINK = {x["link"]: x for x in arts}
     for c in enrich.cluster([a for a in arts if not a.get("drop") and not not_news(a)]):
         if c.get("unnamed"):   # only nameless teasers ('WWE Star Signs New Deal'): no report says who -> not a story
             if c["id"] not in DROPPED_CL: editorial.log_drop({"raw_title": c["raw_title"], "source": c["source"], "link": c["link"]}, "vague: no report names the wrestler")
             DROPPED_CL.add(c["id"]); continue
         c.pop("unnamed", None)
+        if not freshness.corroborated(c, _BYLINK):
+            if c["id"] not in DROPPED_CL: editorial.log_drop({"raw_title": c["raw_title"], "source": c["source"], "link": c["link"]}, "undated: no real publish date and no trusted outlet reports it within 48h")
+            DROPPED_CL.add(c["id"]); continue
         srcs = {c["source"]} | {u["source"] for u in c["updates"]}
         tiers = [editorial.tier(s) for s in srcs]
         if min(tiers) == 3:
@@ -314,6 +331,7 @@ def run():
     for c in clusters: c.pop("member_images", None)
     n_ov = image_overrides(clusters)
     if n_ov: print("images: manual overrides applied to", n_ov, flush=True)
+    clusters = pubgate.run(clusters, bylink)   # pre-publish consistency gate: held stories never reach pages, feeds, X or push
     bf = vision.backfill_finish()
     if bf: print("images: one-time backlog vision pass done:", bf, flush=True)
     vision.save(); llm.save_usage()

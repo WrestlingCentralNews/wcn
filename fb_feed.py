@@ -159,7 +159,7 @@ def rss_item(x):
             + f"<description>{xe(x['desc'])}</description>"
             f'<enclosure url="{xe(x["image"])}" length="0" type="{t}"/><media:content url="{xe(x["image"])}" medium="image" type="{t}"/></item>')
 def write(S, now):
-    its = sorted(S["items"], key=lambda x: -x["pub"])[:KEEP]
+    its = sorted([x for x in S["items"] if not x.get("hidden")], key=lambda x: -x["pub"])[:KEEP]
     last = its[0]["pub"] if its else int(now)
     xml = ('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/"><channel>'
            f"<title>Wrestling Central News: Facebook picks</title><link>{SITE}</link>"
@@ -179,5 +179,10 @@ def build(clusters, now=None):
         S["items"] = sorted(S["items"] + new, key=lambda x: x["pub"])[-60:]   # keep 60 for dedup; feed shows KEEP
         if new: save(S)
     except Exception as ex: log("pick error (feed rebuilt from state)", repr(ex)[:200])
+    live = {c["id"] for c in clusters}
+    gone = [x for x in S["items"] if x["id"] not in live and not x.get("hidden")]
+    if gone:   # a story that was unpublished (held / stale / merged away) leaves the Facebook feed; kept in state so it isn't re-picked
+        for x in gone: x["hidden"] = 1
+        save(S); log("hidden from feed (no longer published):", [x["guid"] for x in gone])
     n = write(S, now); log(f"facebook.xml: {n} items")
     return n

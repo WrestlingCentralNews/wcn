@@ -71,7 +71,24 @@ def categories(a):
     # AAA is co-owned by WWE but stays Global; ROH is AEW-owned but listed as Indie per site filters
     return cats or a.get("categories") or ["Indie"]
 # ---------- story kind ----------
-FIG = "|".join([ROSTER[k] for k in ROSTER] + ["William Regal|Austin Creed|Xavier Woods|Paige|Nikki Bella|Brie Bella|Drew McIntyre|Shotzi Blackheart|Tom Lawlor|Eric Bischoff|Jim Ross|Jim Cornette|Bully Ray|Dave Meltzer|Kevin Nash|Booker T|Mick Foley|Paul Heyman|Ric Flair|Hulk Hogan|Vince McMahon|Bruce Prichard|Mark Henry|Taz|Excalibur|Tony Schiavone|Rocky Romero|Gedo|Rob Van Dam|Konnan|Teddy Long|Dutch Mantell|Arn Anderson|Jeff Jarrett|Dixie Carter|Court Bauer|Brett Lauderdale"])
+# Wrestlers the clustering / consistency gate must recognise by name (no brand: categories come from ROSTER/PROMO only).
+# A wrestler missing here is invisible to the 'different wrestlers never merge' rule, so add new names as they show up.
+NAMES_EXTRA = ("Dragon Lee|Chad Gable|Rey Mysterio|Dominik Mysterio|Big Cass|Ethan Page|Bron Breakker|Bronson Reed|Jacob Fatu|Sheamus|AJ Styles|"
+ "Finn Balor|JD McDonagh|Liv Morgan|Becky Lynch|Charlotte Flair|Bayley|Natalya|Ivy Nile|Maxxine Dupri|Akira Tozawa|Kofi Kingston|Grayson Waller|"
+ "Austin Theory|Logan Paul|Karrion Kross|Killer Kross|Braun Strowman|Sami Zayn|Kevin Owens|The Miz|Shinsuke Nakamura|Aleister Black|Tama Tonga|"
+ "Tonga Loa|Rusev|El Grande Americano|Cruz del Toro|Joaquin Wilde|Wes Lee|Tony D'Angelo|Oba Femi|Tatum Paxley|Jaida Parker|Lash Legend|"
+ "Fallon Henley|Naomi|Jade Cargill|Alba Fyre|Isla Dawn|Piper Niven|Candice LeRae|Johnny Gargano|Tommaso Ciampa|Ludwig Kaiser|Pete Dunne|"
+ "Tyler Bate|Shayna Baszler|Zoey Stark|Sonya Deville|Myles Borne|Lexis King|Brooks Jensen|Joe Gacy|Nathan Frazer|Charlie Dempsey|Shawn Spears|"
+ "Ridge Holland|Brock Lesnar|Goldberg|Angelo Dawkins|Chris Sabin|Santos Escobar|Ilja Dragunov|Kazuchika Okada|Konosuke Takeshita|Claudio Castagnoli|"
+ "Marina Shafir|Kris Statlander|Toni Storm|Mariah May|Jamie Hayter|Thekla|Julia Hart|Skye Blue|Kyle Fletcher|Mark Briscoe|Orange Cassidy|"
+ "Chris Jericho|Bryan Danielson|Christian Cage|Kip Sabian|Big Bill|Bryan Keith|Bandido|Brody King|Buddy Matthews|Dralistico|Komander|"
+ "Mascara Dorada|Lio Rush|Jay White|Juice Robinson|Max Caster|Anthony Bowens|Powerhouse Hobbs|Ricky Starks|Shelton Benjamin|Bobby Lashley|"
+ "Lance Archer|Eddie Kingston|Roderick Strong|Matt Taven|Mike Bennett|Jack Perry|Dustin Rhodes|Kevin Knight|Taya Valkyrie|Trey Miguel|"
+ "Ryan Nemeth|Eric Young|Xia Brookside|Rosemary|AJ Francis|Jason Hotch|John Skyler|Daria Rae|Indi Hartwell|Lei Ying Lee|Cedric Alexander|"
+ "Sami Callihan|Jake Something|KC Navarro|Laredo Kid|Arianna Grace|Lady Frost|Matt Riddle|Satoshi Kojima|Mesias|Brian Pillman Jr|"
+ "Okumura|Rina Yamashita|Mike Santana|Ash by Elegance|Daniel Garcia|Hiromu Takahashi|Kenta|Kota Ibushi|Will Ospreay|Ricochet|Darby Allin|"
+ "Penta|Rey Fenix|Andrade|Carlito|Mortos|Hijo del Vikingo|Psycho Clown|Pagano|Mr. Iguana|Laredo Kid|Fuego del Sol|Willow Nightingale")
+FIG = "|".join([ROSTER[k] for k in ROSTER] + [NAMES_EXTRA, "William Regal|Austin Creed|Xavier Woods|Paige|Nikki Bella|Brie Bella|Drew McIntyre|Shotzi Blackheart|Tom Lawlor|Eric Bischoff|Jim Ross|Jim Cornette|Bully Ray|Dave Meltzer|Kevin Nash|Booker T|Mick Foley|Paul Heyman|Ric Flair|Hulk Hogan|Vince McMahon|Bruce Prichard|Mark Henry|Taz|Excalibur|Tony Schiavone|Rocky Romero|Gedo|Rob Van Dam|Konnan|Teddy Long|Dutch Mantell|Arn Anderson|Jeff Jarrett|Dixie Carter|Court Bauer|Brett Lauderdale"])
 FIG_RX = re.compile(r"\b(" + FIG + r")\b", re.I)
 def kind(a):
     t = a["raw_title"]
