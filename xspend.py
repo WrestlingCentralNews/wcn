@@ -14,6 +14,12 @@ TOPUPS = os.path.join(ROOT, "x_topups.json")
 MANUAL = os.path.join(ROOT, "x_manual.json")   # owner-approved actions done by hand (e.g. a tweet deletion): charges merged once by id
 LOW_USD = 2.00
 PRICES = {"post": 0.015, "post_url": 0.20, "delete": 0.010, "read": 0.005, "media": 0.005}   # read = per post returned; media = per media request
+# Live results thread estimates (live_thread.py): root + photo, then ~1 reply + photo per match/segment (~13 on a weekly show).
+# Since 2026-10-21 only PLE/PPV roots carry the site URL; weekly-show roots and all weekly replies are link-free.
+THREAD_EST = {"weekly_root_usd": round(PRICES["post"] + PRICES["media"], 3), "ppv_root_usd": round(PRICES["post_url"] + PRICES["media"], 3),
+              "reply_usd": round(PRICES["post"] + PRICES["media"], 3), "weekly_thread_13_replies_usd": round(14 * (PRICES["post"] + PRICES["media"]), 3),
+              "ppv_thread_13_replies_usd": round(PRICES["post_url"] + 14 * PRICES["media"] + 13 * PRICES["post"], 3),
+              "note": "weekly shows: no link in root or replies (saves ~$0.185 per weekly show vs a linked root); PLE/PPV roots keep the link"}
 CREDITS_START = 1792219725   # 2026-10-17 06:48:45Z: first successful post after the $5 load (06:26 was still 402 credits-depleted)
 MAX_ENTRIES = 3000
 def _topups():
@@ -71,7 +77,7 @@ def _summ(L):
                  "spent_before_rebase_estimate_usd": round(spent - since, 4)}
     out = {"remaining_usd": rem, "spent_usd": spent, "loaded_total_usd": loaded, "low_balance": rem <= LOW_USD, "low_threshold_usd": LOW_USD, **extra,
            "counts": counts, "updated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "estimate_note": "estimated from our own call log; X console is the source of truth",
-           "prices": PRICES, "top_ups": tu, "how_to_top_up": "add {date, usd, note} to x_topups.json on main",
+           "prices": PRICES, "thread_estimates": THREAD_EST, "top_ups": tu, "how_to_top_up": "add {date, usd, note} to x_topups.json on main",
            "events": L["events"][-200:], "archived": L["archived"], "entries": L["entries"]}
     if L.get("seeded_at"): out["seeded_at"] = L["seeded_at"]
     if L.get("manual_ids"): out["manual_ids"] = L["manual_ids"]   # survives entries being folded into 'archived'

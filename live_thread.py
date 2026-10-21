@@ -4,8 +4,10 @@ result and a 1-2 line summary of each major segment between matches (promos, att
 - Shows: every weekly show in events.json (Raw, SmackDown, NXT, Dynamite, Collision, TNA iMPACT) and every PPV/PLE. Overlapping
   shows each get their own thread while the X balance allows (below SEG_MIN_USD only the /live-priority show gets segments).
 - Root: "<Show> LIVE results (<date>)" + "Live results thread with @<promotion>" (official X handle, root only; unmapped -> no tag)
-  + the WCN results-page URL (+ show photo/card). URL posts cost $0.20, so the link is only
-  used while the estimated balance is >= ROOT_LINK_MIN_USD; otherwise the root says "link in bio" ($0.015).
+  (+ show photo/card). URL posts cost $0.20 vs $0.015, so the WCN results-page URL goes ONLY in PLE/PPV roots (live.py
+  kind == "ppv": every dated entry in events.json "events"; weekly shows from "shows" are kind "weekly") and only while the
+  estimated balance is >= ROOT_LINK_MIN_USD. Weekly-show roots (Raw, SmackDown, NXT, Dynamite, Collision, iMPACT...) always say
+  "link in bio", and no reply in a weekly-show thread may carry a URL (dropped before posting) -- owner rule 2026-10-21.
 - Results: live.py's 'confirmed' matches only (trusted sources, 2 sources or 1 unchallenged for 10 min). Wording = live.py templates.
 - Segments: AI summary (llm.py budget, ~$0.001/call, max 1 call / SEG_EVERY_S, only when source text changed) of the trusted
   results pages live.py already found. Claim guards: the segment must be reported in >=2 AI passes >= 4 min apart or by 2 sources,
@@ -96,6 +98,15 @@ def promo_handle(st):
     if slug.startswith("tna-"): return HANDLES["tna"]
     if slug.startswith("aaa-"): return HANDLES["aaa"]
     return None
+def is_ppv(st):
+    """PLE/PPV per live.py's schedule classification (events.json "events" -> kind "ppv"; weekly "shows" -> "weekly")."""
+    return (st or {}).get("kind") == "ppv"
+def root_link(st, bal):
+    """Site URL in the root only for PLEs/PPVs, and only while the balance allows ($0.20 vs $0.015 per post)."""
+    return is_ppv(st) and bal >= ROOT_LINK_MIN_USD
+def reply_ok(st, text):
+    """No URL in any reply of a weekly-show thread (each URL post costs $0.20)."""
+    return bool(text) and (is_ppv(st) or not XP.has_url(text))
 def root_text(st, link):
     d = datetime.date.fromisoformat(st["date"]); ds = d.strftime("%b ") + str(d.day)
     tail = f"Live results: {page_url(st['key'])}" if link else "Live results page: link in bio"
@@ -215,7 +226,7 @@ def run():
             bal = balance()
             if not P.get("root"):
                 if bal < STOP_USD / 2: log("balance too low for a root", bal); continue
-                tid = post(root_text(st, bal >= ROOT_LINK_MIN_USD), photo=show_photo(st))
+                tid = post(root_text(st, root_link(st, bal)), photo=show_photo(st))
                 if not tid: continue
                 P.update(root=tid, last=tid, root_at=int(now)); sent += 1; save(S)
             if bal < STOP_USD: log("balance below stop level, no replies", bal); continue
@@ -253,6 +264,7 @@ def run():
                     if t: groups.append((t, [r]))
             for text, used in groups:
                 if sent >= PER_RUN: break
+                if not reply_ok(st, text): log("reply dropped (URL in a weekly-show thread):", key, text[:80]); continue
                 ph = None
                 if used[0][0] == "match":
                     try: import live_x; ph = live_x.photo_candidates(st, used[0][2])
