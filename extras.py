@@ -138,7 +138,7 @@ def build_es_home(clusters, tr):
     tick = "".join(f'<span><b>{c["categories"][0]}</b> {e(L["t"])}</span>' for c, L in items[:15])
     s = (C.head(title, desc, SITE + "es/", "es", alts={"en": SITE, "es": SITE + "es/"}, ld=ld, ads=True) +
          f'''<body><div class="spot s1"></div><div class="spot s2"></div>
-{C.header("es", "/", "/es/", "news").replace('</header>', '<nav class="filters" id="filters"></nav><div class="tools"><input id="q" placeholder="Busca luchadores, programas, empresas…" aria-label="Buscar"><span id="count"></span><span class="live" style="margin-left:auto"><i></i> EN VIVO · <span id="updated">cargando…</span></span></div></header>')}
+{C.header("es", "/", "/es/", "news").replace('<nav class="navl"', '<div class="rail"><nav class="navl"', 1).replace('</header>', '<nav class="filters" id="filters"></nav></div><div class="tools"><input id="q" placeholder="Busca luchadores, programas, empresas…" aria-label="Buscar"><span id="count"></span><span class="live" style="margin-left:auto"><i></i> EN VIVO · <span id="updated">cargando…</span></span></div></header>')}
 <div class="ad ad-leader" data-slot="leaderboard" data-size="728×90 Leaderboard"></div>
 <div class="ticker"><div id="ticker">{tick}</div></div>
 <h1 class="es-h1">Noticias de lucha libre en español</h1>

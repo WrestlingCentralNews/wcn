@@ -41,11 +41,11 @@ $('#toTop').onclick=()=>scrollTo({top:0,behavior:'smooth'});
 function fillAds(){const A=window.ADS_CONFIG;if(!A||!A.enabled||!A.publisherId||!(window.wcnConsent&&wcnConsent()))return;
 document.querySelectorAll('.ad:not(.live-ad)').forEach(d=>{d.classList.add('live-ad');d.innerHTML=`<ins class="adsbygoogle" style="display:block;width:100%;height:100%" data-ad-client="${A.publisherId}" data-ad-slot="${A.slots[d.dataset.slot]}" data-ad-format="auto" data-full-width-responsive="true"></ins>`;(window.adsbygoogle=window.adsbygoogle||[]).push({})})}
 async function load(){try{const d=await (await fetch('news.json?'+Date.now())).json();items=d.items;
-$('#updated').textContent=TX.updated+ago(d.updated);$('#ticker').innerHTML=items.slice(0,15).map(i=>`<span><b>${i.categories[0]}</b> ${esc(i.title)}</span>`).join('');
+$('#updated').innerHTML='<span class="upd-p">'+TX.updated+'</span>'+ago(d.updated);if($('#updated-m'))$('#updated-m').textContent=ago(d.updated);$('#ticker').innerHTML=items.slice(0,15).map(i=>`<span><b>${i.categories[0]}</b> ${esc(i.title)}</span>`).join('');
 chips();render();restore();setTimeout(()=>localStorage.setItem('wcn_seen',d.updated),5000)}catch(e){$('#feed').innerHTML='<div class="empty">'+TX.fail+'</div>'}}
 load();setInterval(load,15*60*1000);
 async function liveBar(){try{const d=await (await fetch('/live.json?'+Date.now())).json(),L=d.live||[];let b=document.getElementById('livebar');if(!L.length){b&&b.remove();return}
-if(!b){b=document.createElement('div');b.id='livebar';b.className='livebar';const f=$('#filters');f.parentNode.insertBefore(b,f);b.onclick=e=>{const a=e.target.closest('a');a&&window.track&&track('live_banner_click',{story_slug:a.dataset.live})}}
+if(!b){b=document.createElement('div');b.id='livebar';b.className='livebar';const f=$('.rail')||$('#filters');f.parentNode.insertBefore(b,f);b.onclick=e=>{const a=e.target.closest('a');a&&window.track&&track('live_banner_click',{story_slug:a.dataset.live})}}
 b.innerHTML=L.map(x=>`<a href="/${esc(LANG==='es'?(x.es||x.en):x.en)}" data-live="${esc(x.key)}"><span class="live-badge">${LANG==='es'?'EN VIVO':'LIVE NOW'}</span> <b>${esc(x.name)}</b> <span>${LANG==='es'?'Resultados en vivo, combate por combate':'Match-by-match live results'} →</span></a>`).join('')}catch(e){}}
 liveBar();setInterval(liveBar,3*60*1000);
 
