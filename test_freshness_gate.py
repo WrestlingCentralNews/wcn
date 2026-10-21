@@ -78,5 +78,32 @@ check(len(g) == 1, "Shotzi reports split into %d stories" % len(g))
 check(len(g) >= 1 and "sign" in g[0]["title"].lower() and "Shotzi" in g[0]["title"], "Shotzi story doesn't lead with the signing: " + (g[0]["title"] if g else ""))
 x = enrich.cluster([A("Anya Rune Steps Away From Wrestling", "Fightful", T0), A("Max Caster Steps Away From Wrestling", "Fightful", T0 + 60)])
 check(len(x) == 2, "two different wrestlers 'stepping away' merged")
+# --- undated official pages: narrow middle ground (owner decision 2026-10-21 16:26 UTC) ---
+freshness.URL_SEEN = {}
+def O(t, link, body="", **kw):
+    d = A(t, "TNA Wrestling", T0, link=link, added=T0, body=body); d.update(kw); return d
+def pub(a): return freshness.corroborated({"link": a["link"], "updates": []}, {a["link"]: a}, now=T0)
+up = O("NXT Halloween Havoc 2026 Card Updated", "https://www.wwe.com/shows/nxt/halloween-havoc-2026-card", "NXT Halloween Havoc takes place Saturday, October 25.", ts_guessed=True)
+check(freshness.undated(up) and pub(up), "(a) official 2026 upcoming-event page not published")
+hof = O("TNA Wrestling Announces Inductors For Class of 2026 Hall of Fame", "https://tnawrestling.com/news/class-of-2026-hall-of-fame",
+        "The induction ceremony is on Sunday, October 11, in Tampa.", ts_guessed=True, added=T0 + 6 * 86400)
+check(not pub(hof), "(a) official page about a 2026 event that already happened published")
+check(not pub(O("TNA Lockdown 2026 Results", "https://tnawrestling.com/news/tna-lockdown-2026-live-results", "Live from Chicago.", ts_guessed=True)),
+      "(a) 2026 results page for an event we can't place as current published")
+check(not pub(O("WWE reveals 13 live events for Road to WrestleMania 2025 tour", "https://www.wwe.com/article/road-to-wrestlemania-2025-tour", "On sale now for 2026 fans.", ts=T0 - 3600)),
+      "past year (2025) page published")
+check(not pub(O("WrestleMania 32 Produced Record Economic Impact", "https://www.wwe.com/shows/wrestlemania/article/wm-impact", ts=T0 - 3600)), "WrestleMania 32 page published")
+fb = O("AEW Dynamite: Coral Gables", "https://www.allelitewrestling.com/aew-event/aew-dynamite-coral-gables", ts=T0 - 12 * 3600, source="AEW", via="AEW")   # AEW's own feed, 12h before first seen
+check(not pub(O("More big matches set for Lucha Kingdom", "https://www.njpw1972.com/676463", ts=T0 - 12 * 3600, source="NEW JAPAN PRO-WRESTLING", via="Google News: Global")),
+      "(b) Google News index date taken as the official feed pubDate")
+check(freshness.undated(fb) and pub(fb), "(b) official feed pubDate within 48h + new URL not published")
+freshness.URL_SEEN = {freshness._norm(fb["link"]): T0 - 10 * 86400}
+check(not pub(fb), "(b) URL first seen 10 days ago (resurfaced page) published")
+freshness.URL_SEEN = {}
+check(not pub(O("AEW Dynamite: West Valley City", "https://www.allelitewrestling.com/aew-event/wvc", ts=T0 - 60 * 3600, source="AEW", via="AEW")), "(b) feed pubDate 60h old published")
+check(not pub(O("Dragon Lee signs with WWE", "https://www.wwe.com/article/dragon-lee-signs-with-nxt", ts=T0, ts_guessed=True)), "(b) crawl time taken as a feed pubDate")
+check(pub(O("New tour dates", "https://www.wwe.com/article/tour", ts_guessed=True, lastmod=T0 - 3600)), "(b) sitemap lastmod within 48h not used")
+check(not pub(A("Some Wrestler Teases Return", "Some Blog", T0, link="https://blog/x", ts_guessed=True, added=T0, body="2026 tour event")),
+      "non-official undated page published without corroboration")
 print("FAIL count", fails) if fails else print("ok")
 raise SystemExit(1 if fails else 0)

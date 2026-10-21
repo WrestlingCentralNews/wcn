@@ -268,6 +268,8 @@ def run():
     json.dump(arts, open(STORE, "w"))
     enrich.TIER = editorial.tier
     clusters = []; _BYLINK = {x["link"]: x for x in arts}
+    freshness.OWN_FEEDS = {n for n, u in FEEDS.items() if "news.google." not in u and not n.startswith(("Google", "Official:"))}
+    freshness.load_url_seen(os.path.join(os.path.dirname(STORE), "url_first_seen.json"), arts)
     for c in enrich.cluster([a for a in arts if not a.get("drop") and not not_news(a)]):
         if c.get("unnamed"):   # only nameless teasers ('WWE Star Signs New Deal'): no report says who -> not a story
             if c["id"] not in DROPPED_CL: editorial.log_drop({"raw_title": c["raw_title"], "source": c["source"], "link": c["link"]}, "vague: no report names the wrestler")
