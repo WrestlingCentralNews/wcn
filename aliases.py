@@ -28,9 +28,10 @@ ALIASES = {
  "Matt Hardy": ["Broken Matt"], "Jeff Hardy": ["Brother Nero"], "Masha Slamovich": ["Masha"], "Jordynne Grace": ["Patricia Parker"],
  "Max Caster": ["Maxwell Caster"], "Ilja Dragunov": ["Dragunov"], "Malik": ["MVP", "Montel Vontavious Porter"], "Bobby Lashley": ["Lashley"],
  "Mark Henry": ["Henry"], "Booker T": ["Booker Huffman"], "Paul Heyman": ["Heyman"], "Vince McMahon": ["Vince"], "Tony Khan": ["TK"],
- "Hiroshi Tanahashi": ["Tanahashi"], "Tetsuya Naito": ["Naito"], "Zack Sabre Jr.": ["ZSJ", "Zack Sabre Jr"], "Mistico": ["Místico", "Dragon Lee"],
+ "Hiroshi Tanahashi": ["Tanahashi"], "Tetsuya Naito": ["Naito"], "Zack Sabre Jr.": ["ZSJ", "Zack Sabre Jr"], "Mistico": ["Místico"], "Dragon Lee": [],   # Dragon Lee (WWE, Rush's brother) is not today's Místico (CMLL)
+
  "Hechicero": ["El Hechicero"], "Mayu Iwatani": ["Iwatani"], "Konosuke Takeshita": ["Takeshita"], "Kyle Fletcher": ["Fletcher"],
- "Nick Gage": ["Nicholas Wilson"], "Matt Cardona": ["Zack Ryder"], "Effy": ["Effy"], "Alex Shelley": ["Patrick Martin"],
+ "Nick Gage": ["Nicholas Wilson"], "Ludwig Kaiser": ["Marcel Barthel"], "Matt Cardona": ["Zack Ryder"], "Effy": ["Effy"], "Alex Shelley": ["Patrick Martin"],
  "William Regal": ["Darren Matthews", "Lord Steven Regal"], "Michael Cole": ["Sean Coulthard"], "Nick Aldis": ["Magnus"], "Adam Pearce": ["Scrap Iron"],
 }
 _pairs = sorted(((a, k) for k, v in ALIASES.items() for a in v if a.lower() != k.lower() and len(a) > 3), key=lambda x: -len(x[0]))

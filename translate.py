@@ -35,6 +35,8 @@ def changed_topic(es_title, en_title):
     import enrich
     pe, pn = enrich.persons(enrich.canon(es_title)), enrich.persons(enrich.canon(en_title))
     if pe & pn: return False
+    se, sn = enrich.subjects(es_title), enrich.subjects(en_title)   # incl. authority figures ('Santino Marella' vs 'Dragon Lee')
+    if se and sn: return not enrich.same_people(se, sn)
     a, b = anchors(es_title), anchors(en_title)
     if not a or not b: return bool(pe and pn)
     j = len(a & b) / len(a | b)

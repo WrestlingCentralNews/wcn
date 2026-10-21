@@ -137,7 +137,7 @@ def entities(t):
     e |= set(w.lower() for w in re.findall(r"\b[A-Z][a-zA-Z]{3,}\b", t))
     from aliases import ALIASES
     e |= {k.lower() for k in ALIASES if re.search(r"\b" + re.escape(k) + r"(?![a-z])", t, re.I)}
-    return {x for x in e if x not in GENERIC and x not in STOP and x not in ("medical", "late", "former", "report", "breaking") and not x.startswith(("former ", "ex-", "late ")) and not re.match(r"^(former|wwe|aew|tna|nxt)\b", x)}
+    return {x for x in e if x not in GENERIC and x not in CGEN and x not in STOP and x not in ("medical", "late", "former", "report", "breaking") and not x.startswith(("former ", "ex-", "late ")) and not re.match(r"^(former|wwe|aew|tna|nxt)\b", x)}
 from aliases import canon as _canon
 canon = functools.lru_cache(maxsize=None)(_canon)
 EVENT = re.compile(r"\b(died|death|passed away|cause of death|medical examiner|injur\w*|surgery|retire\w*|signs?|signed|released?|departs?|exit|lawsuit|sued|arrest\w*|suspend\w*|returns?|debut\w*|wins?|crowned|vacate\w*|cancel\w*|postpon\w*|crowned)\b", re.I)
@@ -154,7 +154,7 @@ def persons(t): return frozenset(m.lower() for m in _PRX.findall(t))
 @functools.lru_cache(maxsize=None)
 def evkeys(t): return {EVN.get(m.lower().split()[0], m.lower()[:5]) for m in EVENT.findall(t)}
 @functools.lru_cache(maxsize=None)
-def _tk(t): return frozenset(set(toks(t)) - GENERIC)
+def _tk(t): return frozenset(set(toks(t)) - GENERIC - CGEN)
 _MON = {m: i + 1 for i, m in enumerate("jan feb mar apr may jun jul aug sep oct nov dec".split())}
 @functools.lru_cache(maxsize=None)
 def dates(t):
@@ -177,9 +177,10 @@ def similar(a, b):
     if _different_match(a, b): return False
     sa, sb = shows(a["raw_title"]), shows(b["raw_title"])
     if sa and sb and not sa & sb: return False   # different shows/events ('TNA Destination X' vs 'NJPW Power Struggle')
-    if _sim(a, b): return True
-    if a.get('llm') and b.get('llm'): return _sim({**a, 'raw_title': a['title']}, {**b, 'raw_title': b['title']})
-    return False
+    j = _teaser_join(a, b)                       # a headline naming nobody: only via its own text (see _teaser_join)
+    if j is not None: return j and not conflict(a, b)
+    hit = _sim(a, b) or _same_signing(a, b) or bool(a.get('llm') and b.get('llm') and _sim({**a, 'raw_title': a['title']}, {**b, 'raw_title': b['title']}))
+    return hit and not conflict(a, b)            # never different promotions or different named wrestlers (see conflict())
 def _sim(a, b):
     if abs(a["ts"] - b["ts"]) > 72*3600: return False
     A, B = canon(a["raw_title"]), canon(b["raw_title"])
@@ -198,7 +199,16 @@ def _sim(a, b):
     return j >= .5 or (len(shared) >= 2 and j >= .3) or (len(shared) >= 1 and j >= .42)
 _WIN = 72*3600   # similar() is always False for reports more than 72h apart (_sim's first check) - used to skip pairs safely
 def _gsim(gi, gj):
-    return any(similar(x, y) for x in (gi[0], gi[-1]) for y in (gj[0], gj[-1]))
+    return any(similar(x, y) for x in (gi[0], gi[-1]) for y in (gj[0], gj[-1])) and not _gclash(gi, gj)
+def _gclash(gi, gj):
+    """Groups (or a report and a group) are different stories if at least half of their cross pairs clash (different promotion
+    or different wrestlers). Half, not any: one tangential report inside a group ('Tony Khan on Steven Borden' among Toni Storm
+    reports) must not keep the rest of the same story apart."""
+    n = bad = 0
+    for x in gi:
+        for y in gj:
+            n += 1; bad += conflict(x, y)
+    return bad * 2 >= n
 def cluster(articles):
     """Same result as the original greedy pass + restart-from-the-top merge loop, without the O(merges x groups^2) rescans:
     groups stay ordered by their oldest report, so a scan for group i stops once group j starts >72h after i's newest report,
@@ -207,7 +217,7 @@ def cluster(articles):
     for a in arts:
         for g in groups:
             if g[-1]["ts"] < a["ts"] - _WIN: continue    # every candidate in g is older than the window
-            if similar(a, g[0]) or any(similar(a, m) for m in g[-3:]): g.append(a); break
+            if (similar(a, g[0]) or any(similar(a, m) for m in g[-3:])) and not _gclash([a], g): g.append(a); break
         else: groups.append([a])
     def merge(i, j): groups[i] = sorted(groups[i] + groups.pop(j), key=lambda x: x["ts"])
     def first_j(i, start):
@@ -228,7 +238,7 @@ def cluster(articles):
             merge(k, i); i = k
     out = []
     for g in groups:
-        g = sorted(g, key=lambda x: -x["ts"]); main = min(g, key=lambda x: (TIER(x["source"]) if TIER else 0, -x["ts"]))
+        g = sorted(g, key=lambda x: -x["ts"]); main = min(g, key=lambda x: (teaser(x), TIER(x["source"]) if TIER else 0, -x["ts"]))
         best_img = next((m["image"] for m in g if m.get("image")), None)
         cats = sorted({c for m in g for c in m["categories"]}, key=["WWE","AEW","TNA","Indie","Global"].index)
         out.append({"id": "c" + g[-1]["id"], "title": main["title"], "summary": main["summary"], "link": main["link"],
@@ -237,6 +247,7 @@ def cluster(articles):
             "raw_title": main["raw_title"], "src_summary": (main.get("summary_src") or "")[:500], "kind": main.get("kind", {"type": "news"}),
             "ts": g[0]["ts"],   # latest activity (newest report) -> feed sort order; first_ts = when the story was first reported
             "updates": [{"ts": m["ts"], "line": update_line(m), "source": m["source"], "link": m["link"], "title": m["title"]} for m in g if m is not main]})
+        if all(teaser(m) and not body_subj(m) for m in g): out[-1]["unnamed"] = True   # no report names who signed: not a story
     return sorted(out, key=lambda c: -c["ts"])
 VERSION = 7
 def img_score(u, src):
@@ -257,6 +268,7 @@ def shows(t): return frozenset(k for k, rx in _SHOWS if re.search(rx, t, re.I))
 def about_same(m, main):
     """True if cluster member m is really about the lead article's story (not just a same-show/same-night neighbour)."""
     if m is main: return True
+    if conflict(m, main): return False
     sm, sM = shows(m["raw_title"]), shows(main["raw_title"])
     if sm and sM and not sm & sM: return False      # 'TNA Impact taping spoiler' photo on a 'next week's SmackDown' card
     pm, pM = persons(canon(m["raw_title"])), persons(canon(main["raw_title"]))
@@ -268,6 +280,7 @@ def cluster(articles):
     and its photo scores better (bigger/non-thumbnail). Before this, ties went to the OLDEST member (max() keeps the first), so a
     WrestleDream card preview's Jericho photo became the image of the Persephone TBS-title result. c['member_images'] (lead first,
     on-topic members only) feeds the vision check; aggregator pops it before writing news.json."""
+    _F.clear()
     out = _old_cluster(articles); bylink = {}
     for a in articles: bylink.setdefault(a["link"], a)
     # stock/promo photos an outlet puts on many unrelated articles (podcast 'click to unlock' art, show logos, file photos)
@@ -286,9 +299,151 @@ def cluster(articles):
         others = [bylink[u["link"]] for u in sorted(c["updates"], key=lambda u: -u["ts"]) if u["link"] in bylink]
         pool = [main] + [m for m in others if m is not main and about_same(m, main)]
         pool = list({id(m): m for m in pool}.values())
-        withimg = [m for m in pool if m.get("image") and not JUNK_IMG.search(m["image"])]
+        csub = frozenset().union(*(subj_of(m) for m in pool)); cpro = promos_of(main)
+        withimg = [m for m in pool if m.get("image") and not JUNK_IMG.search(m["image"]) and not img_clash(m["image"], csub, cpro)]
         best = max(withimg, key=sc) if withimg else None
         if best and main in withimg and sc(main) >= sc(best) - (0 if re.search(r"(?i)logo|graphic|poster", main["image"]) else 2): best = main
         c["image"] = best["image"] if best else None
         c["member_images"] = list(dict.fromkeys(m["image"] for m in ([best] if best else []) + withimg if m.get("image")))
     return out
+
+# ---------- subject / promotion guards ----------
+# 2026-10-21: 'WWE Star Signs New Contract' (PWInsider teaser naming nobody) matched 'Santino Marella Signs New TNA Deal' on the
+# words 'signs new deal' alone, so Dragon Lee's WWE re-signing, Santino Marella's TNA re-signing and Shotzi Blackheart's TNA signing
+# ended up in one story with a WWE headline, a Dragon Lee photo and a Santino/Shotzi body. Rules now:
+#  - contract boilerplate (signs/re-signs/new deal/contract/extension/exclusive/star...) never counts as a topic match;
+#  - two reports (or two groups of reports) are never merged if they name different promotions or different wrestlers;
+#  - a headline that names nobody ('WWE Re-Signs Former Tag Team Champion') joins a story only if its own text names that story's
+#    wrestler, never becomes the lead when a named report exists, and a story made only of such teasers is not published;
+#  - the card photo may not be a file named after a different wrestler or promotion.
+CGEN = set("sign signs signed signing re-signs resigns resign resigned ink inks inked deal deals contract contracts extension extensions extend extends extended agreement new exclusive reportedly officially star stars superstar talent legend wrestler former multi year years long-term term".split())
+_SNAMES = sorted(set(_PNAMES) | {x for x in _EXEC if len(x) > 3}, key=len, reverse=True)
+_SRX = re.compile(r"\b(" + "|".join(re.escape(p) for p in _SNAMES) + r")(?![a-z])", re.I)
+@functools.lru_cache(maxsize=None)
+def subjects(t):
+    """Every named wrestler/on-air figure in t (canonical, lower case), executives and authority figures included.
+    A nickname match doesn't hide the name inside it ('Timeless Toni Storm' -> 'timeless toni' and 'toni storm')."""
+    t = canon(t or ""); out = set()
+    for m in _SRX.finditer(t):
+        out.add(m.group(0).lower())
+        for w in re.finditer(r"\S+", m.group(0)):
+            if w.start() == 0: continue
+            mm = _SRX.match(t, m.start() + w.start())
+            if mm and mm.end() > m.end(): out.add(mm.group(0).lower())
+    return frozenset(out)
+_HEAD = re.compile(r"^(?:[A-Z][\w'’]*:\s*)?([A-Z][a-z'’]+ [A-Z][a-z'’]+)\b")
+_NOTHEAD = re.compile(r"(?i)\b(wwe|aew|tna|nxt|raw|smackdown|dynamite|collision|impact|report|reports|breaking|exclusive|latest|update|backstage|former|major|new|big|top|the|this|why|how|what|who|results?|review|watch|live|night|world|title|tag|team|women|men)\b")
+def _head(a):
+    """Unknown subject named at the start of the source headline ('Billy Gunn sides with...' / 'Billy Gunn Takes A Shot...')."""
+    def f(a):
+        m = _HEAD.match(a.get("raw_title") or "")
+        return m.group(1).lower() if m and not _NOTHEAD.search(m.group(1)) and m.group(1).lower() not in _EXEC else ""
+    return _fc("h", a, f) or None
+def _keys(names): return {re.sub(r"s$", "", n.split()[-1]) for n in names}   # 'the hardys' ~ 'matt hardy'; 'dragon lee' -> 'lee'
+def same_people(a, b):
+    """Shared wrestler (or surname). Executives/authority figures only count when one side names nobody else:
+    'Tony Khan on Toni Storm' vs 'Tony Khan on Kairi Sane' are different stories."""
+    na, nb = a - _EXEC, b - _EXEC
+    if na and nb: a, b = na, nb
+    return bool(a & b) or bool(_keys(a) & _keys(b))
+_PROMOS = [("wwe", r"\bWWE\b|\bNXT\b|\bRAW\b|SmackDown|WrestleMania|Survivor Series|Crown Jewel|Royal Rumble|SummerSlam|Saturday Night'?s Main Event|Halloween Havoc"),
+           ("aew", r"\bAEW\b|\bROH\b|Ring of Honor|Dynamite|Collision|Rampage|All Elite|WrestleDream|Full Gear|Double or Nothing|Forbidden Door"),
+           ("tna", r"\bTNA\b|\biMPACT\b|\bIMPACT\b|Impact Wrestling|Bound for Glory|Destination X|Hard to Kill|Knockouts"),
+           ("njpw", r"\bNJPW\b|New Japan|Wrestle Kingdom"), ("cmll", r"\bCMLL\b|Arena M[eé]xico"), ("aaa", r"\bAAA\b|Lucha Libre AAA|Triplemania"),
+           ("mlw", r"\bMLW\b|Major League Wrestling"), ("gcw", r"\bGCW\b"), ("nwa", r"\bNWA\b"), ("stardom", r"\bStardom\b")]
+_PRO_RX = [(k, re.compile(rx, re.I if k not in ("wwe", "tna") else 0)) for k, rx in _PROMOS]
+_PN = r"(?:WWE|AEW|TNA|NXT|ROH|MLW|NJPW|CMLL|AAA|Impact|IMPACT|GCW|NWA)"
+_FORMER = re.compile(r"(?i)\b(?:former|ex-|ex|one-time|onetime|longtime|then-)\s*(?:" + _PN + r"\s*(?:(?:,|/|&|and)\s*)?)+"
+                     r"|\b" + _PN + r"\s+(?:legend|hall of famer|veteran|alum\w*|icon|original)s?\b"
+                     r"|\b(?:formerly (?:of|with|in)|leaves?|leaving|left|exits?|exited|departs?|departed|quits?|released by|from|after|before) " + _PN + r"\b(?:\s+(?:exit|departure|release|run|contract))?")
+@functools.lru_cache(maxsize=None)
+def promos(t):
+    """Promotions a headline is about now ('Former WWE Star X Signs With TNA' -> {'tna'}; WWE/NXT and AEW/ROH count as one)."""
+    t = _FORMER.sub(" ", t or "")
+    t = re.sub(r"\bRaw\b", "RAW", t)
+    return frozenset(k for k, rx in _PRO_RX if rx.search(t))
+_F = {}   # per-cluster()-call cache of per-report features, keyed by (id(report), titles)
+def _fc(kind, a, fn):
+    k = (kind, id(a), a.get("raw_title"), a.get("title"))
+    v = _F.get(k)
+    if v is None: v = _F[k] = fn(a)
+    return v
+def subj_of(a): return _fc("s", a, lambda a: subjects(a.get("raw_title") or "") | subjects(a.get("title") or ""))
+def promos_of(a): return _fc("p", a, lambda a: promos(a.get("raw_title") or "") | promos(a.get("title") or ""))
+_CONTRACT = re.compile(r"(?i)\bre-?sign(?:s|ed|ing)?\b|\bsign(?:s|ed|ing|ee)\b|\binks?\b|\binked\b|\bnew (?:[\w-]+ ){0,2}(?:deal|contract)\b|\bcontract extension\b|\bextends? (?:\w+ )?(?:deal|contract)\b")
+_NOTNAME_W = set("""wwe aew tna nxt roh mlw njpw cmll aaa gcw nwa raw smackdown dynamite collision impact wrestling pro news report update
+ results star stars superstar superstars talent legend legends veteran wrestler wrestlers champion champions championship title titles tag team
+ former new major big top latest exclusive breaking official officially reportedly signs signed sign signing re-signs re-signed re resigns
+ deal deals contract contracts extension agreement inks inked announces announced confirms confirmed adds added another two three hall fame
+ famer world women's women men's men director authority on-air air fan fans favorite favorites spoiler id performance center rookie""".split())
+@functools.lru_cache(maxsize=None)
+def _named(t):
+    """Headline names someone, even a wrestler not on our lists ('Necro Butcher'): two capitalised non-generic words in a row."""
+    w = re.findall(r"[A-Za-z][\w'’.-]*", t or "")
+    ok = [x[0].isupper() and x.lower().strip("'’.") not in _NOTNAME_W and x.lower() not in STOP for x in w]
+    return any(ok[i] and ok[i + 1] for i in range(len(ok) - 1))
+def _contractish(a): return _fc("c", a, lambda a: bool(_CONTRACT.search((a.get("raw_title") or "") + " | " + (a.get("title") or ""))))
+def teaser(a):
+    """A contract headline that names nobody ('WWE Star Signs New Deal', 'TNA Re-Signs Wrestling Legend')."""
+    def f(a):
+        rt, tt = a.get("raw_title") or "", a.get("title") or ""
+        return not subj_of(a) and not _named(rt) and not _named(tt) and bool(_CONTRACT.search(rt + " " + tt))
+    return _fc("t", a, f)
+def body_subj(a): return subjects(((a.get("summary_src") or "")[:500] + " " + (a.get("body") or "")[:800]))
+def body_lead(a):
+    """First wrestler the report's own text names (who a nameless headline is about)."""
+    t = canon((a.get("summary_src") or "")[:500] + " " + (a.get("body") or "")[:800])
+    m = _SRX.search(t)
+    return m.group(0).lower() if m else None
+def conflict(a, b):
+    """True if a and b can't be one story: different promotions, or both name wrestlers and none of them is shared
+    (a weekly-show recap naming several people is exempt from the people rule, not from the promotion rule)."""
+    sa, sb = subj_of(a), subj_of(b)
+    ha = _head(a)
+    if ha and ha == _head(b): return False             # same (possibly unlisted) person leads both headlines
+    if sa and sb and same_people(sa, sb): return False # same wrestler: outlets' promotion labels differ ('AEW star PAC' / 'WWE wrestler Pac')
+    pa, pb = promos_of(a), promos_of(b)
+    if pa and pb and not pa & pb: return True
+    if _recap(a.get("raw_title") or "") or _recap(b.get("raw_title") or ""): return False
+    if _SHOWLEVEL.search(a.get("raw_title") or "") or _SHOWLEVEL.search(b.get("raw_title") or ""): return False   # show results/preview names many people
+    return bool(sa and sb)
+_SHOWLEVEL = re.compile(r"(?i)\b(results?|recap|review|preview|report|card|line-?up)\b")
+def _teaser_join(a, b):
+    """None = no opinion. A nameless contract teaser joins a named contract report only if its own text names that wrestler."""
+    if not (_contractish(a) or _contractish(b)): return None
+    ta, tb = teaser(a), teaser(b)
+    if not (ta or tb): return None
+    if ta and tb: return False                         # two nameless teasers: nothing says they're about the same person
+    T, O = (a, b) if ta else (b, a)
+    if abs(T["ts"] - O["ts"]) > 72*3600 or not _contractish(O): return False
+    lead = body_lead(T)
+    return bool(lead and same_people(frozenset([lead]), subj_of(O)))
+def _fname_words(u):
+    p = urllib.parse.unquote(urllib.parse.urlsplit(u or "").path).rsplit("/", 1)[-1]
+    w = re.sub(r"[-_.+]+", " ", re.sub(r"\.(jpe?g|png|webp|gif|avif)$", "", p, flags=re.I))
+    return re.sub(r"([a-z])([A-Z])", r"\1 \2", w)
+def img_clash(u, story_people, story_promos):
+    """The photo's file name names a wrestler who isn't in the story, or a promotion the story isn't about."""
+    w = _fname_words(u)
+    n = subjects(w)
+    if n and story_people and not same_people(n, story_people): return True
+    p = promos(w)
+    return bool(p and story_promos and not p & story_promos)
+def _same_signing(a, b):
+    """Both headlines are about a contract/signing of the same named wrestler with the same promotion, within 72h."""
+    if not (_contractish(a) and _contractish(b)) or abs(a["ts"] - b["ts"]) > 72*3600: return False
+    sa, sb = subj_of(a) - _EXEC or subj_of(a), subj_of(b) - _EXEC or subj_of(b)
+    pa, pb = promos_of(a), promos_of(b)
+    return bool(sa and sb and same_people(sa, sb) and pa and pb and pa & pb)
+def same_story(a, b):
+    """Donor check for sharing a write-up: no promotion/people clash, and if both name people they share one."""
+    if conflict(a, b): return False
+    sa, sb = subj_of(a), subj_of(b)
+    return not (sa and sb) or same_people(sa, sb)
+def long_mismatch(a, paras):
+    """A write-up (list of paragraphs) that is about other people or another promotion than report a's headline."""
+    t = " ".join(paras or [])
+    sa, st = subj_of(a), subjects(t)
+    if sa and st and not same_people(sa, st): return True
+    pa, pt = promos_of(a), promos(t)
+    return bool(pa and pt and not pa & pt)

@@ -133,6 +133,11 @@ LONG_MAX_PER_RUN = 400
 LLM_MAX_PER_RUN = 700  # steady state is ~5-30 per run; high cap allows one-time backfill
 RETENTION_DAYS = 60  # prune stories older than this each run
 DROPPED_CL = set()
+MERCH = re.compile(r"(?i)^https?://(?:[\w-]+\.)?(?:shop|euroshop\d*)\.wwe\.com/")   # WWE Shop product pages: merchandise, never news
+NOT_NEWS = re.compile(r"(?i)[-|–—]\s*WWE Shop\s*$|\bswimsuit\b|\bbikini\b|\bAI predicts\b")   # shop pages via Google News, photo gossip, AI-guess filler
+def not_news(a):
+    """Never a story on its own, never part of one (they used to hide inside wrongly merged stories)."""
+    return bool(MERCH.search(a.get("link") or "") or NOT_NEWS.search(a.get("raw_title") or ""))
 OVERRIDES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "image_overrides.json")
 def image_overrides(clusters):
     """Hand-picked card photos (repo file image_overrides.json, survives every run): {"items": [{"links": [...], "image": url|null}]}.
@@ -249,7 +254,11 @@ def run():
     json.dump(arts, open(STORE, "w"))
     enrich.TIER = editorial.tier
     clusters = []
-    for c in enrich.cluster([a for a in arts if not a.get("drop")]):
+    for c in enrich.cluster([a for a in arts if not a.get("drop") and not not_news(a)]):
+        if c.get("unnamed"):   # only nameless teasers ('WWE Star Signs New Deal'): no report says who -> not a story
+            if c["id"] not in DROPPED_CL: editorial.log_drop({"raw_title": c["raw_title"], "source": c["source"], "link": c["link"]}, "vague: no report names the wrestler")
+            DROPPED_CL.add(c["id"]); continue
+        c.pop("unnamed", None)
         srcs = {c["source"]} | {u["source"] for u in c["updates"]}
         tiers = [editorial.tier(s) for s in srcs]
         if min(tiers) == 3:
@@ -261,12 +270,24 @@ def run():
     clusters = clusters[:3000]
     # long-form write-ups for cards (cached on the card's lead article), then static pages + sitemap
     bylink = {x["link"]: x for x in arts}
-    # reuse a long-form already written for another article of the same story (the lead article can change as reports arrive)
+    # a long-form about someone else (copied in from a wrongly merged story, e.g. Santino Marella's TNA re-signing on Dragon Lee's
+    # WWE report): drop it so the lead gets its own write-up
+    # (only copies: a write-up shared by several reports, or marked as copied; a report's own write-up is never thrown away)
+    _lc = {}
+    for x in arts:
+        if x.get("llm_long"): _lc[json.dumps(x["llm_long"])] = _lc.get(json.dumps(x["llm_long"]), 0) + 1
+    for x in arts:
+        if x.get("llm_long") and (x.get("llm_long_from") or _lc[json.dumps(x["llm_long"])] > 1) and enrich.long_mismatch(x, x["llm_long"]):
+            print("longform: off-subject write-up dropped from", x["id"], x["raw_title"][:60], flush=True)
+            x.pop("llm_long", None); x.pop("llm_long_from", None)
+    # reuse a long-form already written for another article of the same story (the lead article can change as reports arrive),
+    # only from a report about the same wrestler(s)/promotion as the lead
     for c in clusters:
         m = bylink.get(c["link"])
         if m and "llm_long" not in m:
-            prev = next((bylink[u["link"]]["llm_long"] for u in c.get("updates", []) if u["link"] in bylink and bylink[u["link"]].get("llm_long")), None)
-            if prev: m["llm_long"] = prev
+            d = next((bylink[u["link"]] for u in c.get("updates", []) if u["link"] in bylink and bylink[u["link"]].get("llm_long")
+                      and enrich.same_story(bylink[u["link"]], m) and not enrich.long_mismatch(m, bylink[u["link"]]["llm_long"])), None)
+            if d: m["llm_long"] = d["llm_long"]; m["llm_long_from"] = d["id"]
     need = [(c, bylink.get(c["link"])) for c in clusters if bylink.get(c["link"]) and "llm_long" not in bylink[c["link"]]]
     need = [(c, m) for c, m in need if m.get("llm")][:LONG_MAX_PER_RUN]
     if need and llm.budget_left() > llm.LONGFORM_RESERVE_USD and llm.pace_ok():

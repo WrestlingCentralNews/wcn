@@ -1,0 +1,8 @@
+{"_note": "Story URLs shared while a story was wrongly merged -> the story holding to_link (pages.redirects). 2026-10-21: 'WWE Star Signs New Contract' (cdcbf6730547f / c0448e53fdcdd) was Santino Marella's TNA re-signing merged with Dragon Lee's WWE re-signing.",
+ "urls": {
+  "story/wwe-star-signs-new-contract-cdcbf6730547f.html": {"to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/"},
+  "story/wwe-star-signs-new-contract-c0448e53fdcdd.html": {"to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/"},
+  "es/noticias/estrella-de-wwe-firma-nuevo-contrato-cdcbf6730547f.html": {"to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/", "es": true},
+  "es/noticias/estrella-de-wwe-firma-nuevo-contrato-c0448e53fdcdd.html": {"to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/", "es": true},
+  "story/dragon-lee-re-signs-with-wwe-cdcbf6730547f.html": {"to_link": "https://www.fightful.com/wrestling-news/report-dragon-lee-re-signs-with-wwe"}
+ }}

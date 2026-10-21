@@ -303,10 +303,17 @@ def redirects(clusters, tr, old_tr):
     by_link = {}
     for c in clusters:
         for l in _members(c): by_link.setdefault(l, c)
+    # hand-pinned targets (repo file redirect_overrides.json {"urls": {old_url: {"to_link": report url, "es": bool}}}): a story URL
+    # that was shared while the story was wrongly merged goes to the story holding that report, whatever the vote says
+    try: OV = json.load(open(os.path.join(ROOT, "redirect_overrides.json"))).get("urls", {})
+    except Exception: OV = {}
+    for u, o in OV.items():
+        if u not in R: R[u] = {"links": [o["to_link"]], "lead": o["to_link"], "es": bool(o.get("es")), "at": now}
     out = {}
     for u, r in R.items():
         if now - r.get("at", now) > REDIRECT_DAYS * 86400 or u in cur_en or u in cur_es: continue   # expired, or the URL is live again
-        c = None if r.get("to_id") == "-" else next((x for x in clusters if x["id"] == r.get("to_id")), None) or by_link.get(r.get("lead"))
+        c = by_link.get(OV[u]["to_link"]) if u in OV else None
+        c = c or (None if r.get("to_id") == "-" else next((x for x in clusters if x["id"] == r.get("to_id")), None) or by_link.get(r.get("lead")))
         if not c and r.get("to_id") != "-":
             cnt = {}
             for l in r.get("links", []):

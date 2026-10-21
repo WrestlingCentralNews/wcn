@@ -139,6 +139,9 @@ def key_person(c):
         P = _pnames(canon(c.get("raw_title") or ""))
         if P: t = canon(c.get("raw_title") or "")
     names = [p[0] for p in P]
+    if not P:   # only an executive / authority figure is named ('Santino Marella Re-Signs With TNA'): they are the subject
+        m = enrich._SRX.search(canon(c.get("title") or "")) or enrich._SRX.search(canon(c.get("raw_title") or ""))
+        if m: return m.group(0), [m.group(0)], False
     if not P:
         g = names_in(c["title"]) or names_in(c.get("raw_title", ""))
         g = [x for x in (re.split(VERB_RX, x)[0].strip() for x in g) if len(x.split()) >= 2]   # 'Divine Dominion Beats' -> 'Divine Dominion'
@@ -263,13 +266,20 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     Returns (image or None, credit dict or None, status)."""
     _tl.n = 0; _tl.bf = False
     key, names, guessed = key_person(c)
+    story_pro = enrich.promos((c.get("title") or "") + " | " + (c.get("raw_title") or ""))
     if not key:
-        if c.get("image"): return c["image"], None, "no-names"
+        # no person in the headline: never a photo whose file name names a wrestler or another promotion
+        # ('WWE Star Signs New Contract' got a Dragon Lee Raw photo from another report in the cluster)
+        if c.get("image") and not enrich.subjects(enrich._fname_words(c["image"])) and not enrich.img_clash(c["image"], frozenset(), story_pro):
+            return c["image"], None, "no-names"
         pr = promo_in(c.get("title") or "")      # no person, no photo: the story's promotion card instead of the WCN card
         return (PROMO_CARD.format(pr), None, "no-names-promo:" + pr) if pr else (None, None, "no-names")
     cands = list(dict.fromkeys([u for u in [c.get("image")] + member_images if u]))
     k = "choice3|" + c["id"] + "|" + key + "|" + hashlib.md5("|".join(cands).encode()).hexdigest()[:8]; C = cache()
     bf = rank >= VISION_TOP and budget_ok and not guessed and backfill_on() # one-time backlog pass
+    if k in C and C[k].get("image") and not str(C[k]["image"]).startswith(PROMO_CARD[:40]):
+        _L = label(C[k]["image"])          # cached pick made before the label rules: re-check its file name (free, no fetch)
+        if others_named(_L, key, names) or (story_pro and enrich.promos(_L) and not enrich.promos(_L) & story_pro): del C[k]
     if k in C and not (bf and not str(C[k].get("st", "")).startswith("key")):
         if C[k].get("st") == "wcn-card" and not C[k].get("image") and not guessed:   # roster lists updated since: free re-check for the promotion card
             pr = promotion(key, c)
@@ -285,7 +295,8 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     for u in cands:
         L = label(u, link)
         if names_key(L, key): labelled.append(u)
-        elif not guessed and others_named(L, key, names): continue   # labelled with a wrestler who isn't in this story
+        elif others_named(L, key, names): continue   # labelled with a wrestler who isn't in this story (also for names we only guessed)
+        elif story_pro and enrich.promos(L) and not enrich.promos(L) & story_pro: continue   # labelled with another promotion
         elif re.search(r"(?i)poster|logo|graphic|key[-_ ]?art|banner", L): art.append(u)
         else: neutral.append(u)
     # an earlier vision-confirmed pick for this card that showed the key person (incl. a Wikipedia photo)
