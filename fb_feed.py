@@ -180,7 +180,11 @@ def build(clusters, now=None):
         if new: save(S)
     except Exception as ex: log("pick error (feed rebuilt from state)", repr(ex)[:200])
     live = {c["id"] for c in clusters}
-    gone = [x for x in S["items"] if x["id"] not in live and not x.get("hidden")]
+    story = lambda x: not str(x["id"]).startswith("res-")     # results-page items aren't stories: never hidden by this rule
+    back = [x for x in S["items"] if x.get("hidden") and not story(x)]
+    for x in back: x.pop("hidden", None)
+    if back: save(S)
+    gone = [x for x in S["items"] if story(x) and x["id"] not in live and not x.get("hidden")]
     if gone:   # a story that was unpublished (held / stale / merged away) leaves the Facebook feed; kept in state so it isn't re-picked
         for x in gone: x["hidden"] = 1
         save(S); log("hidden from feed (no longer published):", [x["guid"] for x in gone])
