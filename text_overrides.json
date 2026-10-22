@@ -1,7 +1,23 @@
-{"note": "Hand corrections of an article's headline/summary (pinned: applied after the AI rewrite on every build, so rebuilds never regenerate the wrong text). Key = article id (data/articles.json).",
+{
+ "note": "Hand corrections of an article's headline/summary (pinned: applied after the AI rewrite on every build, so rebuilds never regenerate the wrong text). Key = article id (data/articles.json).",
  "items": {
   "322c9d922994": {
    "headline": "AAA on FOX Results: La Catalina Appears, Wagner Brothers Defend Tag Titles",
    "summary": "Lucha Libre AAA aired its latest AAA on FOX episode on October 17 on Fox Latin America and YouTube. Reigning AAA Reina de Reinas Champion La Catalina appeared on the show, and the Wagner Brothers defended the AAA World Tag Team Championship. Full results are in Fightful's results section.",
-   "date": "2026-10-18", "reason": "AI rewrite said 'Debuts' / 'in-ring debut appearance'; the source (Fightful) only says she appears; the tag title bout was the Wagner Brothers"}
- }}
+   "date": "2026-10-18",
+   "reason": "AI rewrite said 'Debuts' / 'in-ring debut appearance'; the source (Fightful) only says she appears; the tag title bout was the Wagner Brothers"
+  },
+  "8dfd5d2e0ec6": {
+   "headline": "Sting's Son Steve Borden Returns, Issues Blood & Guts Challenge On Dynamite",
+   "summary": "Steve Borden, the son of Sting, returned on AEW Dynamite alongside Darby Allin to save Will Ospreay and Adam Copeland from a Don Callis Family beatdown after their tag team loss to Kyle Fletcher and Kevin Knight. Borden, out since being injured at All Out, then took the microphone and challenged the Don Callis Family to Blood & Guts, set for the November 4 Dynamite. The Young Bucks also helped clear the ring.",
+   "date": "2026-10-22",
+   "reason": "AI rewrite turned 'Steve(n) Borden' (Sting's son) into 'Sting'; Wrestling Inc: 'The son of wrestling legend Sting', Fightful: 'Steven Borden'"
+  },
+  "0b362676d5fc": {
+   "headline": "Sting's Son Steve Borden Returns, Issues Blood & Guts Challenge On Dynamite",
+   "summary": "Steve Borden, the son of Sting, returned on AEW Dynamite alongside Darby Allin to save Will Ospreay and Adam Copeland from a Don Callis Family beatdown after their tag team loss to Kyle Fletcher and Kevin Knight. Borden, out since being injured at All Out, then took the microphone and challenged the Don Callis Family to Blood & Guts, set for the November 4 Dynamite. The Young Bucks also helped clear the ring.",
+   "date": "2026-10-22",
+   "reason": "AI rewrite turned 'Steve(n) Borden' (Sting's son) into 'Sting'; Wrestling Inc: 'The son of wrestling legend Sting', Fightful: 'Steven Borden'"
+  }
+ }
+}

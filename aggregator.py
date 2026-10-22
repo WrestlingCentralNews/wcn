@@ -126,7 +126,7 @@ def on_topic(a):
     t = a["raw_title"]; b = (a.get("body") or "") + " " + (a.get("summary_src") or "")
     if classify(re.sub(r"\b(Mexico|Japan|Australia)\b", "", t)) or SIG.search(t): return True
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
-import enrich, editorial, llm, pages, vision, breaking, stale, toppick, freshness, pubgate, combat
+import enrich, editorial, llm, pages, vision, breaking, stale, toppick, freshness, pubgate, combat, aliases
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
 IMG_CHECK_TOP = 60
 LONG_MAX_PER_RUN = 400
@@ -259,6 +259,11 @@ def run():
         for y in set(re.findall(r"\b(?:19|20)\d\d\b", a["title"])):   # rewrite added a year the source never says ('Bound For Glory 2024 Results' for 2026): drop it
             if y not in src_txt and y != time.strftime("%Y", time.gmtime(int(a.get("ts") or time.time()))): a["title"] = re.sub(r"\s*\b" + y + r"\b", "", a["title"]).strip(" ,:-")
         claim_guard(a)
+        fm = aliases.family_mixup(a["title"], a.get("raw_title"), (a.get("summary_src") or "") + " " + (a.get("body") or ""))
+        if fm:   # rewrite named the famous parent (Sting) for the child the source names (Steve Borden): use the source's headline
+            print(f"llm guard: '{a['title']}' names {fm}, source names the child -> rule-based headline", flush=True)
+            a["title"] = enrich.headline(a["raw_title"], (a.get("kind") or {}).get("type")); a["ai_claim_fixed"] = "family:" + fm
+            if aliases._has_parent(fm, a["summary"]) and not aliases._has_parent(fm, a.get("summary_src") or ""): a["summary"] = enrich.summarize(a)
         if a["id"] in TEXT_OV:   # pinned hand correction (text_overrides.json) beats the cached AI rewrite on every build
             o = TEXT_OV[a["id"]]; a["title"] = o.get("headline") or a["title"]; a["summary"] = o.get("summary") or a["summary"]; a["pinned"] = True
         if L["categories"]: a["categories"] = L["categories"]

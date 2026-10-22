@@ -40,3 +40,27 @@ _map = {a: k for a, k in _pairs}
 def canon(t):
     """Replace real/former names with the canonical ring name (case-sensitive to avoid 'kane'/'walter' false hits)."""
     return _rx.sub(lambda m: _map[m.group(1)], t or "")
+
+# Same-name / family members: the CHILD must never be resolved to the famous PARENT (2026-10-22: Fightful/Wrestling Inc
+# 'Steve(n) Borden Returns' was rewritten 'Sting Returns'). Sting = only 'Sting' or an explicit 'Steve Borden Sr.'.
+FAMILY = {   # parent ring name -> names/phrases that mean the child
+ "Sting": ["Steve Borden Jr", "Steven Borden Jr", "Steve Borden", "Steven Borden", "Borden Jr", "Sting's son", "Sting’s son", "son of Sting"],
+ "Rey Mysterio": ["Dominik Mysterio", "Dominik", "Rey Mysterio's son"],
+ "Ric Flair": ["Charlotte Flair", "David Flair", "Reid Flair", "Ric Flair's daughter"],
+}
+_PARENT_OK = {"Sting": r"\bSting\b(?!['’]s\s+(?i:son|daughter|kid|child))|Steve(?:n)? Borden,? Sr\b"}
+def _has_parent(p, t):
+    """Text names the parent himself (not 'Sting's son' / 'son of Sting' / 'Sting Jr.')."""
+    rx = _PARENT_OK.get(p) or (r"\b" + re.escape(p) + r"\b(?!['’]s\s+(?i:son|daughter|kid|child)|,?\s+Jr\b)")
+    t = re.sub(r"(?i)\b(?:son|daughter|child|kid|father|dad)\s+of\s+(?:(?:wrestling|wwe|aew)\s+)?(?:legend|icon|hall of famer\s+)?\s*" + re.escape(p), "", t or "")
+    return bool(re.search(rx, t))
+def _child_named(p, t):
+    t = t or ""
+    if any(re.search(r"(?i)\b" + re.escape(c) + r"\b", t) for c in FAMILY.get(p, [])): return True
+    return bool(re.search(r"(?i)\b(?:son|daughter)\s+of\s+(?:(?:wrestling|wwe|aew)\s+)?(?:legend\s+|icon\s+)?" + re.escape(p) + r"\b|\b" + re.escape(p) + r"['’]s\s+(?:son|daughter)\b|\b" + re.escape(p) + r",?\s+Jr\b", t))
+def family_mixup(headline, src_title, src_text=""):
+    """Parent named in the headline although the source headline names only the child (Jr./'son of'/known family) -> parent name."""
+    for p in list(FAMILY) + [m for m in re.findall(r"\b((?:[A-Z][a-z]+\s){0,2}[A-Z][a-z]+),?\s+Jr\b", (src_title or "") + " " + (src_text or ""))]:
+        if _has_parent(p, headline) and not _has_parent(p, src_title) and _child_named(p, (src_title or "") + "\n" + (src_text or "")):
+            return p
+    return None
