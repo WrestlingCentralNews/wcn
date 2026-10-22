@@ -22,4 +22,8 @@ assert all("utm_source=facebook&utm_medium=social" in x["link"] for x in S["item
 g = [x["guid"] for x in S["items"]]; F.build(cl, noon + 13 * 3600); assert [x["guid"] for x in F.load()["items"]][:len(g)] == g   # stable
 r = ET.parse(F.OUT).getroot(); assert r.tag == "rss" and r.get("version") == "2.0"
 it = r.find("channel").findall("item"); assert it and all(i.find("enclosure") is not None and i.find("guid").text for i in it)
+# story URL changed after it was picked (new slug): same guid, link follows the new URL (no redirect stubs in the feed)
+k = next(x for x in cl if x["id"] == "k"); k["url"] = "story/kairi-sane-new-slug-k.html"; F.build(cl, noon + 14 * 3600)
+fk = next(x for x in F.load()["items"] if x["id"] == "k"); assert fk["guid"] == "wcn-fb-k" and fk["link"].startswith(F.SITE + "story/kairi-sane-new-slug-k.html?utm_source=facebook"), fk["link"]
+assert "story/k.html" not in open(F.OUT).read()
 print("ok", ids)

@@ -188,5 +188,11 @@ def build(clusters, now=None):
     if gone:   # a story that was unpublished (held / stale / merged away) leaves the Facebook feed; kept in state so it isn't re-picked
         for x in gone: x["hidden"] = 1
         save(S); log("hidden from feed (no longer published):", [x["guid"] for x in gone])
+    # a story whose URL changed since it was picked (new lead headline -> new slug) keeps its guid but links to the current URL,
+    # never to the old slug's redirect stub (crawlers that follow the feed must only see final URLs)
+    cur = {c["id"]: utm(SITE + c["url"]) for c in clusters if c.get("url")}
+    moved = [x for x in S["items"] if story(x) and x["id"] in cur and x.get("link") != cur[x["id"]]]
+    for x in moved: x["link"] = cur[x["id"]]
+    if moved: save(S); log("links updated to current story URLs:", [x["guid"] for x in moved])
     n = write(S, now); log(f"facebook.xml: {n} items")
     return n
