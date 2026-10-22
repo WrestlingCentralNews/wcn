@@ -335,11 +335,14 @@ def cluster(articles):
         pool = [main] + [m for m in others if m is not main and about_same(m, main)]
         pool = list({id(m): m for m in pool}.values())
         csub = frozenset().union(*(subj_of(m) for m in pool)); cpro = promos_of(main)
-        withimg = [m for m in pool if m.get("image") and not JUNK_IMG.search(m["image"]) and not img_clash(m["image"], csub, cpro)]
+        ctxt = (main.get("raw_title") or "") + " | " + (main.get("title") or "") + " | " + (main.get("summary") or "")
+        withimg = [m for m in pool if m.get("image") and not JUNK_IMG.search(m["image"]) and not img_clash(m["image"], csub, cpro, ctxt)
+                   and not foreign_promo(m["image"], cpro, src=m.get("raw_title") or "", story_text=ctxt)[0]]   # e.g. a head-to-head piece's split graphic
         best = max(withimg, key=sc) if withimg else None
         if best and main in withimg and sc(main) >= sc(best) - (0 if re.search(r"(?i)logo|graphic|poster", main["image"]) else 2): best = main
         c["image"] = best["image"] if best else None
         c["member_images"] = list(dict.fromkeys(m["image"] for m in ([best] if best else []) + withimg if m.get("image")))
+        c["member_src"] = {m["image"]: m.get("raw_title") or "" for m in pool if m.get("image")}   # image -> its report's headline (vision.choose)
     return out
 
 # ---------- subject / promotion guards ----------
@@ -509,13 +512,47 @@ def _fname_words(u):
     p = urllib.parse.unquote(urllib.parse.urlsplit(u or "").path).rsplit("/", 1)[-1]
     w = re.sub(r"[-_.+]+", " ", re.sub(r"\.(jpe?g|png|webp|gif|avif)$", "", p, flags=re.I))
     return re.sub(r"([a-z])([A-Z])", r"\1 \2", w)
-def img_clash(u, story_people, story_promos):
+def img_clash(u, story_people, story_promos, story_text=""):
     """The photo's file name names a wrestler who isn't in the story, or a promotion the story isn't about."""
     w = _fname_words(u)
     n = subjects(w)
     if n and story_people and not same_people(n, story_people): return True
-    p = promos(w)
-    return bool(p and story_promos and not p & story_promos)
+    return bool(_foreign(label_promos(w), story_promos, story_text))
+# ---------- other-promotion branding on a photo (2026-10-22) ----------
+# 'AEW Blood And Guts 2026 Match Set' showed Ringside News' split 'NXT logo | Dynamite Blood and Guts poster' graphic
+# (file 'wwe-nxt-expected-to-go-head-to-head-with-aew-blood-amp-guts...jpg', from a head-to-head ratings article). The old rule
+# only asked that the photo share ONE promotion with the story; now every promotion a photo is tied to must be one the story's
+# own text (headline + summary) names. WWE/NXT and AEW/ROH still count as one (enrich.promos).
+SPLIT_RX = re.compile(r"(?i)\bvs\.?(?![a-z])|\bversus\b|head[- ]to[- ]head|ratings? (?:war|battle|fight)|\bopposite\b|counter-?program\w*|"
+                      r"\bgo(?:es|ing)? (?:up )?against\b|\bcompet\w* (?:with|against) \w+ (?:for )?(?:viewers|ratings|viewership)|\bviewership\b|\bratings?\b")
+_ABBR = re.compile(r"(?i)\b(wwe|nxt|tna|aew|roh|njpw|cmll|aaa|mlw|gcw|nwa|ufc|mma|pfl|bkfc)\b")
+def label_promos(t):
+    """promos() for file names / alt text, where 'wwe-nxt-...' is lower case (promos() is case-sensitive for WWE/TNA)."""
+    return promos(_ABBR.sub(lambda m: m.group(1).upper(), t or ""))
+_CROSS = re.compile(r"(?i)\bbox(?:er|ers|ing)\b|\bfighter\b|\bUFC\b|\bMMA\b|\bPFL\b|\bBKFC\b")
+def mentioned(t):
+    """Every promotion a text names, 'former X' included (promos() drops those)."""
+    t = re.sub(r"\bRaw\b", "RAW", t or "")
+    return frozenset(k for k, rx in _PRO_RX if rx.search(t)) if t else frozenset()
+def _foreign(p, sp, story_text=""):
+    """Promotions in p that the story (promotions sp) isn't about. A combat-sports tag next to the story's own promotion is
+    fine for crossover stories ('wwe-star-boxing-debut.jpg')."""
+    if not p or not sp: return frozenset()
+    f = p - sp - mentioned(story_text)   # any mention counts, 'former AEW champion' too (Max Caster's old Dynamite photo)
+    if f == {"combat"} and (p & sp or _CROSS.search(story_text or "")): return frozenset()
+    return f
+def foreign_promo(u, story_promos, label="", src="", story_text=""):
+    """(other promotions the image is tied to, strong?) for a story about `story_promos`.
+    strong: the image's own file name / alt / caption names a promotion the story isn't about (free, certain enough to drop).
+    weak:   the image names no promotion, but the article it came from is a 'vs' / head-to-head / ratings piece whose headline
+            names another promotion (a split graphic is likely; vision may confirm)."""
+    sp = frozenset(story_promos or ())
+    if not sp: return frozenset(), False
+    lp = label_promos(_fname_words(u) + " | " + (label or ""))
+    if lp: return _foreign(lp, sp, story_text), True
+    if src and SPLIT_RX.search(src + " | " + (label or "") + " | " + _fname_words(u)):
+        return _foreign(promos(src), sp, story_text), False
+    return frozenset(), False
 def _same_signing(a, b):
     """Both headlines are about a contract/signing of the same named wrestler with the same promotion, within 72h."""
     if not (_contractish(a) and _contractish(b)) or abs(a["ts"] - b["ts"]) > 72*3600: return False

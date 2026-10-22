@@ -257,6 +257,40 @@ def promotion(key, c):
         if b in ("WWE", "AEW", "TNA") and (tp in (None, b.lower()) or len(brands) == 1): return b.lower()
     if any(b in ("Global", "Indie") for b in brands): return tp
     return brands[0].lower() if brands[0] in ("WWE", "AEW", "TNA") else None
+def check_brand(img, promos_, paid=True):
+    """True if the image shows logos/branding of any promotion in promos_ (Grok vision, low detail, cached per image+promos).
+    Only called for images that already tripped a free signal (enrich.foreign_promo weak). None if unknown."""
+    names = sorted({BRAND.get(p, p.upper()) for p in promos_})
+    k = "b1|" + img + "|" + "|".join(names); c = cache()
+    if k in c: return c[k]["ok"]
+    key = os.environ.get("AI_API_KEY")
+    if not paid or not key or llm.budget_left() < VISION_RESERVE_USD or not llm.pace_ok(): return None
+    if getattr(_tl, "n", 0) >= MAX_CHECKS_PER_CARD: return None
+    _tl.n = getattr(_tl, "n", 0) + 1
+    prompt = ("Pro-wrestling image check. Does this image show a logo, show name, poster or branding of: " + ", ".join(names) +
+              "? Answer true if any of them is visible anywhere (e.g. one half of a split graphic). "
+              "Return JSON {\"shows_brand\": true|false}.")
+    body = {"model": llm.MODEL, "max_tokens": 20, "temperature": 0, "response_format": {"type": "json_object"},
+            "messages": [{"role": "user", "content": [{"type": "image_url", "image_url": {"url": img, "detail": "low"}}, {"type": "text", "text": prompt}]}]}
+    try:
+        r = urllib.request.urlopen(urllib.request.Request(llm.URL, data=json.dumps(body).encode(),
+            headers=llm.HDR(key, "wcn-vision")), timeout=45)
+        d = json.load(r)
+        with llm._lock:
+            llm._U["usd"] += d.get("usage", {}).get("cost_in_usd_ticks", 0) / 1e10; llm._U["vision"] = llm._U.get("vision", 0) + 1
+        out = json.loads(d["choices"][0]["message"]["content"])
+        c[k] = {"ok": bool(out.get("shows_brand")), "at": int(time.time())}
+        return c[k]["ok"]
+    except Exception as e:
+        print("vision brand error:", str(e)[:100], flush=True); return None
+BRAND = {"wwe": "WWE or NXT", "aew": "AEW or ROH", "tna": "TNA", "combat": "UFC/MMA/boxing"}
+def other_brand(u, story_pro, L, src, story_txt, vision_ok):
+    """True if photo u is tied to a promotion the story isn't about: its file name/alt names one (free), or it comes from a
+    'vs'/head-to-head/ratings article naming one and vision confirms (or can't check: then the safe choice is to skip it)."""
+    f, strong = enrich.foreign_promo(u, story_pro, L, src, story_txt)
+    if not f: return False
+    if strong: return True
+    return check_brand(u, f, paid=vision_ok) is not False   # an earlier verdict is free; a new paid check only for top cards
 VISION_TOP = 60          # vision confirms only for the top cards on the homepage
 def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     """Photo that shows the story's key person. Order: candidate labelled with the key person (file name/alt/caption) ->
@@ -266,12 +300,18 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     Returns (image or None, credit dict or None, status)."""
     _tl.n = 0; _tl.bf = False
     key, names, guessed = key_person(c)
-    story_pro = enrich.promos((c.get("title") or "") + " | " + (c.get("raw_title") or ""))
+    story_txt = (c.get("title") or "") + " | " + (c.get("raw_title") or "") + " | " + (c.get("summary") or "")
+    story_pro = enrich.promos((c.get("title") or "") + " | " + (c.get("raw_title") or "")) | enrich.promos(c.get("summary") or "")
+    msrc = c.get("member_src") or {}
+    vis_ok = budget_ok and rank < VISION_TOP
     if not key:
         # no person in the headline: never a photo whose file name names a wrestler or another promotion
-        # ('WWE Star Signs New Contract' got a Dragon Lee Raw photo from another report in the cluster)
-        if c.get("image") and not enrich.subjects(enrich._fname_words(c["image"])) and not enrich.img_clash(c["image"], frozenset(), story_pro):
-            return c["image"], None, "no-names"
+        # ('WWE Star Signs New Contract' got a Dragon Lee Raw photo from another report in the cluster); a photo tied to another
+        # promotion (split 'NXT | Blood and Guts' graphic) -> the next report's photo, then the promotion card
+        for u in list(dict.fromkeys([x for x in [c.get("image")] + list(member_images) if x])):
+            if not enrich.subjects(enrich._fname_words(u)) and not enrich.img_clash(u, frozenset(), story_pro, story_txt) \
+                    and not other_brand(u, story_pro, label(u), msrc.get(u, ""), story_txt, vis_ok):
+                return u, None, "no-names"
         pr = promo_in(c.get("title") or "")      # no person, no photo: the story's promotion card instead of the WCN card
         return (PROMO_CARD.format(pr), None, "no-names-promo:" + pr) if pr else (None, None, "no-names")
     cands = list(dict.fromkeys([u for u in [c.get("image")] + member_images if u]))
@@ -279,7 +319,7 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     bf = rank >= VISION_TOP and budget_ok and not guessed and backfill_on() # one-time backlog pass
     if k in C and C[k].get("image") and not str(C[k]["image"]).startswith(PROMO_CARD[:40]):
         _L = label(C[k]["image"])          # cached pick made before the label rules: re-check its file name (free, no fetch)
-        if others_named(_L, key, names) or (story_pro and enrich.promos(_L) and not enrich.promos(_L) & story_pro): del C[k]
+        if others_named(_L, key, names) or enrich.foreign_promo(C[k]["image"], story_pro, _L, msrc.get(C[k]["image"], ""), story_txt)[0]: del C[k]
     if k in C and not (bf and not str(C[k].get("st", "")).startswith("key")):
         if C[k].get("st") == "wcn-card" and not C[k].get("image") and not guessed:   # roster lists updated since: free re-check for the promotion card
             pr = promotion(key, c)
@@ -294,9 +334,9 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     labelled, neutral, art = [], [], []
     for u in cands:
         L = label(u, link)
+        if other_brand(u, story_pro, L, msrc.get(u, ""), story_txt, vis_ok and not guessed): continue   # tied to another promotion (even if it names the key person / event)
         if names_key(L, key): labelled.append(u)
         elif others_named(L, key, names): continue   # labelled with a wrestler who isn't in this story (also for names we only guessed)
-        elif story_pro and enrich.promos(L) and not enrich.promos(L) & story_pro: continue   # labelled with another promotion
         elif re.search(r"(?i)poster|logo|graphic|key[-_ ]?art|banner", L): art.append(u)
         else: neutral.append(u)
     # an earlier vision-confirmed pick for this card that showed the key person (incl. a Wikipedia photo)

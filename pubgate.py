@@ -253,7 +253,7 @@ def gate(c, bylink):
         p = sorted(ft)[0] if ft else None
         c["image"] = PROMO_CARD.format(p) if p else None; c["image_status"] = "gate:art:" + (p or "wcn-card"); c["image_credit"] = None
         c.pop("img_w", None); c.pop("img_h", None); fixes.append("illustrated header art, not a photo -> " + (c["image"] or "WCN card")); u = c["image"]
-    if u and "wrestlingcentralnews.com/img/" not in u and c.get("image_status") != "override" and enrich.img_clash(u, pt, ft):
+    if u and "wrestlingcentralnews.com/img/" not in u and c.get("image_status") != "override" and enrich.img_clash(u, pt, ft | fs, t + " | " + s + " | " + (c.get("raw_title") or "")):
         p = sorted(ft)[0] if ft else None
         c["image"] = PROMO_CARD.format(p) if p else None; c["image_status"] = "gate:" + (p or "wcn-card"); c["image_credit"] = None
         c.pop("img_w", None); c.pop("img_h", None); fixes.append("photo names another wrestler/promotion -> " + (c["image"] or "WCN card"))

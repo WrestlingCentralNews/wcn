@@ -341,7 +341,7 @@ def run():
     with ThreadPoolExecutor(8) as ex:
         for c, (img, cr, st) in ex.map(_pick, todo):
             c["image"] = img; c["image_credit"] = cr; c["image_status"] = st; stats_img[st] = stats_img.get(st, 0) + 1
-    for c in clusters: c.pop("member_images", None)
+    for c in clusters: c.pop("member_images", None); c.pop("member_src", None)
     n_ov = image_overrides(clusters)
     if n_ov: print("images: manual overrides applied to", n_ov, flush=True)
     # roster check is on demand only (pubgate.roster_check -> roster.ensure), owner rule 2026-10-21
