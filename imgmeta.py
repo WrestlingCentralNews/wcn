@@ -8,11 +8,13 @@ For a feed image that is under 1200px it tries, cheapest first, versions of THE 
      (so a vision-verified photo is never swapped for a different picture).
 Picks the smallest version that is >=1200px wide (keeps pages light), else the largest found.
 apply() then points every card/story at that version and records its real width/height."""
-import os, re, json, struct, urllib.request, urllib.parse, html as _html, time
+import os, re, json, struct, zlib, urllib.request, urllib.parse, html as _html, time
 from concurrent.futures import ThreadPoolExecutor
 ROOT = os.path.dirname(os.path.abspath(__file__)); CACHE = os.path.join(ROOT, "data", "image_sizes.json")
-V = 2                         # cache entries from older finders (<1200px) are re-checked once with the new rules
+V = 3                         # v3: PNG picks re-checked once for transparent padding (Fightful's 1920px canvas with a small photo)
 MIN_W = 1200
+MIN_SHOW = 400                # narrower than this (logos, 220px thumbs) -> WCN promotion card instead of a tiny photo
+PAD_MIN = 0.9                 # a PNG whose visible area is under 90% of its canvas width or height is 'padded' -> never used
 WINDOW_D = 60                 # stories first reported within this many days get probed
 UA = "Mozilla/5.0 (compatible; WCN-bot/1.0; +https://wrestlingcentralnews.com/)"
 def dims(b):
@@ -44,6 +46,51 @@ def probe(u):
         if not (r.headers.get("Content-Type") or "image").startswith("image"): return None
         return dims(r.read(65536))
     except Exception: return None
+def alpha_box(b):
+    """(W, H, x0, y0, x1, y1) of the visible (alpha > 16) area of an 8-bit RGBA / grey+alpha PNG, else None. Stdlib only."""
+    if b[:8] != b"\x89PNG\r\n\x1a\n": return None
+    i = 8; idat = []; W = H = ct = bd = il = None
+    while i + 8 <= len(b):
+        n, t = struct.unpack(">I4s", b[i:i + 8]); d = b[i + 8:i + 8 + n]; i += 12 + n
+        if t == b"IHDR": W, H, bd, ct, _, _, il = struct.unpack(">IIBBBBB", d[:13])
+        elif t == b"IDAT": idat.append(d)
+        elif t == b"IEND": break
+    if not W or bd != 8 or il or ct not in (4, 6): return None
+    bpp = 4 if ct == 6 else 2; st = W * bpp
+    try: raw = zlib.decompress(b"".join(idat))
+    except Exception: return None
+    prev = bytearray(st); x0, y0, x1, y1 = W, H, -1, -1; p = 0
+    for y in range(H):
+        if p + 1 + st > len(raw): return None
+        f = raw[p]; row = bytearray(raw[p + 1:p + 1 + st]); p += 1 + st
+        if f == 1:
+            for k in range(bpp, st): row[k] = (row[k] + row[k - bpp]) & 255
+        elif f == 2: row = bytearray((a + c) & 255 for a, c in zip(row, prev))
+        elif f == 3:
+            for k in range(st): row[k] = (row[k] + ((row[k - bpp] if k >= bpp else 0) + prev[k]) // 2) & 255
+        elif f == 4:
+            for k in range(st):
+                a = row[k - bpp] if k >= bpp else 0; c = prev[k - bpp] if k >= bpp else 0; u = prev[k]
+                q = a + u - c; pa, pb, pc = abs(q - a), abs(q - u), abs(q - c)
+                row[k] = (row[k] + (a if pa <= pb and pa <= pc else u if pb <= pc else c)) & 255
+        al = row[bpp - 1::bpp]
+        if max(al) > 16:
+            xs = [k for k, v in enumerate(al) if v > 16]
+            x0 = min(x0, xs[0]); x1 = max(x1, xs[-1]); y0 = min(y0, y); y1 = y
+        prev = row
+    return (W, H, x0, y0, x1 + 1, y1 + 1) if x1 >= 0 else (W, H, 0, 0, 0, 0)
+def is_padded(box):
+    """True when the visible photo fills under PAD_MIN of the canvas (photo floating on a transparent sheet)."""
+    if not box: return False
+    W, H, x0, y0, x1, y1 = box
+    return (x1 - x0) < PAD_MIN * W or (y1 - y0) < PAD_MIN * H
+def padded(u):
+    """Full download (PNG only, <=15 MB) -> is the photo a small island on a transparent canvas?"""
+    if not re.search(r"\.png$", urllib.parse.urlsplit(u).path, re.I): return False
+    try:
+        b = urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": UA}), timeout=20).read(15_000_000)
+        return is_padded(alpha_box(b))
+    except Exception: return False
 # ---------- same-photo URL variants ----------
 def _stem(u):
     """Normalised file name: no extension, size/edit suffixes, or 'l-' prefixes -> compare two URLs for 'same photo'."""
@@ -121,7 +168,7 @@ def pick(found):
 def find(u, link=None):
     """(best_url, w, h) for feed image u; only cheap HTTP."""
     d = probe(u); found = [(u, *d)] if d else []
-    if d and d[0] >= MIN_W and _good(*d) and d[0] <= 2600: return (u, *d)
+    if d and d[0] >= MIN_W and _good(*d) and d[0] <= 2600 and not padded(u): return (u, *d)
     for v in variants(u)[:4]:
         dv = probe(v)
         if dv: found.append((v, *dv))
@@ -133,6 +180,11 @@ def find(u, link=None):
             dv = probe(v)
             if dv: found.append((v, *dv))
         b = pick(found)
+    # a 'bigger' PNG can be the same photo floating on a transparent canvas (Fightful: -e edited crop 774px vs 1920px sheet)
+    tried = set()
+    while b and b[0] not in tried and padded(b[0]):
+        tried.add(b[0]); found = [f for f in found if f[0] != b[0]]; b = pick(found)
+    if not b and tried: return (u, None, None, "padded")
     return b or (u, None, None)
 _C = None
 def cache():
@@ -145,7 +197,18 @@ def best(u):
     """(url, w, h) best-known large version of image u, from cache only."""
     x = cache().get(u)
     if not x: return (u, None, None)
-    return tuple(x["best"])
+    return tuple(x["best"][:3])
+def fill_cls(w, h):
+    """' fill' for widescreen photos (16:10 .. 2.1:1): they cover the 16:9 / 2:1 frame edge to edge; other shapes keep the whole photo over the blurred fill."""
+    try: return " fill" if w and h and 1.6 <= int(w) / int(h) <= 2.1 else ""
+    except Exception: return ""
+def unusable(u):
+    """Why the photo must not be shown ('padded' / 'too-small'), from cache only; None = fine or unknown."""
+    x = cache().get(u)
+    if not x: return None
+    b = x["best"]
+    if len(b) > 3 and b[3]: return b[3]
+    return "too-small" if b[1] and b[1] < MIN_SHOW else None
 def _age(c, now): return now - c.get("first_ts", c["ts"])
 def stats(clusters, days=7, use_best=True):
     """Share of recent stories whose (displayed) image is >=1200px wide."""
@@ -160,7 +223,7 @@ def run(clusters, max_new=150):
         u = c.get("image") or ""
         if not u.startswith("https://") or u in seen or _age(c, now) > WINDOW_D * 86400: continue
         x = C.get(u)
-        if x and (x.get("v", 1) >= V or (x["best"][1] or 0) >= MIN_W): continue
+        if x and (x.get("v", 1) >= V or ((x["best"][1] or 0) >= MIN_W and not re.search(r"\.png$", urllib.parse.urlsplit(x["best"][0]).path, re.I))): continue
         seen.add(u); todo.append((u, c.get("link")))
     todo = todo[:max_new]
     def job(a): return a[0], find(*a)
@@ -177,6 +240,9 @@ def apply(clusters):
     for c in clusters:
         u = c.get("image") or ""
         if not u.startswith("https://"): continue
+        why = unusable(u) if c.get("image_status") != "override" else None
+        if why:   # tiny thumb / publisher logo / photo on a transparent sheet -> clean promotion card, never a tiny photo
+            c["image_src"] = u; c["image"] = None; c["image_status"] = why; c.pop("img_w", None); c.pop("img_h", None); n += 1; continue
         b, w, h = best(u)
         if b != u: c["image_src"] = u; c["image"] = b; n += 1
         if w and h: c["img_w"], c["img_h"] = int(w), int(h)

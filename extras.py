@@ -1,7 +1,7 @@
 """Spanish home (/es/), trust pages (about, masthead, editorial & corrections policy, contact, staff byline pages; EN + ES),
 sitemaps (sitemap.xml, es/sitemap.xml, sitemap-news.xml) and robots.txt."""
 import os, re, json, time, html
-import chrome as C
+import chrome as C, imgmeta
 from chrome import e, SITE
 ROOT = os.path.dirname(os.path.abspath(__file__)); PUB = os.path.join(ROOT, "public")
 CATC = {"WWE": "#f26a14", "AEW": "#7cd618", "TNA": "#4ea8ff", "Indie": "#f05fc1", "Global": "#2fd3b4"}
@@ -106,7 +106,7 @@ def card_html(c, L, n, hero=False):
     col = CATC.get(c["categories"][0]); img = c.get("image") or ""
     ld = 'fetchpriority="high"' if hero else 'loading="lazy"'   # lead card is the LCP image: load it first, never lazily
     wh = f' width="{c["img_w"]}" height="{c["img_h"]}"' if c.get("img_w") and c.get("img_h") else ""
-    im = (f'<img class="bg" {ld} referrerpolicy="no-referrer" src="{e(img)}" alt="" aria-hidden="true"><img class="fg" {ld}{wh} referrerpolicy="no-referrer" src="{e(img)}" alt="">' if img else "")
+    im = (f'<img class="bg" {ld} referrerpolicy="no-referrer" src="{e(img)}" alt="" aria-hidden="true"><img class="fg{imgmeta.fill_cls(c.get('img_w'), c.get('img_h'))}" {ld}{wh} referrerpolicy="no-referrer" src="{e(img)}" alt="">' if img else "")
     u = L["url"][3:]   # relative to /es/
     return (f'<article class="card {"hero" if hero else ""} in" style="--c:{col}" data-cat="{c["categories"][0]}" data-pos="{n}"><a class="img" href="{e(u)}" aria-hidden="true" tabindex="-1"><div class="ph">{c["categories"][0]}</div>{im}</a><div class="body">'
             f'<div class="tags">{BRK_ES if hero and c.get("brk") else ""}{"".join(f"<span class=tag style=--c:{CATC[k]}>{k}</span>" for k in c["categories"])}</div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><p>{e(L["s"])}</p>'

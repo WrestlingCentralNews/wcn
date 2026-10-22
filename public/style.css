@@ -301,3 +301,4 @@ header.hid{transform:translateY(-100%)}
 .rail{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
 }
 @media(max-width:370px){.logo span{display:none}}
+.img img.fg.fill,.story-hero img.fg.fill{object-fit:cover}

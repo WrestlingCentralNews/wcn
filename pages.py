@@ -220,7 +220,7 @@ def page(c, related, lang="en", L=None, alt=None):
                        extra=(f'<meta property="og:image:alt" content="{e(title)}">{imgx}<meta property="article:publisher" content="{chrome.FB}">'
                               f'<meta property="article:published_time" content="{iso(pub)}"><meta property="article:modified_time" content="{iso(mod)}"><meta property="article:section" content="{e(c["categories"][0])}">'))
     en_u = "/" + (alt or {}).get("en", SITE).replace(SITE, ""); es_u = "/" + (alt or {}).get("es", SITE + "es/").replace(SITE, "")
-    hero = (f'<div class="story-hero"><img class="bg" src="{e(img)}" alt="" aria-hidden="true" decoding="async" referrerpolicy="no-referrer"><img class="fg" src="{e(img)}"{wh} alt="{e(title)}" fetchpriority="high" decoding="async" referrerpolicy="no-referrer"></div>'
+    hero = (f'<div class="story-hero"><img class="bg" src="{e(img)}" alt="" aria-hidden="true" decoding="async" referrerpolicy="no-referrer"><img class="fg{imgmeta.fill_cls(iw, ih)}" src="{e(img)}"{wh} alt="{e(title)}" fetchpriority="high" decoding="async" referrerpolicy="no-referrer"></div>'
             if img else f'<div class="story-hero ph-h"><span>{c["categories"][0]}</span></div>')
     credit = f'<p class="pcredit"><a href="{e(c["image_credit"]["url"])}" rel="nofollow noopener" target="_blank">{e(c["image_credit"]["text"])}</a></p>' if c.get("image_credit") else ""
     return (f'{head}\n<body class="story-page" style="--c:{col}"><div class="spot s1"></div><div class="spot s2"></div>\n'
