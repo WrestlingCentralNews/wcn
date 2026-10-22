@@ -11,8 +11,9 @@ apply() then points every card/story at that version and records its real width/
 import os, re, json, struct, zlib, urllib.request, urllib.error, urllib.parse, html as _html, time
 from concurrent.futures import ThreadPoolExecutor
 ROOT = os.path.dirname(os.path.abspath(__file__)); CACHE = os.path.join(ROOT, "data", "image_sizes.json")
-V = 5                         # v5: 401/403/429 no longer count as broken (Jetpack i0.wp.com refused the Actions runner, fine for readers); why kept
-V_BROKEN = 5
+V = 6                         # v6: Jetpack Photon (i0.wp.com) judged by its origin file (Photon 404s the runner); broken marks re-checked even when no story uses them any more
+                              # v5: 401/403/429 no longer count as broken (Jetpack i0.wp.com refused the Actions runner, fine for readers); why kept
+V_BROKEN = 6
 _WHY = {}
 # v3: PNG picks re-checked once for transparent padding (Fightful's 1920px canvas with a small photo)
                               # v4: photos whose size could not be read re-checked once with a browser-like request -> "broken" (404, bot challenge, not an image)
@@ -53,6 +54,8 @@ def load_state(u):
     'ok', 'broken:<why>' (HTTP 404/410 and other 4xx except 401/403/429-style IP blocks, bot-challenge page such as SiteGround's 202 sg-captcha or Cloudflare's, HTML/not an image),
     or None when unknown (timeout, 5xx, network) -> never treated as broken."""
     if u.startswith("https://wrestlingcentralnews.com/"): return "ok"
+    m = re.match(r"https?://i[0-3]\.wp\.com/([^?#]+)", u)
+    if m: return load_state("https://" + m.group(1))   # Jetpack Photon answers the runner 404 for files it serves readers fine
     for rng in (True, False):
         h = {"User-Agent": BROWSER_UA, "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8", "Sec-Fetch-Dest": "image", "Sec-Fetch-Mode": "no-cors", "Sec-Fetch-Site": "cross-site"}
         if rng: h["Range"] = "bytes=0-65535"
@@ -258,12 +261,18 @@ def run(clusters, max_new=150):
         stale_broken = x and len(x["best"]) > 3 and x["best"][3] == "broken" and (now - x.get("at", 0) > BROKEN_RECHECK_H * 3600 or x.get("v", 1) < V_BROKEN)
         if x and not stale_broken and (x.get("v", 1) >= V or (x.get("v", 1) >= 3 and (x["best"][1] or 0)) or ((x["best"][1] or 0) >= MIN_W and not re.search(r"\.png$", urllib.parse.urlsplit(x["best"][0]).path, re.I))): continue
         seen.add(u); todo.append((u, c.get("link")))
+    for u, x in list(C.items()):   # a broken photo is filtered out before stories pick an image, so it is re-checked here or never
+        if u in seen or len(x["best"]) < 4 or x["best"][3] != "broken" or now - x.get("first", x.get("at", 0)) > 7 * 86400: continue
+        if now - x.get("at", 0) > BROKEN_RECHECK_H * 3600 or x.get("v", 1) < V_BROKEN: seen.add(u); todo.append((u, x.get("link")))
     todo = todo[:max_new]
+    l = dict(todo)
     def job(a): return a[0], find(*a)
     with ThreadPoolExecutor(12) as ex:
         for u, b in ex.map(job, todo):
+            old = C.get(u) or {}
             C[u] = {"best": list(b), "v": V, "at": int(now)}
-            if u in _WHY: C[u]["why"] = _WHY.pop(u)
+            if u in _WHY:
+                C[u].update(why=_WHY.pop(u), first=old.get("first", old.get("at", int(now))), link=l.get(u) or old.get("link"))
     live = {c.get("image") for c in clusters}
     for k in [k for k, v in C.items() if k not in live and now - v.get("at", 0) > 7 * 86400]: C.pop(k)
     json.dump(C, open(CACHE, "w"))
