@@ -30,6 +30,10 @@ class LoadState(unittest.TestCase):
     def test_404(self): self.assertEqual(self.st(urllib.error.HTTPError("u", 404, "nf", {}, None)), "broken:http-404")
     def test_403_with_range_retries_without(self):
         self.assertEqual(self.st(urllib.error.HTTPError("u", 403, "x", {}, None), _Resp()), "ok")
+    def test_ip_blocks_are_unknown(self):   # i0.wp.com refused the Actions runner 2026-10-22 while readers loaded the photos
+        e403 = urllib.error.HTTPError("u", 403, "x", {}, None)
+        self.assertIsNone(self.st(e403, e403)); self.assertIsNone(self.st(urllib.error.HTTPError("u", 429, "x", {}, None)))
+        self.assertEqual(self.st(urllib.error.HTTPError("u", 410, "x", {}, None)), "broken:http-410")
     def test_transient_is_unknown(self):
         self.assertIsNone(self.st(urllib.error.HTTPError("u", 503, "x", {}, None)))
         self.assertIsNone(self.st(TimeoutError()))
@@ -47,6 +51,7 @@ class Broken(unittest.TestCase):
     def test_find_marks_broken(self):
         imgmeta.probe = lambda u: None; imgmeta.load_state = lambda u: "broken:challenge"
         self.assertEqual(imgmeta.find("https://wp.bodyslam.net/x/dynamite.jpeg", "https://l"), ("https://wp.bodyslam.net/x/dynamite.jpeg", None, None, "broken"))
+        self.assertEqual(imgmeta._WHY.pop("https://wp.bodyslam.net/x/dynamite.jpeg"), "broken:challenge")
     def test_unknown_is_not_broken(self):
         imgmeta.probe = lambda u: None; imgmeta.load_state = lambda u: None
         self.assertEqual(len(imgmeta.find("https://a/x.jpg")), 3)
@@ -59,8 +64,9 @@ class Broken(unittest.TestCase):
     def test_broken_rechecked_later_and_unmeasured_once(self):
         import time
         now = time.time(); seen = []
-        imgmeta._C = {"https://a/old-broken.jpg": {"best": ["https://a/old-broken.jpg", None, None, "broken"], "v": 4, "at": now - 7 * 3600},
-                      "https://a/new-broken.jpg": {"best": ["https://a/new-broken.jpg", None, None, "broken"], "v": 4, "at": now},
+        imgmeta._C = {"https://a/old-broken.jpg": {"best": ["https://a/old-broken.jpg", None, None, "broken"], "v": 5, "at": now - 7 * 3600},
+                      "https://a/new-broken.jpg": {"best": ["https://a/new-broken.jpg", None, None, "broken"], "v": 5, "at": now},
+                      "https://a/v4-broken.jpg": {"best": ["https://a/v4-broken.jpg", None, None, "broken"], "v": 4, "at": now},
                       "https://a/v3-unmeasured.jpg": {"best": ["https://a/v3-unmeasured.jpg", None, None], "v": 3, "at": now},
                       "https://a/v3-measured.jpg": {"best": ["https://a/v3-measured.jpg", 800, 450], "v": 3, "at": now}}
         imgmeta.find = (lambda f: (lambda u, l=None: (seen.append(u), (u, 900, 500))[1]))(imgmeta.find)
@@ -69,7 +75,7 @@ class Broken(unittest.TestCase):
             imgmeta.run([{"image": u, "ts": now, "first_ts": now, "link": "l"} for u in imgmeta._C])
         finally:
             import importlib; importlib.reload(imgmeta)
-        self.assertEqual(sorted(seen), ["https://a/old-broken.jpg", "https://a/v3-unmeasured.jpg"])
+        self.assertEqual(sorted(seen), ["https://a/old-broken.jpg", "https://a/v3-unmeasured.jpg", "https://a/v4-broken.jpg"])
 class ChooseSkipsBroken(unittest.TestCase):
     BAD = "https://wp.bodyslam.net/wp-content/uploads/2026/10/drew-mcintyre-insight-01.jpg"
     GOOD = "https://cdn.example/drew-mcintyre-raw.jpg"

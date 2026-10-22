@@ -11,7 +11,10 @@ apply() then points every card/story at that version and records its real width/
 import os, re, json, struct, zlib, urllib.request, urllib.error, urllib.parse, html as _html, time
 from concurrent.futures import ThreadPoolExecutor
 ROOT = os.path.dirname(os.path.abspath(__file__)); CACHE = os.path.join(ROOT, "data", "image_sizes.json")
-V = 4                         # v3: PNG picks re-checked once for transparent padding (Fightful's 1920px canvas with a small photo)
+V = 5                         # v5: 401/403/429 no longer count as broken (Jetpack i0.wp.com refused the Actions runner, fine for readers); why kept
+V_BROKEN = 5
+_WHY = {}
+# v3: PNG picks re-checked once for transparent padding (Fightful's 1920px canvas with a small photo)
                               # v4: photos whose size could not be read re-checked once with a browser-like request -> "broken" (404, bot challenge, not an image)
 BROKEN_RECHECK_H = 6          # a "broken" photo is tried again after this many hours (publisher fixed the file / challenge lifted)
 BROWSER_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"
@@ -47,7 +50,7 @@ def qurl(u):
     return urllib.parse.quote(u, safe=":/?&=%#~+,;@!$'()*[]")
 def load_state(u):
     """How a reader's browser fares loading photo u (no referrer, like our <img referrerpolicy=no-referrer>):
-    'ok', 'broken:<why>' (HTTP 4xx, bot-challenge page such as SiteGround's 202 sg-captcha or Cloudflare's, HTML/not an image),
+    'ok', 'broken:<why>' (HTTP 404/410 and other 4xx except 401/403/429-style IP blocks, bot-challenge page such as SiteGround's 202 sg-captcha or Cloudflare's, HTML/not an image),
     or None when unknown (timeout, 5xx, network) -> never treated as broken."""
     if u.startswith("https://wrestlingcentralnews.com/"): return "ok"
     for rng in (True, False):
@@ -61,6 +64,7 @@ def load_state(u):
             return "broken:not-image"
         except urllib.error.HTTPError as ex:
             if ex.code in (403, 416) and rng: continue          # some hosts refuse Range requests: retry once without
+            if ex.code in (401, 403, 407, 429, 451): return None   # blocks often aimed at the runner's datacenter IP, not readers
             if 400 <= ex.code < 500: return f"broken:http-{ex.code}"
             return None
         except Exception: return None
@@ -211,7 +215,8 @@ def find(u, link=None):
     while b and b[0] not in tried and padded(b[0]):
         tried.add(b[0]); found = [f for f in found if f[0] != b[0]]; b = pick(found)
     if not b and tried: return (u, None, None, "padded")
-    if not b and (load_state(u) or "").startswith("broken"): return (u, None, None, "broken")   # dead link / challenge page: never shown
+    st = None if b else load_state(u)
+    if st and st.startswith("broken"): _WHY[u] = st; return (u, None, None, "broken")   # dead link / challenge page: never shown
     return b or (u, None, None)
 _C = None
 def cache():
@@ -250,13 +255,15 @@ def run(clusters, max_new=150):
         u = c.get("image") or ""
         if not u.startswith("https://") or u in seen or _age(c, now) > WINDOW_D * 86400: continue
         x = C.get(u)
-        stale_broken = x and len(x["best"]) > 3 and x["best"][3] == "broken" and now - x.get("at", 0) > BROKEN_RECHECK_H * 3600
+        stale_broken = x and len(x["best"]) > 3 and x["best"][3] == "broken" and (now - x.get("at", 0) > BROKEN_RECHECK_H * 3600 or x.get("v", 1) < V_BROKEN)
         if x and not stale_broken and (x.get("v", 1) >= V or (x.get("v", 1) >= 3 and (x["best"][1] or 0)) or ((x["best"][1] or 0) >= MIN_W and not re.search(r"\.png$", urllib.parse.urlsplit(x["best"][0]).path, re.I))): continue
         seen.add(u); todo.append((u, c.get("link")))
     todo = todo[:max_new]
     def job(a): return a[0], find(*a)
     with ThreadPoolExecutor(12) as ex:
-        for u, b in ex.map(job, todo): C[u] = {"best": list(b), "v": V, "at": int(now)}
+        for u, b in ex.map(job, todo):
+            C[u] = {"best": list(b), "v": V, "at": int(now)}
+            if u in _WHY: C[u]["why"] = _WHY.pop(u)
     live = {c.get("image") for c in clusters}
     for k in [k for k, v in C.items() if k not in live and now - v.get("at", 0) > 7 * 86400]: C.pop(k)
     json.dump(C, open(CACHE, "w"))
