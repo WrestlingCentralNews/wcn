@@ -18,6 +18,9 @@ import enrich, editorial, combat, roster
 ROOT = os.path.dirname(os.path.abspath(__file__))
 HELD = os.path.join(ROOT, "data", "held.json")
 PROMO_CARD = "https://wrestlingcentralnews.com/img/promo/{}.jpg"
+# illustrated / painted header art, not photos: PWTorch's stock caricature headers (artists GG / Joel Tesch, '<Name>_GG_3x2_600.jpg',
+# 'CorbinBaronTeschJoel3x2_600.png') that its years-ago reprint columns reuse. Never the story photo -> the promotion card.
+ART_IMG = re.compile(r"(?i)pwtorch\.com/.*/uploads/.*(?:_GG_|Tesch|3x2_600\.)")
 CAT = {"wwe": "WWE", "aew": "AEW", "tna": "TNA", "njpw": "Global", "cmll": "Global", "aaa": "Global", "stardom": "Global",
        "mlw": "Indie", "gcw": "Indie", "nwa": "Indie"}
 def _art(c): return {"raw_title": c.get("raw_title") or "", "title": c.get("title") or ""}
@@ -146,6 +149,55 @@ def neutral_signing(c):
         if isinstance(c.get(k), str): c[k] = neutral_text(c[k])
     c["signing_neutral"] = True
     return True
+# ---- content-staleness guard (owner 2026-10-22): a results-style story whose named wrestlers mostly aren't on ANY current
+# official roster (WWE/AEW/TNA snapshot in data/rosters.json, no fetch) describes a past show ('Ziggler retains the IC title,
+# the Vaudevillains, the Hype Bros'). Results/live-event reports only; never history/return framing, never interviews/quotes.
+_RG_FRAME = re.compile(r"(?i)\b(?:returns?|returned|comeback|reunion|reunite[sd]?|legends?|alumni|history|years ago|decades? ago|flashback|"
+                       r"anniversary|tribute|hall of fame|throwback|former|ex-|nostalgia|indie|independent|gcw|mlw|nwa|roh|njpw|cmll|aaa|stardom|evolve|lfg|tryouts?|ovw|dark match|main event)\b")
+def _rg_names(txt, cur):
+    """Wrestler names in txt: the known-name dictionary (enrich._PRX: editorial roster + figures + aliases) plus any current
+    roster name spelled out in full."""
+    out = {}
+    for m in enrich._PRX.finditer(txt or ""):
+        k = roster.key(m.group(1))
+        if k: out.setdefault(k, m.group(1))
+    N = r"((?:[A-Z][\w'’.-]+)(?:\s+[A-Z][\w'’.-]+){0,2})"
+    for m in re.finditer(N + r"\s+(?:defeated|pinned|beat|beats|def\.|vs\.?|over|submitted|retained\s+against)\s+" + N, txt or ""):
+        for g in m.groups():
+            g = re.sub(r"^(?:The|And|Then|After|Champion|Intercontinental|WWE|Tag)\s+", "", g).strip(" .")
+            k = roster.key(g)
+            if k and len(g) > 3 and not re.search(r"(?i)\b(?:champion(?:ship)?|title|match|team|tag)\b", g): out.setdefault(k, g)
+    low = (txt or "").lower()
+    for k, e in cur.items():
+        if " " in k and k in low: out.setdefault(k, e)
+    return out
+def roster_stale(c, bylink, db=None, now=None):
+    """Hold reason when a results-style story's named wrestlers are mostly off every current roster, else None."""
+    if (c.get("kind") or {}).get("type") != "results" and not re.search(r"(?i)\b(?:results?|live event|house show)\b", c.get("raw_title") or ""): return None
+    cats = set(c.get("categories") or [])
+    if not cats & {"WWE", "AEW", "TNA"}: return None
+    lead = bylink.get(c.get("link")) or {}
+    head = (c.get("raw_title") or "") + " " + (c.get("title") or "")
+    if _RG_FRAME.search(head): return None
+    db = roster.load() if db is None else db; now = now or time.time()
+    cur = {}
+    for p in ("WWE", "AEW", "TNA"):
+        r = db.get(p) or {}
+        if not r.get("ok") or not r.get("fetched") or now - r["fetched"] > 30 * 86400 or len(r.get("names", {})) < roster.MIN.get(p, 10): return None
+        for k, e in r["names"].items():
+            if e.get("last", 0) >= r["fetched"] - 86400: cur[k] = p
+    last = {}
+    for k in cur:
+        parts = k.split()
+        if len(parts) > 1: last.setdefault(parts[-1], set()).add(k)
+    txt = (lead.get("raw_title") or c.get("raw_title") or "") + ". " + ((lead.get("summary_src") or "") + " " + (lead.get("body") or ""))[:1500]
+    on, off = [], []
+    for k, n in _rg_names(txt, {k: k for k in cur}).items():
+        if k in cur or (" " not in k and len(last.get(k, ())) == 1): on.append(n)
+        else: off.append(n)
+    if len(on) + len(off) < 4 or len(off) < 3: return None
+    if len(off) / (len(on) + len(off)) < 0.6: return None
+    return f"results-style story, but {len(off)} of {len(on) + len(off)} named wrestlers aren't on any current roster (e.g. {', '.join(off[:4])}): likely an old show re-run"
 def gate(c, bylink):
     fixes, holds = [], []
     # 1. the headline names the person
@@ -189,12 +241,18 @@ def gate(c, bylink):
     # 4b. official roster cross-check (WWE/AEW/TNA): released-but-still-listed, 'new' signing listed > 14 days, support note
     rh, note = roster_check(c, tk, bylink)
     holds += rh
+    rs = roster_stale(c, bylink)
+    if rs: holds.append(rs)
     if note: c["roster_note"] = note; fixes.append("roster: " + note)
     # 5. body
     if c.get("long") and (enrich.long_mismatch(_art(c), c["long"]) or off_topic_long(c, c["long"])):
         c["long"] = None; fixes.append("long-form about another story dropped")
     # 6. photo
     u = c.get("image")
+    if u and c.get("image_status") != "override" and ART_IMG.search(u):
+        p = sorted(ft)[0] if ft else None
+        c["image"] = PROMO_CARD.format(p) if p else None; c["image_status"] = "gate:art:" + (p or "wcn-card"); c["image_credit"] = None
+        c.pop("img_w", None); c.pop("img_h", None); fixes.append("illustrated header art, not a photo -> " + (c["image"] or "WCN card")); u = c["image"]
     if u and "wrestlingcentralnews.com/img/" not in u and c.get("image_status") != "override" and enrich.img_clash(u, pt, ft):
         p = sorted(ft)[0] if ft else None
         c["image"] = PROMO_CARD.format(p) if p else None; c["image_status"] = "gate:" + (p or "wcn-card"); c["image_credit"] = None

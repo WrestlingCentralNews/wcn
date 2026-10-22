@@ -236,6 +236,9 @@ def run():
     for a in arts:   # UFC / MMA / boxing / Bellator / PFL / ONE: not wrestling, never on WCN (owner rule 2026-10-21; checked every run)
         r = None if a.get("drop") else combat.nonwrestling(a)
         if r: editorial.log_drop(a, r); a["drop"] = r; print("off-topic:", a["raw_title"][:70], "->", r, flush=True)
+    for a in arts:   # look-backs / re-published history columns ('10 YEARS AGO - WWE LIVE EVENT REPORT', WON Flashback): fresh date, old news
+        r = None if a.get("drop") else editorial.retro(a)
+        if r: editorial.log_drop(a, r); a["drop"] = r; print("retro:", a["raw_title"][:70], "->", r, flush=True)
     for a in arts:   # an OLD article a feed re-dated (Google News re-indexing wwe.com/.../2017/...): never published, never on an event page
         r = None if a.get("drop") else stale.reason(a)
         if r: editorial.log_drop(a, r); a["drop"] = r; print("stale:", a["raw_title"][:70], "->", r, flush=True)

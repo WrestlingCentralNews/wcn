@@ -127,3 +127,58 @@ def log_drop(a, reason):
         f.write(json.dumps({"at": int(time.time()), "reason": reason, "source": a["source"], "title": a["raw_title"], "link": a["link"]}) + "\n")
 VERSION = 9   # v9 2026-10-21: podcast episodes (fightful /podcasts/, The Hump, 'w/ SRS') and '<Outlet> Daily Update' roundups are filler
 _V8 = 8   # v8 2026-10-21: 'start times' (plural) and 'This Day In History' are filler
+# ---------- re-published / retrospective content (owner rule 2026-10-22: old news is never posted as new) ----------
+# PWTorch's '10 YEARS AGO – WWE LIVE EVENT REPORT: AJ Styles vs. Dean Ambrose ...' is a 2016 house-show report re-run on
+# 2026-10-22 with a genuinely fresh publish date, so the 48h real-date gate can't catch it, and the AI rewrite dropped
+# '10 YEARS AGO' from the headline. These are history pieces, never news: checked on the SOURCE headline and body, every run,
+# before the 'results' exemption in verdict().
+_RETRO_T = re.compile(r"(?i)^\W*(?:\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|"
+                      r"twenty-five|thirty|forty|fifty)\s+years?\s+ago\b|\byears?\s+ago\s+(?:today|tonight|this\s+(?:week|month|weekend))\b|"
+                      r"\bflashback\b|\bfrom\s+the\s+(?:vault|archives?)\b|\bthis\s+week\s+in\s+(?:wrestling\s+|wwe\s+|aew\s+)?history\b|"
+                      r"\bthrowback\s+thursday\b|\b#?TBT\b|\bretro\s+(?:review|report|recap)\b|\brewind\b|\bdecades?\s+ago\b|"
+                      r"\bon\s+this\s+date\b|\btoday\s+in\s+(?:wrestling\s+)?history\b")
+_RETRO_ANY = re.compile(r"(?i)\b\d{1,3}\s+years?\s+ago\b")
+_RETRO_B = re.compile(r"(?i)\b(?:originally|first)\s+(?:published|posted|ran|appeared|written)\b[^.]{0,60}?\b(?:\d{1,3}\s+years?\s+ago|"
+                      r"in\s+(?:19|20)\d\d|on\s+\w+\.?\s+\d{1,2},\s+(?:19|20)\d\d)|\bthe\s+following\s+(?:is|was)\s+(?:a|an|the)\s+"
+                      r"(?:\w+\s+){0,3}(?:report|review|recap|column|article)\s+(?:originally|first)\s+(?:published|posted)\b|"
+                      r"\bfrom\s+our\s+archives?\b|\breprinted\b")
+_ANNIV = re.compile(r"(?i)\banniversary\s+of\b(?!\s+(?:her|his|their)\s+(?:\w+\s+){0,2}(?:signing|debut))")
+_QUOTEISH = re.compile(r"(?i)\b(?:reacts?|says|said|reflects?|recalls?|reveals?|comments?|addresses|responds|admits|discusses|talks|opens up|speaks|celebrates? (?:his|her|their))\b")
+# results-style report whose opening describes the past ('A live event in Tokyo featured several matches two decades ago')
+_RESULTISH = re.compile(r"(?i)\b(?:results?|recap|live event report|house show report|event report)\b")
+_PAST_B = re.compile(r"(?i)\b(?:\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|twenty|thirty)\s+(?:years?|decades?)\s+ago\b|"
+                     r"\bon\s+this\s+(?:day|date)\b|\bthrowback\b|\blooking\s+back\b|\blook\s+back\b")
+REMOVED_LINKS = {   # hand-removed reports (owner-reported old content), never a story again even if a rule changes
+    "https://www.pwtorch.com/site/2026/10/22/10-years-ago-wwe-live-event-report-aj-styles-vs-dean-ambrose-for-wwe-title-plus-ziggler-kane-bray-wyatt-naomi-alexa-bliss-usos-corbin/",
+    "https://www.pwtorch.com/site/2026/10/22/20-years-ago-wwe-live-event-report-in-tokyo-japan-cm-punk-randy-orton-tommy-dreamer-triple-h-shawn-michaels-sabu-edge/",
+}
+# history columns / sections (whole feed sections that only re-run old material)
+RETRO_SECTIONS = re.compile(r"(?i)pwtorch\.com/site/\d{4}/\d\d/\d\d/\d+-years?-ago-|/(?:flashback|throwback|this-day-in-history|on-this-day|"
+                            r"today-in-wrestling-history|this-week-in-wrestling-history|from-the-vault|rewind)[/-]|[?&]series=flashback")
+def _old_year(txt, now=None):
+    y = time.gmtime(now or time.time()).tm_year
+    yrs = [int(v) for v in re.findall(r"(?<!\d)((?:19|20)\d\d)(?!\d)", txt or "")]
+    return bool(yrs) and max(yrs) <= y - 2
+def retro(a):
+    """'retrospective: ...' when a report re-runs old content (years-ago reprints, flashbacks, archive pieces), else None.
+    A quote story where someone talks about the past ('X reveals why he left WWE 5 years ago') is not a retrospective."""
+    link = a.get("link") or ""; t = a.get("raw_title") or ""
+    if link in REMOVED_LINKS: return "retrospective: hand-removed (old content re-published)"
+    if RETRO_SECTIONS.search(link): return "retrospective: history column / look-back URL"
+    t0 = re.sub(r"[\"“‘'][^\"”’]{3,140}[\"”’]", " ", t)
+    if _RETRO_T.search(t0): return "retrospective: headline says it's a look back"
+    quote = kind(a).get("type") == "quote" or _QUOTEISH.search(t0)
+    if _RETRO_ANY.search(t0) and not quote: return "retrospective: headline is about something from years ago"
+    if _ANNIV.search(t0) and not quote: return "retrospective: anniversary piece"
+    lead = (a.get("summary_src") or "")[:400] + " " + (a.get("body") or "")[:600]
+    if _RETRO_B.search(lead): return "retrospective: body says it was originally published years ago"
+    resultish = (a.get("kind") or {}).get("type") == "results" or kind(a).get("type") == "results" or _RESULTISH.search(t0)
+    if resultish and not quote:
+        if re.search(r"(?<!\d)(?:19|20)\d\d(?!\d)", t0) and _old_year(t0): return "retrospective: results-style headline about a show 2+ years old"
+        opening = ((a.get("summary_src") or "").strip() or (a.get("body") or "").strip())[:250]   # how the source opens
+        m = _PAST_B.search(opening)
+        dated_now = re.search(r"(?<!\d)\d{1,2}[/.]\d{1,2}(?:[/.](?:%d|%d))?(?![\d/.])|\b%d\b" % (time.gmtime().tm_year % 100, time.gmtime().tm_year, time.gmtime().tm_year), t0 + " " + opening)
+        if m and not dated_now: return f"retrospective: results-style report describing the past ('{m.group(0)}')"
+        if re.search(r"(?i)\b(?:in|from|during|on\s+\w+\.?\s+\d{1,2},)\s+(?:19|20)\d\d\b", opening) and _old_year(t0 + " " + opening):
+            return "retrospective: results-style report that opens on a date 2+ years old"
+    return None
