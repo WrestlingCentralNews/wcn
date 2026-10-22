@@ -181,6 +181,8 @@ def byline_html(c, lang):
          f'<time datetime="{iso(pub)}" data-ts="{int(pub)}">{chrome.stamp(pub, lang)}</time>')
     if upd: s += f' · {t["upd"]} <time datetime="{iso(mod)}" data-ts="{int(mod)}">{chrome.stamp(mod, lang)}</time>'
     return s + "</div>"
+# story hero photo that fails to load -> the promotion placeholder (same look as a story with no photo), never an empty frame
+HERO_ERR = "var h=this.parentNode;h.classList.add('ph-h');h.innerHTML='<span></span>';h.firstChild.textContent=h.dataset.cat||''"
 def page(c, related, lang="en", L=None, alt=None):
     """Story page. lang='es' uses L = {'t','s','url','p'} (Spanish translation) and related = [(cluster, L)]."""
     t = S[lang]; es = lang == "es"
@@ -220,7 +222,7 @@ def page(c, related, lang="en", L=None, alt=None):
                        extra=(f'<meta property="og:image:alt" content="{e(title)}">{imgx}<meta property="article:publisher" content="{chrome.FB}">'
                               f'<meta property="article:published_time" content="{iso(pub)}"><meta property="article:modified_time" content="{iso(mod)}"><meta property="article:section" content="{e(c["categories"][0])}">'))
     en_u = "/" + (alt or {}).get("en", SITE).replace(SITE, ""); es_u = "/" + (alt or {}).get("es", SITE + "es/").replace(SITE, "")
-    hero = (f'<div class="story-hero"><img class="bg" src="{e(img)}" alt="" aria-hidden="true" decoding="async" referrerpolicy="no-referrer"><img class="fg{imgmeta.fill_cls(iw, ih)}" src="{e(img)}"{wh} alt="{e(title)}" fetchpriority="high" decoding="async" referrerpolicy="no-referrer"></div>'
+    hero = (f'<div class="story-hero" data-cat="{e(c["categories"][0])}"><img class="bg" src="{e(img)}" alt="" aria-hidden="true" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"><img class="fg{imgmeta.fill_cls(iw, ih)}" src="{e(img)}"{wh} alt="{e(title)}" fetchpriority="high" decoding="async" referrerpolicy="no-referrer" onerror="{e(HERO_ERR)}"></div>'
             if img else f'<div class="story-hero ph-h"><span>{c["categories"][0]}</span></div>')
     credit = f'<p class="pcredit"><a href="{e(c["image_credit"]["url"])}" rel="nofollow noopener" target="_blank">{e(c["image_credit"]["text"])}</a></p>' if c.get("image_credit") else ""
     return (f'{head}\n<body class="story-page" style="--c:{col}"><div class="spot s1"></div><div class="spot s2"></div>\n'

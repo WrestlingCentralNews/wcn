@@ -23,6 +23,18 @@
    "ids": [
     "cec1adb2cfbb7"
    ]
+  },
+  {
+   "note": "2026-10-22: homepage top story showed an empty dark frame (its 411mania copy of the photo failed to load for the reader and the card's error handler also removed the TNA placeholder). TNA's own official signing graphic (Shayna Baszler with the Knockouts Tag Team title belt, 1920x1080), served from TNA's CDN (tnawrestling.com og:image -> CloudFront), instead. Owner rule: top stories always have a picture.",
+   "links": [
+    "https://www.pwinsider.com/article/212996/shayna-baszler-signs-with-tna.html",
+    "https://pwinsider.com/article/212996/shayna-baszler-signs-with-tna.html?p=1",
+    "https://www.pwinsider.com/article/212996/shayna-baszler-signs-with-tna.html?p=1"
+   ],
+   "image": "https://djnvkc60dme4l.cloudfront.net/articles/featured/56329a99da472915e539cba193be9d69-1-1.jpg",
+   "ids": [
+    "cb913ddea1d55"
+   ]
   }
  ],
  "block": []

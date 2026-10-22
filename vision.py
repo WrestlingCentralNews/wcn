@@ -299,6 +299,11 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     A photo labelled with a DIFFERENT wrestler, or that vision says shows someone else, is never used.
     Returns (image or None, credit dict or None, status)."""
     _tl.n = 0; _tl.bf = False
+    # photos imgmeta found unusable (broken link / bot-challenge page / not an image / tiny / padded sheet) are never candidates:
+    # the next report's photo is tried instead, then the promotion card (cache only, no fetch here)
+    import imgmeta
+    member_images = [u for u in member_images if not imgmeta.unusable(u)]
+    if c.get("image") and imgmeta.unusable(c["image"]): c = {**c, "image": None}
     key, names, guessed = key_person(c)
     story_txt = (c.get("title") or "") + " | " + (c.get("raw_title") or "") + " | " + (c.get("summary") or "")
     story_pro = enrich.promos((c.get("title") or "") + " | " + (c.get("raw_title") or "")) | enrich.promos(c.get("summary") or "")

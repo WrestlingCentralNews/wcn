@@ -37,6 +37,11 @@ def act(c):
 def value(c, now):
     ts = act(c); f = _i(c.get("first_ts"), ts)
     return _i(c.get("imp")) - DECAY * max(0, now - ts) / 3600 - OLD * max(0, ts - f) / 3600
+def photo(c):
+    """2 = real photo with a measured size (imgmeta loaded it), 1 = promotion card or unmeasured photo, 0 = none (placeholder). Mirrors app.js photo()."""
+    u = (c.get("image") or "").strip()
+    if not (u.startswith("http") or u.startswith("/")): return 0
+    return 2 if "/img/promo/" not in u and c.get("img_w") else 1
 def pick(items, now=None):
     """items: newest-first list (already filtered). -> (lead, [secondary...]) or (None, [])."""
     now = now or time.time()
@@ -45,9 +50,10 @@ def pick(items, now=None):
     if len(pool) < N: pool = items[:40]
     ranked = sorted(pool, key=lambda c: value(c, now), reverse=True)
     quote = lambda c: (c.get("kind") or {}).get("type") == "quote"
-    lead = next((c for c in ranked if c.get("image") and not quote(c)), ranked[0])
+    # lead: a real photo the site could measure (it loads) beats a promotion card / unmeasured photo; never an empty frame first
+    lead = next((c for c in ranked if photo(c) == 2 and not quote(c)), None) or next((c for c in ranked if photo(c) and not quote(c)), ranked[0])
     rest = [c for c in ranked if c is not lead]
-    sec = [c for c in rest if c.get("image")][:N - 1]
+    sec = [c for c in rest if photo(c)][:N - 1]
     sec += [c for c in rest if c not in sec][:N - 1 - len(sec)]
     sec.sort(key=lambda c: rest.index(c))
     return lead, sec

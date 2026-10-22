@@ -102,11 +102,13 @@ def build_trust(clusters, tr):
     return out
 # ---------- Spanish home ----------
 BRK_ES = '<span class="tag brk">ÚLTIMA HORA</span>'
+# a photo that fails to load removes itself and its blurred copy, never the promotion placeholder (.ph) under it (mirrors app.js)
+FGERR = "var b=this.parentNode&&this.parentNode.querySelector('img.bg');b&&b.remove();this.remove()"
 def card_html(c, L, n, hero=False):
     col = CATC.get(c["categories"][0]); img = c.get("image") or ""
     ld = 'fetchpriority="high"' if hero else 'loading="lazy"'   # lead card is the LCP image: load it first, never lazily
     wh = f' width="{c["img_w"]}" height="{c["img_h"]}"' if c.get("img_w") and c.get("img_h") else ""
-    im = (f'<img class="bg" {ld} referrerpolicy="no-referrer" src="{e(img)}" alt="" aria-hidden="true"><img class="fg{imgmeta.fill_cls(c.get('img_w'), c.get('img_h'))}" {ld}{wh} referrerpolicy="no-referrer" src="{e(img)}" alt="">' if img else "")
+    im = (f'<img class="bg" {ld} referrerpolicy="no-referrer" src="{e(img)}" alt="" aria-hidden="true" onerror="this.remove()"><img class="fg{imgmeta.fill_cls(c.get('img_w'), c.get('img_h'))}" {ld}{wh} referrerpolicy="no-referrer" src="{e(img)}" alt="" onerror="{FGERR}">' if img else "")
     u = L["url"][3:]   # relative to /es/
     return (f'<article class="card {"hero" if hero else ""} in" style="--c:{col}" data-cat="{c["categories"][0]}" data-pos="{n}"><a class="img" href="{e(u)}" aria-hidden="true" tabindex="-1"><div class="ph">{c["categories"][0]}</div>{im}</a><div class="body">'
             f'<div class="tags">{BRK_ES if hero and c.get("brk") else ""}{"".join(f"<span class=tag style=--c:{CATC[k]}>{k}</span>" for k in c["categories"])}</div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><p>{e(L["s"])}</p>'
@@ -116,7 +118,7 @@ def _ago_es(t):   # same wording as app.js ago() (es); app.js re-renders it on l
     return "hace " + (f"{max(1, int(m))} min" if m < 60 else f"{int(m // 60)}h" if m < 1440 else f"{int(m // 1440)}d")
 def mini_html(c, L, n):
     col = CATC.get(c["categories"][0]); img = c.get("image") or ""; u = L["url"][3:]
-    im = f'<img class="fg" loading="lazy" referrerpolicy="no-referrer" src="{e(img)}" alt="">' if img else ""
+    im = f'<img class="fg" loading="lazy" referrerpolicy="no-referrer" src="{e(img)}" alt="" onerror="this.remove()">' if img else ""
     return (f'<article class="card mini in" style="--c:{col}" data-cat="{c["categories"][0]}" data-pos="{n}"><a class="img" href="{e(u)}" aria-hidden="true" tabindex="-1"><div class="ph">{c["categories"][0]}</div>{im}</a><div class="body">'
             f'<div class="tags">{BRK_ES if c.get("brk") else ""}<span class="tag" style="--c:{col}">{c["categories"][0]}</span></div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><div class="meta"><span>{_ago_es(c["ts"])}</span></div></div></article>')
 def top_html(items):
