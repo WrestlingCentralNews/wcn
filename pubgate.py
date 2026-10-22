@@ -118,8 +118,34 @@ def roster_check(c, tk, bylink, db=None):
         return [f"release/exit story but {name} is still listed on the official {p} roster"], None
     if not st["listed"]: return [], None
     if tk == "new" and st["days"] > roster.LONG_DAYS:
+        if neutral_signing(c): return [], f"on the {p} roster {int(st['days'])}+ days; worded neutrally (signs with)"
         return [f"'new signing' but {name} has been on the official {p} roster for {int(st['days'])}+ days (likely a re-signing)"], None
     return [], (f"newly added to the {p} roster" if st["new"] else f"still on the {p} roster")
+_NEU = [(re.compile(r"(?i)\bre-?signs?\b|\bsigns? (?:a )?(?:new|fresh) (?:\w+ ){0,3}(?:deal|contract|extension)\b|\bsigns? (?:an )?(?:contract )?extension\b"), "signs a deal"),
+        (re.compile(r"(?i)\bre-?signed\b|\bsigned (?:a )?(?:new|fresh) (?:\w+ ){0,3}(?:deal|contract)\b|\bsigned an extension\b"), "signed a deal"),
+        (re.compile(r"(?i)\bre-?signing\b|\bnew signing\b"), "signing"),
+        (re.compile(r"(?i)\b(?:a )?new ((?:[\w-]+ ){0,2}(?:deal|contract))\b"), r"a \1"),
+        (re.compile(r"(?i)\bnewest (?:signing|addition)\b"), "signing"), (re.compile(r"(?i)\bnewly[- ]signed\b"), "signed")]
+def neutral_text(x):
+    for rx, rep in _NEU: x = rx.sub(rep, x)
+    return x
+def neutral_signing(c):
+    """Owner rule 2026-10-22: new-vs-re-signing unclear -> publish '<Name> Signs With <Promotion>', neutral body, no hold."""
+    t = c.get("title") or ""; raw = c.get("raw_title") or ""
+    ppl = (enrich.subjects(t) or enrich.subjects(raw)) - enrich._EXEC
+    pr = enrich.promos(t) or enrich.promos(raw)
+    if not ppl:   # name not in our wrestler list: take the capitalised words before 'Signs'/'Re-Signs' in the headline
+        m = re.match(r"^(?:Report:\s*)?((?:[A-Z][\w.'-]*\s+){1,3}?)(?:Officially\s+)?(?:Re-?)?Signs?\b", t) or re.match(r"^(?:Report:\s*)?((?:[A-Z][\w.'-]*\s+){1,3}?)(?:Officially\s+)?(?:Re-?)?Signs?\b", raw)
+        if m and not enrich.promos(m.group(1)): ppl = {m.group(1).strip()}
+    if len(ppl) != 1 or len(pr) != 1: return False
+    who = next(iter(ppl)); p = next(iter(pr)); p = {"wwe": "WWE", "aew": "AEW", "tna": "TNA", "nxt": "NXT", "aaa": "AAA", "roh": "ROH", "njpw": "NJPW", "cmll": "CMLL", "mlw": "MLW"}.get(p.lower(), p)
+    nm = next((m.group(0) for m in [re.search(re.escape(who), t + " " + raw, re.I)] if m), who.title())
+    nm = nm if nm != nm.lower() else nm.title()
+    c["title"] = f"{nm} Signs With {p}"
+    for k in ("summary", "long", "dek"):
+        if isinstance(c.get(k), str): c[k] = neutral_text(c[k])
+    c["signing_neutral"] = True
+    return True
 def gate(c, bylink):
     fixes, holds = [], []
     # 1. the headline names the person
@@ -153,10 +179,13 @@ def gate(c, bylink):
     # 4. new signing vs re-signing
     ks = kinds(c, bylink); tk = enrich.signing_kind(t) or enrich.signing_kind(c.get("raw_title") or "")
     n, r = ks.count("new"), ks.count("re-sign")
-    if n >= 2 and r >= 2 and min(n, r) >= 0.4 * max(n, r): holds.append(f"sources disagree: {n} say new signing, {r} say re-signing")
+    why = None
+    if n >= 2 and r >= 2 and min(n, r) >= 0.4 * max(n, r): why = f"sources disagree: {n} say new signing, {r} say re-signing"
     elif tk in ("new", "re-sign"):
         opp = "re-sign" if tk == "new" else "new"
-        if ks.count(opp) >= 2 and ks.count(opp) > 2 * ks.count(tk): holds.append(f"headline says {tk} but most sources say {opp}")
+        if ks.count(opp) >= 2 and ks.count(opp) > 2 * ks.count(tk): why = f"headline says {tk} but most sources say {opp}"
+    if why and neutral_signing(c): fixes.append("signing unclear (" + why + ") -> neutral '" + c["title"] + "'"); tk = "signs"
+    elif why: holds.append(why)
     # 4b. official roster cross-check (WWE/AEW/TNA): released-but-still-listed, 'new' signing listed > 14 days, support note
     rh, note = roster_check(c, tk, bylink)
     holds += rh

@@ -30,8 +30,12 @@ for t, k in [("Dragon Lee Re-Signs With WWE", "re-sign"), ("Santino Marella Sign
 c = {"id": "c1", "title": "Dragon Lee Signs With WWE", "raw_title": "Dragon Lee Signs With WWE", "summary": "Dragon Lee has a new WWE deal.",
      "link": "l0", "source": "x", "categories": ["WWE"], "updates": [{"link": f"l{i}"} for i in range(1, 4)]}
 by = {"l0": A("Dragon Lee Signs With WWE", link="l0"), **{f"l{i}": A("Dragon Lee Re-Signs With WWE", link=f"l{i}") for i in range(1, 4)}}
-ok, _, holds = pubgate.gate(dict(c), by)
-check(not ok, "headline says new signing while 3 sources say re-signing: not held")
+cc = dict(c); ok, _, holds = pubgate.gate(cc, by)
+check(ok and cc["title"] == "Dragon Lee Signs With WWE" and "new" not in cc["summary"].lower(), f"unclear signing not neutral-published: {ok} {cc['title']} {cc['summary']} {holds}")
+cc = dict(c, title="Amazing Red Signs New TNA Deal", raw_title="Report: Amazing Red Signs With TNA Wrestling", summary="Amazing Red signed a new deal with TNA.", categories=["TNA"])
+by2 = {"l0": A("Amazing Red Signs New TNA Deal", link="l0"), **{f"l{i}": A("Amazing Red Signs With TNA", link=f"l{i}") for i in range(1, 4)}}
+ok, _, holds = pubgate.gate(cc, by2)
+check(ok and cc["title"] == "Amazing Red Signs With TNA" and "new" not in cc["summary"].lower(), f"Amazing Red not neutral: {cc['title']} {cc['summary']} {holds}")
 # --- freshness: real publish date ---
 html = '<meta property="article:modified_time" content="2026-10-21T10:00:00Z"><meta property="article:published_time" content="2022-05-02T09:00:00Z">'
 check(freshness.page_published(html) == 1651482000, "published_time not used / modified used")

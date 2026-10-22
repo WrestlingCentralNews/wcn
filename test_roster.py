@@ -20,7 +20,7 @@ h, n = pubgate.roster_check(two, "release", {}, db); check(not h and "trusted" i
 h, n = pubgate.roster_check(story("WWE Releases Dragon Lee", src="WWE", link="https://www.wwe.com/article/x"), "release", {}, db)
 check(not h and "official" in n, "official WWE statement didn't confirm")
 # 'new' signing of a wrestler listed > 14 days -> held; newly listed -> support note
-h, n = pubgate.roster_check(story("Dragon Lee Signs With WWE"), "new", {}, db); check(h and "re-signing" in h[0], "long-listed 'new' signing not held")
+st = story("Dragon Lee Signs With WWE"); h, n = pubgate.roster_check(st, "new", {}, db); check(not h and "neutral" in n and st["title"] == "Dragon Lee Signs With WWE", "long-listed 'new' signing not neutral-published")
 h, n = pubgate.roster_check(story("Bron Breakker Signs With WWE"), "new", {}, db); check(not h and n == "newly added to the WWE roster", "new roster add note")
 h, n = pubgate.roster_check(story("Leon Slater Re-Signs With TNA"), "re-sign", {}, db); check(not h and n == "still on the TNA roster", "still-listed note")
 # never hold: stale/failed roster, executive, unknown promotion, no data
