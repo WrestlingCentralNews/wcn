@@ -1,0 +1,4 @@
+{
+ "_note": "Stories taken off the site by hand (EN + ES; their URLs fall back via pages.redirects). The ids stay listed so a later re-cluster can't bring the same story back under the same id. 2026-10-22: c7f5d19a32d31 'The Usos Speak on WWE Raw' = PWInsider live Raw report of 2026-10-19 (page 2026-10-20 02:20 UTC) re-clustered into a new story on 2026-10-22 07:43, 53h after its source - old news shown as new.",
+ "ids": {"c7f5d19a32d31": "lead source 53h old at publish (live Raw report 2026-10-19)"}
+}

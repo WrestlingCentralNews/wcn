@@ -196,3 +196,34 @@ def corroborated(c, bylink, now=None):
         r = real_ts(m)
         if r and abs(base - r) <= MAX_AGE: return True
     return False
+# ---------- publish-time date gate (2026-10-22) ----------
+# The 48h rule used to run only when a report was first seen. A story could still go live later with an old lead (held then
+# released, or a re-cluster giving a 2-day-old live Raw report a new story id). Every story that is NEW to the site now needs
+# the lead's own verified publish date (article page meta / JSON-LD / byline, or the article URL's date path - never the
+# feed or Google News date) under 48h at publish time. No verified date -> it fails closed (held, re-checked next run).
+def verified_ts(a):
+    if not a: return None
+    if a.get("pub_ts"): return int(a["pub_ts"])
+    ud = stale.url_date(a.get("link"))
+    if ud and re.search(r"/(?:19|20)\d\d/\d\d/\d\d(?:/|$)|[/_-](?:19|20)\d\d-\d\d-\d\d(?:[/_.-]|$)", (a.get("link") or "").split("?")[0]):
+        return int(dt.datetime(ud.year, ud.month, ud.day, 23, 59, tzinfo=dt.timezone.utc).timestamp())   # day-exact URL dates only
+    return None
+def needs_recheck(c, bylink, limit=3):
+    lead = bylink.get(c["link"])
+    return bool(lead) and verified_ts(lead) is None and int(lead.get("pubchk2") or 0) < limit
+def publish_check(c, bylink, now=None):
+    """None if a story new to the site may publish now, else why not."""
+    now = now or time.time()
+    lead = bylink.get(c["link"])
+    if not lead: return "unverified date: lead report missing"
+    v = verified_ts(lead)
+    if v is not None:
+        if now - v > MAX_AGE: return f"stale: lead page published {(now - v) / 3600:.0f}h ago (limit 48h)"
+        return None
+    if is_official(lead) and official_reason(lead, now): return None        # owner rule: undated official promotion pages
+    for u in c.get("updates", []):    # undated lead, but a trusted outlet's verified page date shows the news is current
+        m = bylink.get(u["link"])
+        if not m or m["source"] == lead["source"] or editorial.tier(m["source"]) != 1: continue
+        r = verified_ts(m)
+        if r is not None and now - r <= MAX_AGE: return None
+    return "unverified date: no article-page publish date for the lead"

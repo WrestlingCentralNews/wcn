@@ -126,7 +126,7 @@ def on_topic(a):
     t = a["raw_title"]; b = (a.get("body") or "") + " " + (a.get("summary_src") or "")
     if classify(re.sub(r"\b(Mexico|Japan|Australia)\b", "", t)) or SIG.search(t): return True
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
-import enrich, editorial, llm, pages, vision, breaking, stale, toppick, freshness, pubgate, combat, aliases
+import enrich, editorial, llm, pages, vision, breaking, stale, toppick, freshness, pubgate, combat, aliases, framing
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
 IMG_CHECK_TOP = 60
 LONG_MAX_PER_RUN = 400
@@ -255,6 +255,7 @@ def run():
     for a in arts:
         if a["id"] in TEXT_OV and not a.get("llm"):
             o = TEXT_OV[a["id"]]; a["title"] = o.get("headline") or a["title"]; a["summary"] = o.get("summary") or a["summary"]; a["pinned"] = True
+            if o.get("categories"): a["categories"] = list(o["categories"])
         L = a.get("llm")
         if not L or a.get("drop") and not str(a["drop"]).startswith("llm:"): continue
         a["title"], a["summary"] = L["headline"].strip(), L["summary"].strip()
@@ -267,9 +268,17 @@ def run():
             print(f"llm guard: '{a['title']}' names {fm}, source names the child -> rule-based headline", flush=True)
             a["title"] = enrich.headline(a["raw_title"], (a.get("kind") or {}).get("type")); a["ai_claim_fixed"] = "family:" + fm
             if aliases._has_parent(fm, a["summary"]) and not aliases._has_parent(fm, a.get("summary_src") or ""): a["summary"] = enrich.summarize(a)
+        fsrc = (a.get("raw_title") or "") + " " + (a.get("summary_src") or "") + " " + (a.get("body") or "")
+        if framing.choice_inverted(a["title"], fsrc):   # 'Penta Chose AEW Over WWE' when the source says he signed with WWE
+            print(f"llm guard: '{a['title']}' inverts the choice the source reports -> rule-based headline", flush=True)
+            a["title"] = enrich.headline(a["raw_title"], (a.get("kind") or {}).get("type")); a["ai_claim_fixed"] = "choice"
+        pf = framing.past_framing(a["title"], a.get("raw_title"), fsrc, lambda s: bool(enrich.subjects(s)))
+        if pf:   # an interview recollection told as if it just happened -> past framing ('X Recalls Pitching ...')
+            print(f"llm guard: '{a['title']}' presents a recollection as new -> '{pf}'", flush=True); a["title"] = pf
         if a["id"] in TEXT_OV:   # pinned hand correction (text_overrides.json) beats the cached AI rewrite on every build
             o = TEXT_OV[a["id"]]; a["title"] = o.get("headline") or a["title"]; a["summary"] = o.get("summary") or a["summary"]; a["pinned"] = True
         if L["categories"]: a["categories"] = L["categories"]
+        if (TEXT_OV.get(a["id"]) or {}).get("categories"): a["categories"] = list(TEXT_OV[a["id"]]["categories"])   # hand-set tags, primary first
         t = L["type"]
         a["kind"] = {"type": "quote", "who": L.get("speaker") or "", "quote": L.get("quote")} if t == "quote" and L.get("speaker") else {"type": t if t in ("results", "match") else "news"}
         if t != "evergreen" and editorial.evergreen(L["headline"]): t = "evergreen"   # rewrite headline reads as an explainer ('X explained')
@@ -345,7 +354,29 @@ def run():
     n_ov = image_overrides(clusters)
     if n_ov: print("images: manual overrides applied to", n_ov, flush=True)
     # roster check is on demand only (pubgate.roster_check -> roster.ensure), owner rule 2026-10-21
-    clusters = pubgate.run(clusters, bylink)   # pre-publish consistency gate: held stories never reach pages, feeds, X or push
+    # publish-time date gate: stories new to the site need the lead's verified page date under 48h (freshness.publish_check)
+    try: live_ids = {p["id"] for p in json.load(open(OUT)).get("items", [])} or None
+    except Exception: live_ids = None
+    if live_ids is not None:
+        rc = [bylink[c["link"]] for c in clusters if c["id"] not in live_ids and freshness.needs_recheck(c, bylink)][:60]
+        def _rc(a):
+            a["pubchk2"] = int(a.get("pubchk2") or 0) + 1
+            try:
+                u = a["link"]
+                if "news.google.com" in u: u = enrich.resolve_google(u)
+                h = enrich._get(u, 10).read()[:900000].decode("utf8", "ignore"); p = freshness.page_published(h)
+                if p: a["pub_ts"] = p
+            except Exception: pass
+        if rc:
+            with ThreadPoolExecutor(8) as ex: list(ex.map(_rc, rc))
+            print(f"freshness: lead page dates re-checked for {len(rc)} new stories, {sum(1 for a in rc if a.get('pub_ts'))} found", flush=True)
+            json.dump(arts, open(STORE, "w"))
+    clusters = pubgate.run(clusters, bylink, live_ids=live_ids)   # pre-publish consistency + date gate: held stories never reach pages, feeds, X or push
+    try: RM = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "story_removals.json"))).get("ids", {})
+    except Exception: RM = {}
+    if RM:
+        n0 = len(clusters); clusters = [c for c in clusters if c["id"] not in RM]
+        if len(clusters) < n0: print(f"removals: {n0 - len(clusters)} hand-removed stories kept off the site", flush=True)
     bf = vision.backfill_finish()
     if bf: print("images: one-time backlog vision pass done:", bf, flush=True)
     vision.save(); llm.save_usage()

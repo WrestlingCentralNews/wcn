@@ -258,10 +258,16 @@ def gate(c, bylink):
         c["image"] = PROMO_CARD.format(p) if p else None; c["image_status"] = "gate:" + (p or "wcn-card"); c["image_credit"] = None
         c.pop("img_w", None); c.pop("img_h", None); fixes.append("photo names another wrestler/promotion -> " + (c["image"] or "WCN card"))
     return not holds, fixes, holds
-def run(clusters, bylink, log=print):
+def run(clusters, bylink, log=print, live_ids=None, now=None):
+    """live_ids: story ids already on the site (previous news.json). Every other story must pass freshness.publish_check
+    (verified article-page date under 48h, fail closed). None skips the date check (tests / no previous build)."""
+    import freshness
     keep, held = [], {}
     for c in clusters:
         ok, fixes, holds = gate(c, bylink)
+        if live_ids is not None and c["id"] not in live_ids:
+            why = freshness.publish_check(c, bylink, now)
+            if why: ok = False; holds = list(holds) + [why]
         if fixes: log(f"gate: fixed {c['id']} '{c['title'][:70]}': " + "; ".join(fixes))
         if ok: keep.append(c); continue
         held[c["id"]] = {"title": c["title"], "link": c["link"], "source": c["source"], "why": holds, "at": int(time.time())}

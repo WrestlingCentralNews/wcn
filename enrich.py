@@ -18,7 +18,17 @@ def meta(h, prop):
     m = re.search(r'<meta[^>]+(?:property|name)=["\']%s["\'][^>]*content=["\']([^"\']+)' % prop, h) or \
         re.search(r'<meta[^>]+content=["\']([^"\']+)["\'][^>]*(?:property|name)=["\']%s["\']' % prop, h)
     return html.unescape(m.group(1)) if m else None
-JUNK = re.compile(r"subscribe|newsletter|cookie|click here|sign up|follow us|advertis|copyright|all rights|©|share this|related:|read more|you can (?:watch|listen)|podcast|patreon|share facebook|whatsapp|linkedin|watch [\w ]+ live on|preferred source|add [\w. ]+ on google|google discover|stale|my throat|lol\b|loading…|comment|connect with us|bluesky|ugh|this article|photo credit|getty|discord|affiliate", re.I)
+# Junk-paragraph filter. Word-bounded: a bare 'ugh' / 'comment' / 'podcast' / 'advertis' used to drop real paragraphs
+# ('through', 'enough', 'commentary', 'told his podcast', 'advertised for Raw'), which cost the Penta story (2026-10-22)
+# the paragraph saying he chose WWE, so the AI rewrite inverted it. Photo credits / 'Add X on Google' badges glued to a
+# paragraph are stripped (CREDIT) instead of dropping the whole paragraph.
+JUNK = re.compile(r"subscribe|newsletter|\bcookies?\b|click here|sign up|follow us|\badvertisement\b|advertis(?:e|ing) with us|copyright|all rights|©|share this|related:|read more|you can (?:watch|listen)|"
+                  r"listen to (?:the|this|our) (?:full |latest )?(?:podcast|episode)|(?:full|latest|new) episode|podcast (?:below|here|is available)|\bpatreon\b|share facebook|whatsapp|linkedin|watch [\w ]+ live on|"
+                  r"preferred source|add [\w. ]+ on google|google discover|\bstale\b|my throat|\blol\b|loading…|leave a comment|\bcomments? (?:below|section)|\b\d+ comments?\b|comment below|"
+                  r"connect with us|bluesky|\bugh\b|this article|photo credit|discord|affiliate", re.I)
+CREDIT = re.compile(r"(?i)^(?:(?:photo )?credits?:?\s*)?[\w.'’ &-]{0,60}/\s*(?:Getty Images|WWE|AEW|TNA|AP|Imagn|USA Today Sports)\b\s*|"
+                    r"\badd [\w. ]{1,40} on google:?\s*|\bpreferred source\b:?\s*|\bgoogle discover\b\s*|^\s*getty images\b\s*")
+def strip_credit(p): return CREDIT.sub("", p).strip()
 PAYWALL = re.compile(r"(?i)class=[\"'][^\"']*\b(paywall|premium-content|members?-only|subscriber-only|pmpro_content_message|mepr-unauthorized|piano-offer|tp-container)\b|"
                      r"this (content|article|post) is (only )?(available )?(for|to) (subscribers|members)|subscribe to (read|continue|unlock)")
 def fetch_article(it):
@@ -39,7 +49,7 @@ def fetch_article(it):
         it["paywalled"] = True; it["body"] = clean(meta(h, "og:description") or ""); return
     body = re.sub(r"(?is)<(script|style|nav|footer|header|aside|figure|form)[^>]*>.*?</\1>", " ", h)
     paras = [clean(p) for p in re.findall(r"(?is)<p[^>]*>(.*?)</p>", body)]
-    paras = [p for p in paras if len(p) > 60 and not JUNK.search(p)]
+    paras = [strip_credit(p) for p in paras]; paras = [p for p in paras if len(p) > 60 and not JUNK.search(p) and not re.search(r"(?i)getty images", p)]
     it["body"] = " ".join(paras)[:6000] or clean(meta(h, "og:description") or "")
 # ---------- original summary writing (rule-based extractive + paraphrase; no LLM available on box) ----------
 SYN = [(r"\bannounced\b","revealed"),(r"\breportedly\b","by most accounts"),(r"\bconfirmed\b","made official"),(r"\bwill face\b","is set to meet"),
