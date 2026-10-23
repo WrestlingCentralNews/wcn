@@ -88,7 +88,7 @@ def build(key, st, show, date, inf, brand, name):
             "source": st.get("source_name") or brand, "raw_title": f"{name} Full Card For {fmt_date(date)}", "src_summary": summ,
             "first_ts": st["first_ts"], "lead_ts": st["first_ts"], "ts": st["ts"], "added": st["first_ts"], "image": st.get("image"),
             "image_status": "override" if st.get("image") else None, "image_credit": {"text": src, "url": st["source"]} if st.get("image") else None,
-            "categories": [brand], "kind": {"type": "news"}, "updates": [], "sources": 1, "trusted": 1, "fullcard": key, "card": st.get("items") or [],
+            "categories": [brand], "kind": {"type": "news"}, "updates": [], "sources": 1, "trusted": 1, "fullcard": key, "card": st.get("items") or [], "appearances": app, "show_name": name,
             "lead_until": int(st["start"]) if st.get("start") else None}
 def run(clusters, now=None, fetch=None, log=print):
     """Add/refresh the Full Card reports in `clusters` (in place). fetch(url)->html (tests inject one). Returns the reports."""

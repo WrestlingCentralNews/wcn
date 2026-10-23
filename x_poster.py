@@ -1,6 +1,8 @@
 """Auto-post the most important NEW WCN stories to X (@wrestlingWCN).
 
 Posts are link-free (cheap X plan): headline + one line + hashtags + "link in bio".
+Full Card reports (fullcard.py) post ONCE as a clean card list (card_text) while the show hasn't started; card updates keep the
+same story id, so they never repost.
 Runs after the site deploy in the 15-min workflow. Standard library only (OAuth 1.0a user context).
 Enable with env X_POST_ENABLED=1 (repo variable); anything else = dry run (logs what it would post).
 State: data/posted_x.json (saved to the 'data' branch with the rest of the state).
@@ -102,7 +104,7 @@ def save_state(s):
 def source_text(c):
     """the lead source's OWN title + summary (never our AI rewrite): breaking.kind needs the event stated there too"""
     return ((c.get("raw_title") or "") + "\n" + (c.get("src_summary") or "")).strip()
-def is_breaking(c): return bool(breaking.kind(c["title"], (c.get("kind") or {}).get("type"), source_text(c)))
+def is_breaking(c): return not c.get("fullcard") and bool(breaking.kind(c["title"], (c.get("kind") or {}).get("type"), source_text(c)))
 def score(c):
     s = 2 * min(c.get("sources", 1), 8) + 2 * min(c.get("trusted", 0), 4)
     s += max(CAT_BONUS.get(k, 0) for k in c["categories"])
@@ -152,6 +154,54 @@ def tweet_text(c):
     while x_len(text) > 280 and len(title) > 40:          # still too long: trim the headline, never the label
         title = title[:max(40, len(title) - max(4, x_len(text) - 280))].rsplit(" ", 1)[0].rstrip(",;:-–") + "…"; head = label + title; text = build("")
     if has_url(text) or x_len(text) > 280: return None    # safety: never send anything URL-like or too long
+    return text
+
+# --- Full Card reports (owner 2026-10-23): one post per show card, a clean list, regular (never BREAKING), link in bio ----------
+def card_due(c, now):
+    """unposted Full Card whose show hasn't started (lead_until = show start) and that has at least 2 matches"""
+    return bool(c.get("fullcard")) and now < int(c.get("lead_until") or 0) and len(c.get("card") or []) >= 2
+_VERB = (r"(?:faces?|takes? on|battles?|meets?|collides? with|clash(?:es)? with|squares? off (?:against|with)|goes one-on-one with|"
+         r"goes? head-to-head with|wrestles?|tangles? with|locks? up with|is set to face|will face|vs\.?|versus)")
+def match_line(line, short=False):
+    """WWE.com card sentence -> 'A (c) vs. B: Title' / 'A vs. B: Street Fight' (falls back to the sentence)."""
+    t = re.sub(r"\s+", " ", line.replace("’", "'")).strip().rstrip(".")
+    t = re.sub(r"(?i)\b(once again|again|finally|look to|looks to|set to|will)\s+", "", t)
+    title = lambda s: re.sub(r"(?i)^(the )?(WWE |AEW |TNA |NXT |AAA )?", "", s.strip()).strip()
+    m = re.match(r"(?i)^(.+?) defends? (?:the |their |her |his )?(.+?) against (.+?)$", t)
+    if m: a, b, extra = f"{m[1]} (c)", m[3], title(m[2])
+    else:
+        m = re.match(r"(?i)^(.+?) challenges? (.+?) for (?:the )?(.+?)$", t)
+        if m: a, b, extra = f"{m[2]} (c)", m[1], title(m[3])
+        else:
+            m = re.match(r"(?i)^(.+?) " + _VERB + r" (.+?)(?: in (?:a |an |the )?(.+?)| for (?:the )?(.+?))?$", t)
+            if not m: return t
+            a, b, extra = m[1], m[2], title(m[3] or m[4] or "")
+    a, b = re.sub(r"(?i)^the ", "The ", a.strip()), b.strip()
+    return f"{a} vs. {b}" + (f": {extra}" if extra and not short else "")
+def card_text(c, now=None):
+    import datetime, zoneinfo
+    from live_thread import promo_handle
+    now = now or time.time(); et = zoneinfo.ZoneInfo("America/New_York")
+    key = c["fullcard"]; slug, d = key.split("/")[0], key.split("/")[-1]
+    name = c.get("show_name") or c["title"].split(" Full Card")[0]
+    show = re.sub(r"^WWE (?=Raw\b|SmackDown\b)", "", name)
+    start = datetime.datetime.fromtimestamp(int(c.get("lead_until") or now), et).date(); today = datetime.datetime.fromtimestamp(now, et).date()
+    when = "Tonight" if start == today else "Tomorrow" if (start - today).days == 1 else start.strftime("%A")
+    head = f"{show} {when}: Full Card"
+    handle = promo_handle({"slug": slug, "brand": (c.get("categories") or [""])[0], "name": name, "key": f"{d}-{slug}"})   # same rule as live thread roots
+    tags = " ".join(([handle] if handle else []) + sorted(hashtags(c, name), key=lambda h: h in CAT_TAG.values()))   # show tag first
+    outro = "Full card: link in bio"
+    lines = [i["line"] for i in c.get("card") or []]; app = list(c.get("appearances") or [])
+    def build(ms, app, short):
+        body = "\n".join("- " + match_line(l, short) for l in ms) + ("\n+ more" if len(ms) < len(lines) else "")
+        if app: body += "\nAlso advertised: " + ", ".join(app)
+        return f"{head}\n\n{body}\n\n{tags}\n{outro}"
+    ms, short = lines, False
+    text = build(ms, app, short)
+    while x_len(text) > 280 and app: app = app[:-1] if len(app) > 2 else []; text = build(ms, app, short)   # advertised appearances go first (never just one)
+    if x_len(text) > 280: short = True; text = build(ms, app, short)                        # then the stipulation/title tails
+    while x_len(text) > 280 and len(ms) > 2: ms = ms[:-1]; text = build(ms, app, short)     # then the last matches ('+ more')
+    if has_url(text) or x_len(text) > 280: return None
     return text
 
 # --- OAuth 1.0a ----------------------------------------------------------------------------------
@@ -263,7 +313,7 @@ def run(test_top=False):
         log("paused until", time.strftime("%F %T", time.gmtime(S["paused_until"])), "reason:", S.get("pause_reason")); return
     items = json.load(open(NEWS))["items"]
     posted_links = set(S["links"])
-    def seen(c): return c.get("resplit") or c.get("fullcard") or c["id"] in S["posted"] or c["link"] in posted_links or any(u["link"] in posted_links for u in c.get("updates", []))
+    def seen(c): return c.get("resplit") or c["id"] in S["posted"] or c["link"] in posted_links or any(u["link"] in posted_links for u in c.get("updates", []))
     L = live_posted(); _skipped = []
     def live_seen(c):
         d = live_dup(c, L)
@@ -281,8 +331,9 @@ def run(test_top=False):
     else:
         recent = [t for t in S["log"] if t.get("ok") and not t.get("deleted") and now - t["at"] < 86400]
         rec_brk = [t for t in recent if t.get("breaking")]; rec_norm = [t for t in recent if not t.get("breaking")]
-        allc = [c for c in items if not seen(c) and now - c.get("first_ts", c["ts"]) < FRESH_H * 3600 and score(c) >= MIN_SCORE]
-        allc.sort(key=lambda c: -score(c))
+        allc = [c for c in items if not seen(c) and (card_due(c, now) if c.get("fullcard") else
+                now - c.get("first_ts", c["ts"]) < FRESH_H * 3600 and score(c) >= MIN_SCORE)]
+        allc.sort(key=lambda c: (not c.get("fullcard"), -score(c)))   # a Full Card has a deadline (showtime): first in line, still under cap/gap
         brk = [c for c in allc if is_breaking(c) and c.get("trusted", 0) >= 1]
         normal = [c for c in allc if c not in brk]
         nb = max(0, min(BREAKING_PER_RUN, BREAKING_MAX_24H - len(rec_brk)))
@@ -299,7 +350,7 @@ def run(test_top=False):
         n_allowed = len(cands)
     if not cands: log("nothing new worth posting (or waiting on cap/gap)"); save_state(S) if _skipped else None; return
     for c in cands[:n_allowed]:
-        text = tweet_text(c)
+        text = card_text(c, now) if c.get("fullcard") else tweet_text(c)
         if not text or has_url(text):
             log("skipped (URL-like text or too long):", c["title"]); S["links"] += [c["link"]]; continue
         if not (enabled or test_top) or not have_keys:
@@ -309,6 +360,7 @@ def run(test_top=False):
             log("photo: none attached, posting text-only:", merr); xspend.event("media_upload_failed", "x_poster", merr or "")
         code, body, hdr = post_tweet(text, [media] if media else None)
         entry = {"id": c["id"], "at": int(now), "code": code, "score": score(c)}
+        if c.get("fullcard"): entry["fullcard"] = c["fullcard"]
         if is_breaking(c): entry["breaking"] = True     # exempt from DAILY_CAP / MIN_GAP (counted in BREAKING_MAX_24H)
         if media: entry.update(media=media, image=img_url, image_why=img_why)
         if code in (200, 201):
