@@ -450,7 +450,7 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     solo = solo_subject(c, key)
     if k in C and C[k].get("st") in ("key-other-story", "report-photo") and (not solo or not solo_photo(C[k].get("image"), key)): del C[k]   # picked before the 2026-10-23 rule
     if k in C and C[k].get("st") == "key-other-story" and (person_photo(key, names, story_pro, story_txt, c["id"]) or (None,))[0] != C[k].get("image"): del C[k]   # its source card no longer qualifies
-    if k in C and str(C[k].get("st", "")).startswith("promo-logo:") and guessed and NOT_WITH.search(c.get("title") or "") and free_agent(key, c) == "":
+    if k in C and (str(C[k].get("st", "")).startswith("promo-logo:") or C[k].get("st") == "event-art") and guessed and NOT_WITH.search(c.get("title") or "") and free_agent(key, c) == "":
         del C[k]   # departure story, they left that promotion more than ~6 months ago (2026-10-23 rule): no promotion card
     if k in C and str(C[k].get("st", "")).startswith("promo-logo:") and not guessed:
         # placeholder picked earlier: free re-check (official roster says another promotion now, or a photo of them exists now)
