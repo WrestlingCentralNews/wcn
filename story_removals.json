@@ -3,6 +3,7 @@
  "ids": {
   "c7f5d19a32d31": "lead source 53h old at publish (live Raw report 2026-10-19)",
   "ce520ee75c891": "2026-10-23: duplicate of c8fc599f19c11 (same Oct 23 SmackDown announcement: Women's Tag Title match + MFTs vs Bakusai) and its summary had the champions inverted; URLs redirect to c8fc599f19c11.",
-  "c0cbceeba84fb": "2026-10-23: led by a raw Spanish WWE.com video title from the Oct 16 SmackDown (stale clip, not news); Spanish titles now blocked by aggregator.foreign_or_clip."
+  "c0cbceeba84fb": "2026-10-23: led by a raw Spanish WWE.com video title from the Oct 16 SmackDown (stale clip, not news); Spanish titles now blocked by aggregator.foreign_or_clip.",
+  "caaa99f50bdcd": "2026-10-23: Anya Rune (Airica Demia) step-back reports, split out of the Max Caster hiatus story (c03b26676bd72) by the subject fix; newest report 56h old, oldest 73h at split - old news, not published as new."
  }
 }
