@@ -51,7 +51,8 @@ def from_text(c, key):
     names them (a story about them), and only sentences that name them or follow from the headline."""
     import vision
     t = (c.get("title") or "") + " | " + (c.get("raw_title") or "")
-    if not vision.names_key(t, key): return None
+    # the published headline must name them, and a roundup ('..., ERIC YOUNG, ... AND MORE') is no departure story (2026-10-23)
+    if not vision.names_key(c.get("title") or "", key) or vision.roundup_title(c.get("title") or ""): return None
     try:
         import current
         if current.recollection(c): return None   # look-back story ('Recalls His 2014 WWE Exit'): not a departure date
@@ -73,8 +74,20 @@ def from_rosters(key, db=None):
         if not r.get("fetched") or (r.get("count") or 0) < roster.MIN.get(p, 10) or not e: continue
         if e.get("last", 0) < r["fetched"] and (not best or e["last"] > best[1]): best = (p, int(e["last"]))
     return best
+def forget():
+    """Keys whose remembered (story-text) departures are wrong; dropped from SEEN on the next write (departures.json 'forget')."""
+    return {roster.key(n) for n in (_load(HAND).get("forget") or [])}
+def prune(path=None):
+    """Drop forgotten keys from the remembered departures (runs each pipeline pass)."""
+    path = path or SEEN; d = _load(path); bad = [k for k in d if k in forget()]
+    for k in bad: d.pop(k)
+    if bad:
+        try: json.dump(d, open(path, "w"), indent=0)
+        except Exception: pass
+    return bad
 def record(key, promo, ts, path=None):
     path = path or SEEN; d = _load(path); k = roster.key(key); e = d.get(k) or {}
+    if k in forget(): return
     if ts > e.get("ts", 0):
         d[k] = {"name": key, "promo": promo, "ts": int(ts)}
         try: os.makedirs(os.path.dirname(path), exist_ok=True); json.dump(d, open(path, "w"), indent=0)
@@ -86,7 +99,7 @@ def last(key, c=None, db=None, now=None, hand=None, seen=None):
     for n, v in h.items():
         if roster.key(n) == k and v.get("promo"): cands.append((v["promo"], _ts(v.get("date"))))
     s = (_load(SEEN) if seen is None else seen).get(k)
-    if s: cands.append((s["promo"], int(s["ts"])))
+    if s and k not in forget(): cands.append((s["promo"], int(s["ts"])))
     r = from_rosters(key, db)
     if r: cands.append(r)
     if c is not None:

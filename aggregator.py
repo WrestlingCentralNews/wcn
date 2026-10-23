@@ -356,6 +356,9 @@ def run():
     # every card gets the key-person rule (labels/file names are free); article pages are fetched for top + recent cards,
     # vision confirms only for the top vision.VISION_TOP cards when candidates are ambiguous
     rank = {c["id"]: i for i, c in enumerate(clusters)}
+    try:
+        import departed; departed.prune()   # drop wrong remembered departures (departures.json 'forget')
+    except Exception: pass
     vision.CARD_TITLES = {c["id"]: c.get("title") or "" for c in clusters}   # a reused photo's source card must be about that person alone
     todo = clusters
     with ThreadPoolExecutor(8) as ex:

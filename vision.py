@@ -130,20 +130,23 @@ def _pnames(t):
         n = m.group(0)
         if n.lower() not in [x[0].lower() for x in out]: out.append((n, m.start(), m.end()))
     return out
+def roundup_title(t):
+    """A multi-subject roundup headline: a comma list of 2+ items or 'and more' (2026-10-23)."""
+    return bool(re.search(r"(?i)\band more\b", t or "")) or (t or "").count(",") >= 2
 def key_person(c):
     """(key person, all named people) for card c. Rules first: the subject of the headline's event verb (winner/champion in a
     result, the person who died/retired/was injured/signed/was released/returned, the one at the centre of a row); 'X loses to Y'
     and 'A sues B' take the person after the verb; no verb -> the most-mentioned wrestler in headline + dek (headline order breaks ties)."""
     t = canon(c.get("title") or ""); P = _pnames(t)
-    if not P:
+    if not P and not roundup_title(c.get("raw_title") or ""):   # a roundup source headline ('AEW STARS IN NJPW, SLOANE JACOBS, ERIC YOUNG ... AND MORE') is about no one
         P = _pnames(canon(c.get("raw_title") or ""))
         if P: t = canon(c.get("raw_title") or "")
     names = [p[0] for p in P]
     if not P:   # only an executive / authority figure is named ('Santino Marella Re-Signs With TNA'): they are the subject
-        m = enrich._SRX.search(canon(c.get("title") or "")) or enrich._SRX.search(canon(c.get("raw_title") or ""))
+        m = enrich._SRX.search(canon(c.get("title") or "")) or (None if roundup_title(c.get("raw_title") or "") else enrich._SRX.search(canon(c.get("raw_title") or "")))
         if m: return m.group(0), [m.group(0)], False
     if not P:
-        g = names_in(c["title"]) or names_in(c.get("raw_title", ""))
+        g = names_in(c["title"]) or ([] if roundup_title(c.get("raw_title") or "") else names_in(c.get("raw_title", "")))
         g = [x for x in (re.split(VERB_RX, x)[0].strip() for x in g) if len(x.split()) >= 2]   # 'Divine Dominion Beats' -> 'Divine Dominion'
         return (g[0] if g else None), g, True
     m = re.search(r"(?i)\b(loses? to|lost to|falls? to|beaten by|defeated by|pinned by|released by|fired by|signed by)\b", t)

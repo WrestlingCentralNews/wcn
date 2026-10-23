@@ -379,12 +379,18 @@ def subjects(t):
             mm = _SRX.match(t, m.start() + w.start())
             if mm and mm.end() > m.end(): out.add(mm.group(0).lower())
     return frozenset(out)
-_HEAD = re.compile(r"^(?:[A-Z][\w'’]*:\s*)?([A-Z][a-z'’]+ [A-Z][a-z'’]+)\b")
+_HEAD = re.compile(r"^(?:[A-Z][\w'’]*:\s*)?"
+    # descriptor before the name ('Former WWE EVOLVE Star Anya Rune ...', 'Ex-WWE ID Talent Formerly Known As Anya Rune ...', 2026-10-23)
+    r"(?:(?:Former|Ex-?|Longtime|Veteran|Released|Ex)\s*(?:(?:WWE|AEW|TNA|NXT|ROH|EVOLVE|ID|LFG|Impact|IMPACT|NJPW|MLW)\s+)*"
+    r"(?:Star|Superstar|Talent|Wrestler|Champion|Knockout|Prospect|Signee|Performer)\s+(?:Formerly Known As\s+)?)?"
+    r"([A-Z][a-z'’]+ [A-Z][a-z'’]+)\b")
 _NOTHEAD = re.compile(r"(?i)\b(wwe|aew|tna|nxt|raw|smackdown|dynamite|collision|impact|report|reports|breaking|exclusive|latest|update|backstage|former|major|new|big|top|the|this|why|how|what|who|results?|review|watch|live|night|world|title|tag|team|women|men)\b")
+_VERBY = re.compile(r"(?i)\b(officially|reportedly|finally|now|still|signs?|signed|announces?|returns?|says|said|reveals?|makes?|set|is|was|has|joins?|debuts?|lands?|inks?|teases?|retires?|released|recalls?|explains?|opens?|discusses?|praises?|wants?|hopes?|confirms?|addresses?|claims?|responds?|shares?|issues?|gets?|takes?|steps?|leaves?|exits?|heading|headed|done|out|back|talks?|comments?|thinks?|believes?|names?|calls?|rips|slams|blasts|on|in|at|with|to|for|and|of)\b")
 def _head(a):
     """Unknown subject named at the start of the source headline ('Billy Gunn sides with...' / 'Billy Gunn Takes A Shot...')."""
     def f(a):
         m = _HEAD.match(a.get("raw_title") or "")
+        if m and m.start(1) > 0 and _VERBY.search(m.group(1)): return ""   # 'Ex-WWE Star Officially Signs ...' names nobody
         return m.group(1).lower() if m and not _NOTHEAD.search(m.group(1)) and m.group(1).lower() not in _EXEC else ""
     return _fc("h", a, f) or None
 def _keys(names): return {re.sub(r"s$", "", n.split()[-1]) for n in names}   # 'the hardys' ~ 'matt hardy'; 'dragon lee' -> 'lee'
