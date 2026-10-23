@@ -263,7 +263,7 @@ def run(test_top=False):
         log("paused until", time.strftime("%F %T", time.gmtime(S["paused_until"])), "reason:", S.get("pause_reason")); return
     items = json.load(open(NEWS))["items"]
     posted_links = set(S["links"])
-    def seen(c): return c.get("resplit") or c["id"] in S["posted"] or c["link"] in posted_links or any(u["link"] in posted_links for u in c.get("updates", []))
+    def seen(c): return c.get("resplit") or c.get("fullcard") or c["id"] in S["posted"] or c["link"] in posted_links or any(u["link"] in posted_links for u in c.get("updates", []))
     L = live_posted(); _skipped = []
     def live_seen(c):
         d = live_dup(c, L)

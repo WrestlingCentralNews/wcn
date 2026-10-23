@@ -42,6 +42,12 @@ def photo(c):
     u = (c.get("image") or "").strip()
     if not (u.startswith("http") or u.startswith("/")): return 0
     return 2 if "/img/promo/" not in u and c.get("img_w") else 1
+def pinned(items, now):
+    """Lead-slot test (owner 2026-10-23): a Full Card report (fullcard.py sets lead_until = show start) leads the homepage from
+    publish until its show starts, then normal ranking resumes. Same real-photo rule (a measured show poster/graphic counts).
+    Mirrors app.js topPick."""
+    p = [c for c in items if _i(c.get("lead_until")) > now and photo(c) == 2]
+    return min(p, key=lambda c: _i(c.get("lead_until"))) if p else None
 def pick(items, now=None):
     """items: newest-first list (already filtered). -> (lead, [secondary...]) or (None, [])."""
     now = now or time.time()
@@ -51,7 +57,7 @@ def pick(items, now=None):
     ranked = sorted(pool, key=lambda c: value(c, now), reverse=True)
     quote = lambda c: (c.get("kind") or {}).get("type") == "quote"
     # lead: a real photo the site could measure (it loads) beats a promotion card / unmeasured photo; never an empty frame first
-    lead = next((c for c in ranked if photo(c) == 2 and not quote(c)), None) or next((c for c in ranked if photo(c) and not quote(c)), ranked[0])
+    lead = pinned(items, now) or next((c for c in ranked if photo(c) == 2 and not quote(c)), None) or next((c for c in ranked if photo(c) and not quote(c)), ranked[0])
     rest = [c for c in ranked if c is not lead]
     sec = [c for c in rest if photo(c)][:N - 1]
     sec += [c for c in rest if c not in sec][:N - 1 - len(sec)]

@@ -75,6 +75,7 @@ def live_result(c):
     return bool((c.get("hub") or {}).get("k") == "show" and RESULT_RX.search(t))
 def blocked(c, S, now):
     if c.get("resplit"): return "resplit"
+    if c.get("fullcard"): return "fullcard"   # Full Card reports are site-only (not breaking)
     if editorial.evergreen(c.get("title")) or editorial.evergreen(c.get("raw_title")): return "evergreen"
     if live_result(c): return "live-result"
     if not (c.get("image") or "").startswith("https://"): return "no-image"

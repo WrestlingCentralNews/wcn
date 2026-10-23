@@ -1,0 +1,18 @@
+{
+ "_note": "Hand card data for fullcard.py, keyed '<show or event slug>/<YYYY-MM-DD>'. 'matches' (+ 'source', 'source_name', optional 'image', 'name', 'time', 'network') = the whole card copied from the promotion's official preview or trusted outlets (any promotion/PLE). For WWE weekly shows the matches come from WWE.com automatically; an entry may add 'appearances' (advertised talent, with 'appearances_source') and 'venue'.",
+ "cards": {
+  "wwe-smackdown/2026-10-23": {
+   "venue": "Toyota Arena in Ontario, California",
+   "appearances": [
+    "CM Punk",
+    "Cody Rhodes",
+    "Jade Cargill",
+    "Tiffany Stratton",
+    "Gunther",
+    "Trick Williams",
+    "Karl Anderson"
+   ],
+   "appearances_source": "https://www.wwe.com/event/friday-night-smackdown-86"
+  }
+ }
+}

@@ -135,9 +135,19 @@ RETENTION_DAYS = 60  # prune stories older than this each run
 DROPPED_CL = set()
 MERCH = re.compile(r"(?i)^https?://(?:[\w-]+\.)?(?:shop|euroshop\d*)\.wwe\.com/")   # WWE Shop product pages: merchandise, never news
 NOT_NEWS = re.compile(r"(?i)[-|–—]\s*WWE Shop\s*$|\bswimsuit\b|\bbikini\b|\bAI predicts\b")   # shop pages via Google News, photo gossip, AI-guess filler
+# raw non-English titles / YouTube highlight clips (owner 2026-10-23: 'Cody Rhodes le propina PUNT a Baron Corbin ...: SmackDown highlights,
+# 16 de Oct. 2026' reached the English feed): Spanish-language titles and WWE.com / YouTube highlight clips are not news reports
+ES_DATE = re.compile(r"(?i)\b\d{1,2} de (?:ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)[a-z]*\.?(?: de)? \d{4}\b")
+ES_WORDS = re.compile(r"(?i)\b(?:el|las|los|del|le|les|frente|una|después|cuando|para|que|sus|contra|aquí|así|qué|cómo|tras|sobre|hacia|desde|pero|muy)\b")
+CLIP_LINK = re.compile(r"(?i)^https?://(?:www\.|m\.)?(?:youtube\.com/|youtu\.be/)")   # WWE.com English clips stay (official confirmation)
+def foreign_or_clip(a):
+    t = a.get("raw_title") or a.get("title") or ""
+    if ES_DATE.search(t) or re.search(r"(?i)\bresumen completo\b", t) or len({w.lower() for w in ES_WORDS.findall(t)}) >= 3: return "spanish"
+    if CLIP_LINK.search(a.get("link") or "") and re.search(r"(?i)\bhighlights?\b|\bresumen\b|\bmejores momentos\b", t): return "clip"
+    return None
 def not_news(a):
     """Never a story on its own, never part of one (they used to hide inside wrongly merged stories)."""
-    return bool(MERCH.search(a.get("link") or "") or NOT_NEWS.search(a.get("raw_title") or "") or combat.nonwrestling(a))
+    return bool(MERCH.search(a.get("link") or "") or NOT_NEWS.search(a.get("raw_title") or "") or combat.nonwrestling(a) or foreign_or_clip(a))
 OVERRIDES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "image_overrides.json")
 def image_overrides(clusters):
     """Hand-picked card photos (repo file image_overrides.json, survives every run): {"items": [{"links": [...], "image": url|null}]}.
@@ -377,6 +387,9 @@ def run():
     if RM:
         n0 = len(clusters); clusters = [c for c in clusters if c["id"] not in RM]
         if len(clusters) < n0: print(f"removals: {n0 - len(clusters)} hand-removed stories kept off the site", flush=True)
+    try:   # 'Full Card' report per show whose official card is announced (template-built, no AI; same id when the card changes)
+        import fullcard; fullcard.run(clusters)
+    except Exception as ex: print("fullcard: error (ignored)", repr(ex)[:200], flush=True)
     bf = vision.backfill_finish()
     if bf: print("images: one-time backlog vision pass done:", bf, flush=True)
     vision.save(); llm.save_usage()

@@ -156,9 +156,9 @@ def feed_links(cat=None):
     return s
 def ad(slot, size, cls="ad-feed"): return f'<div class="ad {cls}" data-slot="{slot}" data-size="{size}"></div>'
 S = {
- "en": {"conf": "✔ CONFIRMED BY {n} SOURCES", "timeline": "Story timeline · {n} reports", "source": "Source", "more": "More {cat} news", "by": "By",
+ "en": {"card_h": "The card", "card_story": "Story", "conf": "✔ CONFIRMED BY {n} SOURCES", "timeline": "Story timeline · {n} reports", "source": "Source", "more": "More {cat} news", "by": "By",
         "staff": "WCN Staff", "pub": "Published", "first": "First reported", "upd": "Updated", "part": "Part of our coverage of", "hub_go": "Full card & results →"},
- "es": {"conf": "✔ CONFIRMADO POR {n} FUENTES", "timeline": "Cronología · {n} reportes", "source": "Fuente", "more": "Más noticias de {cat}", "by": "Por",
+ "es": {"card_h": "Cartelera", "card_story": "Noticia", "conf": "✔ CONFIRMADO POR {n} FUENTES", "timeline": "Cronología · {n} reportes", "source": "Fuente", "more": "Más noticias de {cat}", "by": "Por",
         "staff": "Redacción WCN", "pub": "Publicado", "first": "Publicado", "upd": "Actualizado", "part": "Parte de nuestra cobertura de", "hub_go": "Cartelera y resultados →"},
 }
 def schema_image(c):
@@ -204,6 +204,11 @@ def page(c, related, lang="en", L=None, alt=None):
     quote = ""
     if k.get("type") == "quote" and k.get("who") and not es:
         quote = f'<blockquote class="qc big"><span class="qm">“</span>{e(k.get("quote") or c["summary"].split(". ")[0])}<cite>— {e(k.get("who"))}</cite></blockquote>'
+    cl = c.get("card") or []
+    if cl:
+        urls = {x["id"]: x.get("url") for x in (BUILT or [])}
+        li = "".join(f'<li>{e(i["line"])}' + (f' <a href="/{e(urls[i["sid"]])}">{t.get("card_story", "Full story")} →</a>' if urls.get(i.get("sid")) else "") + "</li>" for i in cl)
+        quote += f'<section class="fullcard"><h2>{t.get("card_h", "Card")}</h2><ol>{li}</ol></section>'
     tl = "" if es else "".join(f'<li><time datetime="{iso(u["ts"])}">{nice(u["ts"])}</time><b>{e(u["title"])}</b><span>{e(u["line"])}</span></li>' for u in c.get("updates", []))
     tl = f'<section class="timeline upd"><h2>{t["timeline"].format(n=len(c["updates"]) + 1)}</h2><ol>{tl}</ol></section>' if tl else ""
     if es: rel = "".join(f'<a class="rel" href="/{r2["url"]}" style="--c:{CATC.get(r["categories"][0])}"><div class="ri" style="background-image:url(\'{e(r.get("image") or "")}\')"></div><span>{e(r2["t"])}</span></a>' for r, r2 in related)
@@ -277,6 +282,7 @@ def build_newsletter_page(clusters):
     os.makedirs(os.path.join(PUB, "newsletter"), exist_ok=True)
     open(os.path.join(PUB, "newsletter", "index.html"), "w").write(html_)
 # ---------- redirect stubs for story URLs that changed (re-clustering splits/merges, new lead headline) ----------
+BUILT = []           # this run's stories (Full Card reports link their match stories)
 PREV = []            # previous run's news.json items (set by aggregator before build)
 REDIRECTS = os.path.join(ROOT, "data", "redirects.json")   # {old_rel_url: {links, lead, es, at, to}}
 REDIRECT_DAYS = 60
@@ -334,6 +340,7 @@ def stub(to):
             f'<body><p>This story moved: <a href="/{e(to)}">{e(t)}</a></p></body></html>')
 def build(clusters):
     import translate, extras
+    global BUILT; BUILT = clusters
     build_sw()
     imgmeta.run(clusters); imgmeta.apply(clusters)   # cards, story heroes, og:image and NewsArticle use the largest version of each photo
     nh = hubs.tag(clusters)
