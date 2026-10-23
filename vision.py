@@ -252,7 +252,7 @@ def promotion(key, c):
         if on: brands = [b for b in BIG if b in on] + [b for b in brands if b not in BIG]
     tp = promo_in(t)
     if not brands:   # not on our roster lists (lists lag behind signings): the story itself says they compete/signed there
-        if tp and tp in ("wwe", "aew", "tna", "nxt", "roh") and re.search(r"(?i)\b(retains?|wins?|won|beats?|defeats?|debuts?|signs?|signed|captures?|crowned|champions?)\b", t): return tp
+        if tp and tp in ("wwe", "aew", "tna", "nxt", "roh") and re.search(r"(?i)\b(retains?|wins?|won|beats?|defeats?|debuts?|signs?|signed|captures?|crowned|champions?|deal|contract)\b", t): return tp
         return None
     named = {k_ for k_, rx in PROMO_TXT if re.search(rx, t, re.I)}
     own = {b.lower() for b in brands} | ({"nxt"} if "WWE" in brands else set()) | ({"roh"} if "AEW" in brands else set())
@@ -262,6 +262,11 @@ def promotion(key, c):
         return tp # roster list is behind: they're competing/signed there now ('Andrade Retains AEW National Title')
     if "WWE" in brands and (tp == "nxt" or (tp is None and re.search(r"\bNXT\b", c.get("summary") or ""))): return "nxt"
     if "AEW" in brands and tp == "roh": return "roh"
+    if len(brands) == 1 and brands[0] in BIG and tp in ("wwe", "aew", "tna") and tp != brands[0].lower():
+        import current
+        on, off = current.official(key)
+        if brands[0] not in on and re.search(r"(?i)\b(signs?|signed|deal|contract|joins?|joined|debuts?|wins?|won|retains?|captures?|crowned)\b", t):
+            return tp   # hand list is stale (not on that official roster) and the headline places them in another promotion now
     for b in brands:
         if b in ("WWE", "AEW", "TNA") and (tp in (None, b.lower()) or len(brands) == 1): return b.lower()
     if any(b in ("Global", "Indie") for b in brands): return tp

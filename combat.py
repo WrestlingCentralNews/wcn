@@ -50,6 +50,25 @@ def crossover(head):
     t = SITE_SUFFIX.sub("", head or "")
     if _wrestler_named(t) and not (BIZ_RX.search(t) and not CROSS_RX.search(t)): return True
     return bool(WREST_RX.search(t) and CROSS_RX.search(t) and not BIZ_RX.search(t))
+# Off-topic business / world news (owner rule 2026-10-23): wrestling outlets (POST Wrestling especially) also carry plain
+# streaming-industry and world news because it touches WWE ('Netflix faces ... Q3 earnings', 'Netflix's chief content officer
+# ... gone', 'Riyadh International Airport remains highly restricted following Houthi attacks'). Their headlines name no
+# promotion, show or wrestler, so the combat-sports guard let them through. Corporate news is fine ONLY when the headline is
+# clearly about wrestling ('WWE Raw on Netflix Draws 4.5M', 'CM Punk ... Netflix Movie', 'TKO says WWE revenue up').
+OFFTOPIC_RX = re.compile(r"\b(?:Netflix|Paramount|Peacock|ESPN|Disney|Comcast|NBCU(?:niversal)?|Warner Bros|WBD|Fox Corp|Amazon|Prime Video|"
+                         r"Hulu|HBO Max|Tubi|Roku|Endeavor|Silver Lake|Live Nation|Ticketmaster|Spotify|Apple)\b(?!\s+(?:Raw|SmackDown|NXT))|"
+                         r"\b(?:earnings|layoffs?|shareholders?|stock price|share price|Wall Street|chief (?:content|executive|financial|operating) officer|"
+                         r"\bCEO\b|subscribers? growth|box office|airports?|airlines?|flights? (?:cancel|suspend|halt)\w*|Houthis?|missiles?|air ?strikes?|"
+                         r"drone attacks?|military|ceasefire|invasion|election|government shutdown|tariffs?|hurricane|earthquake|"
+                         r"wildfire|NFL|NBA|MLB|NHL|Super Bowl|World Cup|Formula 1|\bF1\b|NASCAR)", re.I)
+def offtopic(a):
+    """Reason string if report/story a is business/world news whose headline (published and raw) is not about wrestling."""
+    head = SITE_SUFFIX.sub("", a.get("raw_title") or "") + " | " + SITE_SUFFIX.sub("", a.get("title") or "")
+    import enrich
+    if _wrestling_head(head) or WRESTLERS_EXTRA.search(head) or enrich.subjects(head): return None   # executives count here ('Triple H Jacket')
+    if re.search(r"(?i)pro[- ]wrestling|\bNJPW\b", a.get("raw_title") or ""): return None              # site suffix 'NEW JAPAN PRO-WRESTLING'
+    m = OFFTOPIC_RX.search(head)
+    return f"non-wrestling: business/world news headline ({m.group(0)}) with no wrestling subject" if m else None
 def nonwrestling(a):
     """Reason string if report/story a is non-wrestling combat-sports news (not a crossover), else None."""
     head = SITE_SUFFIX.sub("", a.get("raw_title") or "") + " | " + SITE_SUFFIX.sub("", a.get("title") or "")
@@ -57,6 +76,8 @@ def nonwrestling(a):
     if combat_head:
         if crossover(head): return None
         return "non-wrestling: headline about UFC/MMA/boxing (no wrestling crossover)"
+    ot = offtopic(a)
+    if ot: return ot
     if _wrestling_head(head): return None          # wrestling headline (weight-class words alone: 'MLW Featherweight Championship')
     if URL_RX.search(a.get("link") or ""): return "non-wrestling: combat-sports section URL"
     if TERM_RX.search(head): return "non-wrestling: headline about UFC/MMA/boxing"
