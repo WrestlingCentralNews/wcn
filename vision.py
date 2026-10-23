@@ -450,6 +450,8 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     solo = solo_subject(c, key)
     if k in C and C[k].get("st") in ("key-other-story", "report-photo") and (not solo or not solo_photo(C[k].get("image"), key)): del C[k]   # picked before the 2026-10-23 rule
     if k in C and C[k].get("st") == "key-other-story" and (person_photo(key, names, story_pro, story_txt, c["id"]) or (None,))[0] != C[k].get("image"): del C[k]   # its source card no longer qualifies
+    if k in C and str(C[k].get("st", "")).startswith("promo-logo:") and guessed and NOT_WITH.search(c.get("title") or "") and free_agent(key, c) == "":
+        del C[k]   # departure story, they left that promotion more than ~6 months ago (2026-10-23 rule): no promotion card
     if k in C and str(C[k].get("st", "")).startswith("promo-logo:") and not guessed:
         # placeholder picked earlier: free re-check (official roster says another promotion now, or a photo of them exists now)
         if promotion(key, c) != C[k]["st"].split(":", 1)[1] or (solo and person_photo(key, names, story_pro, story_txt, c["id"])): del C[k]
@@ -502,6 +504,7 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     # nothing clearly shows the key person: (1) the logo card of the promotion they work for (show/event art when the story is
     # about a specific show), (2) people with no promotion: a photo from the story's own reports, (3) the WCN card (None)
     pr = promo_in(c.get("title") or "") if guessed and not neutral else (None if guessed else promotion(key, c)) # unknown name: its report's photo, else the story's promotion
+    if guessed and pr and NOT_WITH.search(c.get("title") or "") and free_agent(key, c) == "": pr = None   # left long ago: WCN card
     if not names_key(c.get("title") or "", key):   # key only from the source headline (published one names nobody): the story's own promotion card
         pr = promo_in(c.get("title") or "") or promo_in(c.get("raw_title") or "") or pr
     if pr:
