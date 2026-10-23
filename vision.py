@@ -504,7 +504,7 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     # nothing clearly shows the key person: (1) the logo card of the promotion they work for (show/event art when the story is
     # about a specific show), (2) people with no promotion: a photo from the story's own reports, (3) the WCN card (None)
     pr = promo_in(c.get("title") or "") if guessed and not neutral else (None if guessed else promotion(key, c)) # unknown name: its report's photo, else the story's promotion
-    if guessed and pr and NOT_WITH.search(c.get("title") or "") and free_agent(key, c) == "": pr = None   # left long ago: WCN card
+    if guessed and NOT_WITH.search(c.get("title") or "") and free_agent(key, c) == "": pr, art = None, []   # left long ago: no promotion card / logo art -> photo or WCN card
     if not names_key(c.get("title") or "", key):   # key only from the source headline (published one names nobody): the story's own promotion card
         pr = promo_in(c.get("title") or "") or promo_in(c.get("raw_title") or "") or pr
     if pr:
