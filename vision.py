@@ -227,12 +227,17 @@ def promo_in(text):
     for k, rx in PROMO_TXT:
         if re.search(rx, text or "", re.I): return k
     return None
+BIG = ("WWE", "AEW", "TNA")
 def promotion(key, c):
     """Promotion the key person works for (existing roster brand lists + the story's own promotion/show names), or None for
     free agents, retirees, legends/commentators, celebrities, people who just left or died, and unknown names."""
     import editorial
     k = key.lower(); t = c.get("title") or ""
     if NOT_WITH.search(t): return None
+    try:   # look-back story about a promotion they've since left ('Chris Sabin Recalls ... TNA'): their current promotion's card
+        import current; np_ = current.now_promo(key, c)
+        if np_: return np_
+    except Exception: pass
     def hit(n):
         n = n.strip()
         if not n: return False
@@ -241,6 +246,10 @@ def promotion(key, c):
         except re.error: pass
         return re.search(r"(?<![a-z])" + re.escape(k) + r"(?![a-z])", re.sub(r"\[[^]]*\]", "e", n).lower()) is not None
     brands = [b for b, v in editorial.ROSTER.items() if any(hit(n) for n in v.split("|"))]
+    if brands:   # the official current rosters (data/rosters.json) beat the hand lists: Joe Hendry is WWE now, not TNA (2026-10-23)
+        import current
+        on, off = current.official(key)
+        if on: brands = [b for b in BIG if b in on] + [b for b in brands if b not in BIG]
     tp = promo_in(t)
     if not brands:   # not on our roster lists (lists lag behind signings): the story itself says they compete/signed there
         if tp and tp in ("wwe", "aew", "tna", "nxt", "roh") and re.search(r"(?i)\b(retains?|wins?|won|beats?|defeats?|debuts?|signs?|signed|captures?|crowned|champions?)\b", t): return tp
@@ -292,6 +301,46 @@ def other_brand(u, story_pro, L, src, story_txt, vision_ok):
     if strong: return True
     return check_brand(u, f, paid=vision_ok) is not False   # an earlier verdict is free; a new paid check only for top cards
 VISION_TOP = 60          # vision confirms only for the top cards on the homepage
+_PIX = None
+KEY_ST = ("key-labelled", "key-verified", "key-verified-cached", "key-inline", "key-verified-earlier")
+def person_photo(key, names, story_pro, story_txt, cid=None, vision_ok=False):
+    """(image, credit) of the key person that another card's pick already showed (file name/caption named them or vision
+    confirmed it), still usable, not tied to a promotion this story isn't about and not labelled with someone else; else None.
+    Free (cache only). Newest-looking upload path first (year/month in the URL)."""
+    import imgmeta
+    global _PIX
+    if _PIX is None or _PIX[0] is not cache():     # key person -> their confirmed picks, built once per run (the cache has thousands of entries)
+        ix = {}
+        for k_, v in list(cache().items()):
+            if k_.startswith("choice3|") and v.get("st") in KEY_ST and v.get("key"): ix.setdefault(v["key"], []).append((k_, v))
+        _PIX = (cache(), ix)
+    seen, out = set(), []
+    for k_, v in _PIX[1].get(key, []):
+        u = v.get("image")
+        if not u or u in seen or str(u).startswith(PROMO_CARD[:40]) or k_.split("|")[1] == cid: continue
+        seen.add(u)
+        try:
+            if imgmeta.unusable(u): continue
+        except Exception: pass
+        L = label(u)
+        if others_named(L, key, names) or other_brand(u, story_pro, L, "", story_txt, False): continue
+        if story_pro and enrich.label_promos(enrich._fname_words(u) + " | " + L) - set(story_pro): continue   # e.g. a TNA-era photo
+        if prior(u, key) is False: continue
+        y = re.search(r"/(20\d\d)/(\d\d)/", u)
+        out.append(((y.group(1) + y.group(2)) if y else "0", v.get("st") == "key-labelled" or names_key(L, key), u, v.get("credit")))
+    if not out: return None
+    out.sort(key=lambda x: (x[0], x[1]), reverse=True)
+    return out[0][2], out[0][3]
+_ONE_RX = re.compile(r"(?i)\b(vs\.?|versus|v\.|results?|recap|card|match(?:es)?|battles?|faces?|against|teams? with|and|&)\b")
+def report_photo(neutral, msrc, key):
+    """A still-unverified photo from a report whose own headline names the key person and no other wrestler, and isn't a
+    match/results piece (those show opponents): very likely the subject. None otherwise."""
+    for u in neutral:
+        h = msrc.get(u) or ""
+        if not h or _ONE_RX.search(h): continue
+        sub = enrich.subjects(h)
+        if sub and all(names_key(x, key) for x in sub) and names_key(h, key): return u
+    return None
 def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     """Photo that shows the story's key person. Order: candidate labelled with the key person (file name/alt/caption) ->
     vision-confirmed (top cards only, ambiguous candidates only, cached per image) -> article photo captioned with them ->
@@ -309,6 +358,10 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     story_pro = enrich.promos((c.get("title") or "") + " | " + (c.get("raw_title") or "")) | enrich.promos(c.get("summary") or "")
     msrc = c.get("member_src") or {}
     vis_ok = budget_ok and rank < VISION_TOP
+    if key and not guessed:   # a promotion the summary names only as their past ('rose to prominence in TNA') isn't the story's
+        try:
+            import current; story_pro = frozenset(story_pro) - current.past_promos(c, key)
+        except Exception: pass
     if not key:
         # no person in the headline: never a photo whose file name names a wrestler or another promotion
         # ('WWE Star Signs New Contract' got a Dragon Lee Raw photo from another report in the cluster); a photo tied to another
@@ -325,6 +378,9 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     if k in C and C[k].get("image") and not str(C[k]["image"]).startswith(PROMO_CARD[:40]):
         _L = label(C[k]["image"])          # cached pick made before the label rules: re-check its file name (free, no fetch)
         if others_named(_L, key, names) or enrich.foreign_promo(C[k]["image"], story_pro, _L, msrc.get(C[k]["image"], ""), story_txt)[0]: del C[k]
+    if k in C and str(C[k].get("st", "")).startswith("promo-logo:") and not guessed:
+        # placeholder picked earlier: free re-check (official roster says another promotion now, or a photo of them exists now)
+        if promotion(key, c) != C[k]["st"].split(":", 1)[1] or person_photo(key, names, story_pro, story_txt, c["id"]): del C[k]
     if k in C and not (bf and not str(C[k].get("st", "")).startswith("key")):
         if C[k].get("st") == "wcn-card" and not C[k].get("image") and not guessed:   # roster lists updated since: free re-check for the promotion card
             pr = promotion(key, c)
@@ -373,6 +429,12 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     pr = promo_in(c.get("title") or "") if guessed and not neutral else (None if guessed else promotion(key, c)) # unknown name: its report's photo, else the story's promotion
     if pr:
         if art and enrich.shows(c.get("title") or ""): return done(art[0], "event-art")
+        # before a placeholder for a person story (owner rule 2026-10-23): a photo of them another story already confirmed,
+        # then a photo from one of this story's reports whose headline is about them alone
+        alt = person_photo(key, names, story_pro, story_txt, c["id"], vis_ok)
+        if alt: return done(alt[0], "key-other-story", alt[1])
+        rp = report_photo(neutral, msrc, key)
+        if rp: return done(rp, "report-photo", keep=not unknown)
         return done(PROMO_CARD.format(pr), "promo-logo:" + pr, keep=not unknown)
     if neutral: return done(neutral[0], "person-photo-unverified", keep=not unknown)
     if art: return done(art[0], "event-art")

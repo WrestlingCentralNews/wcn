@@ -228,6 +228,12 @@ def gate(c, bylink):
     want = sorted({CAT[p] for p in ft if p in CAT}, key=["WWE", "AEW", "TNA", "Indie", "Global"].index)
     if want and not set(want) & set(c.get("categories") or []):
         fixes.append(f"tag {c.get('categories')} -> {want}"); c["categories"] = want
+    # 3b. tags follow the subject's CURRENT promotion (official rosters, current.py): a promotion they've left that the story
+    # names only as history ('rose to prominence in TNA') is dropped, their current one leads (owner rule 2026-10-23, Joe Hendry)
+    try:
+        import current; n = current.fix_tags(c)
+        if n: fixes.append(n)
+    except Exception as e: print("current-promo tags: error (ignored)", repr(e)[:120], flush=True)
     # 4. new signing vs re-signing
     ks = kinds(c, bylink); tk = enrich.signing_kind(t) or enrich.signing_kind(c.get("raw_title") or "")
     n, r = ks.count("new"), ks.count("re-sign")
