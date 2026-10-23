@@ -317,7 +317,7 @@ def person_photo(key, names, story_pro, story_txt, cid=None, vision_ok=False):
     seen, out = set(), []
     for k_, v in _PIX[1].get(key, []):
         u = v.get("image")
-        if not u or u in seen or str(u).startswith(PROMO_CARD[:40]) or k_.split("|")[1] == cid: continue
+        if not u or u in seen or str(u).startswith(PROMO_CARD[:40]) or k_.split("|")[1] == cid or not solo_photo(u, key): continue
         seen.add(u)
         try:
             if imgmeta.unusable(u): continue
@@ -331,13 +331,51 @@ def person_photo(key, names, story_pro, story_txt, cid=None, vision_ok=False):
     if not out: return None
     out.sort(key=lambda x: (x[0], x[1]), reverse=True)
     return out[0][2], out[0][3]
+# owner rule 2026-10-23 (Cyndi Lauper story got a Penta photo, a CMLL title change got PAC, a Honolulu house show got Liv Morgan):
+# a photo confirmed on ANOTHER story (or an unverified report photo) is only reused when the published headline is about exactly
+# that one person: they are its first-named subject (only a promotion / title / 'former' in front of the name), it names no other
+# wrestler, and it isn't a results / event / vs / roundup / multi-person story. A key person taken from the SOURCE headline because
+# the published one names nobody is never enough. Photos that show more than one wrestler (posters, group shots, screenshots) are
+# never reused (reuse_block.json lists the ones found by hand; a file name / caption naming anyone else or 'vs' also blocks).
+_PRE_OK = re.compile(r"(?i)^(?:(?:wwe|aew|tna|nxt|roh|njpw|cmll|aaa|stardom|noah|mlw|gcw|nwa|raw|smackdown|impact|collision|dynamite|"
+                     r"former|current|new|reigning|interim|undisputed|world|women'?s|men'?s|tbs|tnt|tv|national|continental|international|"
+                     r"intercontinental|united states|us|north american|x-division|heavyweight|tag(?: team)?|title|champion|star|"
+                     r"legend|veteran|hall of famer|the)\b[\s'’:,-]*)*$")
+_ROUND_RX = re.compile(r"(?i)\b(notes?|roundup|round-up|and more|plus|news|report|results?|recap|preview|lineup|live|tonight|show|"
+                       r"house show|event|tour|episode|poster|trailer|documentary|card|tournament|league|faction|stable|joins?|unite|"
+                       r"tag team|teams?)\b")
+def _block():
+    try: return {re.sub(r"[?#].*$", "", u) for u in json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "reuse_block.json"))).get("images", [])}
+    except Exception: return set()
+_BLOCK = _block()
+def blocked(u): return re.sub(r"[?#].*$", "", str(u or "")) in _BLOCK
+def solo_subject(c, key):
+    """True if card c's PUBLISHED headline is about the key person alone (see the 2026-10-23 rule above)."""
+    if not key: return False
+    if ((c.get("kind") or {}).get("type") or "") in ("results", "event", "preview", "card"): return False
+    t = canon(c.get("title") or "")
+    if not t or not names_key(t, key) or _ONE_RX.search(t) or _ROUND_RX.search(t): return False
+    sub = enrich.subjects(t)
+    if not sub or not all(names_key(x, key) for x in sub): return False
+    P = _pnames(t)
+    first = next((p for p in P if names_key(p[0], key)), None)
+    if not first or any(not names_key(p[0], key) for p in P): return False
+    kw = {w.lower() for w in first[0].split()}       # canon() can leave the source's own first name in front ('Ilja Ilja Dragunov')
+    pre = " ".join(w for w in t[:first[1]].split() if w.lower().strip("'’:,") not in kw)
+    return bool(_PRE_OK.match(pre.strip()))
+def solo_photo(u, key):
+    """True if photo u may be reused for the key person: not hand-blocked, its file name / caption names nobody else, no 'vs'."""
+    if blocked(u) or re.search(r"(?i)screen[-_ ]?shot|collage|poster|flyer|graphic|instagram", str(u)): return False
+    L = enrich._fname_words(u) + " | " + label(u)
+    if re.search(r"(?i)(?<![a-z0-9])(vs|versus)(?![a-z0-9])", L) or re.search(r"[a-z]vs ?[A-Z]", L): return False   # 'Nic Nemethvs Leon Slater'
+    return all(names_key(x, key) for x in enrich.subjects(L))
 _ONE_RX = re.compile(r"(?i)\b(vs\.?|versus|v\.|results?|recap|card|match(?:es)?|battles?|faces?|against|teams? with|and|&)\b")
 def report_photo(neutral, msrc, key):
     """A still-unverified photo from a report whose own headline names the key person and no other wrestler, and isn't a
     match/results piece (those show opponents): very likely the subject. None otherwise."""
     for u in neutral:
         h = msrc.get(u) or ""
-        if not h or _ONE_RX.search(h): continue
+        if not h or _ONE_RX.search(h) or not solo_photo(u, key): continue
         sub = enrich.subjects(h)
         if sub and all(names_key(x, key) for x in sub) and names_key(h, key): return u
     return None
@@ -378,9 +416,11 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     if k in C and C[k].get("image") and not str(C[k]["image"]).startswith(PROMO_CARD[:40]):
         _L = label(C[k]["image"])          # cached pick made before the label rules: re-check its file name (free, no fetch)
         if others_named(_L, key, names) or enrich.foreign_promo(C[k]["image"], story_pro, _L, msrc.get(C[k]["image"], ""), story_txt)[0]: del C[k]
+    solo = solo_subject(c, key)
+    if k in C and C[k].get("st") in ("key-other-story", "report-photo") and (not solo or not solo_photo(C[k].get("image"), key)): del C[k]   # picked before the 2026-10-23 rule
     if k in C and str(C[k].get("st", "")).startswith("promo-logo:") and not guessed:
         # placeholder picked earlier: free re-check (official roster says another promotion now, or a photo of them exists now)
-        if promotion(key, c) != C[k]["st"].split(":", 1)[1] or person_photo(key, names, story_pro, story_txt, c["id"]): del C[k]
+        if promotion(key, c) != C[k]["st"].split(":", 1)[1] or (solo and person_photo(key, names, story_pro, story_txt, c["id"])): del C[k]
     if k in C and not (bf and not str(C[k].get("st", "")).startswith("key")):
         if C[k].get("st") == "wcn-card" and not C[k].get("image") and not guessed:   # roster lists updated since: free re-check for the promotion card
             pr = promotion(key, c)
@@ -427,13 +467,15 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     # nothing clearly shows the key person: (1) the logo card of the promotion they work for (show/event art when the story is
     # about a specific show), (2) people with no promotion: a photo from the story's own reports, (3) the WCN card (None)
     pr = promo_in(c.get("title") or "") if guessed and not neutral else (None if guessed else promotion(key, c)) # unknown name: its report's photo, else the story's promotion
+    if not names_key(c.get("title") or "", key):   # key only from the source headline (published one names nobody): the story's own promotion card
+        pr = promo_in(c.get("title") or "") or promo_in(c.get("raw_title") or "") or pr
     if pr:
         if art and enrich.shows(c.get("title") or ""): return done(art[0], "event-art")
         # before a placeholder for a person story (owner rule 2026-10-23): a photo of them another story already confirmed,
         # then a photo from one of this story's reports whose headline is about them alone
-        alt = person_photo(key, names, story_pro, story_txt, c["id"], vis_ok)
+        alt = person_photo(key, names, story_pro, story_txt, c["id"], vis_ok) if solo else None
         if alt: return done(alt[0], "key-other-story", alt[1])
-        rp = report_photo(neutral, msrc, key)
+        rp = report_photo(neutral, msrc, key) if solo else None
         if rp: return done(rp, "report-photo", keep=not unknown)
         return done(PROMO_CARD.format(pr), "promo-logo:" + pr, keep=not unknown)
     if neutral: return done(neutral[0], "person-photo-unverified", keep=not unknown)

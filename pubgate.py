@@ -23,6 +23,7 @@ PROMO_CARD = "https://wrestlingcentralnews.com/img/promo/{}.jpg"
 ART_IMG = re.compile(r"(?i)pwtorch\.com/.*/uploads/.*(?:_GG_|Tesch|3x2_600\.)")
 CAT = {"wwe": "WWE", "aew": "AEW", "tna": "TNA", "njpw": "Global", "cmll": "Global", "aaa": "Global", "stardom": "Global",
        "mlw": "Indie", "gcw": "Indie", "nwa": "Indie"}
+ROUNDUP = re.compile(r"(?i)\b(notes|roundup|round-up|and more)\b|&\s*more\b")
 def _art(c): return {"raw_title": c.get("raw_title") or "", "title": c.get("title") or ""}
 def names_in(t, names):
     low = enrich.canon(t or "").lower()
@@ -207,6 +208,13 @@ def gate(c, bylink):
             new = enrich.headline(c["raw_title"], (c.get("kind") or {}).get("type"))
             fixes.append(f"nameless headline '{c['title']}' -> '{new}'"); c["title"] = new
         elif T(c.get("raw_title")): holds.append("headline doesn't name who it is about")
+    # 1b. (2026-10-23, 'Cyndi Lauper Announces Las Vegas Residency') a rewrite of a wrestling notes roundup that led with its
+    # non-wrestling item (names no wrestler, promotion or show while the source headline does) -> the source headline
+    rt = c.get("raw_title") or ""; tt = c.get("title") or ""
+    if not c.get("pinned") and ROUNDUP.search(rt) and enrich.subjects(rt) \
+            and not (enrich.subjects(tt) or enrich.promos(tt) or enrich.shows(tt)):
+        new = enrich.headline(rt, (c.get("kind") or {}).get("type"))
+        fixes.append(f"roundup headline led with a non-wrestling item '{tt}' -> '{new}'"); c["title"] = new
     nw = combat.nonwrestling(c)
     if nw: holds.append(nw)
     t = c.get("title") or ""; s = c.get("summary") or ""
