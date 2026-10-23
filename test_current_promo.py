@@ -91,6 +91,7 @@ class Placeholder(Base):
         bad = "https://cdn.example/maxresdefault-182.jpg"
         vision._C["v2|" + bad + "|Joe Hendry"] = {"ok": False, "who": "unknown"}; vision._VI = None
         c = {**HENDRY, "image": bad, "member_src": {bad: HENDRY["raw_title"]}}
+        vision.CARD_TITLES = {"cOTHER": "Joe Hendry Reveals Favorite WWE Entrances", "cQ": "Joe Hendry Faces Randy Orton"}   # source cards (2026-10-23 rule)
         img, _, st = vision.choose(c, [bad], fetch=False)
         self.assertEqual((img, st), (good, "key-other-story"))
     def test_tna_era_photo_not_reused(self):

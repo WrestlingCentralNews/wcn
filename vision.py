@@ -318,6 +318,7 @@ def person_photo(key, names, story_pro, story_txt, cid=None, vision_ok=False):
     for k_, v in _PIX[1].get(key, []):
         u = v.get("image")
         if not u or u in seen or str(u).startswith(PROMO_CARD[:40]) or k_.split("|")[1] == cid or not solo_photo(u, key): continue
+        if not solo_source(CARD_TITLES.get(k_.split("|")[1]), key): continue   # source card gone, or about more than this person
         seen.add(u)
         try:
             if imgmeta.unusable(u): continue
@@ -369,6 +370,15 @@ def solo_photo(u, key):
     L = enrich._fname_words(u) + " | " + label(u)
     if re.search(r"(?i)(?<![a-z0-9])(vs|versus)(?![a-z0-9])", L) or re.search(r"[a-z]vs ?[A-Z]", L): return False   # 'Nic Nemethvs Leon Slater'
     return all(names_key(x, key) for x in enrich.subjects(L))
+CARD_TITLES = {}   # id -> published headline of every card in this run (aggregator sets it before picking photos)
+def solo_source(t, key):
+    """True if the headline of the card a photo was confirmed on is about the key person and names no other wrestler
+    ('Queen Aminata earns TBS title shot vs Persephone' -> its poster shows both; 'Damian Priest Dismisses R-Truth's Injury
+    Post' -> a Priest/R-Truth ring photo). Unknown source (card no longer listed) -> False."""
+    if not t: return False
+    t = canon(t)
+    if not names_key(t, key) or re.search(r"(?i)\b(vs\.?|versus|against|teams? with|and|&)\b|&", t): return False
+    return all(names_key(x, key) for x in enrich.subjects(t)) and all(names_key(p[0], key) for p in _pnames(t))
 _ONE_RX = re.compile(r"(?i)\b(vs\.?|versus|v\.|results?|recap|card|match(?:es)?|battles?|faces?|against|teams? with|and|&)\b")
 def report_photo(neutral, msrc, key):
     """A still-unverified photo from a report whose own headline names the key person and no other wrestler, and isn't a
@@ -418,6 +428,7 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
         if others_named(_L, key, names) or enrich.foreign_promo(C[k]["image"], story_pro, _L, msrc.get(C[k]["image"], ""), story_txt)[0]: del C[k]
     solo = solo_subject(c, key)
     if k in C and C[k].get("st") in ("key-other-story", "report-photo") and (not solo or not solo_photo(C[k].get("image"), key)): del C[k]   # picked before the 2026-10-23 rule
+    if k in C and C[k].get("st") == "key-other-story" and (person_photo(key, names, story_pro, story_txt, c["id"]) or (None,))[0] != C[k].get("image"): del C[k]   # its source card no longer qualifies
     if k in C and str(C[k].get("st", "")).startswith("promo-logo:") and not guessed:
         # placeholder picked earlier: free re-check (official roster says another promotion now, or a photo of them exists now)
         if promotion(key, c) != C[k]["st"].split(":", 1)[1] or (solo and person_photo(key, names, story_pro, story_txt, c["id"])): del C[k]

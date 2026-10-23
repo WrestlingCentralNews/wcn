@@ -15,6 +15,7 @@ class Base(unittest.TestCase):
     def setUp(self):
         vision._C = {"choice3|cother000001|PAC|abcd1234": {"image": PAC_IMG, "credit": None, "st": "key-labelled", "key": "PAC"}}
         vision._PAGES.clear(); vision._PIX = None; vision.save = lambda: None
+        vision.CARD_TITLES = {"cother000001": "PAC Signs New AEW Contract"}
         self._un = imgmeta.unusable; imgmeta.unusable = lambda u: False
     def tearDown(self): imgmeta.unusable = self._un
 class Headline(Base):
@@ -53,6 +54,11 @@ class Photo(Base):
         self.assertFalse(vision.solo_photo("https://x.com/2026/10/dominik-mysterio-explains-why-seth-rollins-is-a-significant-figure.jpg", "Dominik Mysterio"))
         # hand-blocked (reuse_block.json): Jericho / Nick Wayne match graphic
         self.assertFalse(vision.solo_photo("https://d1fcaprh3kb5t7.cloudfront.net/wp-content/uploads/2026/10/06065959/HT75eXxXsAA69Aa-scaled.jpeg?v=1", "Chris Jericho"))
+    def test_source_card_must_be_about_them_alone(self):
+        self.assertFalse(vision.solo_source("Queen Aminata earns TBS title shot vs Persephone", "Persephone"))
+        self.assertFalse(vision.solo_source("Damian Priest Dismisses R-Truth's Injury Post", "Damian Priest"))
+        self.assertFalse(vision.solo_source(None, "PAC"))
+        self.assertTrue(vision.solo_source("Dominik Mysterio Skips NXT Training For Main Roster", "Dominik Mysterio"))
 class Choose(Base):
     def test_cmll_story_never_gets_pac(self):
         c = card("CMLL Title Change Ends 931-Day Reign", raw="CMLL Roundup: Tom Cruise respects lucha libre, Kemalito honors PAC, & more!")
@@ -67,6 +73,12 @@ class Choose(Base):
     def test_single_subject_story_reuses(self):
         c = card("PAC Returns To Training After Injury")
         self.assertEqual(vision.choose(c, [], budget_ok=False, fetch=False)[:3:2], (PAC_IMG, "key-other-story"))
+    def test_source_gone_no_reuse(self):
+        vision.CARD_TITLES = {}
+        self.assertNotEqual(vision.choose(card("PAC Returns To Training After Injury"), [], budget_ok=False, fetch=False)[0], PAC_IMG)
+    def test_source_multi_person_no_reuse(self):
+        vision.CARD_TITLES = {"cother000001": "PAC vs Will Ospreay Set For Dynamite"}
+        self.assertNotEqual(vision.choose(card("PAC Returns To Training After Injury"), [], budget_ok=False, fetch=False)[0], PAC_IMG)
 class Roundup(unittest.TestCase):
     def test_nonwrestling_lead_falls_back(self):
         c = card("Cyndi Lauper Announces Las Vegas Residency",
