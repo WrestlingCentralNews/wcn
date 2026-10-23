@@ -233,7 +233,11 @@ def promotion(key, c):
     free agents, retirees, legends/commentators, celebrities, people who just left or died, and unknown names."""
     import editorial
     k = key.lower(); t = c.get("title") or ""
-    if NOT_WITH.search(t): return None
+    if NOT_WITH.search(t):
+        # free agent / between promotions (owner rule 2026-10-23): the LAST promotion they were signed to if they left within
+        # ~6 months (departed.py: hand table, official roster drop-offs, story text), else None (WCN card). Died/retired: None.
+        if re.search(r"(?i)\b(died|dies|death|passe[sd] away|retire[sd]?|retirement)\b", t): return None
+        return free_agent(key, c) or None
     try:   # look-back story about a promotion they've since left ('Chris Sabin Recalls ... TNA'): their current promotion's card
         import current; np_ = current.now_promo(key, c)
         if np_: return np_
@@ -253,7 +257,19 @@ def promotion(key, c):
     tp = promo_in(t)
     if not brands:   # not on our roster lists (lists lag behind signings): the story itself says they compete/signed there
         if tp and tp in ("wwe", "aew", "tna", "nxt", "roh") and re.search(r"(?i)\b(retains?|wins?|won|beats?|defeats?|debuts?|signs?|signed|captures?|crowned|champions?|deal|contract)\b", t): return tp
-        return None
+        return free_agent(key, c) or None
+    return _listed(key, c, brands, t, k)
+def free_agent(key, c):
+    """Last promotion (lower case) of someone on no current official roster who left it within departed.RECENT; '' if they
+    left longer ago; None if unknown or still listed somewhere."""
+    try:
+        import current, departed
+        on, off = current.official(key)
+        if on: return None
+        return departed.card(key, c)
+    except Exception: return None
+def _listed(key, c, brands, t, k):
+    tp = promo_in(t)
     named = {k_ for k_, rx in PROMO_TXT if re.search(rx, t, re.I)}
     own = {b.lower() for b in brands} | ({"nxt"} if "WWE" in brands else set()) | ({"roh"} if "AEW" in brands else set())
     if tp and not named & own and re.search(r"(?i)\b(results?|card|tag match|show|event|tour|episode|teams? with|appears? (at|in|on))\b", t):
@@ -439,6 +455,9 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
         if promotion(key, c) != C[k]["st"].split(":", 1)[1] or (solo and person_photo(key, names, story_pro, story_txt, c["id"])): del C[k]
     if k in C and not (bf and not str(C[k].get("st", "")).startswith("key")):
         if C[k].get("st") == "wcn-card" and not C[k].get("image") and not guessed:   # roster lists updated since: free re-check for the promotion card
+            alt = person_photo(key, names, story_pro, story_txt, c["id"]) if solo else None   # photo of them first (2026-10-23)
+            if alt:
+                C[k] = {"image": alt[0], "credit": alt[1], "st": "key-other-story", "key": key}; return alt[0], alt[1], "key-other-story"
             pr = promotion(key, c)
             if pr:
                 C[k] = {"image": PROMO_CARD.format(pr), "credit": None, "st": "promo-logo:" + pr, "key": key}; return C[k]["image"], None, "promo-logo:" + pr
@@ -494,6 +513,9 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
         rp = report_photo(neutral, msrc, key) if solo else None
         if rp: return done(rp, "report-photo", keep=not unknown)
         return done(PROMO_CARD.format(pr), "promo-logo:" + pr, keep=not unknown)
+    if solo and not guessed:   # no promotion (free agent who left long ago, retiree, ...): a confirmed photo of them before the WCN card
+        alt = person_photo(key, names, story_pro, story_txt, c["id"], vis_ok)
+        if alt: return done(alt[0], "key-other-story", alt[1])
     if neutral: return done(neutral[0], "person-photo-unverified", keep=not unknown)
     if art: return done(art[0], "event-art")
     return done(None, "wcn-card", keep=not unknown)
