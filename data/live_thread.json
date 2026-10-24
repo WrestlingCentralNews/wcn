@@ -1,0 +1,908 @@
+{
+"shows": {
+"2026-10-19-wwe-raw": {
+"root": "2112342773332594876",
+"last": "2112375058056515777",
+"root_at": 1792456737,
+"items": [
+{
+"kind": "seg",
+"ref": "s:roman reigns,sami zayn",
+"tweet": "2112345102232224195",
+"at": 1792457290,
+"key": "roman reigns,sami zayn"
+},
+{
+"kind": "match",
+"ref": "m:m1",
+"tweet": "2112346117123756120",
+"at": 1792457532,
+"fact": {
+"winner": "Penta",
+"loser": "Bron Breakker"
+}
+},
+{
+"kind": "match",
+"ref": "m:m2",
+"tweet": "2112348682683310222",
+"at": 1792458142,
+"fact": {
+"winner": "Chelsea Green & Iyo Sky",
+"loser": "Roxanne Perez and Raquel Rodriguez"
+}
+},
+{
+"kind": "seg",
+"ref": "s:carmelo hayes,the 946",
+"tweet": "2112352255470895365",
+"at": 1792458993,
+"key": "carmelo hayes,the 946"
+},
+{
+"kind": "seg",
+"ref": "s:jd mcdonagh,joe hendry",
+"tweet": "2112352259984048286",
+"at": 1792458993,
+"key": "jd mcdonagh,joe hendry"
+},
+{
+"kind": "seg",
+"ref": "s:lola vice,lyra valkyria",
+"tweet": "2112355842884350176",
+"at": 1792459849,
+"key": "lola vice,lyra valkyria"
+},
+{
+"kind": "seg",
+"ref": "s:adam pearce,becky lynch,stephanie vaquer",
+"tweet": "2112358902742282502",
+"at": 1792460578,
+"key": "adam pearce,becky lynch,stephanie vaquer"
+},
+{
+"kind": "match",
+"ref": "m:m3",
+"tweet": "2112362965118992519",
+"at": 1792461546,
+"fact": {
+"winner": "JD McDonagh",
+"loser": "Joe Hendry"
+}
+},
+{
+"kind": "match",
+"ref": "m:m4",
+"tweet": "2112362968977723712",
+"at": 1792461546,
+"fact": {
+"winner": "Lola Vice",
+"loser": "Lyra Valkyria"
+}
+},
+{
+"kind": "seg",
+"ref": "s:big cass,chad gable,dragon lee,ethan page,rey mysterio",
+"tweet": "2112364991344972090",
+"at": 1792462029,
+"key": "big cass,chad gable,dragon lee,ethan page,rey mysterio"
+},
+{
+"kind": "seg",
+"ref": "s:the usos",
+"tweet": "2112366112558153808",
+"at": 1792462295,
+"key": "the usos"
+},
+{
+"kind": "match",
+"ref": "m:m5",
+"tweet": "2112375058056515777",
+"at": 1792464429,
+"fact": {
+"winner": "Chad Gable",
+"loser": "Dragon Lee and Rey Mysterio"
+}
+}
+],
+"seeded": true,
+"seg_at": 1792464429.932738,
+"seg_hash": "fe48eb975c3a",
+"seg_cand": {
+"roman reigns,sami zayn": {
+"first": 1792457290.490884,
+"seen": 1,
+"s": "Sami Zayn enters the ring and asks fans to ride or die with him before Roman Reigns interrupts. The two embrace as Reigns questions Zayn's motives and demands acknowledgment from the crowd while they debate their titles and history."
+},
+"carmelo hayes,the 946": {
+"first": 1792458993.1595018,
+"seen": 1,
+"s": "The 946 including newest member Carmelo Hayes appear via FaceTime in a promo declaring that nobody is safe."
+},
+"jd mcdonagh,joe hendry": {
+"first": 1792458993.1595018,
+"seen": 1,
+"s": "JD McDonagh and Dominik Mysterio head to the ring followed by Joe Hendry and a life-size Funko Pop version of McDonagh."
+},
+"lola vice,lyra valkyria": {
+"first": 1792459605.247102,
+"seen": 2,
+"s": "Earlier today Lyra Valkyria accidentally hit Lola Vice thinking it was Bayley. A recap shows Bayley costing Valkyria a match against Sol Ruca."
+},
+"adam pearce,becky lynch,stephanie vaquer": {
+"first": 1792460578.0767334,
+"seen": 1,
+"s": "In the medical office Stephanie Vaquer has her ankle taped and is out at least another week. Becky Lynch demands a title shot but Pearce books her versus Vaquer once cleared to determine the next contender for Liv Morgan."
+},
+"big cass,chad gable,dragon lee,ethan page,rey mysterio": {
+"first": 1792462029.5530703,
+"seen": 1,
+"s": "After the match Ethan Page attacked Rey Mysterio and Chad Gable. Big Cass attacked Dragon Lee and chokeslammed him on the barricade then booted Rey. Page hit two EgoPlexes on Gable."
+},
+"the usos": {
+"first": 1792462295.3143606,
+"seen": 1,
+"s": "The Usos arrive backstage with a baseball bat and chair heading to the ring."
+}
+},
+"last_at": 1792464429
+},
+"2026-10-20-wwe-nxt": {
+"items": [
+{
+"kind": "seg",
+"ref": "s:kelani jordan,wren sinclair",
+"tweet": "2112696970464661931",
+"at": 1792541182,
+"key": "kelani jordan,wren sinclair"
+},
+{
+"kind": "seg",
+"ref": "s:grayson waller,tony d'angelo",
+"tweet": "2112698000271352098",
+"at": 1792541427,
+"key": "grayson waller,tony d'angelo"
+},
+{
+"kind": "seg",
+"ref": "s:izzi dame,layla diggs",
+"tweet": "2112705759180124351",
+"at": 1792543275,
+"key": "izzi dame,layla diggs"
+},
+{
+"kind": "seg",
+"ref": "s:charlie dempsey,lexis king",
+"tweet": "2112705762506219991",
+"at": 1792543275,
+"key": "charlie dempsey,lexis king"
+},
+{
+"kind": "seg",
+"ref": "s:chantel monroe",
+"tweet": "2112705762506219991",
+"at": 1792543275,
+"key": "chantel monroe"
+},
+{
+"kind": "match",
+"ref": "m:m1",
+"tweet": "2112707202628956518",
+"at": 1792543620,
+"fact": {
+"winner": "El Hijo del Dr. Wagner Jr. & Galeno",
+"loser": "Birthright"
+}
+},
+{
+"kind": "seg",
+"ref": "s:zilla fatu",
+"tweet": "2112707205703303305",
+"at": 1792543620,
+"key": "zilla fatu"
+},
+{
+"kind": "seg",
+"ref": "s:cruz montana,darkstate",
+"tweet": "2112707208639283324",
+"at": 1792543620,
+"key": "cruz montana,darkstate"
+},
+{
+"kind": "seg",
+"ref": "s:myles borne,tavion heights",
+"tweet": "2112708218992386350",
+"at": 1792543861,
+"key": "myles borne,tavion heights"
+},
+{
+"kind": "seg",
+"ref": "s:robert stone,vanity project",
+"tweet": "2112709291346198536",
+"at": 1792544117,
+"key": "robert stone,vanity project"
+},
+{
+"kind": "match",
+"ref": "m:m2",
+"tweet": "2112712258929537383",
+"at": 1792544828,
+"fact": {
+"winner": "Izzi Dame",
+"loser": "Layla Diggs"
+}
+},
+{
+"kind": "match",
+"ref": "m:m3",
+"tweet": "2112717896681955712",
+"at": 1792546172,
+"fact": {
+"winner": "Hank Walker and Tank Ledger",
+"loser": "The Creed Brothers"
+}
+},
+{
+"kind": "seg",
+"ref": "s:kam hendrix",
+"tweet": "2112718467053101557",
+"at": 1792546303,
+"key": "kam hendrix"
+},
+{
+"kind": "seg",
+"ref": "s:izzy dame,zaria",
+"tweet": "2112724070571635035",
+"at": 1792547642,
+"key": "izzy dame,zaria"
+}
+],
+"root": "2112694924244090989",
+"last": "2112724070571635035",
+"root_at": 1792540695,
+"seg_at": 1792548240.45824,
+"seg_hash": "b19d10cebdda",
+"seg_cand": {
+"kelani jordan,wren sinclair": {
+"first": 1792540695.9387105,
+"seen": 2,
+"s": "A contract signing takes place involving Wren Sinclair and Kelani Jordan."
+},
+"tony d'angelo": {
+"first": 1792541182.2618687,
+"seen": 2,
+"s": "Tony D'Angelo calls out Grayson Waller to the ring. Waller recalls their shared history, asks if D'Angelo is avoiding him, and demands a one-on-one match."
+},
+"izzi dame,layla diggs": {
+"first": 1792543002.4589448,
+"seen": 2,
+"s": "Footage from earlier shows Izzi Dame and Layla Diggs arguing in the women's locker room over Zaria and deciding to settle it in a match."
+},
+"ariana grace,charlie dempsey,lexis king": {
+"first": 1792543002.4589448,
+"seen": 2,
+"s": "Ariana Grace interrupts to deliver a promo from Lexis King and Charlie Dempsey claiming Birthright will win the Dusty Classic."
+},
+"chantel monroe": {
+"first": 1792543002.4589448,
+"seen": 2,
+"s": "A vignette airs introducing Chantel Monroe as pure entertainment who loves attention."
+},
+"zilla fatu": {
+"first": 1792543002.4589448,
+"seen": 3,
+"s": "After the match Zilla Fatu attacks Birthright, hitting a Samoan Drop on Charlie Dempsey."
+},
+"cruz montana,darkstate,dion lennox": {
+"first": 1792543002.4589448,
+"seen": 3,
+"s": "Backstage, DarkState watches Cruz Montana's promo. Dion Lennox says there will be casualties but he has a plan."
+},
+"myles borne,tavion heights": {
+"first": 1792543620.3023155,
+"seen": 2,
+"s": "Tavion Heights cuts a promo on Myles Borne's betrayal before Borne attacks him and they brawl to the parking lot."
+},
+"robert stone,vanity project": {
+"first": 1792543861.025038,
+"seen": 2,
+"s": "Vanity Project meets Robert Stone about their issues with Mini Vikingo. Stone says Vikingo is not cleared and informs Jackson Drake he defends the North American title against EK Prosper next week."
+},
+"kam hendrix": {
+"first": 1792544717.9926393,
+"seen": 2,
+"s": "The NXT Spotlight shines on Kam Hendrix who catches footballs from 10 feet away then does it again with a shirt over his head, calling himself the future."
+},
+"izzy dame,zaria": {
+"first": 1792547642.0080855,
+"seen": 1,
+"s": "Zaria confronts Izzi Dame in the ring over the bullying with old photos and offers her a women's north american championship match at halloween havoc. dame accepts."
+},
+"saquon shugars,sean legacy": {
+"first": 1792548240.4573615,
+"seen": 1,
+"s": "In the men's locker room, the group discusses EK Prosper's upcoming match until Saquon Shugars blasts NXT on his iPad. Sean Legacy criticizes him for wasting talent."
+},
+"naraku,shiloh hill": {
+"first": 1792548240.4573615,
+"seen": 1,
+"s": "In a taped promo, Naraku warns Shiloh Hill that after the red, green, orange, and blue mists, the black mist is far more dangerous and will kill him."
+}
+},
+"last_at": 1792547642
+},
+"2026-10-21-aew-dynamite": {
+"items": [
+{
+"kind": "match",
+"ref": "m:m1",
+"tweet": "2113061403393155320",
+"at": 1792628069,
+"fact": {
+"winner": "Mark Davis and Jake Doyle",
+"loser": "The Young Bucks"
+}
+},
+{
+"kind": "seg",
+"ref": "s:don callis,jake doyle,mark davis,young bucks",
+"tweet": "2113061407100899701",
+"at": 1792628069,
+"key": "don callis,jake doyle,mark davis,young bucks"
+},
+{
+"kind": "match",
+"ref": "m:m2",
+"tweet": "2113067668714525147",
+"at": 1792629565,
+"fact": {
+"winner": "Kyle Fletcher and Kevin Knight",
+"loser": "Will Ospreay & Adam Copeland"
+}
+},
+{
+"kind": "seg",
+"ref": "s:darby allin,kazuchika okada,steven borden",
+"tweet": "2113068134135742563",
+"at": 1792629673,
+"key": "darby allin,kazuchika okada,steven borden"
+},
+{
+"kind": "seg",
+"ref": "s:swerve strickland",
+"tweet": "2113068137252098298",
+"at": 1792629673,
+"key": "swerve strickland"
+},
+{
+"kind": "match",
+"ref": "m:m3",
+"tweet": "2113071888419184934",
+"at": 1792630571,
+"fact": {
+"winner": "Swerve Strickland",
+"loser": "Tome Filip"
+}
+},
+{
+"kind": "match",
+"ref": "m:m4",
+"tweet": "2113072393283366941",
+"at": 1792630688,
+"fact": {
+"winner": "Switchblade Jay White & Orange Cassidy",
+"loser": "Death Riders"
+}
+},
+{
+"kind": "seg",
+"ref": "s:jay white,orange cassidy",
+"tweet": "2113072396953387204",
+"at": 1792630688,
+"key": "jay white,orange cassidy"
+},
+{
+"kind": "seg",
+"ref": "s:callis family,copeland,okada,ospreay",
+"tweet": "2113073928109482342",
+"at": 1792631054,
+"key": "callis family,copeland,okada,ospreay"
+},
+{
+"kind": "seg",
+"ref": "s:marina shafir,mercedes mone",
+"tweet": "2113075213500060027",
+"at": 1792631359,
+"key": "marina shafir,mercedes mone"
+},
+{
+"kind": "match",
+"ref": "m:m5",
+"tweet": "2113081273316995572",
+"at": 1792632804,
+"fact": {
+"winner": "Jon Moxley",
+"loser": "Roderick Strong"
+}
+},
+{
+"kind": "seg",
+"ref": "s:bang bang gang,conglomeration,death riders,the dogs",
+"tweet": "2113081276248777125",
+"at": 1792632804,
+"key": "bang bang gang,conglomeration,death riders,the dogs"
+},
+{
+"kind": "seg",
+"ref": "s:brawling birds,divine dominion,sisters of sin,wrathlander",
+"tweet": "2113081279293899226",
+"at": 1792632804,
+"key": "brawling birds,divine dominion,sisters of sin,wrathlander"
+},
+{
+"kind": "seg",
+"ref": "s:nick wayne",
+"tweet": "2113082703159468467",
+"at": 1792633142,
+"key": "nick wayne"
+},
+{
+"kind": "seg",
+"ref": "s:chris jericho,nick wayne",
+"tweet": "2113082705915130326",
+"at": 1792633142,
+"key": "chris jericho,nick wayne"
+},
+{
+"kind": "match",
+"ref": "m:m6",
+"tweet": "2113088896284098879",
+"at": 1792634621,
+"fact": {
+"winner": "Queen Aminata",
+"loser": "Maya World"
+}
+},
+{
+"kind": "seg",
+"ref": "s:don callis family",
+"tweet": "2113088899643851208",
+"at": 1792634621,
+"key": "don callis family"
+},
+{
+"kind": "seg",
+"ref": "s:jungle jack perry,samoa joe",
+"tweet": "2113092286191939654",
+"at": 1792635429,
+"key": "jungle jack perry,samoa joe"
+},
+{
+"kind": "match",
+"ref": "m:m7",
+"tweet": "2113096338854293633",
+"at": 1792636400,
+"fact": {
+"winner": "Ilja Dragunov",
+"loser": "Speedball Mike Bailey"
+}
+},
+{
+"kind": "seg",
+"ref": "s:britt baker,persephone,queen aminata",
+"tweet": "2113097141828608288",
+"at": 1792636587,
+"key": "britt baker,persephone,queen aminata"
+}
+],
+"root": "2113056791437467745",
+"last": "2113097141828608288",
+"root_at": 1792626971,
+"seg_at": 1792636587.68532,
+"seg_hash": "1c817be4d90e",
+"seg_cand": {
+"don callis family,young bucks": {
+"first": 1792627801.9249098,
+"seen": 3,
+"s": "The Don Callis Family celebrates wins over The Young Bucks, Adam Copeland and Will Ospreay. They confirm a Blood & Guts match in two weeks against Ospreay, Copeland, Darby Allin, Sting and The Young Bucks."
+},
+"adam copeland,kevin knight,kyle fletcher,will ospreay": {
+"first": 1792628069.160747,
+"seen": 1,
+"s": "Adam Copeland and Will Ospreay head to the ring followed by Kyle Fletcher and Kevin Knight for their scheduled tag team match."
+},
+"highlights": {
+"first": 1792629673.0515435,
+"seen": 1,
+"s": "A video package airs recapping everything from WrestleDream."
+},
+"darby allin,kazuchika okada,steven borden": {
+"first": 1792629673.0515435,
+"seen": 1,
+"s": "After the match The Callis Family attacks until Darby Allin and Steven Borden arrive to fight them off. Borden challenges them to Blood & Guts."
+},
+"swerve strickland": {
+"first": 1792629673.0515435,
+"seen": 1,
+"s": "Swerve Strickland quickly defeats his opponent with a House Call and Vertebreaker."
+},
+"mercedes mone": {
+"first": 1792629673.0515435,
+"seen": 2,
+"s": "Renee Paquette introduces Mercedes Mone in the ring. Mone calls out Thekla and says she is the most dominant woman in wrestling and the spotlight. Marina Shafir comes out with Jon Moxley and gets in her face."
+},
+"wrestledream": {
+"first": 1792630125.9997675,
+"seen": 1,
+"s": "A highlight video recaps everything that took place at WrestleDream."
+},
+"jay white,orange cassidy": {
+"first": 1792630688.8351483,
+"seen": 1,
+"s": "Jay White and Orange Cassidy defeat Wheeler Yuta and Daniel Garcia."
+},
+"callis family,copeland,okada,ospreay": {
+"first": 1792631054.8672311,
+"seen": 1,
+"s": "Post-match the Callis Family beats down Ospreay and Copeland until Darby Allin, Steven Borden, and the Young Bucks run them off. Borden challenges them to Blood and Guts."
+},
+"bang bang gang,jon moxley,roderick strong,the dogs": {
+"first": 1792632554.074675,
+"seen": 2,
+"s": "Post-match, The Dogs attack Strong then blindside Moxley. Gabe Kidd intervenes before The Bang Bang Gang and Conglomeration join the fray. The Dogs and Bang Bang Gang turn heel, beating everyone down and standing tall."
+},
+"nick wayne": {
+"first": 1792632804.0925214,
+"seen": 3,
+"s": "Nick Wayne enters the ring, gloats about beating Chris Jericho twice and demands an apology. Jericho's music hits as Wayne calls him out for not being a man of his word."
+},
+"brawling birds,divine dominion,sisters of sin,wrathlander": {
+"first": 1792632804.0925214,
+"seen": 1,
+"s": "Divine Dominion and Sisters of Sin beat down The Brawling Birds, Harley Cameron and Kris Statlander. Thekla tells them to stop and the groups leave together."
+},
+"hangman,swerve": {
+"first": 1792633884.8105984,
+"seen": 1,
+"s": "Swerve Strickland demands a Texas Death Match rematch for the AEW World Trios Championship against Hangman Page, Brody King and Bandido at Full Gear. Page refuses the stipulation."
+},
+"jungle jack perry,samoa joe": {
+"first": 1792634986.4458964,
+"seen": 2,
+"s": "Samoa Joe tells The Opps he still wants the AEW World Title. Jungle Jack Perry confronts him over a past match and demands a rematch, which Joe accepts."
+},
+"don callis,okada,will ospreay": {
+"first": 1792636200.5600038,
+"seen": 1,
+"s": "The Don Callis Family celebrates wins over The Young Bucks, Adam Copeland and Will Ospreay. They confirm a Blood and Guts match in two weeks against Ospreay, Copeland, Darby Allin, Sting and The Young Bucks."
+},
+"britt baker,persephone,queen aminata": {
+"first": 1792636587.6834958,
+"seen": 1,
+"s": "Queen Aminata defeats Maya World to earn a TBS Title shot. Persephone and Britt Baker nearly attack post-match until Hyan and Maya World make the save."
+}
+},
+"last_at": 1792636587
+},
+"2026-10-22-tna-impact": {
+"items": [
+{
+"kind": "seg",
+"ref": "s:allie,kiera hogan",
+"tweet": "2113434166394233299",
+"at": 1792716942,
+"key": "allie,kiera hogan"
+},
+{
+"kind": "seg",
+"ref": "s:daria rae,indi hartwell",
+"tweet": "2113439300675158048",
+"at": 1792718167,
+"key": "daria rae,indi hartwell"
+},
+{
+"kind": "match",
+"ref": "m:m1",
+"tweet": "2113441438834819554",
+"at": 1792718678,
+"fact": {
+"winner": "Indi Hartwell",
+"loser": "Xia Brookside"
+}
+},
+{
+"kind": "seg",
+"ref": "s:leon slater,trey miguel",
+"tweet": "2113443808591454210",
+"at": 1792719239,
+"key": "leon slater,trey miguel"
+},
+{
+"kind": "seg",
+"ref": "s:xia brookside",
+"tweet": "2113446369830879461",
+"at": 1792719851,
+"key": "xia brookside"
+},
+{
+"kind": "seg",
+"ref": "s:amazing red,cedric alexander",
+"tweet": "2113447819017101764",
+"at": 1792720195,
+"key": "amazing red,cedric alexander"
+},
+{
+"kind": "seg",
+"ref": "s:agent zero,tasha steelz",
+"tweet": "2113447823349809258",
+"at": 1792720195,
+"key": "agent zero,tasha steelz"
+},
+{
+"kind": "seg",
+"ref": "s:aj francis,expressions,john skyler,mila moore",
+"tweet": "2113449316001910802",
+"at": 1792720552,
+"key": "aj francis,expressions,john skyler,mila moore"
+},
+{
+"kind": "seg",
+"ref": "s:avery styles,frankie kazarian,the hardys",
+"tweet": "2113450944029417958",
+"at": 1792720938,
+"key": "avery styles,frankie kazarian,the hardys"
+},
+{
+"kind": "match",
+"ref": "m:m2",
+"tweet": "2113452545523761437",
+"at": 1792721321,
+"fact": {
+"winner": "Avery Styles",
+"loser": "Joe Alonzo"
+}
+},
+{
+"kind": "seg",
+"ref": "s:elayna black,jada stone,m by elegance",
+"tweet": "2113452549063721363",
+"at": 1792721321,
+"key": "elayna black,jada stone,m by elegance"
+},
+{
+"kind": "seg",
+"ref": "s:santino marella",
+"tweet": "2113457131315925387",
+"at": 1792722415,
+"key": "santino marella"
+},
+{
+"kind": "seg",
+"ref": "s:harley hudson,the righteous",
+"tweet": "2113457134499471482",
+"at": 1792722415,
+"key": "harley hudson,the righteous"
+},
+{
+"kind": "match",
+"ref": "m:m3",
+"tweet": "2113464127276347515",
+"at": 1792724083,
+"fact": {
+"winner": "Cedric Alexander",
+"loser": "Rich Swann, KC Navarro, and Fabian Aichner"
+}
+},
+{
+"kind": "match",
+"ref": "m:m4",
+"tweet": "2113465912359547286",
+"at": 1792724510,
+"fact": {
+"winner": "Jason Hotch",
+"loser": "Mustafa Ali"
+}
+},
+{
+"kind": "seg",
+"ref": "s:elijah,ryan nemeth",
+"tweet": "2113465916079944110",
+"at": 1792724510,
+"key": "elijah,ryan nemeth"
+}
+],
+"root": "2113434155958821286",
+"last": "2113465916079944110",
+"root_at": 1792716942,
+"seg_at": 1792727477.1710992,
+"seg_hash": "7ac11595c2d5",
+"seg_cand": {
+"allie,kiera hogan": {
+"first": 1792716942.1975255,
+"seen": 1,
+"s": "Kiera Hogan and Allie address the Knockouts division after losing the tag team titles at Bound for Glory."
+},
+"daria rae": {
+"first": 1792716942.1975255,
+"seen": 2,
+"s": "Daria Rae returns from suspension and heads to the ring to address the Knockouts division and Indi Hartwell. Hartwell comes out to confront her before Xia Brookside also appears."
+},
+"leon slater,trey miguel": {
+"first": 1792718887.910231,
+"seen": 2,
+"s": "World Champion Leon Slater cuts a promo praising Trey Miguel ahead of their Destination X match with Miguel joining him for a respectful embrace."
+},
+"xia brookside": {
+"first": 1792719851.3940864,
+"seen": 1,
+"s": "A distraught Xia Brookside is shown backstage after her title loss. She holds two white flowers, drops her cape and walks off."
+},
+"amazing red,cedric alexander": {
+"first": 1792720195.9172294,
+"seen": 1,
+"s": "New number one contender Cedric Alexander is confronted in the ring by X-Division Champion Amazing Red as the two stare each other down and argue."
+},
+"agent zero,tasha steelz": {
+"first": 1792720195.9172294,
+"seen": 1,
+"s": "Tasha Steelz tells Agent Zero that Order 4 is finished, they shake hands, declare the mission accomplished, and she wishes him luck going forward."
+},
+"aj francis,expressions,john skyler,mila moore": {
+"first": 1792720552.920903,
+"seen": 1,
+"s": "AJ Francis praises Expressions for fighting the Hardys last week. Mila Moore and John Skyler interrupt and mock them, leading to a verbal confrontation where Francis books a match with Skyler for next week."
+},
+"avery styles,frankie kazarian,the hardys": {
+"first": 1792720938.3162231,
+"seen": 1,
+"s": "The Hardys wish Avery Styles luck in his upcoming match. Frankie Kazarian says he is ready and they head to the ring together."
+},
+"elayna black,jada stone,m by elegance": {
+"first": 1792721321.3463342,
+"seen": 1,
+"s": "M By Elegance declares herself leader of the Elegance brand. Elayna Black and Jada Stone confront her. M books Stone a title match and promises Black a future shot."
+},
+"santino marella": {
+"first": 1792722415.2022889,
+"seen": 1,
+"s": "Santino Marella announces the Destination X card including a Knockouts Ultimate X for number one contendership and the 2026 World X Cup with four-way matches leading to a champion."
+},
+"harley hudson,the righteous": {
+"first": 1792722415.2022889,
+"seen": 1,
+"s": "Harley Hudson tells The Righteous she is grateful for their help but Vincent and Dutch demand she decide by next week if she wants to join them."
+},
+"elijah,ryan nemeth": {
+"first": 1792724510.1750124,
+"seen": 1,
+"s": "Ryan Nemeth shows Elijah his new movie Stranglehold and warns him that Nic Nemeth will beat him."
+}
+},
+"last_at": 1792724510
+},
+"2026-10-23-wwe-smackdown": {
+"items": [
+{
+"kind": "seg",
+"ref": "s:candice lerae,johnny gargano,sami zayn",
+"tweet": "2113786041203302545",
+"at": 1792800836,
+"key": "candice lerae,johnny gargano,sami zayn"
+},
+{
+"kind": "match",
+"ref": "m:m1",
+"tweet": "2113791881402290462",
+"at": 1792802228,
+"fact": {
+"winner": "Chelsea Green",
+"loser": "Roxanne Perez"
+}
+},
+{
+"kind": "seg",
+"ref": "s:chelsea green,liv morgan,roxanne perez,tiffany stratton",
+"tweet": "2113791885277884676",
+"at": 1792802228,
+"key": "chelsea green,liv morgan,roxanne perez,tiffany stratton"
+},
+{
+"kind": "match",
+"ref": "m:m2",
+"tweet": "2113796969155977342",
+"at": 1792803442,
+"fact": {
+"winner": "Blake Monroe",
+"loser": "Giulia"
+}
+},
+{
+"kind": "seg",
+"ref": "s:nick aldis,sami zayn,trick williams",
+"tweet": "2113801693188026816",
+"at": 1792804567,
+"key": "nick aldis,sami zayn,trick williams"
+},
+{
+"kind": "seg",
+"ref": "s:cody rhodes,nick aldis,randy orton",
+"tweet": "2113801696824496366",
+"at": 1792804567,
+"key": "cody rhodes,nick aldis,randy orton"
+},
+{
+"kind": "match",
+"ref": "m:m3",
+"tweet": "2113805061713281413",
+"at": 1792805370,
+"fact": {
+"winner": "Michin and B-Fab",
+"loser": "Tatum Paxley & Alexa Bliss"
+}
+},
+{
+"kind": "seg",
+"ref": "s:cm punk,kevin owens,nick aldis",
+"tweet": "2113811140631241110",
+"at": 1792806818,
+"key": "cm punk,kevin owens,nick aldis"
+},
+{
+"kind": "seg",
+"ref": "s:bakusai,kyoki,mft,nakamura",
+"tweet": "2113811143982449131",
+"at": 1792806818,
+"key": "bakusai,kyoki,mft,nakamura"
+},
+{
+"kind": "match",
+"ref": "m:m4",
+"tweet": "2113814326590996599",
+"at": 1792807579,
+"fact": {
+"winner": "Penta, Rey Fenix, and Trick Williams",
+"loser": "Sami Zayn & Johnny Gargano"
+}
+}
+],
+"root": "2113781671694946456",
+"last": "2113814326590996599",
+"root_at": 1792799796,
+"seg_at": 1792808050.6058748,
+"seg_hash": "f825ba3d4075",
+"seg_cand": {
+"candice lerae,johnny gargano,sami zayn": {
+"first": 1792800467.5097358,
+"seen": 2,
+"s": "Sami Zayn addresses the crowd about his confrontation with Roman Reigns on Raw and lists several stars pursuing him. Rey Fenix interrupts to defend his brother Penta and warn Zayn."
+},
+"chelsea green,liv morgan,roxanne perez,tiffany stratton": {
+"first": 1792802228.5531542,
+"seen": 1,
+"s": "After Chelsea Green retains her title against Roxanne Perez, Liv Morgan attacks Green. Judgment Day joins the beatdown until Tiffany Stratton runs in for the save and hits Morgan with her Money in the Bank briefcase before attempting to cash in."
+},
+"nick aldis,sami zayn,trick williams": {
+"first": 1792804567.6112938,
+"seen": 1,
+"s": "Sami Zayn and Johnny Gargano confront Trick Williams and Rey Fenix in the ring. Williams demands a title shot and attacks Gargano. Nick Aldis appears and books Zayn and Gargano versus Williams and Fenix for tonight."
+},
+"cody rhodes,nick aldis,randy orton": {
+"first": 1792804567.6112938,
+"seen": 1,
+"s": "Randy Orton enters the ring to discuss Cody Rhodes punting Baron Corbin. Cody Rhodes joins him and calls Orton a coward. Nick Aldis intervenes and books them in a Last Man Standing match at Crown Jewel."
+},
+"bakusai,mft,shinsuke nakamura": {
+"first": 1792805850.047071,
+"seen": 2,
+"s": "The M.F.T.s face Bakusai but the match never starts as Kyoki steals Haku's staff and the teams brawl on the stage. Officials and agents break it up."
+},
+"cm punk,kevin owens,nick aldis": {
+"first": 1792806818.990586,
+"seen": 1,
+"s": "Nick Aldis announces CM Punk versus Kevin Owens for two weeks from now in Brooklyn. The pair sit down for a tense exchange where they trade accusations and insults until Aldis steps in to keep things professional."
+}
+},
+"last_at": 1792807579
+}
+}
+}

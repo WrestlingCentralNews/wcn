@@ -1,0 +1,484 @@
+{
+"key": "2026-10-21-aew-dynamite",
+"matches": [
+{
+"winner": "Mark Davis and Jake Doyle",
+"loser": "The Young Bucks",
+"stip": "AEW World Tag Team Championship",
+"title": "change",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": null,
+"id": "m1",
+"first_seen": 1792627768,
+"updated": 1792628039,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2292521/aew-dynamite-october-21-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-21-2026/"
+}
+],
+"order": 10026,
+"pos": {
+"Wrestling Inc": 26,
+"Wrestling Observer": 12
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Mark Davis and Jake Doyle beat The Young Bucks \u2014 NEW CHAMPIONS.",
+"es": "Mark Davis and Jake Doyle vencieron a The Young Bucks \u2014 \u00a1CAMBIO DE T\u00cdTULO!"
+},
+{
+"winner": "Kyle Fletcher and Kevin Knight",
+"loser": "Will Ospreay & Adam Copeland",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "Fletcher pinned Copeland",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1792629529,
+"updated": 1792629529,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-21-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2292521/aew-dynamite-october-21-2026-results/"
+}
+],
+"order": 20,
+"pos": {
+"Wrestling Observer": 20,
+"Wrestling Inc": 37
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Kyle Fletcher and Kevin Knight beat Will Ospreay & Adam Copeland by pinfall (Fletcher pinned Copeland).",
+"es": "Kyle Fletcher and Kevin Knight vencieron a Will Ospreay & Adam Copeland por conteo de tres (Fletcher cubri\u00f3 a Copeland)."
+},
+{
+"winner": "Swerve Strickland",
+"loser": "Tome Filip",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1792629845,
+"updated": 1792629845,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-21-2026/"
+}
+],
+"order": 24,
+"pos": {
+"Wrestling Observer": 24
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Swerve Strickland beat Tome Filip.",
+"es": "Swerve Strickland venci\u00f3 a Tome Filip."
+},
+{
+"winner": "Switchblade Jay White & Orange Cassidy",
+"loser": "Death Riders",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "White pinned Yuta",
+"field": null,
+"move": "",
+"id": "m4",
+"first_seen": 1792630654,
+"updated": 1792630654,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-21-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2292521/aew-dynamite-october-21-2026-results/"
+}
+],
+"order": 30,
+"pos": {
+"Wrestling Observer": 30,
+"Wrestling Inc": 56
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Switchblade Jay White & Orange Cassidy beat Death Riders by pinfall (White pinned Yuta).",
+"es": "Switchblade Jay White & Orange Cassidy vencieron a Death Riders por conteo de tres (White cubri\u00f3 a Yuta)."
+},
+{
+"winner": "Jon Moxley",
+"loser": "Roderick Strong",
+"stip": "AEW Continental Championship",
+"title": "retain",
+"fin_en": "by submission",
+"fin_es": "por rendici\u00f3n",
+"who": "",
+"field": null,
+"move": "",
+"id": "m5",
+"first_seen": 1792632767,
+"updated": 1792632767,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-21-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2292521/aew-dynamite-october-21-2026-results/"
+}
+],
+"order": 45,
+"pos": {
+"Wrestling Observer": 45,
+"Wrestling Inc": 72
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Jon Moxley beat Roderick Strong by submission to retain.",
+"es": "Jon Moxley venci\u00f3 a Roderick Strong por rendici\u00f3n y retuvo el t\u00edtulo."
+},
+{
+"winner": "Queen Aminata",
+"loser": "Maya World",
+"stip": "TBS Championship",
+"title": "change",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m6",
+"first_seen": 1792634585,
+"updated": 1792634585,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-21-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2292521/aew-dynamite-october-21-2026-results/"
+}
+],
+"order": 58,
+"pos": {
+"Wrestling Observer": 58,
+"Wrestling Inc": 98
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Queen Aminata beat Maya World \u2014 NEW CHAMPION.",
+"es": "Queen Aminata venci\u00f3 a Maya World \u2014 \u00a1CAMBIO DE T\u00cdTULO!"
+},
+{
+"winner": "Ilja Dragunov",
+"loser": "Speedball Mike Bailey",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m7",
+"first_seen": 1792636364,
+"updated": 1792636364,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-21-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2292521/aew-dynamite-october-21-2026-results/"
+}
+],
+"order": 69,
+"pos": {
+"Wrestling Observer": 69,
+"Wrestling Inc": 108
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Ilja Dragunov beat Speedball Mike Bailey.",
+"es": "Ilja Dragunov venci\u00f3 a Speedball Mike Bailey."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-21-2026/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2292521/aew-dynamite-october-21-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/aew-dynamite-results-10-21-2026-mike-bailey-vs-ilja-dragunov-cope-will-ospreay-team-up-more": "Fightful"
+},
+"kind": "weekly",
+"slug": "aew-dynamite",
+"date": "2026-10-21",
+"name": "AEW Dynamite",
+"brand": "AEW",
+"tag": "#AEWDynamite",
+"start": 1792627200,
+"main": 1792627200,
+"end": 1792636200,
+"card": [
+{
+"stip": "",
+"sides": [
+"The Young Bucks (Matt & Nick Jackson)",
+"Davis & Doyle (Mark Davis & Jake Doyle w/Don Callis) in an AEW Tag Team Title Eliminator"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "",
+"sides": [
+"AEW World Champion Will Ospreay & Adam Copeland",
+"Kevin Knight & Kyle Fletcher"
+],
+"champ": null,
+"pre": false,
+"idx": 14
+},
+{
+"stip": "",
+"sides": [
+"Swerve Strickland",
+"Tome Filip"
+],
+"champ": null,
+"pre": false,
+"idx": 22
+},
+{
+"stip": "",
+"sides": [
+"Switchblade Jay White & Orange Cassidy",
+"Death Riders (Wheeler Yuta & Daniel Garcia)"
+],
+"champ": null,
+"pre": false,
+"idx": 26
+},
+{
+"stip": "",
+"sides": [
+"Jon Moxley",
+"Roderick Strong in an AEW Continental Classic Eliminator"
+],
+"champ": null,
+"pre": false,
+"idx": 39
+},
+{
+"stip": "",
+"sides": [
+"Queen Aminata",
+"Maya World"
+],
+"champ": null,
+"pre": false,
+"idx": 54
+},
+{
+"stip": "",
+"sides": [
+"The match is official in 2 weeks, Ospreay, Copeland, Allin, Borden & The Young Bucks",
+"Okada, Fletcher, Knight, Wardlow, Davis & Doyle in Blood and Guts"
+],
+"champ": null,
+"pre": false,
+"idx": 61
+},
+{
+"stip": "",
+"sides": [
+"Ilja Dragunov",
+"Speedball Mike Bailey"
+],
+"champ": null,
+"pre": false,
+"idx": 64
+},
+{
+"stip": "",
+"sides": [
+"Motor City Machine Guns",
+"FTR in Match #2 of the Best of 5 Series"
+],
+"champ": null,
+"pre": false,
+"idx": 71
+},
+{
+"stip": "",
+"sides": [
+"Swerve Strickland",
+"Myron Reed"
+],
+"champ": null,
+"pre": false,
+"idx": 72
+},
+{
+"stip": "",
+"sides": [
+"Motor City Machine Guns",
+"FTR in Match #3 of the Best of 5 Series"
+],
+"champ": null,
+"pre": false,
+"idx": 74
+},
+{
+"stip": "AEW World Tag Team Championship",
+"sides": [
+"The Young Bucks",
+"Mark Davis and Jake Doyle"
+],
+"champ": "The Young Bucks",
+"pre": false,
+"idx": 23
+},
+{
+"stip": "",
+"sides": [
+"Will Ospreay and Adam Copeland",
+"Kyle Fletcher and Kevin Knight"
+],
+"champ": null,
+"pre": false,
+"idx": 30
+},
+{
+"stip": "",
+"sides": [
+"Swerve Strickand",
+"Tome Filip"
+],
+"champ": null,
+"pre": false,
+"idx": 45
+},
+{
+"stip": "",
+"sides": [
+"The Death Riders",
+"Orange Cassidy and Jay White"
+],
+"champ": null,
+"pre": false,
+"idx": 51
+},
+{
+"stip": "AEW Continental Championship",
+"sides": [
+"Jon Moxley",
+"Roderick Strong"
+],
+"champ": "Jon Moxley",
+"pre": false,
+"idx": 67
+},
+{
+"stip": "TBS Championship",
+"sides": [
+"Queen Aminata",
+"Maya World"
+],
+"champ": null,
+"pre": false,
+"idx": 93
+},
+{
+"stip": "",
+"sides": [
+"Ilja Dragunov",
+"Speedball Bailey"
+],
+"champ": null,
+"pre": false,
+"idx": 102
+},
+{
+"stip": "",
+"sides": [
+"Ilja Dragunov",
+"\u201cSpeedball\u201d Mike Bailey"
+],
+"champ": null,
+"pre": false,
+"idx": 7
+},
+{
+"stip": "",
+"sides": [
+"Will Ospreay & Adam Copeland",
+"Kevin Knight & Kyle Fletcher"
+],
+"champ": null,
+"pre": false,
+"idx": 8
+},
+{
+"stip": "AEW TBS Championship Number One Contenders Match",
+"sides": [
+"Maya World",
+"Queen Aminata"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "AEW Tag Team Championship Eliminator Match",
+"sides": [
+"The Young Bucks (Matt Jackson & Nick Jackson)",
+"Mark Davis & Jake Doyle"
+],
+"champ": null,
+"pre": false,
+"idx": 10
+}
+],
+"checked": 1792655931,
+"next_id": 7,
+"updated": 1792636364
+}

@@ -1,0 +1,315 @@
+{
+"key": "2026-10-20-wwe-nxt",
+"matches": [
+{
+"winner": "El Hijo del Dr. Wagner Jr. & Galeno",
+"loser": "Birthright",
+"stip": "Dusty Rhodes Tag Team Classic quarterfinal",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m1",
+"first_seen": 1792542972,
+"updated": 1792542972,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-live-results-october-20-2026/"
+}
+],
+"order": 36,
+"pos": {
+"Wrestling Observer": 36
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "El Hijo del Dr. Wagner Jr. & Galeno beat Birthright.",
+"es": "El Hijo del Dr. Wagner Jr. & Galeno vencieron a Birthright."
+},
+{
+"winner": "Izzi Dame",
+"loser": "Layla Diggs",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1792544797,
+"updated": 1792544797,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-live-results-october-20-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2291313/wwe-nxt-october-20-2026-results/"
+}
+],
+"order": 51,
+"pos": {
+"Wrestling Observer": 51,
+"Wrestling Inc": 60
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Izzi Dame beat Layla Diggs.",
+"es": "Izzi Dame venci\u00f3 a Layla Diggs."
+},
+{
+"winner": "Hank Walker and Tank Ledger",
+"loser": "The Creed Brothers",
+"stip": "Dusty Rhodes Tag Team Classic quarterfinal",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1792546144,
+"updated": 1792546144,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-live-results-october-20-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2291313/wwe-nxt-october-20-2026-results/"
+}
+],
+"order": 62,
+"pos": {
+"Wrestling Observer": 62,
+"Wrestling Inc": 73
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Hank Walker and Tank Ledger beat The Creed Brothers.",
+"es": "Hank Walker and Tank Ledger vencieron a The Creed Brothers."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-live-results-october-20-2026/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2291313/wwe-nxt-october-20-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/wwe-nxt-results-10-20-2026-cruz-montana-vs-dion-lennox-dusty-cup-more": "Fightful"
+},
+"kind": "weekly",
+"slug": "wwe-nxt",
+"date": "2026-10-20",
+"name": "WWE NXT",
+"brand": "WWE",
+"tag": "#WWENXT",
+"start": 1792540800,
+"main": 1792540800,
+"end": 1792549800,
+"card": [
+{
+"stip": "",
+"sides": [
+"Cruz Montana",
+"Dion Lennox"
+],
+"champ": null,
+"pre": false,
+"idx": 8
+},
+{
+"stip": "Dusty Rhodes Tag Team Classic quarterfinal",
+"sides": [
+"Creed Brothers",
+"Hank & Tank"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "Dusty Rhodes Tag Team Classic quarterfinal",
+"sides": [
+"El Hijo del Dr. Wagner Jr. & Galeno",
+"Birthright (Lexis King & Charlie Dempsey)"
+],
+"champ": null,
+"pre": false,
+"idx": 10
+},
+{
+"stip": "",
+"sides": [
+"Vanity Project (Jackson Drake, Brad Baylor & Ricky Smokes)",
+"EK Prosper, Chazz \u201cStarboy\u201d Hall & Mini Vikingo"
+],
+"champ": null,
+"pre": false,
+"idx": 11
+},
+{
+"stip": "Dusty Rhodes Tag Team Classic quarterfinal",
+"sides": [
+"The Wagner Brothers (El Hijo de Dr. Wagner Jr. & Galeno)",
+"BirthRight (Charlie Dempsey & Lexis King)"
+],
+"champ": null,
+"pre": false,
+"idx": 27
+},
+{
+"stip": "",
+"sides": [
+"Layla Diggs",
+"Izzi Dame"
+],
+"champ": null,
+"pre": false,
+"idx": 44
+},
+{
+"stip": "Dusty Rhodes Tag Team Classic quarterfinal",
+"sides": [
+"The Creed Brothers (Brutus Creed & Julius Creed)",
+"Hank And Tank (Hank Walker & Tank Ledger)"
+],
+"champ": null,
+"pre": false,
+"idx": 54
+},
+{
+"stip": "",
+"sides": [
+"Cruz Montana",
+"Dion Lennox"
+],
+"champ": null,
+"pre": false,
+"idx": 72
+},
+{
+"stip": "Match Result",
+"sides": [
+"Cruz Montana",
+"Dion Lennox went to a no contest"
+],
+"champ": null,
+"pre": false,
+"idx": 80
+},
+{
+"stip": "The Semi-Finals of the Dusty Rhodes Tag Team Classic",
+"sides": [
+"The Wagner Brothers",
+"Hank & Tank and Vanity Project",
+"Romeo Moreno & Noam Dar"
+],
+"champ": null,
+"pre": false,
+"idx": 84
+},
+{
+"stip": "Drake\u2019s NXT North American Title",
+"sides": [
+"EK Prosper",
+"Jackson Drake"
+],
+"champ": null,
+"pre": false,
+"idx": 85
+},
+{
+"stip": "",
+"sides": [
+"Chantel Monroe",
+"Izzy Rain because Monroe is \u201cannoying.\u201d"
+],
+"champ": null,
+"pre": false,
+"idx": 86
+},
+{
+"stip": "",
+"sides": [
+"Izzi Dame",
+"Layla Diggs"
+],
+"champ": null,
+"pre": false,
+"idx": 54
+},
+{
+"stip": "",
+"sides": [
+"Hank Walker and Tank Ledger",
+"The Creed Brothers in a Quarterfinals Match for the 2026 Dusty Rhodes Tag Team Classic"
+],
+"champ": null,
+"pre": false,
+"idx": 67
+},
+{
+"stip": "",
+"sides": [
+"Cruz Montana",
+"Dion Lennox"
+],
+"champ": null,
+"pre": false,
+"idx": 82
+},
+{
+"stip": "",
+"sides": [
+"Cruz Montana",
+"Dion Lennox"
+],
+"champ": null,
+"pre": false,
+"idx": 8
+},
+{
+"stip": "",
+"sides": [
+"Vanity Project (Jackson Drake, Ricky Smokes & Brad Baylor)",
+"E.K. Prosper, Mini Vikingo & Chazz \u2018Starboy\u2019 Hall"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "Dusty Rhodes Tag Team Classic",
+"sides": [
+"The Wagner Brothers (Galeno & El Hijo de Dr. Wagner Jr.)",
+"BirthRight (Lexis King & Charlie Dempsey)"
+],
+"champ": null,
+"pre": false,
+"idx": 10
+},
+{
+"stip": "Dusty Rhodes Tag Team Classic",
+"sides": [
+"Creed Brothers (Julius Creed & Brutus Creed)",
+"Hank and Tank (Hank Walker & Tank Ledger)"
+],
+"champ": null,
+"pre": false,
+"idx": 11
+}
+],
+"checked": 1792569418,
+"next_id": 3,
+"updated": 1792546144
+}

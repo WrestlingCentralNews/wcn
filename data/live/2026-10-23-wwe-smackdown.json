@@ -1,0 +1,456 @@
+{
+"key": "2026-10-23-wwe-smackdown",
+"matches": [
+{
+"winner": "Chelsea Green",
+"loser": "Roxanne Perez",
+"stip": "WWE Women\u2019s Championship",
+"title": "retain",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m1",
+"first_seen": 1792802198,
+"updated": 1792802423,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-two-womens-title-defenses-giulia-vs-blake-monroe-street-fight/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2294997/wwe-smackdown-october-23-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/wwe-smackdown-results-10-23-2026-chelsea-green-vs-roxanne-perez-bakusai-vs-mft-giulia-vs-blake-monroe-more/"
+}
+],
+"order": 20,
+"pos": {
+"Wrestling Observer": 20,
+"Wrestling Inc": 47,
+"Fightful": 12
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Chelsea Green beat Roxanne Perez by pinfall to retain.",
+"es": "Chelsea Green venci\u00f3 a Roxanne Perez por conteo de tres y retuvo el t\u00edtulo."
+},
+{
+"winner": "Blake Monroe",
+"loser": "Giulia",
+"stip": "Street Fight",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1792803406,
+"updated": 1792804986,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-two-womens-title-defenses-giulia-vs-blake-monroe-street-fight/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2294997/wwe-smackdown-october-23-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/wwe-smackdown-results-10-23-2026-chelsea-green-vs-roxanne-perez-bakusai-vs-mft-giulia-vs-blake-monroe-more/"
+}
+],
+"order": 28,
+"pos": {
+"Wrestling Observer": 28,
+"Wrestling Inc": 60,
+"Fightful": 14
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Blake Monroe beat Giulia by pinfall.",
+"es": "Blake Monroe venci\u00f3 a Giulia por conteo de tres."
+},
+{
+"winner": "Michin and B-Fab",
+"loser": "Tatum Paxley & Alexa Bliss",
+"stip": "WWE Women\u2019s Tag Team Championship",
+"title": "change",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1792805337,
+"updated": 1792806785,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-two-womens-title-defenses-giulia-vs-blake-monroe-street-fight/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2294997/wwe-smackdown-october-23-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/wwe-smackdown-results-10-23-2026-chelsea-green-vs-roxanne-perez-bakusai-vs-mft-giulia-vs-blake-monroe-more/"
+}
+],
+"order": 42,
+"pos": {
+"Wrestling Observer": 42,
+"Wrestling Inc": 82,
+"Fightful": 17
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Michin and B-Fab beat Tatum Paxley & Alexa Bliss by pinfall \u2014 NEW CHAMPIONS.",
+"es": "Michin and B-Fab vencieron a Tatum Paxley & Alexa Bliss por conteo de tres \u2014 \u00a1CAMBIO DE T\u00cdTULO!"
+},
+{
+"winner": "Trick Williams & Lucha Bros (Rey Fenix & Penta)",
+"loser": "Sami Zayn & Johnny Gargano",
+"stip": "Undisputed WWE Championship",
+"title": null,
+"fin_en": "by disqualification",
+"fin_es": "por descalificaci\u00f3n",
+"who": "",
+"field": null,
+"move": "",
+"id": "m4",
+"first_seen": 1792806785,
+"updated": 1792808015,
+"sources": [
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/wwe-smackdown-results-10-23-2026-chelsea-green-vs-roxanne-perez-bakusai-vs-mft-giulia-vs-blake-monroe-more/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2294997/wwe-smackdown-october-23-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-two-womens-title-defenses-giulia-vs-blake-monroe-street-fight/"
+}
+],
+"order": 30024,
+"pos": {
+"Fightful": 23,
+"Wrestling Inc": 102,
+"Wrestling Observer": 65
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Trick Williams & Lucha Bros (Rey Fenix & Penta) beat Sami Zayn & Johnny Gargano by disqualification.",
+"es": "Trick Williams & Lucha Bros (Rey Fenix & Penta) vencieron a Sami Zayn & Johnny Gargano por descalificaci\u00f3n."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-two-womens-title-defenses-giulia-vs-blake-monroe-street-fight/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2294997/wwe-smackdown-october-23-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/wwe-smackdown-results-10-23-2026-chelsea-green-vs-roxanne-perez-bakusai-vs-mft-giulia-vs-blake-monroe-more": "Fightful",
+"https://www.fightful.com/wrestling/wwe-smackdown-results-10-23-2026-chelsea-green-vs-roxanne-perez-bakusai-vs-mft-giulia-vs-blake-monroe-more/": "Fightful",
+"https://dev.fightful.com/wrestling-news/wwe-smackdown-results-10-23-2026-chelsea-green-vs-roxanne-perez-bakusai-vs-mft-giulia-vs-blake-monroe-more": "Fightful"
+},
+"kind": "weekly",
+"slug": "wwe-smackdown",
+"date": "2026-10-23",
+"name": "WWE SmackDown",
+"brand": "WWE",
+"tag": "#SmackDown",
+"start": 1792800000,
+"main": 1792800000,
+"end": 1792809000,
+"card": [
+{
+"stip": "WWE Women\u2019s Championship",
+"sides": [
+"Chelsea Green",
+"Roxanne Perez"
+],
+"champ": "Chelsea Green",
+"pre": false,
+"idx": 16
+},
+{
+"stip": "Street Fight",
+"sides": [
+"Giulia",
+"Blake Monroe"
+],
+"champ": null,
+"pre": false,
+"idx": 24
+},
+{
+"stip": "WWE Women\u2019s Tag Team Championship",
+"sides": [
+"Alexa Bliss & Tatum Paxley",
+"The Baddies (B-Fab & Michin)"
+],
+"champ": "Alexa Bliss & Tatum Paxley",
+"pre": false,
+"idx": 39
+},
+{
+"stip": "",
+"sides": [
+"The M.F.T.s (Tama & Talla Tonga)",
+"Bakusai (Kyoki & Shinsuke Nakamura)"
+],
+"champ": null,
+"pre": false,
+"idx": 46
+},
+{
+"stip": "",
+"sides": [
+"The M.F.T.s",
+"Bakusai never happened"
+],
+"champ": null,
+"pre": false,
+"idx": 48
+},
+{
+"stip": "Undisputed WWE Championship",
+"sides": [
+"Sami Zayn",
+"Trick Williams"
+],
+"champ": null,
+"pre": false,
+"idx": 56
+},
+{
+"stip": "WWE Women\u2019s Championship",
+"sides": [
+"Chelsea Green",
+"Nikki Bella"
+],
+"champ": null,
+"pre": false,
+"idx": 57
+},
+{
+"stip": "AAA Cruiserweight Championship",
+"sides": [
+"Rey Fenix",
+"Ricky Saints"
+],
+"champ": null,
+"pre": false,
+"idx": 58
+},
+{
+"stip": "",
+"sides": [
+"Sami Zayn & Johnny Gargano",
+"Trick Williams & Rey Fenix"
+],
+"champ": null,
+"pre": false,
+"idx": 59
+},
+{
+"stip": "",
+"sides": [
+"Sami Zayn, Johnny Gargano & Ricky Saints",
+"Trick Williams, Rey Fenix & Penta"
+],
+"champ": null,
+"pre": false,
+"idx": 62
+},
+{
+"stip": "Women\u2019s Tag Team Championship",
+"sides": [
+"Chelsea Green",
+"Roxanne Perez"
+],
+"champ": "Chelsea Green",
+"pre": false,
+"idx": 41
+},
+{
+"stip": "",
+"sides": [
+"Giulia",
+"Blake Monroe in a Street Fight"
+],
+"champ": null,
+"pre": false,
+"idx": 53
+},
+{
+"stip": "Women\u2019s Tag Team Championship",
+"sides": [
+"Tatum Paxley and Alexa Bliss",
+"Michin and B-Fab"
+],
+"champ": "Tatum Paxley and Alexa Bliss",
+"pre": false,
+"idx": 76
+},
+{
+"stip": "",
+"sides": [
+"Sami Zayn and Johnny Gargano",
+"Trick Williams and Rey Fenix"
+],
+"champ": null,
+"pre": false,
+"idx": 93
+},
+{
+"stip": "",
+"sides": [
+"Sami Zayn, Johnny Gargano, and Ricky Saints",
+"Penta, Trick Williams, and Rey Fenix"
+],
+"champ": null,
+"pre": false,
+"idx": 98
+},
+{
+"stip": "Street Fight",
+"sides": [
+"Giulia",
+"Blake Monroe"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "WWE Women\u2019s Tag Team Championship",
+"sides": [
+"Tatum Paxley and Alexa Bliss",
+"B-Fab and Michin"
+],
+"champ": "Tatum Paxley and Alexa Bliss",
+"pre": false,
+"idx": 10
+},
+{
+"stip": "",
+"sides": [
+"Bakusai (Shinsuke Nakamura and Kyoki)",
+"The MFT (Tama Tonga and Talla Tonga)"
+],
+"champ": null,
+"pre": false,
+"idx": 11
+},
+{
+"stip": "WWE Women\u2019s Championship",
+"sides": [
+"Chelsea Green",
+"Roxanne Perez"
+],
+"champ": "Chelsea Green",
+"pre": false,
+"idx": 12
+},
+{
+"stip": "Street Fight",
+"sides": [
+"Giulia",
+"Blake Monroe"
+],
+"champ": null,
+"pre": false,
+"idx": 6
+},
+{
+"stip": "WWE Women\u2019s Tag Team Championship",
+"sides": [
+"Tatum Paxley and Alexa Bliss",
+"B-Fab and Michin"
+],
+"champ": "Tatum Paxley and Alexa Bliss",
+"pre": false,
+"idx": 7
+},
+{
+"stip": "",
+"sides": [
+"Bakusai (Shinsuke Nakamura and Kyoki)",
+"The MFT (Tama Tonga and Talla Tonga)"
+],
+"champ": null,
+"pre": false,
+"idx": 8
+},
+{
+"stip": "WWE Women\u2019s Championship",
+"sides": [
+"Chelsea Green",
+"Roxanne Perez"
+],
+"champ": "Chelsea Green",
+"pre": false,
+"idx": 9
+},
+{
+"stip": "Street Fight",
+"sides": [
+"Giulia",
+"Blake Monroe"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "WWE Women\u2019s Tag Team Championship",
+"sides": [
+"Tatum Paxley and Alexa Bliss",
+"B-Fab and Michin"
+],
+"champ": "Tatum Paxley and Alexa Bliss",
+"pre": false,
+"idx": 10
+},
+{
+"stip": "",
+"sides": [
+"Bakusai (Shinsuke Nakamura and Kyoki)",
+"The MFT (Tama Tonga and Talla Tonga)"
+],
+"champ": null,
+"pre": false,
+"idx": 11
+},
+{
+"stip": "WWE Women\u2019s Championship",
+"sides": [
+"Chelsea Green",
+"Roxanne Perez"
+],
+"champ": "Chelsea Green",
+"pre": false,
+"idx": 12
+}
+],
+"checked": 1792828074,
+"next_id": 4,
+"updated": 1792810213
+}

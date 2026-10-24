@@ -1,0 +1,230 @@
+{
+"key": "2026-10-19-wwe-raw",
+"matches": [
+{
+"winner": "Penta",
+"loser": "Bron Breakker",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": null,
+"id": "m1",
+"first_seen": 1792456844,
+"updated": 1792456844,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2290858/wwe-raw-october-19-2026-results/"
+}
+],
+"order": 10041,
+"pos": {
+"Wrestling Inc": 41
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Penta beat Bron Breakker.",
+"es": "Penta venci\u00f3 a Bron Breakker."
+},
+{
+"winner": "Chelsea Green & Iyo Sky",
+"loser": "Roxanne Perez and Raquel Rodriguez",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "Sky pinned Rodriguez",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1792458112,
+"updated": 1792458112,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-raw-live-results-road-to-crown-jewel-roman-reigns/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2290858/wwe-raw-october-19-2026-results/"
+}
+],
+"order": 38,
+"pos": {
+"Wrestling Observer": 38,
+"Wrestling Inc": 52
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Chelsea Green & Iyo Sky beat Roxanne Perez and Raquel Rodriguez by pinfall (Sky pinned Rodriguez).",
+"es": "Chelsea Green & Iyo Sky vencieron a Roxanne Perez and Raquel Rodriguez por conteo de tres (Sky cubri\u00f3 a Rodriguez)."
+},
+{
+"winner": "JD McDonagh",
+"loser": "Joe Hendry",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": null,
+"id": "m3",
+"first_seen": 1792460804,
+"updated": 1792460804,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2290858/wwe-raw-october-19-2026-results/"
+}
+],
+"order": 10062,
+"pos": {
+"Wrestling Inc": 62
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "JD McDonagh beat Joe Hendry by pinfall.",
+"es": "JD McDonagh venci\u00f3 a Joe Hendry por conteo de tres."
+},
+{
+"winner": "Lola Vice",
+"loser": "Lyra Valkyria",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": null,
+"id": "m4",
+"first_seen": 1792460804,
+"updated": 1792460804,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2290858/wwe-raw-october-19-2026-results/"
+}
+],
+"order": 10071,
+"pos": {
+"Wrestling Inc": 71
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Lola Vice beat Lyra Valkyria.",
+"es": "Lola Vice venci\u00f3 a Lyra Valkyria."
+},
+{
+"winner": "Chad Gable",
+"loser": "Dragon Lee and Rey Mysterio",
+"stip": "Intercontinental Championship",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": null,
+"id": "m5",
+"first_seen": 1792463382,
+"updated": 1792463382,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2290858/wwe-raw-october-19-2026-results/"
+}
+],
+"order": 10088,
+"pos": {
+"Wrestling Inc": 88
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Chad Gable beat Dragon Lee and Rey Mysterio to retain.",
+"es": "Chad Gable venci\u00f3 a Dragon Lee and Rey Mysterio y retuvo el t\u00edtulo."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/wwe/results/wwe-raw-live-results-road-to-crown-jewel-roman-reigns/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2290858/wwe-raw-october-19-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/wwe-raw-results-10-19-roman-reigns-appears-penta-competes": "Fightful"
+},
+"kind": "weekly",
+"slug": "wwe-raw",
+"date": "2026-10-19",
+"name": "WWE Raw",
+"brand": "WWE",
+"tag": "#WWERaw",
+"start": 1792454400,
+"main": 1792454400,
+"end": 1792463400,
+"card": [
+{
+"stip": "",
+"sides": [
+"Penta",
+"Bron Breakker"
+],
+"champ": null,
+"pre": false,
+"idx": 35
+},
+{
+"stip": "",
+"sides": [
+"Judgment Day",
+"Chelsea Green and IYO SKY"
+],
+"champ": null,
+"pre": false,
+"idx": 46
+},
+{
+"stip": "",
+"sides": [
+"Joe Hendry",
+"JD McDonagh"
+],
+"champ": null,
+"pre": false,
+"idx": 56
+},
+{
+"stip": "",
+"sides": [
+"Lola Vice",
+"Lyra Valkyria"
+],
+"champ": null,
+"pre": false,
+"idx": 66
+},
+{
+"stip": "Intercontinental Championship",
+"sides": [
+"Chad Gable",
+"Dragon Lee",
+"Rey Mysterio"
+],
+"champ": "Chad Gable",
+"pre": false,
+"idx": 79
+}
+],
+"checked": 1792483171,
+"next_id": 5,
+"updated": 1792464395
+}
