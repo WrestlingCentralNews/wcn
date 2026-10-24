@@ -182,3 +182,19 @@ def retro(a):
         if re.search(r"(?i)\b(?:in|from|during|on\s+\w+\.?\s+\d{1,2},)\s+(?:19|20)\d\d\b", opening) and _old_year(t0 + " " + opening):
             return "retrospective: results-style report that opens on a date 2+ years old"
     return None
+# ---------- 'free live stream' spam (2026-10-24) ----------
+# Google News carried pages like '(LIVESTREAMs)! WWE SmackDown 𝐋𝐈𝐕𝐄 Ｆｒｅｅ 𝐒𝐭𝐑𝐞𝐀𝐦 Wrestling' planted on hijacked town / university
+# sites (town.shodoshima.lg.jp krpano tour '?xml=data:...base64', uco.es). They joined real stories as 'sources' (timeline lines,
+# 'confirmed by N sources') and one gave the SmackDown preview a 360 panorama of a barrel room as its photo. Checked every run.
+_STREAMY = re.compile(r"(?i)live\s*@?\s*streams?|livestreams?|free\s*streams?|streaming\s+(?:free|online)|\btv\s*channel\b|watch\s+(?:\w+\s+){0,4}(?:online|free)\b|\bfree\s+online\b")
+_SPAMMY = re.compile(r"(?i)\bfree\b|\bonline\b|\breddit\b|\bcrackstreams?\b|\btv\s*channel\b|[%*~$+!@\[\]【】()<>]{2,}|\(\s*live")
+_HIJACK = re.compile(r"(?i)[?&]xml=data:|base64,|\.(?:lg|go|ac|ed)\.jp/|\.gov(?:\.\w\w)?/|\.edu(?:\.\w\w)?/|\buco\.es/|/VR_[^/]*/")
+def stream_spam(a):
+    """'stream spam' for illegal free-stream pages dressed up as wrestling news; None otherwise. Trusted (tier 1/2) outlets'
+    own 'Buy-In live stream' posts never match."""
+    import unicodedata
+    if tier(a.get("source")) < 3: return None
+    raw = a.get("raw_title") or a.get("title") or ""; t = unicodedata.normalize("NFKC", raw); link = a.get("link") or ""
+    if _HIJACK.search(link) and _STREAMY.search(t): return "stream spam"
+    if _STREAMY.search(t) and (t != raw or _SPAMMY.search(t)): return "stream spam"   # 𝐋𝐈𝐕𝐄 / Ｆｒｅｅ styled letters, 'free', '%*(((' junk
+    return None

@@ -422,7 +422,7 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     _tl.n = 0; _tl.bf = False
     # photos imgmeta found unusable (broken link / bot-challenge page / not an image / tiny / padded sheet) are never candidates:
     # the next report's photo is tried instead, then the promotion card (cache only, no fetch here)
-    import imgmeta
+    import imgmeta, photoguard
     member_images = [u for u in member_images if not imgmeta.unusable(u)]
     if c.get("image") and imgmeta.unusable(c["image"]): c = {**c, "image": None}
     key, names, guessed = key_person(c)
@@ -434,6 +434,8 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
         try:
             import current; story_pro = frozenset(story_pro) - current.past_promos(c, key)
         except Exception: pass
+    if c.get("image") and photoguard.pano_url(c["image"]): c = {**c, "image": None}
+    member_images = [u for u in member_images if not photoguard.pano_url(u)]   # 360 / virtual-tour assets (photoguard)
     if not key:
         # no person in the headline: never a photo whose file name names a wrestler or another promotion
         # ('WWE Star Signs New Contract' got a Dragon Lee Raw photo from another report in the cluster); a photo tied to another
@@ -449,7 +451,7 @@ def choose(c, member_images, budget_ok=True, rank=0, fetch=True):
     bf = rank >= VISION_TOP and budget_ok and not guessed and backfill_on() # one-time backlog pass
     if k in C and C[k].get("image") and not str(C[k]["image"]).startswith(PROMO_CARD[:40]):
         _L = label(C[k]["image"])          # cached pick made before the label rules: re-check its file name (free, no fetch)
-        if others_named(_L, key, names) or enrich.foreign_promo(C[k]["image"], story_pro, _L, msrc.get(C[k]["image"], ""), story_txt)[0]: del C[k]
+        if imgmeta.unusable(C[k]["image"]) or others_named(_L, key, names) or enrich.foreign_promo(C[k]["image"], story_pro, _L, msrc.get(C[k]["image"], ""), story_txt)[0]: del C[k]
     solo = solo_subject(c, key)
     if k in C and C[k].get("st") in ("key-other-story", "report-photo") and (not solo or not solo_photo(C[k].get("image"), key)): del C[k]   # picked before the 2026-10-23 rule
     if k in C and C[k].get("st") == "key-other-story" and (person_photo(key, names, story_pro, story_txt, c["id"]) or (None,))[0] != C[k].get("image"): del C[k]   # its source card no longer qualifies

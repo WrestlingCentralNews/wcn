@@ -86,9 +86,24 @@
     "cd70bafe6ed09"
    ],
    "image": "https://wrestlingcentralnews.com/img/promo/wwe.jpg"
+  },
+  {
+   "note": "2026-10-24: card showed a 400x200 360-degree panorama of a soy-sauce barrel room -- the krpano virtual-tour thumbnail of a Japanese town website (town.shodoshima.lg.jp) whose page was hijacked by 'LIVESTREAM WWE SmackDown Free Stream' spam that Google News: WWE carried into the cluster. WWE's official SmackDown Oct 23 match graphic (Chelsea Green vs Roxanne Perez, WWE Women's Championship; wwe.com/shows/smackdown/2026-10-23 og:image, 1200x675) instead. Spam is now dropped at ingest (editorial.stream_spam) and panoramas by photoguard.",
+   "links": [
+    "https://www.pwinsider.com/article/212854/wwe-friday-night-smackdown-on-usa-network-preview.html",
+    "https://www.pwinsider.com/article/212854/wwe-friday-night-smackdown-on-usa-network-preview.html?p=1",
+    "https://www.f4wonline.com/news/wwe/wwe-smackdown-preview-confirmed-matches-segments-10-23-2026/"
+   ],
+   "image": "https://www.wwe.com/f/styles/og_image/public/2026/10/20261021_SD_Match_GreenRoxanne_16x9_fri.jpg",
+   "ids": [
+    "c071c209fa5fd"
+   ],
+   "credit": "WWE"
   }
  ],
  "block": [
-  "https://d1fcaprh3kb5t7.cloudfront.net/wp-content/uploads/2026/01/11171926/Screenshot-2026-01-11-at-5.19.09-PM.png"
+  "https://d1fcaprh3kb5t7.cloudfront.net/wp-content/uploads/2026/01/11171926/Screenshot-2026-01-11-at-5.19.09-PM.png",
+  "https://www.town.shodoshima.lg.jp/section/VR_choseiyoran/shodoshima349data/thumbnail.jpg",
+  "https://www.uco.es/scai/visita_virtual/SCAI UCOdata/thumbnail.jpg"
  ]
 }

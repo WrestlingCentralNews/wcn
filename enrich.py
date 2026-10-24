@@ -238,6 +238,13 @@ def _gclash(gi, gj):
         for y in gj:
             n += 1; bad += conflict(x, y)
     return bad * 2 >= n
+def _scenery(m):
+    """360 panorama / virtual-tour thumbnail / extreme shape, or an institutional site's (town / university) photo with no wrestling word in its file name
+    (photoguard; size from the imgmeta cache only, no fetch). 2026-10-24: Shodoshima barrel-room panorama on a SmackDown preview."""
+    try:
+        import photoguard, imgmeta
+        return photoguard.reject(m["image"], m, w=imgmeta.dims_cached(m["image"])[0], h=imgmeta.dims_cached(m["image"])[1])
+    except Exception: return None
 def cluster(articles):
     """Same result as the original greedy pass + restart-from-the-top merge loop, without the O(merges x groups^2) rescans:
     groups stay ordered by their oldest report, so a scan for group i stops once group j starts >72h after i's newest report,
@@ -346,7 +353,7 @@ def cluster(articles):
         pool = list({id(m): m for m in pool}.values())
         csub = frozenset().union(*(subj_of(m) for m in pool)); cpro = promos_of(main)
         ctxt = (main.get("raw_title") or "") + " | " + (main.get("title") or "") + " | " + (main.get("summary") or "")
-        withimg = [m for m in pool if m.get("image") and not JUNK_IMG.search(m["image"]) and not img_clash(m["image"], csub, cpro, ctxt)
+        withimg = [m for m in pool if m.get("image") and not JUNK_IMG.search(m["image"]) and not _scenery(m) and not img_clash(m["image"], csub, cpro, ctxt)
                    and not foreign_promo(m["image"], cpro, src=m.get("raw_title") or "", story_text=ctxt)[0]]   # e.g. a head-to-head piece's split graphic
         best = max(withimg, key=sc) if withimg else None
         if best and main in withimg and sc(main) >= sc(best) - (0 if re.search(r"(?i)logo|graphic|poster", main["image"]) else 2): best = main

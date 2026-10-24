@@ -72,12 +72,16 @@ def load_state(u):
             return None
         except Exception: return None
     return None
+_PANO = set()                 # probed files carrying Photo Sphere / equirectangular XMP (photoguard.pano_bytes)
 def probe(u):
     if u.startswith("https://wrestlingcentralnews.com/img/promo/"): return (1200, 675) # our own logo cards (may not be deployed yet on the run that first uses them)
     try:
         r = urllib.request.urlopen(urllib.request.Request(qurl(u), headers={"User-Agent": UA, "Range": "bytes=0-65535", "Accept": "image/avif,image/webp,image/*,*/*"}), timeout=8)
         if not (r.headers.get("Content-Type") or "image").startswith("image"): return None
-        return dims(r.read(65536))
+        b = r.read(65536)
+        import photoguard
+        if photoguard.pano_bytes(b): _PANO.add(u)
+        return dims(b)
     except Exception: return None
 def alpha_box(b):
     """(W, H, x0, y0, x1, y1) of the visible (alpha > 16) area of an 8-bit RGBA / grey+alpha PNG, else None. Stdlib only."""
@@ -201,6 +205,9 @@ def pick(found):
 def find(u, link=None):
     """(best_url, w, h) for feed image u; only cheap HTTP."""
     d = probe(u); found = [(u, *d)] if d else []
+    import photoguard   # 360 panorama / virtual-tour asset or extreme shape: never shown (2026-10-24 Shodoshima barrel-room thumbnail)
+    why = "panorama" if (u in _PANO or photoguard.pano_url(u)) else (photoguard.shape(*d) if d else None)
+    if why: _WHY[u] = why; return (u, *(d or (None, None)), why)
     if d and d[0] >= MIN_W and _good(*d) and d[0] <= 2600 and not padded(u): return (u, *d)
     for v in variants(u)[:4]:
         dv = probe(v)
@@ -219,7 +226,8 @@ def find(u, link=None):
         tried.add(b[0]); found = [f for f in found if f[0] != b[0]]; b = pick(found)
     if not b and tried: return (u, None, None, "padded")
     st = None if b else load_state(u)
-    if st and st.startswith("broken"): _WHY[u] = st; return (u, None, None, "broken")   # dead link / challenge page: never shown
+    if st and st.startswith("broken"): _WHY[u] = st; return (u, None, None, "broken")
+    if b and (b[0] in _PANO or photoguard.pano_url(b[0]) or photoguard.shape(b[1], b[2])): return (u, *(d or (None, None)), "panorama")   # bigger version found is a panorama
     return b or (u, None, None)
 _C = None
 def cache():
@@ -238,12 +246,19 @@ def fill_cls(w, h):
     try: return " fill" if w and h and 1.6 <= int(w) / int(h) <= 2.1 else ""
     except Exception: return ""
 def unusable(u):
-    """Why the photo must not be shown ('padded' / 'too-small'), from cache only; None = fine or unknown."""
+    """Why the photo must not be shown ('padded' / 'too-small' / 'panorama' / 'extreme-shape'), from cache only; None = fine or unknown."""
+    import photoguard
+    if photoguard.pano_url(u): return "panorama"
     x = cache().get(u)
     if not x: return None
     b = x["best"]
     if len(b) > 3 and b[3]: return b[3]
-    return "too-small" if b[1] and b[1] < MIN_SHOW else None
+    if photoguard.pano_url(b[0]): return "panorama"
+    return "too-small" if b[1] and b[1] < MIN_SHOW else photoguard.shape(b[1], b[2])
+def dims_cached(u):
+    """(w, h) of photo u from the size cache, else (None, None). No fetch."""
+    x = cache().get(u)
+    return tuple(x["best"][1:3]) if x else (None, None)
 def _age(c, now): return now - c.get("first_ts", c["ts"])
 def stats(clusters, days=7, use_best=True):
     """Share of recent stories whose (displayed) image is >=1200px wide."""
