@@ -59,6 +59,10 @@ class SelfHost(unittest.TestCase):
         ld = [json.loads(x) for x in re.findall(r'<script type="application/ld\+json">(.*?)</script>', h, re.S)]
         imgs = json.dumps(ld); self.assertIn(loc, imgs); self.assertNotIn("a.com/big.jpg", imgs)
         self.assertNotIn('src="https://a.com/big.jpg"', h); self.assertIn(f'src="{loc}"', h)
+    def test_photon_origin(self):
+        SRC["https://a.com/w/p.jpg"] = jpg(1300, 731)
+        cl = self.cl("https://i0.wp.com/a.com/w/p.jpg?fit=1200%2C675&ssl=1"); selfhost.run(cl)   # i0.wp.com not in SRC -> KeyError, origin works
+        self.assertEqual(cl[0]["local_w"], 1300); self.assertEqual(selfhost.photon_origin("https://a.com/x.jpg"), None)
 class ImgMeta(unittest.TestCase):
     def test_x_orig(self):
         for u in ("https://pbs.twimg.com/media/G4abcdEFGHijk12?format=jpg&name=small", "https://pbs.twimg.com/media/G4abcdEFGHijk12.jpg", "https://pbs.twimg.com/media/G4abcdEFGHijk12?format=jpg&name=900x900"):

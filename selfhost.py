@@ -12,7 +12,7 @@ Anything that fails (403 to the runner, bot page, not an image) keeps the old ho
 Storage: files live in public/img/s (restored each run from the Actions cache, then from the live site for misses),
 listed in data/selfhost.json {src: {f, w, h, b, at, used}}. A file no live story has used for KEEP_D days is deleted,
 so photos of stories past the 60-day retention go away. ~110 KB a photo -> ~80 MB for ~700 live stories."""
-import os, io, json, time, hashlib, urllib.request, urllib.parse
+import os, io, re, json, time, hashlib, urllib.request, urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://wrestlingcentralnews.com/"
@@ -51,6 +51,9 @@ def encode(b):
     if w > MAX_W: im = im.resize((MAX_W, round(h * MAX_W / w)), Image.LANCZOS)
     out = io.BytesIO(); im.save(out, "JPEG", quality=Q, optimize=True, progressive=True)
     return out.getvalue(), im.size[0], im.size[1]
+def photon_origin(u):
+    m = re.match(r"https://i[0-3]\.wp\.com/([^?#]+)", u or "")
+    return "https://" + m.group(1) if m else None
 def load():
     try: return json.load(open(MAN))
     except Exception: return {}
@@ -64,10 +67,14 @@ def _fetch(job):
                 from PIL import Image
                 w, h = Image.open(io.BytesIO(b)).size; open(p, "wb").write(b); return u, f, w, h, len(b), None
         except Exception: pass
-    try:
-        b, w, h = encode(_get(u, ref=ref))
-        open(p, "wb").write(b); return u, f, w, h, len(b), None
-    except Exception as ex: return u, f, None, None, 0, repr(ex)[:160]
+    err = None
+    for src in (u, photon_origin(u)):   # Jetpack Photon (i0.wp.com) refuses the Actions runner: same photo from its origin file
+        if not src: continue
+        try:
+            b, w, h = encode(_get(src, ref=ref))
+            open(p, "wb").write(b); return u, f, w, h, len(b), None
+        except Exception as ex: err = err or repr(ex)[:160]
+    return u, f, None, None, 0, err
 def run(clusters, max_new=MAX_NEW, fetch=True):
     """Download + record self-hosted copies. Sets c['image_local'], c['local_w'], c['local_h'] on every story whose photo has one."""
     os.makedirs(DIR, exist_ok=True)
