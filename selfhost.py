@@ -24,6 +24,7 @@ MAX_NEW = 220         # new downloads per build (first run backfills newest stor
 MAX_BYTES = 12 * 1024 * 1024
 KEEP_D = 3            # unused files kept this long (social cards / cached pages that still point at them)
 FAIL_RETRY_H = 12
+EV = 2                # bump to retry recorded failures at once (2: Photon origin fallback)
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"
 def fname(u): return hashlib.sha1(u.encode()).hexdigest()[:16] + ".jpg"
 def own(u): return (u or "").startswith(SITE)
@@ -84,14 +85,14 @@ def run(clusters, max_new=MAX_NEW, fetch=True):
         if not u.startswith("https://") or own(u): continue
         x = M.get(u); f = (x or {}).get("f") or fname(u)
         if x and x.get("w") and os.path.exists(os.path.join(DIR, f)): continue
-        if x and x.get("err") and now - x.get("at", 0) < FAIL_RETRY_H * 3600: continue
+        if x and x.get("err") and x.get("ev") == EV and now - x.get("at", 0) < FAIL_RETRY_H * 3600: continue
         if u in seen: continue
         seen.add(u); todo.append((u, f, c.get("link"), bool(x and x.get("w"))))
     todo = todo[:max_new] if fetch else []
     ok = bad = 0
     with ThreadPoolExecutor(10) as ex:
         for u, f, w, h, nb, err in ex.map(_fetch, todo):
-            if err: M[u] = {"f": f, "err": err, "at": now}; bad += 1
+            if err: M[u] = {"f": f, "err": err, "at": now, "ev": EV}; bad += 1
             else: M[u] = {"f": f, "w": w, "h": h, "b": nb, "at": now, "used": now}; ok += 1
     n = 0
     for c in clusters:
