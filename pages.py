@@ -265,6 +265,7 @@ def page(c, related, lang="en", L=None, alt=None):
     en_u = "/" + (alt or {}).get("en", SITE).replace(SITE, ""); es_u = "/" + (alt or {}).get("es", SITE + "es/").replace(SITE, "")
     hero = (f'<div class="story-hero" data-cat="{e(c["categories"][0])}"><img class="bg" src="{e(img)}" alt="" aria-hidden="true" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()"><img class="fg{imgmeta.fill_cls(iw, ih)}" src="{e(img)}"{wh} alt="{e(title)}" fetchpriority="high" decoding="async" referrerpolicy="no-referrer" onerror="{e(HERO_ERR)}"></div>'
             if img else f'<div class="story-hero ph-h"><span>{c["categories"][0]}</span></div>')
+    if isinstance(c.get("image_credit"), str): c = {**c, "image_credit": {"url": c.get("image") or "", "text": c["image_credit"]}}   # override credit given as plain text
     credit = f'<p class="pcredit"><a href="{e(c["image_credit"]["url"])}" rel="nofollow noopener" target="_blank">{e(c["image_credit"]["text"])}</a></p>' if c.get("image_credit") else ""
     return (f'{head}\n<body class="story-page" style="--c:{col}"><div class="spot s1"></div><div class="spot s2"></div>\n'
             f'{chrome.header(lang, en_u, es_u, "news", back=True)}\n{ad("leaderboard", "728×90 Leaderboard", "ad-leader")}\n'

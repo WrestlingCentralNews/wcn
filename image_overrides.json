@@ -98,7 +98,10 @@
    "ids": [
     "c071c209fa5fd"
    ],
-   "credit": "WWE"
+   "credit": {
+    "url": "https://www.wwe.com/shows/smackdown/2026-10-23",
+    "text": "Photo: WWE"
+   }
   }
  ],
  "block": [
