@@ -1,0 +1,15 @@
+{
+ "updated": "2026-10-24T21:38:06Z",
+ "run_id": "40122265309",
+ "run_url": "https://github.com/WrestlingCentralNews/wcn/actions/runs/40122265309",
+ "run_started": "2026-10-24T18:46:54Z",
+ "run_ends": "2026-10-25T00:16:54Z",
+ "poll_every_s": 120,
+ "cycles_this_run": 86,
+ "cycles_total": 3698,
+ "last_poll": "poll: 26 sources in 3.3s - 200:19 304:5 err:1 new trusted items: 0",
+ "pending": 0,
+ "dispatched_this_run": 10,
+ "dispatches_last_hour_by_poller": 3,
+ "last_dispatch": "2026-10-24T21:10:00Z DISPATCHED update.yml for 1 new item(s) (queued behind running run 40132801528)"
+}
