@@ -8,8 +8,44 @@ e = lambda s: html.escape(s or "", quote=True)
 def slugify(t): return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", (t or "").lower())).strip("-")[:70].rstrip("-")
 def iso(ts): return datetime.datetime.fromtimestamp(ts, datetime.timezone.utc).isoformat(timespec="seconds")
 def nice(ts): return datetime.datetime.fromtimestamp(ts, datetime.timezone.utc).strftime("%b %d, %Y · %H:%M UTC")
+# Words that carry the news itself: a retitle that adds or drops one of these is a different claim, so the URL follows the new headline.
+SLUG_CRIT = {"retain", "retains", "lose", "loses", "lost", "win", "wins", "won", "defeat", "defeats", "beat", "beats", "release", "released",
+             "releases", "sign", "signs", "signed", "resigns", "re", "return", "returns", "injured", "injury", "dies", "died", "passes", "dead",
+             "retire", "retires", "retirement", "fired", "leave", "leaves", "left", "depart", "departs", "exit", "exits", "debut", "debuts",
+             "vs", "champion", "title", "titles", "suspended", "arrested", "cancel", "cancelled", "canceled", "pulled", "not", "no", "denies", "rumor"}
+def _slug_words(t):
+    return {w for w in re.findall(r"[a-z0-9]+", (t or "").lower()) if len(w) > 2 or w.isdigit() or w in ("vs", "no", "re")}
+def keep_slug(old_slug, title):
+    """True when the headline is a light rewrite of the one the old slug came from (same people, same claim): the story keeps its
+    URL so Google's indexed page and its ranking survive. Any change in the news words, numbers or people gets a new URL."""
+    import translate
+    a = old_slug.replace("-", " ").title()
+    if translate.changed_topic(a, title): return False
+    A, B = translate.anchors(a), translate.anchors(title)
+    if not A or not B or len(A & B) / len(A | B) < 0.5: return False
+    diff = _slug_words(old_slug.replace("-", " ")) ^ _slug_words(slugify(title).replace("-", " "))
+    return not (diff & SLUG_CRIT or any(w.isdigit() for w in diff))
+def meta_desc(s, n=158):
+    """Search snippet: whole sentences up to ~158 chars, else cut at a word with an ellipsis (never mid-word)."""
+    s = re.sub(r"\s+", " ", s or "").strip()
+    if len(s) <= n: return s
+    cut = s[:n + 1]; end = max(cut.rfind(". "), cut.rfind("! "), cut.rfind("? "))
+    if end >= 90: return cut[:end + 1]
+    return cut[:cut.rfind(" ")].rstrip(" ,;:-") + "…" if " " in cut else s[:n]
+def title_tag(title):
+    """<title>: the headline first; ' | WCN' only when it still fits ~60 chars (Google shows the site name on its own line)."""
+    return f"{title} | WCN" if len(title) <= 54 else title
 def assign_urls(clusters):
-    for c in clusters: c["url"] = f"story/{slugify(c['title'])}-{c['id']}.html"
+    prev = {p["id"]: p["url"] for p in PREV if p.get("id") and (p.get("url") or "").startswith("story/")}
+    kept = 0
+    for c in clusters:
+        new = f"story/{slugify(c['title'])}-{c['id']}.html"; old = prev.get(c["id"])
+        if old and old != new:
+            try:
+                if keep_slug(old[6:-len(c["id"]) - 6], c["title"]): new = old; kept += 1
+            except Exception as ex: print("[slug] keep check failed", c["id"], repr(ex)[:120], flush=True)
+        c["url"] = new
+    if kept: print(f"pages: kept {kept} story URLs across light headline rewrites", flush=True)
 KIT_ACTION = "https://app.kit.com/forms/10060065/subscriptions"   # Kit form "WCN Weekly" (double opt-in)
 def nl_block(where, compact=False, head="h2", base="../", lang="en"):
     """WCN Weekly signup. Native form -> Kit; newsletter.js upgrades it to fetch() + inline 'check your inbox' message."""
@@ -190,7 +226,7 @@ def page(c, related, lang="en", L=None, alt=None):
     rel_url = L["url"] if es else c["url"]; url = SITE + rel_url
     col = CATC.get(c["categories"][0], "#7cd618")
     paras = (L.get("p") or [summary]) if es else (c.get("long") or [c["summary"]])
-    desc = re.sub(r"\s+", " ", summary)[:158]
+    desc = meta_desc(summary)
     img = c.get("image") or ""; big = img if img.startswith("https://") else SITE + "og-image.jpg"
     iw, ih = (c.get("img_w"), c.get("img_h")) if img.startswith("https://") else (1200, 630)
     wh = f' width="{iw}" height="{ih}"' if iw and ih else ""
@@ -223,7 +259,7 @@ def page(c, related, lang="en", L=None, alt=None):
           "inLanguage": lang, "isAccessibleForFree": True, "author": [chrome.staff_author(lang)], "publisher": chrome.PUBLISHER}
     home = SITE + ("es/" if es else "")
     crumbs = [("WCN en español" if es else "WCN", home), (title[:70], url)]
-    head = chrome.head(f"{title} | WCN", desc, url, lang, alts=alt, og_type="article", image=big, ads=True, ld=[ld, chrome.breadcrumbs(crumbs)],
+    head = chrome.head(title_tag(title), desc, url, lang, alts=alt, og_type="article", image=big, ads=True, ld=[ld, chrome.breadcrumbs(crumbs)],
                        extra=(f'<meta property="og:image:alt" content="{e(title)}">{imgx}<meta property="article:publisher" content="{chrome.FB}">'
                               f'<meta property="article:published_time" content="{iso(pub)}"><meta property="article:modified_time" content="{iso(mod)}"><meta property="article:section" content="{e(c["categories"][0])}">'))
     en_u = "/" + (alt or {}).get("en", SITE).replace(SITE, ""); es_u = "/" + (alt or {}).get("es", SITE + "es/").replace(SITE, "")

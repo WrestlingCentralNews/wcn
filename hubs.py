@@ -298,13 +298,33 @@ def cite(key, path, title, st, lang, aired=True, extra_src=None):
           "citation": [{"@type": "CreativeWork", "name": n, "url": u} for n, u in out]}
     return h, [ld]
 LIVE_PAGES = {}
-def _live(key, lang, path, nm, dl, title, h1, body, ld):
-    """Turn an event/episode page into a live results post (LIVE badge + match list + LiveBlogPosting) when we have live data."""
+def _live_desc(st, nm, dl, lang):
+    """Search snippet for a page with live results: the show plus the first reported results (concrete, not 'card and preview')."""
+    es = lang == "es"
+    lines = [re.sub(r"\s+", " ", (m.get("es") if es else m.get("en")) or "").strip().rstrip(".") for m in st["shown"]]
+    lines = [x for x in lines if x]
+    if st["is_live"]: lead = f"Resultados en vivo de {nm} ({dl})" if es else f"{nm} live results ({dl})"
+    else: lead = f"Resultados de {nm} ({dl})" if es else f"{nm} results ({dl})"
+    s = lead + (": " if lines else ". ")
+    for x in lines:
+        if len(s) + len(x) + 2 > 150: break
+        s += x + "; "
+    s = s.rstrip("; ").rstrip(":")
+    tail = (" y más." if es else " and more.") if lines and len(s) < 150 else "."
+    return s + tail if len(s + tail) <= 160 else s
+def _live(key, lang, path, nm, dl, title, h1, body, ld, desc=None, img=None):
+    """Turn an event/episode page into a live results post (LIVE badge + match list + LiveBlogPosting) when we have live data.
+    Returns (title, h1, body, ld, desc): desc names the reported results once there are any."""
     try: r = LIVE.render(key, lang, SITE + path)
     except Exception as ex: print("[live] render failed", key, ex, flush=True); r = None
-    if not r: return title, h1, body, ld
+    if not r: return title, h1, body, ld, desc
     badge, sec, lld = r
     st = LIVE.page_state(key)
+    for x in lld:   # Google wants an image on LiveBlogPosting for rich results: the page's story photo, else the 1200x630 site card
+        if x.get("@type") == "LiveBlogPosting" and not x.get("image"): x["image"] = [img if (img or "").startswith("https://") else SITE + "og-image.jpg"]
+    if st["shown"] or st["is_live"]:
+        try: desc = _live_desc(st, nm, dl, lang)
+        except Exception as ex: print("[live] desc failed", key, repr(ex)[:120], flush=True)
     if st["is_live"]:
         title = (f"EN VIVO: resultados de {nm} ({dl})" if lang == "es" else f"LIVE: {nm} Results ({dl})")
         LIVE_PAGES.setdefault(key, {})[lang] = path
@@ -312,7 +332,7 @@ def _live(key, lang, path, nm, dl, title, h1, body, ld):
         h1 = (f"Resultados en vivo de {e(nm)}" if lang == "es" else f"{e(nm)} Live Results") + (" " + sm.group(0) if sm else "")
     elif st["shown"]:
         title = (f"Resultados {nm} ({dl})" if lang == "es" else f"{nm} Results ({dl})")
-    return title, badge + h1, sec + body, ld + lld
+    return title, badge + h1, sec + body, ld + lld, desc
 def build(clusters, tr_es=None):
     """Write all hub pages for en + es. Returns {path: content-hash} for sitemaps/IndexNow."""
     import shutil
@@ -363,7 +383,7 @@ def build(clusters, tr_es=None):
             crumbs = [home, shows_c, (nm, SITE + hub_path(show, lang)), (dl, SITE + path)]
             ld = [sports_event(f"{nm} ({dl})", d, info["time"], path, SHOWS[show]["brand"], aired, desc=desc, lang=lang), itemlist(st, lang)]
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
-            title, h1, body, ld = _live(f"{ds}-{show}", lang, path, nm, dl, title, h1, body, ld)
+            title, h1, body, ld, desc = _live(f"{ds}-{show}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
             ch, cl = cite(f"{ds}-{show}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, image=img)
             eps.setdefault(show, []).append((d, path, len(st), aired, st))
@@ -394,7 +414,7 @@ def build(clusters, tr_es=None):
             crumbs = [home, (t["events"], SITE + UP[lang]), (nm, SITE + path)]
             ld = [sports_event(nm, d, hhmm, path, ev["brand"], aired, ev["venue"], ev["city"], desc, lang)] + ([itemlist(st, lang)] if st else [])
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
-            title, h1, body, ld = _live(f"{ev['date']}-{ev['slug']}", lang, path, nm, dl, title, h1, body, ld)
+            title, h1, body, ld, desc = _live(f"{ev['date']}-{ev['slug']}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
             ch, cl = cite(f"{ev['date']}-{ev['slug']}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, active="upcoming", image=img)
             evs.append((ev, d, path, len(st), aired))
