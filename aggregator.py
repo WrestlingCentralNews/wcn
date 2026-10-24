@@ -126,7 +126,7 @@ def on_topic(a):
     t = a["raw_title"]; b = (a.get("body") or "") + " " + (a.get("summary_src") or "")
     if classify(re.sub(r"\b(Mexico|Japan|Australia)\b", "", t)) or SIG.search(t): return True
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
-import enrich, editorial, llm, pages, vision, breaking, stale, toppick, freshness, pubgate, combat, aliases, framing
+import enrich, editorial, llm, pages, vision, breaking, stale, toppick, freshness, pubgate, combat, aliases, framing, indie_gate
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
 IMG_CHECK_TOP = 60
 LONG_MAX_PER_RUN = 400
@@ -256,7 +256,10 @@ def run():
         r = None if a.get("drop") else stale.reason(a)
         if r: editorial.log_drop(a, r); a["drop"] = r; print("stale:", a["raw_title"][:70], "->", r, flush=True)
     # LLM rewrite pass: only articles without a cached rewrite, trusted/mid-tier, not rule-dropped; newest first
-    todo = sorted([a for a in arts if not a.get("drop") and "llm" not in a and editorial.tier(a["source"]) < 3], key=lambda x: -x["ts"])[:LLM_MAX_PER_RUN]
+    todo = sorted([a for a in arts if not a.get("drop") and "llm" not in a and editorial.tier(a["source"]) < 3], key=lambda x: -x["ts"])
+    _ig = [a for a in todo if indie_gate.skip_rewrite(a)]   # Indie-only + not important: rule-based text, no AI (owner budget rule 2026-10-24)
+    if _ig: print(f"indie gate: {len(_ig)} Indie-only reports skip the AI rewrite", flush=True)
+    _igs = {id(a) for a in _ig}; todo = [a for a in todo if id(a) not in _igs][:LLM_MAX_PER_RUN]
     if todo and llm.budget_left() > 0:
         with ThreadPoolExecutor(6) as ex:
             for a, out in zip(todo, ex.map(llm.rewrite, todo)):
@@ -341,7 +344,8 @@ def run():
                       and enrich.same_story(bylink[u["link"]], m) and not enrich.long_mismatch(m, bylink[u["link"]]["llm_long"])), None)
             if d: m["llm_long"] = d["llm_long"]; m["llm_long_from"] = d["id"]
     need = [(c, bylink.get(c["link"])) for c in clusters if bylink.get(c["link"]) and "llm_long" not in bylink[c["link"]]]
-    need = [(c, m) for c, m in need if m.get("llm")][:LONG_MAX_PER_RUN]
+    indie_gate.remember(clusters, bylink)
+    need = [(c, m) for c, m in need if m.get("llm") and not indie_gate.skip_long(c, m)][:LONG_MAX_PER_RUN]
     if need and llm.budget_left() > llm.LONGFORM_RESERVE_USD and llm.pace_ok():
         with ThreadPoolExecutor(6) as ex:
             for (c, m), p in zip(need, ex.map(lambda cm: llm.longform(cm[1], cm[0]["title"]), need)):
