@@ -75,13 +75,13 @@ class Broken(unittest.TestCase):
                       "https://a/v4-broken.jpg": {"best": ["https://a/v4-broken.jpg", None, None, "broken"], "v": 4, "at": now},
                       "https://a/v3-unmeasured.jpg": {"best": ["https://a/v3-unmeasured.jpg", None, None], "v": 3, "at": now},
                       "https://a/v3-measured.jpg": {"best": ["https://a/v3-measured.jpg", 800, 450], "v": 3, "at": now}}
-        imgmeta.find = (lambda f: (lambda u, l=None: (seen.append(u), (u, 900, 500))[1]))(imgmeta.find)
+        imgmeta.find = (lambda f: (lambda u, *l: (seen.append(u), (u, 900, 500))[1]))(imgmeta.find)
         import tempfile; imgmeta.CACHE = os.path.join(tempfile.mkdtemp(), "image_sizes.json")
         try:
             imgmeta.run([{"image": u, "ts": now, "first_ts": now, "link": "l"} for u in imgmeta._C if "orphan" not in u and "ancient" not in u])
         finally:
             import importlib; importlib.reload(imgmeta)
-        self.assertEqual(sorted(seen), ["https://a/old-broken.jpg", "https://a/orphan-broken.jpg", "https://a/v3-unmeasured.jpg", "https://a/v4-broken.jpg"])
+        self.assertEqual(sorted(seen), ["https://a/old-broken.jpg", "https://a/orphan-broken.jpg", "https://a/v3-measured.jpg", "https://a/v3-unmeasured.jpg", "https://a/v4-broken.jpg"])   # v7: an 800px photo is re-checked once for a bigger copy
 class ChooseSkipsBroken(unittest.TestCase):
     BAD = "https://wp.bodyslam.net/wp-content/uploads/2026/10/drew-mcintyre-insight-01.jpg"
     GOOD = "https://cdn.example/drew-mcintyre-raw.jpg"

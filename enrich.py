@@ -359,7 +359,8 @@ def cluster(articles):
         if best and main in withimg and sc(main) >= sc(best) - (0 if re.search(r"(?i)logo|graphic|poster", main["image"]) else 2): best = main
         c["image"] = best["image"] if best else None
         c["member_images"] = list(dict.fromkeys(m["image"] for m in ([best] if best else []) + withimg if m.get("image")))
-        c["member_src"] = {m["image"]: m.get("raw_title") or "" for m in pool if m.get("image")}   # image -> its report's headline (vision.choose)
+        c["member_src"] = {m["image"]: m.get("raw_title") or "" for m in pool if m.get("image")}
+        c["member_link"] = {m["image"]: m.get("link") for m in pool if m.get("image")}   # image -> its report (imgmeta looks for a bigger copy there)   # image -> its report's headline (vision.choose)
     return out
 
 # ---------- subject / promotion guards ----------

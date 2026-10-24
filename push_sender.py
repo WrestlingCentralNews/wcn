@@ -193,7 +193,7 @@ def payload(app_id, c, typ, lang="en", es=None, target=None):
     if target == "es": p["filters"] = [{"field": "language", "relation": "=", "value": "es"}]
     elif target == "not-es": p["filters"] = [{"field": "language", "relation": "!=", "value": "es"}]
     else: p["included_segments"] = [SEGMENT]
-    img = c.get("image") or ""
+    img = c.get("image_local") or c.get("image") or ""
     if img.startswith("https://"): p["chrome_web_image"] = img
     return p
 

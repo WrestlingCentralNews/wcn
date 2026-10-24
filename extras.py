@@ -158,7 +158,7 @@ def build_es_home(clusters, tr):
     # Spanish feed data for app.js (urls relative to /es/)
     es_items = []
     for c, L in items:
-        x = {k: v for k, v in c.items() if k not in ("long", "raw_title")}
+        x = {k: v for k, v in c.items() if k not in ("long", "raw_title", "_hot")}
         x["title"], x["summary"], x["url"] = L["t"], L["s"], L["url"][3:]
         x["updates"] = [{"ts": u["ts"], "source": u["source"], "link": u["link"], "title": f"Reporte de {u['source']}", "line": ""} for u in c.get("updates", [])]
         es_items.append(x)

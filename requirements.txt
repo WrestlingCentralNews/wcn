@@ -1,1 +1,2 @@
-# WCN pipeline uses only the Python 3.12 standard library; no third-party packages required.
+# WCN pipeline: Python 3.12 standard library + Pillow (selfhost.py re-encodes story photos for public/img/s).
+Pillow==12.0.0

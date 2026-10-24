@@ -1,9 +1,9 @@
 /* WCN service worker. Generated into public/sw.js by pages.py; VERSION changes whenever static assets change. */
 const VERSION = "__VERSION__";
-const STATIC = "wcn-static-" + VERSION, PAGES = "wcn-pages-v2", FONTS = "wcn-fonts-v1";
-const KEEP = [STATIC, PAGES, FONTS];
+const STATIC = "wcn-static-" + VERSION, PAGES = "wcn-pages-v2", FONTS = "wcn-fonts-v1", PHOTOS = "wcn-photos-v1";
+const KEEP = [STATIC, PAGES, FONTS, PHOTOS];
 const PRECACHE = __PRECACHE__;
-const OFFLINE = "/offline.html", MAX_PAGES = 80;
+const OFFLINE = "/offline.html", MAX_PAGES = 80, MAX_PHOTOS = 120;
 // Never touched by the SW (always straight to network): ads, analytics, consent, config, RSS feeds/sitemap (*.xml).
 const BYPASS = /^\/push\/|\.xml$|\/(analytics|ads-config)\.js$|\/ads\.txt$|\/sw\.js$|\/manifest\.webmanifest$/;
 const STATIC_EXT = /\.(css|js|png|jpe?g|webp|gif|svg|ico|woff2?)$/i;
@@ -17,9 +17,19 @@ self.addEventListener("activate", ev => {
     .then(() => self.clients.claim()));
 });
 
-async function trim(cache) {
+async function trim(cache, max = MAX_PAGES) {
   const ks = await cache.keys();
-  for (let i = 0; i < ks.length - MAX_PAGES; i++) await cache.delete(ks[i]);
+  for (let i = 0; i < ks.length - max; i++) await cache.delete(ks[i]);
+}
+// Self-hosted story photos (/img/s/<hash>.jpg): the name changes whenever the photo does, so a cached copy is never stale.
+// GitHub Pages can only send max-age=600, so this bounded cache is what gives repeat visitors a long-lived copy.
+async function photo(req) {
+  const cache = await caches.open(PHOTOS);
+  const hit = await cache.match(req, {ignoreSearch: true});
+  if (hit) return hit;
+  const res = await fetch(req);
+  if (res && res.ok && res.type === "basic") cache.put(req, res.clone()).then(() => trim(cache, MAX_PHOTOS));
+  return res;
 }
 // Network-first: always fresh when online; cached copy only if the network actually fails.
 async function networkFirst(ev, key) {
@@ -54,6 +64,7 @@ self.addEventListener("fetch", ev => {
       return ev.respondWith(networkFirst(ev, key));
     }
     if (url.pathname.endsWith(".json")) return ev.respondWith(networkFirst(ev, new URL(url.pathname, location.origin).href));
+    if (url.pathname.startsWith("/img/s/")) return ev.respondWith(photo(req));
     if (STATIC_EXT.test(url.pathname)) return ev.respondWith(cacheFirst(req, STATIC));
     return;
   }

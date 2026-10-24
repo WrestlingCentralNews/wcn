@@ -247,7 +247,7 @@ def run():
         r = None if a.get("drop") else combat.nonwrestling(a)
         if r: editorial.log_drop(a, r); a["drop"] = r; print("off-topic:", a["raw_title"][:70], "->", r, flush=True)
     for a in arts:   # '(LIVESTREAMs)! WWE SmackDown 𝐋𝐈𝐕𝐄 Ｆｒｅｅ 𝐒𝐭𝐑𝐞𝐀𝐦' pages on hijacked sites (2026-10-24): never a source, photo or timeline line
-        r = None if a.get("drop") else editorial.stream_spam(a)
+        r = None if a.get("drop") else (editorial.stream_spam(a) or editorial.stream_notice(a))   # + 'This Week's Edition Of X Is Now Streaming' notices
         if r: editorial.log_drop(a, r); a["drop"] = r; print("spam:", a["raw_title"][:70], "->", r, flush=True)
     for a in arts:   # look-backs / re-published history columns ('10 YEARS AGO - WWE LIVE EVENT REPORT', WON Flashback): fresh date, old news
         r = None if a.get("drop") else editorial.retro(a)
@@ -367,7 +367,10 @@ def run():
     with ThreadPoolExecutor(8) as ex:
         for c, (img, cr, st) in ex.map(_pick, todo):
             c["image"] = img; c["image_credit"] = cr; c["image_status"] = st; stats_img[st] = stats_img.get(st, 0) + 1
-    for c in clusters: c.pop("member_images", None); c.pop("member_src", None)
+            ml = (c.get("member_link") or {}).get(img)
+            if ml and ml != c.get("link"): c["image_link"] = ml   # the report the photo came from (imgmeta: bigger copy on that page)
+            else: c.pop("image_link", None)
+    for c in clusters: c.pop("member_images", None); c.pop("member_src", None); c.pop("member_link", None)
     n_ov = image_overrides(clusters)
     if n_ov: print("images: manual overrides applied to", n_ov, flush=True)
     # roster check is on demand only (pubgate.roster_check -> roster.ensure), owner rule 2026-10-21

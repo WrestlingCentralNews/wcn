@@ -376,10 +376,15 @@ def stub(to):
             f'<script>location.replace("/{e(to)}"+location.hash)</script></head>'
             f'<body><p>This story moved: <a href="/{e(to)}">{e(t)}</a></p></body></html>')
 def build(clusters):
-    import translate, extras
-    global BUILT; BUILT = clusters
+    import selfhost
     build_sw()
     imgmeta.run(clusters); imgmeta.apply(clusters)   # cards, story heroes, og:image and NewsArticle use the largest version of each photo
+    try: selfhost.run(clusters)                      # ...downloaded to public/img/s (our own site), after every photo rule
+    except Exception as ex: print("selfhost: error (ignored, hotlinks kept)", repr(ex)[:200], flush=True)
+    with selfhost.swap(clusters): return _build(clusters)
+def _build(clusters):
+    import translate, extras
+    global BUILT; BUILT = clusters
     nh = hubs.tag(clusters)
     old_tr = translate.load()      # before run() prunes ids that no longer exist (needed for the old Spanish URLs)
     tr = translate.run(clusters)   # {cluster_id: {t, s, url, p}} Spanish, cached; only new/changed stories cost anything

@@ -198,3 +198,10 @@ def stream_spam(a):
     if _HIJACK.search(link) and _STREAMY.search(t): return "stream spam"
     if _STREAMY.search(t) and (t != raw or _SPAMMY.search(t)): return "stream spam"   # 𝐋𝐈𝐕𝐄 / Ｆｒｅｅ styled letters, 'free', '%*(((' junk
     return None
+# 'This Week's Edition Of Gotham Wrestling Is Now Streaming' (PWInsider, 2026-10-24): a one-line 'episode is up' notice with no
+# news in it. These template titles glued unrelated show notices (Gotham, UWN, TNA Xplosion, WWE Main Event, Dynamite, SmackDown
+# previews) into one story that carried a WWE logo photo. Any source; checked every run.
+_NOTICE = re.compile(r"(?i)^\s*(?:this|last)\s+week'?s\s+(?:edition|episode)\s+of\s+.{2,80}?\s+(?:is|are)\s+(?:now\s+)?(?:streaming|available|online|up)\b")
+def stream_notice(a):
+    """'streaming notice' for content-free 'this week's edition of X is now streaming' bulletins; None otherwise."""
+    return "streaming notice" if _NOTICE.search(a.get("raw_title") or a.get("title") or "") else None

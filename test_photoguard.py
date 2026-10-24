@@ -72,4 +72,10 @@ class Spam(unittest.TestCase):
              "summary": "", "image": None, "ts": 2, "categories": ["WWE"], "kind": {"type": "news"}}
         self.assertTrue(enrich._scenery({**SPAM}))
         self.assertFalse(enrich._scenery({**a, "image": F4W}))
+class Notice(unittest.TestCase):   # 2026-10-24 'This Week's Gotham Wrestling Now Streaming' (c764129f9ef72)
+    def test_streaming_notice(self):
+        for t in ("THIS WEEK'S EDITION OF GOTHAM WRESTLING IS NOW STREAMING", "This Week's Edition Of WWE Main Event Is Now Streaming", "This Week's Edition Of TNA Xplosion Is Now Streaming"):
+            self.assertEqual(editorial.stream_notice({"raw_title": t}), "streaming notice", t)
+        for t in ("WWE Unreal Season 2 Is Now Streaming On Netflix", "WWE Main Event Preview", "This Week's Edition Of Uwn Championship Wrestling Tv", "WWE SmackDown Preview For October 23"):
+            self.assertIsNone(editorial.stream_notice({"raw_title": t}), t)
 if __name__ == "__main__": unittest.main()

@@ -53,7 +53,7 @@ def email_html(stories, issue_date):
     rows = []
     for i, c in enumerate(stories, 1):
         cat = c["categories"][0]; col = CATC.get(cat, "#7cd618"); link = e(utm(SITE + c["url"], i))
-        img = c.get("image") or ""
+        img = c.get("image_local") or c.get("image") or ""
         imgrow = (f'<tr><td style="padding:0 0 12px 0"><a href="{link}"><img src="{e(img)}" width="560" alt="{e(c["title"])}" '
                   f'style="display:block;width:100%;max-width:560px;height:auto;border:0;border-radius:10px;background:#13302c"></a></td></tr>') if img.startswith("http") else ""
         if i > 3: imgrow = ""                                       # images on the top 3 only: lighter, faster email
@@ -125,7 +125,7 @@ def main(argv):
     s = load_state()
     body_req = {"subject": subject, "preview_text": preview, "content": body, "description": f"WCN Weekly {week}",
                 "public": False, "published_at": None, "send_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
-                "email_address": None, "thumbnail_url": stories[0].get("image") or None, "thumbnail_alt": stories[0]["title"]}
+                "email_address": None, "thumbnail_url": stories[0].get("image_local") or stories[0].get("image") or None, "thumbnail_alt": stories[0]["title"]}
     if test:
         tid = tag_id(key, TEST_TAG)
         if not tid: log(f"no '{TEST_TAG}' tag in Kit; refusing to send a test to everyone"); return

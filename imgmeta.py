@@ -11,7 +11,7 @@ apply() then points every card/story at that version and records its real width/
 import os, re, json, struct, zlib, urllib.request, urllib.error, urllib.parse, html as _html, time
 from concurrent.futures import ThreadPoolExecutor
 ROOT = os.path.dirname(os.path.abspath(__file__)); CACHE = os.path.join(ROOT, "data", "image_sizes.json")
-V = 6                         # v6: Jetpack Photon (i0.wp.com) judged by its origin file (Photon 404s the runner); broken marks re-checked even when no story uses them any more
+V = 7                         # v7: photos under 1200px re-checked once (X 'name=orig', the photo's own report page); v6: Jetpack Photon (i0.wp.com) judged by its origin file (Photon 404s the runner); broken marks re-checked even when no story uses them any more
                               # v5: 401/403/429 no longer count as broken (Jetpack i0.wp.com refused the Actions runner, fine for readers); why kept
 V_BROKEN = 6
 _WHY = {}
@@ -150,6 +150,11 @@ def variants(u):
         if x and x != u and x not in out: out.append(x)
     s = urllib.parse.urlsplit(u); q = urllib.parse.parse_qsl(s.query, keep_blank_values=True)
     path = s.path
+    # X/Twitter media: any size name (small/medium/900x900) or .jpg form -> the original upload
+    m = re.match(r"^/media/([A-Za-z0-9_-]{10,})(?:\.(jpe?g|png|webp))?$", path) if s.netloc == "pbs.twimg.com" else None
+    if m:
+        fmt = (m.group(2) or dict(q).get("format") or "jpg").replace("jpeg", "jpg")
+        add(f"https://pbs.twimg.com/media/{m.group(1)}?format={fmt}&name=orig")
     # Yahoo/AOL image proxies carry the original URL at the end of the path
     m = re.search(r"/(https?://[^?#]+)$", urllib.parse.unquote(u)) if re.search(r"yimg\.com|aol\.com", s.netloc) else None
     if m: add(m.group(1))
@@ -202,8 +207,8 @@ def pick(found):
     if ok: return min(ok, key=lambda f: f[1])
     ok = [f for f in found if f[1]]
     return max(ok, key=lambda f: f[1]) if ok else None
-def find(u, link=None):
-    """(best_url, w, h) for feed image u; only cheap HTTP."""
+def find(u, link=None, link2=None):
+    """(best_url, w, h) for feed image u; only cheap HTTP. link = the report the photo came from, link2 = the story's lead report."""
     d = probe(u); found = [(u, *d)] if d else []
     import photoguard   # 360 panorama / virtual-tour asset or extreme shape: never shown (2026-10-24 Shodoshima barrel-room thumbnail)
     why = "panorama" if (u in _PANO or photoguard.pano_url(u)) else (photoguard.shape(*d) if d else None)
@@ -214,8 +219,9 @@ def find(u, link=None):
         if dv: found.append((v, *dv))
         if dv and MIN_W <= dv[0] <= 2600 and _good(*dv): break
     b = pick(found)
-    if link and (not b or b[1] < MIN_W or b[1] > 2600):
-        for v in page_images(link, u):
+    for lk in dict.fromkeys(x for x in (link, link2) if x):
+        if b and MIN_W <= b[1] <= 2600: break
+        for v in page_images(lk, u):
             if any(v == f[0] for f in found): continue
             dv = probe(v)
             if dv: found.append((v, *dv))
@@ -274,13 +280,14 @@ def run(clusters, max_new=150):
         if not u.startswith("https://") or u in seen or _age(c, now) > WINDOW_D * 86400: continue
         x = C.get(u)
         stale_broken = x and len(x["best"]) > 3 and x["best"][3] == "broken" and (now - x.get("at", 0) > BROKEN_RECHECK_H * 3600 or x.get("v", 1) < V_BROKEN)
-        if x and not stale_broken and (x.get("v", 1) >= V or (x.get("v", 1) >= 3 and (x["best"][1] or 0)) or ((x["best"][1] or 0) >= MIN_W and not re.search(r"\.png$", urllib.parse.urlsplit(x["best"][0]).path, re.I))): continue
-        seen.add(u); todo.append((u, c.get("link")))
+        is_broken = x and len(x["best"]) > 3 and x["best"][3] == "broken"   # broken marks follow V_BROKEN / BROKEN_RECHECK_H, not V
+        if x and not stale_broken and (is_broken or x.get("v", 1) >= V or (x.get("v", 1) >= 3 and (x["best"][1] or 0) >= MIN_W) or ((x["best"][1] or 0) >= MIN_W and not re.search(r"\.png$", urllib.parse.urlsplit(x["best"][0]).path, re.I))): continue
+        seen.add(u); todo.append((u, c.get("image_link") or c.get("link"), c.get("link")))
     for u, x in list(C.items()):   # a broken photo is filtered out before stories pick an image, so it is re-checked here or never
         if u in seen or len(x["best"]) < 4 or x["best"][3] != "broken" or now - x.get("first", x.get("at", 0)) > 7 * 86400: continue
-        if now - x.get("at", 0) > BROKEN_RECHECK_H * 3600 or x.get("v", 1) < V_BROKEN: seen.add(u); todo.append((u, x.get("link")))
+        if now - x.get("at", 0) > BROKEN_RECHECK_H * 3600 or x.get("v", 1) < V_BROKEN: seen.add(u); todo.append((u, x.get("link"), None))
     todo = todo[:max_new]
-    l = dict(todo)
+    l = {a[0]: a[1] for a in todo}
     def job(a): return a[0], find(*a)
     with ThreadPoolExecutor(12) as ex:
         for u, b in ex.map(job, todo):
