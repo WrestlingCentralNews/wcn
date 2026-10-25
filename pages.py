@@ -471,15 +471,19 @@ def _build(clusters):
     static = extras.build_trust(clusters, tr) + extras.build_es_home(clusters, tr)
     n_news = extras.news_sitemap(clusters, tr)
     # sitemaps: English (+ trust/hub pages) and Spanish (/es/ only), with hreflang alternates
-    hub_en = sorted(p for p in hub_pages if not p.startswith("es/")); hub_es = sorted(p for p in hub_pages if p.startswith("es/"))
+    # left out of sitemaps (still live, linked and indexable): event/episode pages with no stories yet (hubs.THIN) and utility pages
+    # (contact, masthead, newsletter signup) - sitemaps list the pages worth Google's crawl budget
+    thin = set(getattr(hubs, "THIN", ())) | SITEMAP_SKIP
+    hub_en = sorted(p for p in hub_pages if not p.startswith("es/") and p not in thin); hub_es = sorted(p for p in hub_pages if p.startswith("es/") and p not in thin)
     now_iso = iso(time.time())
-    en = [(SITE, now_iso, {"en": SITE, "es": SITE + "es/"}), (SITE + "newsletter/", None, None)]
-    en += [(SITE + p, now_iso, None) for p in hub_en]
-    en += [(SITE + p, None, None) for p in static if not p.startswith("es/")]
+    hlm = hub_lastmod(hub_pages)   # lastmod = when the page's content last changed, not every build
+    en = [(SITE, now_iso, {"en": SITE, "es": SITE + "es/"})]
+    en += [(SITE + p, hlm.get(p), None) for p in hub_en]
+    en += [(SITE + p, None, None) for p in static if not p.startswith("es/") and p not in thin]
     en += [(SITE + c["url"], iso(c["ts"]), {"en": SITE + c["url"], "es": SITE + tr[c["id"]]["url"]} if c["id"] in tr else None) for c in clusters]
     open(os.path.join(PUB, "sitemap.xml"), "w").write(extras.urlset(en, alts=True))
-    es = [(SITE + "es/", now_iso, {"en": SITE, "es": SITE + "es/"})] + [(SITE + p, now_iso, None) for p in hub_es]
-    es += [(SITE + p, None, None) for p in static if p.startswith("es/") and p != "es/"]
+    es = [(SITE + "es/", now_iso, {"en": SITE, "es": SITE + "es/"})] + [(SITE + p, hlm.get(p), None) for p in hub_es]
+    es += [(SITE + p, None, None) for p in static if p.startswith("es/") and p != "es/" and p not in thin]
     es += [(SITE + tr[c["id"]]["url"], iso(c["ts"]), {"en": SITE + c["url"], "es": SITE + tr[c["id"]]["url"]}) for c in clusters if c["id"] in tr]
     open(os.path.join(PUB, "es", "sitemap.xml"), "w").write(extras.urlset(es, alts=True))
     extras.robots()
@@ -491,3 +495,15 @@ def _build(clusters):
     os.makedirs(os.path.join(ROOT, "data"), exist_ok=True); json.dump(idx, open(os.path.join(ROOT, "data", "indexnow_pages.json"), "w"))
     print(f"pages: redirect stubs {len(red)}", flush=True)
     print(f"pages: hubs tagged {nh} stories, {len(hub_pages)} hub pages, es stories {len(tr)}, news sitemap {n_news}", flush=True)
+SITEMAP_SKIP = {"newsletter/", "contact/", "es/contacto/", "masthead/", "es/equipo/"}
+HUB_LM = os.path.join(ROOT, "data", "hub_lastmod.json")
+def hub_lastmod(hub_pages):
+    """{path: ISO time its content hash last changed} (kept in data/hub_lastmod.json; paths no longer built are dropped)."""
+    try: old = json.load(open(HUB_LM))
+    except Exception: old = {}
+    now = time.time(); out = {}
+    for p, h in hub_pages.items():
+        o = old.get(p); out[p] = o if o and o[0] == h else [h, now]
+    try: json.dump(out, open(HUB_LM, "w"))
+    except Exception: pass
+    return {p: iso(v[1]) for p, v in out.items()}

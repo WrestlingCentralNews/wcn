@@ -230,6 +230,7 @@ def page(path, lang, title, desc, h1, body, crumbs, ld, alt, active="shows", ima
     write(path, html_)
     return url
 _WRITTEN = {}
+THIN = set()   # event/episode pages with no stories and no live results yet: built (and linked) but kept out of sitemaps until they have content
 def write(path, s):
     full = os.path.join(BUILD, path, "index.html") if path.endswith("/") else os.path.join(BUILD, path)
     os.makedirs(os.path.dirname(full), exist_ok=True); open(full, "w").write(s)
@@ -375,7 +376,7 @@ def build(clusters, tr_es=None):
     """Write all hub pages for en + es. Returns {path: content-hash} for sitemaps/IndexNow."""
     import shutil
     global BUILD
-    _WRITTEN.clear(); LIVE_PAGES.clear()
+    _WRITTEN.clear(); LIVE_PAGES.clear(); THIN.clear()
     now = datetime.datetime.now(ET); today = now.date(); cutoff = today - datetime.timedelta(days=RETENTION_DAYS)
     by_ep, by_ev = {}, {}
     for c in clusters:
@@ -423,6 +424,7 @@ def build(clusters, tr_es=None):
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             title, h1, body, ld, desc = _live(f"{ds}-{show}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
             ld = event_extras(ld, f"{show}/{ds}", img, lang)
+            if not st and not (LIVE and (LIVE.page_state(f"{ds}-{show}") or {}).get("shown")): THIN.add(path)
             ch, cl = cite(f"{ds}-{show}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, image=img)
             eps.setdefault(show, []).append((d, path, len(st), aired, st))
@@ -455,6 +457,7 @@ def build(clusters, tr_es=None):
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             title, h1, body, ld, desc = _live(f"{ev['date']}-{ev['slug']}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
             ld = event_extras(ld, f"{ev['slug']}/{ev['date']}", img, lang)
+            if not st and not (LIVE and (LIVE.page_state(f"{ev['date']}-{ev['slug']}") or {}).get("shown")): THIN.add(path)
             ch, cl = cite(f"{ev['date']}-{ev['slug']}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, active="upcoming", image=img)
             evs.append((ev, d, path, len(st), aired))
