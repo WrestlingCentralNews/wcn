@@ -38,7 +38,7 @@ def check(img, names):
         d = json.load(r)
         with llm._lock:
             cost = d.get("usage", {}).get("cost_in_usd_ticks", 0) / 1e10
-            llm._U["usd"] += cost; llm._U["vision"] = llm._U.get("vision", 0) + 1
+            llm.add_cost(cost, "vision")
             if getattr(_tl, "bf", False):
                 B = c.setdefault(BACKFILL_KEY, {"usd": 0.0, "calls": 0}); B["usd"] += cost; B["calls"] += 1
         out = json.loads(d["choices"][0]["message"]["content"])
@@ -310,7 +310,7 @@ def check_brand(img, promos_, paid=True):
             headers=llm.HDR(key, "wcn-vision")), timeout=45)
         d = json.load(r)
         with llm._lock:
-            llm._U["usd"] += d.get("usage", {}).get("cost_in_usd_ticks", 0) / 1e10; llm._U["vision"] = llm._U.get("vision", 0) + 1
+            llm.add_cost(d.get("usage", {}).get("cost_in_usd_ticks", 0) / 1e10, "vision")
         out = json.loads(d["choices"][0]["message"]["content"])
         c[k] = {"ok": bool(out.get("shows_brand")), "at": int(time.time())}
         return c[k]["ok"]
