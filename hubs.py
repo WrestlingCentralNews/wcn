@@ -244,7 +244,45 @@ def sports_event(name, d, hhmm, path, brand, status, venue=None, city=None, desc
         ev["eventAttendanceMode"] = "https://schema.org/OnlineEventAttendanceMode"
         ev["location"] = {"@type": "VirtualLocation", "url": SITE + path}
     if desc: ev["description"] = desc
+    else:   # factual line from the sourced schedule data (date, venue / regular slot) - never filler
+        dl = C.dlong(d, lang)
+        if venue: ev["description"] = (f"{name}: {dl}, {venue}, {city}." if lang == "en" else f"{name}: {dl}, {venue}, {city}.")
+        elif show in SHOWS: ev["description"] = show_desc(show, lang)
+    ou = ORG_URL.get(ev["organizer"]["name"])
+    if ou: ev["organizer"]["url"] = ou
+    if venue and status is False and TICKETS.get(ev["organizer"]["name"]):   # upcoming in-person event: the promotion's official tickets/events page (no price - we don't know it)
+        ev["offers"] = {"@type": "Offer", "url": TICKETS[ev["organizer"]["name"]], "category": "primary"}
     return ev
+# Official promotion sites (organizer.url) and their official events/tickets pages (Offer url) - checked 2026-10-25, all return 200.
+ORG_URL = {"WWE": "https://www.wwe.com/", "AEW": "https://www.allelitewrestling.com/", "TNA": "https://tnawrestling.com/", "AAA": "https://www.luchalibreaaa.com/"}
+TICKETS = {"WWE": "https://www.wwe.com/events", "AEW": "https://www.allelitewrestling.com/aew-events", "TNA": "https://tnawrestling.com/events/"}
+def _cards():
+    try:
+        with open(os.path.join(ROOT, "data", "fullcards.json")) as f: return json.load(f)
+    except Exception: return {}
+def event_extras(ld, key, img, lang):
+    """Fill the page's SportsEvent with what we really have: the page photo (absolute https URL that already passed the photo rules)
+    and the announced wrestlers from the official card (fullcard.py state: card lines + advertised appearances) as Person performers,
+    named in the description. Nothing known -> field left out."""
+    ev = next((x for x in ld if isinstance(x, dict) and x.get("@type") == "SportsEvent"), None)
+    if not ev: return ld
+    if (img or "").startswith("https://"): ev["image"] = [img]
+    card = _cards().get(key) or {}
+    names = []
+    try:
+        import enrich
+        for line in card.get("lines") or []:
+            for n in sorted(enrich.persons(enrich.canon(line)), key=lambda n: line.lower().find(n)):
+                m = re.search(re.escape(n), line, re.I); nm = m.group(0) if m and m.group(0) != m.group(0).lower() else n.title()
+                if nm.lower() not in {x.lower() for x in names}: names.append(nm)
+    except Exception as ex: print("[hubs] card performers failed", key, repr(ex)[:120], flush=True)
+    for a in card.get("appearances") or []:
+        if a.lower() not in {x.lower() for x in names}: names.append(a)
+    if names:
+        ev["performer"] = [{"@type": "Person", "name": n} for n in names[:40]]
+        lab = "Anunciados" if lang == "es" else "Announced"
+        ev["description"] = (ev.get("description", "").rstrip() + f" {lab}: " + ", ".join(names[:8]) + (" y más." if lang == "es" and len(names) > 8 else " and more." if len(names) > 8 else ".")).strip()
+    return ld
 def itemlist(stories, lang):
     return {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "url": SITE + s["u"], "name": s["t"]} for i, s in enumerate(stories[:30])]}
@@ -381,9 +419,10 @@ def build(clusters, tr_es=None):
             fx = facts([(t["date"], e(C.dfull(d, lang))), (t["time"], e(C.tfmt(h, m, lang))), (t["watch"], e(info["network"] + " (US)")), ("", e(note) if note else None)])
             body = (f'<p class="lede">{e(show_desc(show, lang))} <a href="/{hub_path(show, lang)}">{e(nm)} →</a></p>{fx}' + sections(st, lang, aired))
             crumbs = [home, shows_c, (nm, SITE + hub_path(show, lang)), (dl, SITE + path)]
-            ld = [sports_event(f"{nm} ({dl})", d, info["time"], path, SHOWS[show]["brand"], aired, desc=desc, lang=lang), itemlist(st, lang)]
+            ld = [sports_event(f"{nm} ({dl})", d, info["time"], path, SHOWS[show]["brand"], aired, desc=desc, lang=lang, show=show), itemlist(st, lang)]
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             title, h1, body, ld, desc = _live(f"{ds}-{show}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
+            ld = event_extras(ld, f"{show}/{ds}", img, lang)
             ch, cl = cite(f"{ds}-{show}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, image=img)
             eps.setdefault(show, []).append((d, path, len(st), aired, st))
@@ -415,6 +454,7 @@ def build(clusters, tr_es=None):
             ld = [sports_event(nm, d, hhmm, path, ev["brand"], aired, ev["venue"], ev["city"], desc, lang)] + ([itemlist(st, lang)] if st else [])
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             title, h1, body, ld, desc = _live(f"{ev['date']}-{ev['slug']}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
+            ld = event_extras(ld, f"{ev['slug']}/{ev['date']}", img, lang)
             ch, cl = cite(f"{ev['date']}-{ev['slug']}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, active="upcoming", image=img)
             evs.append((ev, d, path, len(st), aired))
@@ -453,7 +493,7 @@ def build(clusters, tr_es=None):
             crumbs = [home, shows_c, (nm, SITE + path)]
             ld = [{"@context": "https://schema.org", "@type": "CollectionPage", "name": title.replace(" | WCN", ""), "url": SITE + path, "inLanguage": lang,
                    "about": {"@type": "TVSeries", "name": nm}, "publisher": C.PUBLISHER}]
-            if nxt: ld.append(sports_event(f"{nm} ({C.dlong(nxt[0], lang)})", nxt[0], nxt[1]["time"], path, s["brand"], False, lang=lang))
+            if nxt: ld.append(sports_event(f"{nm} ({C.dlong(nxt[0], lang)})", nxt[0], nxt[1]["time"], path, s["brand"], False, lang=lang, show=show))
             page(path, lang, title, desc, h1, "".join(parts), crumbs, ld, alt)
             idx_rows.append((show, nm, path, nxt, len(mine)))
         # ---- /shows/ index ----
