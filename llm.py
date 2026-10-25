@@ -13,7 +13,7 @@ DAILY_MAX_USD = 1.20         # discretionary work stops for the UTC day once the
 # prio 1 = WWE/AEW/TNA back-fill (older live stories)   prio 2 = Indie/Global new   prio 3 = Indie/Global back-fill
 # Each level needs this much room under the monthly pace line (USD) and may use this share of DAILY_MAX_USD:
 PRIO_HEADROOM = (0.0, 0.40, 0.80, 1.20)
-PRIO_DAY_SHARE = (1.0, 0.85, 0.70, 0.55)
+PRIO_DAY_SHARE = (1.0, 0.60, 0.50, 0.40)
 USAGE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "llm_usage.json")
 CATS = ["WWE", "AEW", "TNA", "Indie", "Global"]
 TYPES = ["news", "results", "match", "quote", "opinion", "rumor", "listicle", "evergreen", "off-topic"]
@@ -139,7 +139,8 @@ _QUOTE = re.compile(r"[\"“]([^\"”]{3,})[\"”]")
 _NUM = re.compile(r"\d[\d,.:]*\d|\d")
 _FILLER = re.compile(r"(?i)\b(?:likely|it remains to be seen|only time will tell|time will tell|fans will (?:be|have)|stay tuned|be sure to|don't miss|"
                      r"expected to|could (?:see|be|lead)|might|perhaps|undoubtedly|without a doubt|in conclusion|overall,)\b")
-SHINGLE = 7              # a sentence sharing 7 consecutive words with a report (outside quotes) is copied wording: dropped
+SHINGLE = 10             # a sentence sharing 10 consecutive words with a report (outside quotes) is copied wording: dropped
+                         # (7 caught harmless runs of names/titles like "for the WWE Women's Tag Team Titles")
 def _norm(t): return re.sub(r"[^a-z0-9]+", " ", (t or "").lower().replace("’", "'").replace("'", "")).strip()
 def _grams(t, n=SHINGLE):
     w = _norm(t).split(); return {" ".join(w[i:i + n]) for i in range(len(w) - n + 1)}
@@ -159,10 +160,19 @@ def grounded(paras, src):
             keep.append(s)
         tot += len(re.split(r"(?<=[.!?\u201d\"])\s+(?=[A-Z\u201c\"])", p)); drop += len(re.split(r"(?<=[.!?\u201d\"])\s+(?=[A-Z\u201c\"])", p)) - len(keep)
         if not out and not keep: return []      # the opening sentence/paragraph failed: the rest would read out of context
-        if not out and p.split(". ")[0] not in " ".join(keep): return []
+        if not out and keep[0] != re.split(r"(?<=[.!?”\"])\s+(?=[A-Z“\"])", p)[0]: return []
         p2 = " ".join(keep).strip()
         if len(p2.split()) >= 8: out.append(p2)
     if tot and drop > tot * 0.25: return []    # too much had to be cut: not trustworthy, keep the story as it was
+    return out
+def regroup(paras, min_words=40, max_words=90):
+    """Join one-sentence paragraphs into readable 2-3 sentence paragraphs (text unchanged)."""
+    out = []
+    for p in paras or []:
+        if out and len(out[-1].split()) < min_words and len(out[-1].split()) + len(p.split()) <= max_words: out[-1] += " " + p
+        else: out.append(p)
+    if len(out) > 1 and len(out[-1].split()) < 20 and len(out[-2].split()) + len(out[-1].split()) <= max_words + 20:
+        out[-2] += " " + out.pop()
     return out
 def longform2(headline, reports, prio=0):
     """reports = [source text, ...] (lead first, same story only). -> paragraphs or None. Paced at the given throttle priority."""
@@ -181,7 +191,7 @@ def longform2(headline, reports, prio=0):
         d = json.load(r)
         with _lock: add_cost(d.get("usage", {}).get("cost_in_usd_ticks", 0) / 1e10, "long2")
         p = [x.strip() for x in json.loads(d["choices"][0]["message"]["content"]).get("paragraphs", []) if isinstance(x, str) and len(x.strip()) > 30]
-        return grounded(p[:9], " ".join(reports) + " " + headline) or None
+        return regroup(grounded(p[:12], " ".join(reports) + " " + headline)) or None
     except Exception as e:
         print("llm long2 error:", str(e)[:80], flush=True); return None
 

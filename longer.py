@@ -14,6 +14,7 @@ MIN_GAIN = 25            # keep the new write-up only if it adds at least this m
 MAX_PER_RUN = 30         # calls per 15-min run at most (the daily $ cap is the real limiter)
 NEW_S = 48 * 3600        # 'new' = first published within 48h (back-fill otherwise)
 BIG = {"WWE", "AEW", "TNA"}
+V = 2                    # guard version (llm.grounded); bump to retry stories an older guard rejected
 
 def words(paras): return sum(len((p or "").split()) for p in paras or [])
 def huge(c, lead):
@@ -50,6 +51,7 @@ def plan(clusters, bylink, now=None):
         w = own(c, m)
         if w >= TARGET_WORDS: continue
         rs = reports(c, m, bylink); t = m.get("llm_long2") or {}
+        if t and t.get("v") != V and "w1" not in t: t = {}                 # rejected by an older guard version: one fresh try
         if t.get("sig") == sig(rs) or t.get("n", 0) >= 2: continue      # tried with these same reports (or twice): keep as is
         if t and now - (c.get("first_ts") or c.get("ts") or now) > 3 * 86400: continue   # retry with new reports only while fresh
         out.append((prio(c, m, now), -(c.get("first_ts") or c.get("ts") or 0), c, m, rs, w))
@@ -72,7 +74,8 @@ def run(clusters, bylink, now=None):
         for (p, _, c, m, rs, w), paras in ex.map(job, todo):
             if paras == "skip": continue
             done += 1; t = m.get("llm_long2") or {}
-            rec = {"sig": sig(rs), "n": t.get("n", 0) + 1, "at": int(now), "w0": w, "prio": p}
+            if t.get("v") != V and "w1" not in t: t = {}
+            rec = {"sig": sig(rs), "n": t.get("n", 0) + 1, "at": int(now), "w0": w, "prio": p, "v": V}
             if paras and not enrich.long_mismatch(m, paras) and words(paras) >= words(m.get("llm_long") or []) + MIN_GAIN \
                     and own({**c}, {**m, "llm_long": paras}) >= w + MIN_GAIN:
                 m["llm_long"] = paras; m.pop("llm_long_from", None); rec["w1"] = own(c, m); kept += 1

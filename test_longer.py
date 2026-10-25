@@ -22,7 +22,7 @@ class Budget(unittest.TestCase):
         usage(usd=10.1)
         self.assertFalse(llm.pace_ok(prio=0))
     def test_daily_cap_spreads_backfill(self):
-        usage(usd=1.0, day_usd=0.90)
+        usage(usd=1.0, day_usd=0.65)
         self.assertEqual([llm.pace_ok(prio=p) for p in range(4)], [True, True, False, False])
         usage(usd=1.0, day_usd=1.25)
         self.assertFalse(llm.pace_ok(prio=0))
@@ -54,8 +54,12 @@ class Grounded(unittest.TestCase):
         self.assertNotIn("remains", " ".join(llm.grounded(p3, self.SRC)))
     def test_copied_run_dropped(self):
         p = ["Cody Rhodes spoke about his career outside the ring at length this week.",
-             "Cody Rhodes said he loves acting and that he enjoys it."]
+             "Cody Rhodes said he loves acting and that wrestling is my life, he noted."]
         self.assertNotIn("loves acting and", " ".join(llm.grounded(p, self.SRC)))
+    def test_regroup(self):
+        p = ["One two three four five six seven eight nine ten.", "Eleven twelve thirteen fourteen fifteen sixteen seventeen.", "A " * 85]
+        r = llm.regroup(p)
+        self.assertEqual(len(r), 2); self.assertEqual(" ".join(r).split(), " ".join(p).split())
     def test_bad_opening_rejects_all(self):
         p = ["Cody Rhodes has held 7 titles over 9 years with the company.", "He talked about acting a lot in the new interview."]
         self.assertEqual(llm.grounded(p, self.SRC), [])
