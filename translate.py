@@ -41,6 +41,46 @@ def changed_topic(es_title, en_title):
     if not a or not b: return bool(pe and pn)
     j = len(a & b) / len(a | b)
     return j < 0.2 or (pe and pn and not pe & pn)
+# ---------- sanity check (no AI): names/promotions/numbers in the Spanish headline+summary must come from the English story ----------
+_PROMO = re.compile(r"\b(WWE|AEW|TNA|NXT|ROH|NJPW|CMLL|AAA|GCW|MLW|NWA|Stardom)\b")
+_FAM = {"NXT": "WWE", "ROH": "AEW"}
+_PROMO_ALL = {"WWE", "AEW", "TNA", "NXT", "ROH", "NJPW", "CMLL", "AAA", "GCW", "MLW", "NWA"}
+_ES_ABBR = {"EE", "UU", "EEUU", "EUA", "PM", "AM", "ET", "TV"}
+def _nums(t): return {re.sub(r"[.,]", "", n) for n in re.findall(r"\d[\d.,]*\d|\d", t or "")} - {"00"}   # '8:00 p.m.' vs '8 PM'
+def _en_text(c):
+    return " ".join([c.get("title") or "", c.get("summary") or "", c.get("raw_title") or "", c.get("src_summary") or ""] + list(c.get("long") or [])
+                    + [u.get("title") or "" for u in c.get("updates") or []])
+def es_issues(c, x):
+    """Reasons the Spanish version looks like a different story than the English one (e.g. a seminar story rendered as
+    'FTR vs MCMG best of 5'), [] if it checks out. Conservative: a wrestler named in the Spanish headline (or 2+ in the summary)
+    who appears nowhere in the English story, a promotion in the Spanish headline the English never mentions, or a number in
+    the Spanish headline that is not in the English text. A flagged Spanish page stays live but is noindex, left out of the
+    sitemaps, and gets one re-translation per English version (run())."""
+    import enrich
+    if not x: return []
+    en = _en_text(c); et, es_ = x.get("t") or "", x.get("s") or ""
+    low = (en + " " + enrich.canon(en)).lower(); words = set(re.findall(r"[a-z0-9]+", low))
+    def missing(n):   # full name, or its first/last word (4+ letters: 'Ric Flair's daughter Charlotte' -> 'charlotte flair')
+        if n in low: return False
+        toks = re.findall(r"[a-z0-9]+", n)
+        return not any(len(w) >= 4 and w in words for w in (toks[:1] + toks[-1:]))
+    pe = lambda t: enrich.persons(enrich.canon(t))
+    r = []
+    xt = sorted(n for n in pe(et) if missing(n))
+    xs = sorted(n for n in pe(es_) - pe(et) if missing(n))
+    caps = re.findall(r"\b[A-Z][a-zA-Z]*(?:\s+[A-Z][a-zA-Z]*)+", en)   # 'Motor City Machine Guns' -> initials 'mcmg'
+    inits = {"".join(w[0] for w in run.split()).lower() for run in caps} | {"".join(w[0] for w in run.split()[i:j]).lower() for run in caps
+                                                                          for i in range(len(run.split())) for j in range(i + 2, len(run.split()) + 1)}
+    xt += sorted({a for a in re.findall(r"\b[A-Z][A-Z0-9]{1,5}\b", et) if a not in _PROMO_ALL and a not in _ES_ABBR
+                  and a.lower() not in words and a.lower() not in inits})   # team / show acronyms the roster list doesn't know (FTR, MCMG)
+    if xt: r.append("headline names not in English: " + ", ".join(xt))
+    if len(xs) >= 2: r.append("summary names not in English: " + ", ".join(xs))
+    fam = lambda ps: {_FAM.get(p, p) for p in ps}   # WWE/NXT and AEW/ROH count as one (as in enrich.promos)
+    xp = sorted(p for p in _PROMO.findall(et) if _FAM.get(p, p) not in fam(_PROMO.findall(en + " " + " ".join(c.get("categories") or []))))
+    if xp: r.append("headline promotion not in English: " + ", ".join(xp))
+    en_n = _nums(en); xd = sorted(n for n in _nums(et) if not any(n in m for m in en_n))
+    if xd: r.append("headline numbers not in English: " + ", ".join(xd))
+    return r
 def load():
     try: return json.load(open(CACHE))
     except Exception: return {}
@@ -51,13 +91,14 @@ def run(clusters):
     tr = load(); now = time.time()
     live = {c["id"] for c in clusters}
     tr = {k: v for k, v in tr.items() if k in live}            # same 60-day pruning as the stories
-    todo = []; moved = set()
+    todo = []; moved = set(); fixes = set()
     for c in clusters:
         x = tr.get(c["id"])
         if not x: todo.append(c)
         elif x.get("h") != h(c) and changed_topic(x.get("en") or x["t"], c["title"]):
             todo.append(c); moved.add(c["id"])      # a different story now: always re-translate, new Spanish slug (old one gets a redirect stub)
         elif x.get("h") != h(c) and x.get("n", 1) <= RETRANSLATE_MAX and now - c.get("first_ts", c["ts"]) < 3 * 86400: todo.append(c)
+        elif x.get("fx") != h(c) and es_issues(c, x): todo.append(c); fixes.add(c["id"])   # failed the sanity check: one re-translation per English version
     todo.sort(key=lambda c: c["id"] not in moved)   # topic changes first
     todo = todo[:MAX_PER_RUN]; done = 0; moved_done = []
     if todo and llm.budget_left() > 0.2:
@@ -71,6 +112,7 @@ def run(clusters):
                     old = tr.get(c["id"], {}); mv = c["id"] in moved
                     tr[c["id"]] = {"t": r["t"], "s": r["s"], "h": h(c), "n": 1 if mv else old.get("n", 0) + 1, "at": int(now), "en": c["title"],
                                    "sl": slug_es(r["t"]) if mv else (old.get("sl") or slug_es(r["t"]))}
+                    if c["id"] in fixes: tr[c["id"]]["fx"] = h(c)
                     if mv: moved_done.append(c["id"])
                     if old.get("p") and old.get("ph") == hashlib.md5(json.dumps(c.get("long") or []).encode()).hexdigest()[:10]:
                         tr[c["id"]]["p"], tr[c["id"]]["ph"] = old["p"], old["ph"]
@@ -91,6 +133,8 @@ def run(clusters):
         if not x: continue
         ok = x.get("p") and x.get("ph") == hashlib.md5(json.dumps(c.get("long") or []).encode()).hexdigest()[:10]
         out[c["id"]] = {**x, "url": f"es/noticias/{x.get('sl') or slug_es(x['t'])}-{c['id']}.html", "p": x["p"] if ok else None}
+    byid = {c["id"]: c for c in clusters}; bad = [k for k in out if es_issues(byid[k], out[k])]
+    if bad: print(f"es: {len(bad)} Spanish versions fail the name/number check (noindex until re-translated): {bad[:20]}", flush=True)
     if moved_done: print(f"es: topic changed, new Spanish slug (old URL redirected): {len(moved_done)} {moved_done[:20]}", flush=True)
     print(f"es: translated {done}/{len(todo)}, long {nl}/{len(lt)}, cached {len(tr)}, month spend ${llm._U['usd'] if llm._U else 0:.3f}", flush=True)
     return out

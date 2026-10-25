@@ -233,7 +233,11 @@ def thin(c): return not c.get("card") and own_words(c) < THIN_WORDS
 def noindex(c, lang="en", L=None):
     """True when the story page in this language carries a robots noindex meta; such pages stay live and linked but are
     never listed in any sitemap (EN, ES or news)."""
-    return thin(c)
+    if thin(c): return True
+    if lang == "es" and L:
+        import translate
+        return bool(translate.es_issues(c, L))   # Spanish version names wrestlers/numbers the English story doesn't: hidden from search until re-translated
+    return False
 def sources_html(c, t):
     """Every outlet behind the story, lead first (deduplicated by outlet, max 6), each linked to its report."""
     seen, out = set(), []
@@ -506,7 +510,7 @@ def _build(clusters):
     en = [(SITE, now_iso, {"en": SITE, "es": SITE + "es/"})]
     en += [(SITE + p, hlm.get(p), None) for p in hub_en]
     en += [(SITE + p, None, None) for p in static if not p.startswith("es/") and p not in thin]
-    en += [(SITE + c["url"], iso(c["ts"]), {"en": SITE + c["url"], "es": SITE + tr[c["id"]]["url"]} if c["id"] in tr else None) for c in clusters if not noindex(c)]
+    en += [(SITE + c["url"], iso(c["ts"]), {"en": SITE + c["url"], "es": SITE + tr[c["id"]]["url"]} if c["id"] in tr and not noindex(c, "es", tr[c["id"]]) else None) for c in clusters if not noindex(c)]
     open(os.path.join(PUB, "sitemap.xml"), "w").write(extras.urlset(en, alts=True))
     es = [(SITE + "es/", now_iso, {"en": SITE, "es": SITE + "es/"})] + [(SITE + p, hlm.get(p), None) for p in hub_es]
     es += [(SITE + p, None, None) for p in static if p.startswith("es/") and p != "es/" and p not in thin]
