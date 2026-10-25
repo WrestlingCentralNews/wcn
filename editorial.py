@@ -219,3 +219,36 @@ def video_notice(a):
     VIDEO_NOTICE_FROM; None otherwise."""
     if (a.get("ts") or 0) < VIDEO_NOTICE_FROM: return None
     return "video notice" if _VNOTICE.search(a.get("raw_title") or a.get("title") or "") else None
+# 2026-10-25 (AdSense follow-up): headlines that are only a link to a video / stream with no named news - 'FULL MATCH: A vs. B: NXT
+# highlights, Oct. 20', 'Watch: FULL EPISODE: Lucha Libre AAA', 'Watch: AEW WrestleDream BUY IN', 'AEW WrestleDream live stream: The Buy In',
+# 'How to Watch AEW WrestleDream 2026', "Here's How to Watch WWE Money in the Bank 2026 Live Online". Deliberately narrow: the whole headline
+# has to be the link phrase + a show/event name (+ date / outlet suffix). 'WATCH: Crown Jewel Stadium Construction Underway...', 'How to
+# watch Crown Jewel: start time, card', 'Cody Rhodes vs Randy Orton full match set for...', 'AEW secures live stream deal' all stay.
+FILLER_FROM = 1792971000   # 2026-10-25 23:30 UTC: stories already published keep their ids
+_SRC_SUFFIX = re.compile(r"\s+[-|–]\s+(?:wwe|aew|all elite wrestling|dazn(?:\s+\w+)?|youtube|fite|triller\s*tv|[\w ]{2,25})\s*$", re.I)
+_SHOWISH = (r"(?:(?:wwe|aew|aaa|lucha libre aaa|tna|nxt|roh|njpw|mlw|cmll|stardom|impact|nwa|gcw)\b[\w!&'’. -]{0,40}?"
+            r"|[\w!&'’. -]{2,40}?\s+(?:buy[- ]in|pre[- ]?show|kickoff|zero hour|countdown|full (?:show|episode)))")
+_DATE = r"(?:[,:\s(]+(?:\d{1,2}/\d{1,2}(?:/\d{2,4})?|(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?:,?\s+\d{4})?|\d{4})\)?)?"
+_NEWSY = re.compile(r"(?i)\b(?:card|matches|match card|start time|preview|results?|predictions?|location|tickets?|date|vs\.?|v\.|deal|signs?|announce\w*|confirm\w*|injur\w*|returns?|wins?|beats?|title)\b")
+_FILLER = re.compile(r"(?i)^\s*(?:"
+    r"(?:watch\s*:\s*)?full\s+match\s*[:|-]\s*.+"                                                        # FULL MATCH: A vs. B: SmackDown highlights
+    r"|watch\s*:\s*full\s+(?:episode|show)\s*[:|-]?\s*.+"                                               # Watch: FULL EPISODE: Lucha Libre AAA, Oct. 17
+    r"|watch\s*:\s*" + _SHOWISH + _DATE +                                                               # Watch: AEW WrestleDream BUY IN / Watch: AAA Héroes Inmortales: October 24, 2026
+    r"|(?:watch\s+)?" + _SHOWISH + r"\s*:?\s*(?:[\w' ]{0,20}\s+)?live\s*stream(?:s|ing)?(?:\s+online)?(?:\s*:\s*the\s+[\w -]{2,20})?" + _DATE +   # AEW WrestleDream live stream: The Buy In
+    r"|(?:here'?s\s+|here’s\s+)?(?:how|where)\s+(?:and\s+where\s+|and\s+when\s+)?to\s+(?:watch|stream)\s+[\w!&'’. ,-]{2,80}?(?:\s+live(?:\s+online)?)?"  # How to Watch AEW WrestleDream 2026
+    r")\s*$")
+def filler_notice(a):
+    """'link-only notice' for headlines that only point at a video/stream (full match, full episode, 'watch:', live stream, how/where
+    to watch) with no named news, dated after FILLER_FROM; None otherwise."""
+    if (a.get("ts") or 0) < FILLER_FROM: return None
+    t = (a.get("raw_title") or a.get("title") or "").strip()
+    t = _SRC_SUFFIX.sub("", t).strip()
+    if not _FILLER.search(t): return None
+    if re.match(r"(?i)\s*(?:watch\s*:\s*)?full\s+(?:match|episode|show)\b", t) or re.match(r"(?i)\s*watch\s*:\s*full\b", t): return "link-only notice"
+    body = re.sub(r"(?i)^\s*(?:here'?s\s+|here’s\s+)?(?:watch\s*:?|(?:how|where)\s+to\s+(?:watch|stream))\s*", "", t)
+    if _NEWSY.search(body): return None
+    import enrich
+    if enrich.persons(enrich.canon(body)): return None   # a named wrestler ('Watch: WWE star Cody Rhodes attacks Orton') is news, not a link post
+    src = " ".join([a.get("summary_src") or "", a.get("body") or ""])[:4000]
+    if len(enrich.persons(enrich.canon(src))) >= 2: return None   # the post itself carries a card / named matches ('Watch: AAA Héroes Inmortales' listing the card)
+    return "link-only notice"

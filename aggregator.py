@@ -247,7 +247,7 @@ def run():
         r = None if a.get("drop") else combat.nonwrestling(a)
         if r: editorial.log_drop(a, r); a["drop"] = r; print("off-topic:", a["raw_title"][:70], "->", r, flush=True)
     for a in arts:   # '(LIVESTREAMs)! WWE SmackDown 𝐋𝐈𝐕𝐄 Ｆｒｅｅ 𝐒𝐭𝐑𝐞𝐀𝐦' pages on hijacked sites (2026-10-24): never a source, photo or timeline line
-        r = None if a.get("drop") else (editorial.stream_spam(a) or editorial.stream_notice(a) or editorial.video_notice(a))   # + 'This Week's Edition Of X Is Now Streaming' notices
+        r = None if a.get("drop") else (editorial.stream_spam(a) or editorial.stream_notice(a) or editorial.video_notice(a) or editorial.filler_notice(a))   # + 'This Week's Edition Of X Is Now Streaming' notices
         if r: editorial.log_drop(a, r); a["drop"] = r; print("spam:", a["raw_title"][:70], "->", r, flush=True)
     for a in arts:   # look-backs / re-published history columns ('10 YEARS AGO - WWE LIVE EVENT REPORT', WON Flashback): fresh date, old news
         r = None if a.get("drop") else editorial.retro(a)
