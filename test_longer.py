@@ -87,7 +87,11 @@ class Plan(unittest.TestCase):
         self.assertNotIn("c6", order); self.assertNotIn("c7", order)
     def test_tried_not_repaid(self):
         c, m = card(1, ["WWE"], 2); bylink = {m["link"]: m}
-        m["llm_long2"] = {"sig": longer.sig(longer.reports(c, m, bylink)), "n": 1}
+        m["llm_long2"] = {"sig": longer.sig(longer.reports(c, m, bylink)), "n": 1, "v": longer.V}
+        self.assertEqual(longer.plan([c], bylink), [])
+        m["llm_long2"] = {"sig": longer.sig(longer.reports(c, m, bylink)), "n": 1}          # rejected by the v1 guard: one fresh try
+        self.assertEqual(len(longer.plan([c], bylink)), 1)
+        m["llm_long2"] = {"sig": longer.sig(longer.reports(c, m, bylink)), "n": 1, "w1": 120}  # kept by v1: not paid again
         self.assertEqual(longer.plan([c], bylink), [])
 
 class Run(unittest.TestCase):
