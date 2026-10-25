@@ -220,16 +220,17 @@ def sections(stories, lang, aired, is_event=False):
     return "".join(out)
 def facts(rows):
     return '<dl class="facts">' + "".join(f"<div><dt>{e(k)}</dt><dd>{v}</dd></div>" for k, v in rows if v) + "</dl>"
-def page(path, lang, title, desc, h1, body, crumbs, ld, alt, active="shows", image=None):
+def page(path, lang, title, desc, h1, body, crumbs, ld, alt, active="shows", image=None, robots=None):
     url = SITE + path; t = C.T[lang]
     en_url = "/" + (alt.get("en") or "").replace(SITE, "") if alt.get("en") else "/"
     es_url = "/" + (alt.get("es") or "").replace(SITE, "") if alt.get("es") else "/es/"
-    html_ = (C.head(title, desc, url, lang, alts=alt, ld=ld + [C.breadcrumbs(crumbs)], image=image, ads=True) +
+    html_ = (C.head(title, desc, url, lang, alts=alt, ld=ld + [C.breadcrumbs(crumbs)], image=image, ads=True, **({"robots": robots} if robots else {})) +
              f'<body class="hub-page"><div class="spot s1"></div><div class="spot s2"></div>{C.header(lang, en_url, es_url, active)}'
              f'<main class="hub">{C.crumbs_html(crumbs)}<h1>{h1}</h1>{body}</main>{C.footer(lang)}{C.SCRIPTS}</body></html>')
     write(path, html_)
     return url
 _WRITTEN = {}
+THIN_ROBOTS = "noindex,follow,max-image-preview:large"   # near-empty event/episode pages: on the site and linked, kept out of search until they have stories, a card or results
 THIN = set()   # event/episode pages with no stories and no live results yet: built (and linked) but kept out of sitemaps until they have content
 def write(path, s):
     full = os.path.join(BUILD, path, "index.html") if path.endswith("/") else os.path.join(BUILD, path)
@@ -261,6 +262,7 @@ def _cards():
     try:
         with open(os.path.join(ROOT, "data", "fullcards.json")) as f: return json.load(f)
     except Exception: return {}
+def _has_card(key): return bool((_cards().get(key) or {}).get("lines"))
 def event_extras(ld, key, img, lang):
     """Fill the page's SportsEvent with what we really have: the page photo (absolute https URL that already passed the photo rules)
     and the announced wrestlers from the official card (fullcard.py state: card lines + advertised appearances) as Person performers,
@@ -424,9 +426,9 @@ def build(clusters, tr_es=None):
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             title, h1, body, ld, desc = _live(f"{ds}-{show}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
             ld = event_extras(ld, f"{show}/{ds}", img, lang)
-            if not st and not (LIVE and (LIVE.page_state(f"{ds}-{show}") or {}).get("shown")): THIN.add(path)
+            if not st and not _has_card(f"{show}/{ds}") and not (LIVE and (LIVE.page_state(f"{ds}-{show}") or {}).get("shown")): THIN.add(path)
             ch, cl = cite(f"{ds}-{show}", path, title, st, lang, aired); body += ch; ld = ld + cl
-            page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, image=img)
+            page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, image=img, robots=THIN_ROBOTS if path in THIN else None)
             eps.setdefault(show, []).append((d, path, len(st), aired, st))
         # ---- PLE / PPV event pages ----
         evs = []
@@ -439,13 +441,19 @@ def build(clusters, tr_es=None):
             if lang == "es":
                 title = f"Resultados {nm} ({dl})" if aired else f"{nm}: cartelera, fecha y hora ({dl})"
                 h1 = (f"Resultados de {e(nm)}" if aired else f"{e(nm)}: cartelera y previa") + f" <small>{C.dfull(d, lang)}</small>"
+                card_ok = _has_card(f"{ev['slug']}/{ev['date']}")
                 desc = (f"Resultados de {nm} ({dl}, {ev['city']}): ganadores y todas las noticias del evento." if aired
-                        else f"{nm}: fecha ({dl}), sede ({ev['venue']}, {ev['city']}), cartelera y noticias rumbo al evento.")
+                        else f"{nm}: fecha ({dl}), sede ({ev['venue']}, {ev['city']}), cartelera y noticias rumbo al evento." if card_ok
+                        else f"{nm}: fecha ({dl}), sede ({ev['venue']}, {ev['city']}) y noticias rumbo al evento." if st
+                        else f"{nm}: fecha ({dl}) y sede ({ev['venue']}, {ev['city']}). Todavía no hay combates anunciados.")
             else:
                 title = f"{nm} Results ({dl})" if aired else f"{nm} Card, Date & Start Time ({dl})"
                 h1 = (f"{e(nm)} Results" if aired else f"{e(nm)} Card &amp; Preview") + f" <small>{C.dfull(d, lang)}</small>"
+                card_ok = _has_card(f"{ev['slug']}/{ev['date']}")
                 desc = (f"{nm} results ({dl}, {ev['city']}): winners and every WCN story from the event." if aired
-                        else f"{nm}: date ({dl}), venue ({ev['venue']}, {ev['city']}), announced card and the latest news.")
+                        else f"{nm}: date ({dl}), venue ({ev['venue']}, {ev['city']}), announced card and the latest news." if card_ok
+                        else f"{nm}: date ({dl}), venue ({ev['venue']}, {ev['city']}) and the latest news." if st
+                        else f"{nm}: date ({dl}) and venue ({ev['venue']}, {ev['city']}). No matches announced yet.")
             path = ev_path(ev, lang); alt = {"en": SITE + ev_path(ev, "en"), "es": SITE + ev_path(ev, "es")}
             tm = None
             if hhmm: h, m = _hm(hhmm); tm = e(C.tfmt(h, m, lang))
@@ -457,9 +465,9 @@ def build(clusters, tr_es=None):
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             title, h1, body, ld, desc = _live(f"{ev['date']}-{ev['slug']}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
             ld = event_extras(ld, f"{ev['slug']}/{ev['date']}", img, lang)
-            if not st and not (LIVE and (LIVE.page_state(f"{ev['date']}-{ev['slug']}") or {}).get("shown")): THIN.add(path)
+            if not st and not card_ok and not (LIVE and (LIVE.page_state(f"{ev['date']}-{ev['slug']}") or {}).get("shown")): THIN.add(path)
             ch, cl = cite(f"{ev['date']}-{ev['slug']}", path, title, st, lang, aired); body += ch; ld = ld + cl
-            page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, active="upcoming", image=img)
+            page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, active="upcoming", image=img, robots=THIN_ROBOTS if path in THIN else None)
             evs.append((ev, d, path, len(st), aired))
         # ---- evergreen show hubs ----
         idx_rows = []

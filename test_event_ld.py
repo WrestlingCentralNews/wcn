@@ -28,4 +28,16 @@ class T(unittest.TestCase):
         self.assertEqual(ld[0]["image"], ["https://wrestlingcentralnews.com/img/a.jpg"])
         self.assertIn("Announced: Chelsea Green", ld[0]["description"])
         self.assertNotIn("performer", x[0]); self.assertNotIn("image", x[0])
+class Thin(unittest.TestCase):
+    def test_has_card_and_page_robots(self):
+        d = tempfile.mkdtemp(); os.makedirs(d + "/data")
+        json.dump({"aew-worlds-end/2026-12-19": {"lines": ["A vs B", "C vs D"]}, "x/2026-01-01": {"appearances": ["CM Punk"]}}, open(d + "/data/fullcards.json", "w"))
+        old, ob = hubs.ROOT, hubs.BUILD; hubs.ROOT = d; hubs.BUILD = d
+        try:
+            self.assertTrue(hubs._has_card("aew-worlds-end/2026-12-19")); self.assertFalse(hubs._has_card("x/2026-01-01")); self.assertFalse(hubs._has_card("nope/2026-01-01"))
+            hubs.page("events/t/", "en", "T", "D", "H", "", [("WCN", hubs.SITE)], [], {}, robots=hubs.THIN_ROBOTS)
+            hubs.page("events/u/", "en", "T", "D", "H", "", [("WCN", hubs.SITE)], [], {})
+            self.assertIn('content="noindex,follow', open(d + "/events/t/index.html").read())
+            self.assertNotIn("noindex", open(d + "/events/u/index.html").read())
+        finally: hubs.ROOT, hubs.BUILD = old, ob
 if __name__ == "__main__": unittest.main()
