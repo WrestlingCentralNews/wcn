@@ -219,12 +219,13 @@ def urlset(entries, alts=False):
             body += f'<xhtml:link rel="alternate" hreflang="x-default" href="{html.escape(alt["en"])}"/>'
         body += "</url>"
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"{ns}>{body}</urlset>'
-def news_sitemap(clusters, tr, hours=48):
-    cut = time.time() - hours * 3600; out = []
+def news_sitemap(clusters, tr, hours=48, skip=None):
+    """skip(c, lang) -> True leaves that language's page out (pages carrying a noindex meta never go in a sitemap)."""
+    cut = time.time() - hours * 3600; out = []; skip = skip or (lambda c, lang: False)
     for c in clusters:
         if c.get("first_ts", c["ts"]) < cut: continue
-        out.append((SITE + c["url"], "en", c["title"], c.get("first_ts", c["ts"])))
-        if c["id"] in tr: out.append((SITE + tr[c["id"]]["url"], "es", tr[c["id"]]["t"], c.get("first_ts", c["ts"])))
+        if not skip(c, "en"): out.append((SITE + c["url"], "en", c["title"], c.get("first_ts", c["ts"])))
+        if c["id"] in tr and not skip(c, "es"): out.append((SITE + tr[c["id"]]["url"], "es", tr[c["id"]]["t"], c.get("first_ts", c["ts"])))
     body = "".join(f"<url><loc>{html.escape(u)}</loc><news:news><news:publication><news:name>Wrestling Central News</news:name><news:language>{l}</news:language></news:publication>"
                    f"<news:publication_date>{C.iso(ts)}</news:publication_date><news:title>{html.escape(t)}</news:title></news:news></url>" for u, l, t, ts in out[:1000])
     open(os.path.join(PUB, "sitemap-news.xml"), "w").write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '

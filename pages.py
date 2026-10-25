@@ -230,6 +230,10 @@ def own_words(c):
     txt += [(u.get("line") or "") for u in c.get("updates", [])]
     return sum(len(x.split()) for x in txt)
 def thin(c): return not c.get("card") and own_words(c) < THIN_WORDS
+def noindex(c, lang="en", L=None):
+    """True when the story page in this language carries a robots noindex meta; such pages stay live and linked but are
+    never listed in any sitemap (EN, ES or news)."""
+    return thin(c)
 def sources_html(c, t):
     """Every outlet behind the story, lead first (deduplicated by outlet, max 6), each linked to its report."""
     seen, out = set(), []
@@ -281,7 +285,7 @@ def page(c, related, lang="en", L=None, alt=None):
     home = SITE + ("es/" if es else "")
     crumbs = [("WCN en español" if es else "WCN", home), (title[:70], url)]
     head = chrome.head(title_tag(title), desc, url, lang, alts=alt, og_type="article", image=big, ads=True, ld=[ld, chrome.breadcrumbs(crumbs)],
-                       **({"robots": "noindex,follow,max-image-preview:large"} if thin(c) else {}),
+                       **({"robots": "noindex,follow,max-image-preview:large"} if noindex(c, lang, L) else {}),
                        extra=(f'<meta property="og:image:alt" content="{e(title)}">{imgx}<meta property="article:publisher" content="{chrome.FB}">'
                               f'<meta property="article:published_time" content="{iso(pub)}"><meta property="article:modified_time" content="{iso(mod)}"><meta property="article:section" content="{e(c["categories"][0])}">'))
     en_u = "/" + (alt or {}).get("en", SITE).replace(SITE, ""); es_u = "/" + (alt or {}).get("es", SITE + "es/").replace(SITE, "")
@@ -491,7 +495,7 @@ def _build(clusters):
     open(os.path.join(PUB, "es", "feed.xml"), "w").write(rss([es_rss_item(c) for c in es_items], SITE + "es/feed.xml", title="Wrestling Central News en español",
         link=SITE + "es/", desc="Noticias de lucha libre en español: WWE, AEW, TNA, independientes y lucha libre mundial, actualizadas cada 15 minutos.", lang="es"))
     static = extras.build_trust(clusters, tr) + extras.build_es_home(clusters, tr) + extras.build_en_home(clusters)
-    n_news = extras.news_sitemap(clusters, tr)
+    n_news = extras.news_sitemap(clusters, tr, skip=lambda c, lang: noindex(c, lang, tr.get(c["id"]) if lang == "es" else None))
     # sitemaps: English (+ trust/hub pages) and Spanish (/es/ only), with hreflang alternates
     # left out of sitemaps (still live, linked and indexable): event/episode pages with no stories yet (hubs.THIN) and utility pages
     # (contact, masthead, newsletter signup) - sitemaps list the pages worth Google's crawl budget
@@ -502,11 +506,11 @@ def _build(clusters):
     en = [(SITE, now_iso, {"en": SITE, "es": SITE + "es/"})]
     en += [(SITE + p, hlm.get(p), None) for p in hub_en]
     en += [(SITE + p, None, None) for p in static if not p.startswith("es/") and p not in thin]
-    en += [(SITE + c["url"], iso(c["ts"]), {"en": SITE + c["url"], "es": SITE + tr[c["id"]]["url"]} if c["id"] in tr else None) for c in clusters]
+    en += [(SITE + c["url"], iso(c["ts"]), {"en": SITE + c["url"], "es": SITE + tr[c["id"]]["url"]} if c["id"] in tr else None) for c in clusters if not noindex(c)]
     open(os.path.join(PUB, "sitemap.xml"), "w").write(extras.urlset(en, alts=True))
     es = [(SITE + "es/", now_iso, {"en": SITE, "es": SITE + "es/"})] + [(SITE + p, hlm.get(p), None) for p in hub_es]
     es += [(SITE + p, None, None) for p in static if p.startswith("es/") and p != "es/" and p not in thin]
-    es += [(SITE + tr[c["id"]]["url"], iso(c["ts"]), {"en": SITE + c["url"], "es": SITE + tr[c["id"]]["url"]}) for c in clusters if c["id"] in tr]
+    es += [(SITE + tr[c["id"]]["url"], iso(c["ts"]), {"en": SITE + c["url"], "es": SITE + tr[c["id"]]["url"]}) for c in clusters if c["id"] in tr and not noindex(c, "es", tr[c["id"]])]
     open(os.path.join(PUB, "es", "sitemap.xml"), "w").write(extras.urlset(es, alts=True))
     extras.robots()
     # pages for IndexNow beyond story URLs: hubs/events (with content hash so changed pages are re-pinged), static pages, Spanish stories
