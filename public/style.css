@@ -304,3 +304,5 @@ header.hid{transform:translateY(-100%)}
 .img img.fg.fill,.story-hero img.fg.fill{object-fit:cover}
 
 .fullcard{border:1px solid var(--line,#333);border-radius:10px;padding:12px 16px;margin:16px 0}.fullcard h2{margin:0 0 8px;font-size:1.1rem}.fullcard ol{margin:0;padding-left:1.3em}.fullcard li{margin:6px 0}.fullcard a{white-space:nowrap;font-weight:600}
+/* ads off (ads-config.js enabled:false -> html.noads): no empty 'Advertisement' placeholder boxes anywhere (AdSense review 2026-10-25) */
+html.noads .ad:not(.live-ad){display:none!important}

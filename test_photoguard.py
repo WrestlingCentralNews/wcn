@@ -78,4 +78,14 @@ class Notice(unittest.TestCase):   # 2026-10-24 'This Week's Gotham Wrestling No
             self.assertEqual(editorial.stream_notice({"raw_title": t}), "streaming notice", t)
         for t in ("WWE Unreal Season 2 Is Now Streaming On Netflix", "WWE Main Event Preview", "This Week's Edition Of Uwn Championship Wrestling Tv", "WWE SmackDown Preview For October 23"):
             self.assertIsNone(editorial.stream_notice({"raw_title": t}), t)
+class VideoNotice(unittest.TestCase):   # 2026-10-25 AdSense 'low value content': content-free video / post-game bulletins
+    def test_video_notice(self):
+        T = editorial.VIDEO_NOTICE_FROM + 60
+        for t in ("10/23 WWE Smackdown Videos", "WWE Raw Post Game", "THE SMACKDOWN POST GAME SHOW", "The AEW Wrestledream 2026 Post PPV Scrum Is Now Streaming",
+                  "This Week's MLW Fusion Is Now Streaming", "10/10 AAA VIDEOS", "AEW Wrestledream 2026 Videos"):
+            self.assertEqual(editorial.video_notice({"raw_title": t, "ts": T}), "video notice", t)
+        for t in ("Tyrese Haliburton Shares Injury Comeback Video With WWE Stars", "WWE Unreal Season 2 Is Now Streaming On Netflix", "MLW Fusion Results For October 22",
+                  "Kevin Nash Says Hulk Hogan Post Show Comments Were Wrong", "AEW Collision Preview", "WWE Releases Jinder Mahal"):
+            self.assertIsNone(editorial.video_notice({"raw_title": t, "ts": T}), t)
+        self.assertIsNone(editorial.video_notice({"raw_title": "10/23 WWE Smackdown Videos", "ts": T - 3600}))   # already-published stories keep their ids
 if __name__ == "__main__": unittest.main()

@@ -1,5 +1,5 @@
 {
- "_note": "Story URLs shared while a story was wrongly merged -> the story holding to_link (pages.redirects). 2026-10-21: 'WWE Star Signs New Contract' (cdcbf6730547f / c0448e53fdcdd) was Santino Marella's TNA re-signing merged with Dragon Lee's WWE re-signing. 2026-10-21 (later): nameless teaser 'TNA Signing Confirmed' -> Shotzi Blackheart's TNA signing; 2022 WWE.com 'Dragon Lee Signs with WWE' (NXT) -> Dragon Lee's 2026 re-signing. Nameless/stale stories with no named match fall back to the home page. 2026-10-21 (night): F4W 'Daily Update' roundup -> home page (dropped link); Fightful podcast 'The Hump' Dragunov/Grace -> Tony Khan Dragunov WrestleDream story; F4W 'Dynamite Preview for October 20' (F4W's own dated slug) -> official AEW Oct 21 preview.",
+ "_note": "Story URLs shared while a story was wrongly merged -> the story holding to_link (pages.redirects). 2026-10-21: 'WWE Star Signs New Contract' (cdcbf6730547f / c0448e53fdcdd) was Santino Marella's TNA re-signing merged with Dragon Lee's WWE re-signing. 2026-10-21 (later): nameless teaser 'TNA Signing Confirmed' -> Shotzi Blackheart's TNA signing; 2022 WWE.com 'Dragon Lee Signs with WWE' (NXT) -> Dragon Lee's 2026 re-signing. Nameless/stale stories with no named match fall back to the home page. 2026-10-21 (night): F4W 'Daily Update' roundup -> home page (dropped link); Fightful podcast 'The Hump' Dragunov/Grace -> Tony Khan Dragunov WrestleDream story; F4W 'Dynamite Preview for October 20' (F4W's own dated slug) -> official AEW Oct 21 preview. 2026-10-25: 10 same-news duplicates (AdSense review) -> the kept story's lead link.",
  "urls": {
   "story/wwe-star-signs-new-contract-cdcbf6730547f.html": {
    "to_link": "https://www.ringsidenews.com/santino-marella-re-signs-tna-wrestling/"
@@ -58,6 +58,76 @@
   },
   "es/noticias/smackdown-anuncia-combate-titular-y-street-fight-ce520ee75c891.html": {
    "to_link": "https://www.f4wonline.com/news/wwe/street-fight-two-tag-matches-set-for-next-wwe-smackdown/"
+  },
+  "story/tna-signs-amazing-red-to-contract-cdb537c5b8f01.html": {
+   "to_link": "https://www.fightful.com/wrestling/report-amazing-red-signs-with-tna-wrestling/"
+  },
+  "es/noticias/tna-firma-a-amazing-red-tras-su-ingreso-al-salon-de-la-fama-cdb537c5b8f01.html": {
+   "to_link": "https://www.fightful.com/wrestling/report-amazing-red-signs-with-tna-wrestling/",
+   "es": true
+  },
+  "story/erik-and-sarah-logan-welcome-third-child-cba9f1b4da672.html": {
+   "to_link": "https://www.fightful.com/wrestling/sarah-rowe-and-erik-welcome-third-child/"
+  },
+  "es/noticias/erik-y-sarah-logan-dan-la-bienvenida-a-su-tercer-hijo-cba9f1b4da672.html": {
+   "to_link": "https://www.fightful.com/wrestling/sarah-rowe-and-erik-welcome-third-child/",
+   "es": true
+  },
+  "story/ospreay-retains-aew-world-title-at-wrestledream-ce4f06b5c1cd3.html": {
+   "to_link": "https://www.postwrestling.com/2026/10/18/will-ospreay-survives-clockwork-carnage-to-retain-aew-world-championship-at-wrestledream/"
+  },
+  "es/noticias/will-ospreay-retiene-el-titulo-mundial-de-aew-en-wrestledream-ce4f06b5c1cd3.html": {
+   "to_link": "https://www.postwrestling.com/2026/10/18/will-ospreay-survives-clockwork-carnage-to-retain-aew-world-championship-at-wrestledream/",
+   "es": true
+  },
+  "story/ospreay-retains-in-clockwork-carnage-main-event-c1a032db6e7ed.html": {
+   "to_link": "https://www.postwrestling.com/2026/10/18/will-ospreay-survives-clockwork-carnage-to-retain-aew-world-championship-at-wrestledream/"
+  },
+  "es/noticias/ospreay-retiene-en-el-evento-estelar-clockwork-carnage-c1a032db6e7ed.html": {
+   "to_link": "https://www.postwrestling.com/2026/10/18/will-ospreay-survives-clockwork-carnage-to-retain-aew-world-championship-at-wrestledream/",
+   "es": true
+  },
+  "story/aew-wrestledream-results-c46c484ee2fe4.html": {
+   "to_link": "https://www.fightful.com/wrestling-news/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more"
+  },
+  "es/noticias/resultados-de-aew-wrestledream-c46c484ee2fe4.html": {
+   "to_link": "https://www.fightful.com/wrestling-news/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more",
+   "es": true
+  },
+  "story/rey-mysterio-helps-secure-payment-for-psicosis-ce3a204df8d31.html": {
+   "to_link": "https://www.f4wonline.com/news/wwe/wwe-paid-for-lucha-libre-legends-hip-replacement-exclusive/"
+  },
+  "es/noticias/rey-mysterio-ayuda-a-que-wwe-pague-a-psicosis-ce3a204df8d31.html": {
+   "to_link": "https://www.f4wonline.com/news/wwe/wwe-paid-for-lucha-libre-legends-hip-replacement-exclusive/",
+   "es": true
+  },
+  "story/wwe-covered-hip-surgery-for-psicosis-c7b913fa1970d.html": {
+   "to_link": "https://www.f4wonline.com/news/wwe/wwe-paid-for-lucha-libre-legends-hip-replacement-exclusive/"
+  },
+  "es/noticias/wwe-pago-la-cirugia-de-cadera-de-psicosis-c7b913fa1970d.html": {
+   "to_link": "https://www.f4wonline.com/news/wwe/wwe-paid-for-lucha-libre-legends-hip-replacement-exclusive/",
+   "es": true
+  },
+  "story/aaa-trios-title-match-added-to-wwe-raw-c6c7c365e721e.html": {
+   "to_link": "https://www.f4wonline.com/news/mexico/dark-match-aaa-trios-title-defense-announced-for-mondays-wwe-raw/"
+  },
+  "es/noticias/agregan-combate-por-los-titulos-de-tercias-de-aaa-a-raw-c6c7c365e721e.html": {
+   "to_link": "https://www.f4wonline.com/news/mexico/dark-match-aaa-trios-title-defense-announced-for-mondays-wwe-raw/",
+   "es": true
+  },
+  "story/drew-mcintyre-calls-cm-punk-a-piece-of-crap-cde53674fabe9.html": {
+   "to_link": "https://sports.yahoo.com/articles/drew-mcintyre-blasts-former-wwe-222107456.html"
+  },
+  "es/noticias/drew-mcintyre-llama-pedazo-de-mierda-a-cm-punk-cde53674fabe9.html": {
+   "to_link": "https://sports.yahoo.com/articles/drew-mcintyre-blasts-former-wwe-222107456.html",
+   "es": true
+  },
+  "story/motor-city-machine-guns-to-host-seminar-at-ny-s-flex-wrestling-c36dd1541dee9.html": {
+   "to_link": "https://www.pwinsider.com/article/212734/nys-flex-wrestling-hosting-seminar-with-motor-city-machine-guns.html?p=1"
+  },
+  "es/noticias/ftr-se-enfrentan-a-motor-city-machine-guns-en-serie-al-mejor-de-5-c36dd1541dee9.html": {
+   "to_link": "https://www.pwinsider.com/article/212734/nys-flex-wrestling-hosting-seminar-with-motor-city-machine-guns.html?p=1",
+   "es": true
   }
  }
 }

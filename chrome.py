@@ -34,12 +34,12 @@ def hreflang(alts):
 def feeds(lang):
     if lang == "es": return f'<link rel="alternate" type="application/rss+xml" title="Wrestling Central News en español" href="{SITE}es/feed.xml">'
     return f'<link rel="alternate" type="application/rss+xml" title="Wrestling Central News" href="{SITE}feed.xml">'
-def head(title, desc, canon, lang="en", alts=None, og_type="website", image=None, ld=None, ads=False, extra=""):
+def head(title, desc, canon, lang="en", alts=None, og_type="website", image=None, ld=None, ads=False, extra="", robots="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"):
     img = image or SITE + "og-image.jpg"
     lds = "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in (ld or []))
     loc = "es_LA" if lang == "es" else "en_US"
     return (f'<!doctype html><html lang="{lang}"><head><meta charset="utf-8">\n{GA_HEAD}\n{ADSENSE if ads else ""}'
-            f'<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">'
+            f'<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="{robots}">'
             f'<title>{e(title)}</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{e(canon)}">{hreflang(alts)}{LANG_JS}{feeds(lang)}'
             f'<meta property="og:type" content="{og_type}"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:locale" content="{loc}"><meta property="og:title" content="{e(title)}">'
             f'<meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{e(canon)}"><meta property="og:image" content="{e(img)}">'
@@ -47,15 +47,15 @@ def head(title, desc, canon, lang="en", alts=None, og_type="website", image=None
             f'{ICONS}<link rel="stylesheet" href="/style.css"><script src="/ads-config.js"></script><script src="/analytics.js"></script></head>')
 T = {
  "en": {"home": "/", "news": "News", "shows": "Shows", "upcoming": "Upcoming", "shows_url": "/shows/", "upcoming_url": "/upcoming/",
-        "about": "About", "masthead": "Masthead", "policy": "Editorial & corrections", "contact": "Contact", "privacy": "Privacy Policy", "newsletter": "Newsletter",
+        "about": "About", "masthead": "Masthead", "policy": "Editorial & corrections", "contact": "Contact", "privacy": "Privacy Policy", "terms": "Terms of Use", "newsletter": "Newsletter",
         "cookies": "Cookie settings", "follow": "Follow us", "all": "← All news", "lang_label": "Language"},
  "es": {"home": "/es/", "news": "Noticias", "shows": "Programas", "upcoming": "Próximos eventos", "shows_url": "/es/programas/", "upcoming_url": "/es/proximos-eventos/",
-        "about": "Quiénes somos", "masthead": "Equipo editorial", "policy": "Política editorial y correcciones", "contact": "Contacto", "privacy": "Política de privacidad (inglés)", "newsletter": "Boletín",
+        "about": "Quiénes somos", "masthead": "Equipo editorial", "policy": "Política editorial y correcciones", "contact": "Contacto", "privacy": "Política de privacidad (inglés)", "terms": "Términos de uso", "newsletter": "Boletín",
         "cookies": "Configuración de cookies", "follow": "Síguenos", "all": "← Todas las noticias", "lang_label": "Idioma"},
 }
 STATIC = {  # (en path, es path) for the trust pages, linked from every footer
  "about": ("/about/", "/es/acerca-de/"), "masthead": ("/masthead/", "/es/equipo/"), "policy": ("/editorial-policy/", "/es/politica-editorial/"),
- "contact": ("/contact/", "/es/contacto/"), "staff": ("/authors/wcn-staff/", "/es/autores/redaccion-wcn/"),
+ "contact": ("/contact/", "/es/contacto/"), "terms": ("/terms/", "/es/terminos/"), "staff": ("/authors/wcn-staff/", "/es/autores/redaccion-wcn/"),
 }
 SOCIAL = (f'<div class="social"><a class="soc soc-x" href="{X_URL}" target="_blank" rel="noopener me" aria-label="Follow WCN on X" title="Follow @wrestlingWCN on X"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.9 2H22l-7.2 8.2L23.3 22h-6.6l-5.2-6.8L5.5 22H2.4l7.7-8.8L1.9 2h6.8l4.7 6.2L18.9 2zm-1.2 18h1.8L7.4 3.9H5.5L17.7 20z"/></svg></a>'
           f'<a class="soc soc-fb" href="{FB}" target="_blank" rel="noopener me" aria-label="Follow WCN on Facebook" title="Follow WCN on Facebook"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4z"/></svg></a></div>')
@@ -77,7 +77,7 @@ def footer(lang):
     rss = "/es/feed.xml" if lang == "es" else "/feed.xml"
     nl = "/newsletter/"
     return (f'<footer>© 2026 Wrestling Central News (WCN) · <a href="{STATIC["about"][i]}">{t["about"]}</a> · <a href="{STATIC["masthead"][i]}">{t["masthead"]}</a> · '
-            f'<a href="{STATIC["policy"][i]}">{t["policy"]}</a> · <a href="{STATIC["contact"][i]}">{t["contact"]}</a> · <a href="/privacy.html">{t["privacy"]}</a> · '
+            f'<a href="{STATIC["policy"][i]}">{t["policy"]}</a> · <a href="{STATIC["contact"][i]}">{t["contact"]}</a> · <a href="/privacy.html">{t["privacy"]}</a> · <a href="{STATIC["terms"][i]}">{t["terms"]}</a> · '
             f'<a class="nl-link" href="{nl}">{t["newsletter"]}</a> · <a class="rss-link" href="{rss}" type="application/rss+xml">RSS</a> · '
             f'{t["follow"]}: <a href="{X_URL}" target="_blank" rel="noopener">X @wrestlingWCN</a> · <a href="{FB}" target="_blank" rel="noopener">Facebook</a> · '
             f'<a href="#" class="cookie-set" onclick="wcnCookieSettings();return false">{t["cookies"]}</a></footer>')

@@ -20,13 +20,15 @@ TRUST = {
 "about": {
  "en": ("About Wrestling Central News", "Wrestling Central News (WCN) covers WWE, AEW, TNA, the independents and wrestling around the world, updated around the clock.", "About <b>WCN</b>",
   f"""<p class="lede">Wrestling Central News (WCN) is an independent pro wrestling news site covering WWE, AEW, TNA, the independent scene and promotions around the world, in English and Spanish.</p>
-<h2>What we do</h2><p>We monitor official promotion announcements and established wrestling news outlets around the clock and publish a refreshed feed every 15 minutes. Each WCN story has an original headline and summary written in our own words, says when the story was first reported and last updated, and links to the original report so readers can go to the source.</p>
+<h2>What we do</h2><p>We monitor official promotion announcements and established wrestling news outlets around the clock and publish a refreshed feed every 15 minutes. Each WCN story has an original headline and summary written in our own words, says when the story was first reported and last updated, and links to the original reports so readers can go to the source.</p>
+<p>When several outlets report the same news we publish one story, list the outlets that reported it under "Sources" and add later reports to that story's timeline instead of publishing it again. Short announcements that are only a line or two stay available to readers but are kept out of search engines.</p>
 <h2>How stories are produced</h2><p>WCN uses automated tools, including AI writing assistance, to draft headlines, summaries, Spanish translations and longer write-ups from the reporting of trusted outlets. Editorial rules decide what gets published: we prioritise official sources and outlets with a strong track record, we flag stories confirmed by several outlets, we hold back single-source reports from low-trust sites, and we don't publish rumor roundups, opinion columns or listicles as news. Read our <a href="/editorial-policy/">editorial and corrections policy</a>.</p>
 <h2>Shows and events</h2><p>Our <a href="/shows/">show pages</a> collect the card, results and news for every episode of WWE Raw, SmackDown, NXT, AEW Dynamite, AEW Collision and TNA iMPACT, plus premium live events and PPVs. See the <a href="/upcoming/">upcoming events</a> schedule.</p>
 <h2>Contact</h2><p>Tips, corrections and business enquiries: <a href="mailto:{EMAIL}">{EMAIL}</a>. More on our <a href="/contact/">contact page</a>.</p>"""),
  "es": ("Quiénes somos: Wrestling Central News", "Wrestling Central News (WCN) cubre WWE, AEW, TNA, las independientes y la lucha libre de todo el mundo, las 24 horas.", "Quiénes <b>somos</b>",
   f"""<p class="lede">Wrestling Central News (WCN) es un sitio independiente de noticias de lucha libre que cubre WWE, AEW, TNA, la escena independiente y empresas de todo el mundo, en inglés y en español.</p>
-<h2>Qué hacemos</h2><p>Seguimos las 24 horas los anuncios oficiales de las empresas y a los medios de lucha libre más reconocidos, y actualizamos las noticias cada 15 minutos. Cada noticia de WCN tiene un titular y un resumen propios, indica cuándo se publicó y cuándo se actualizó, y enlaza al reporte original.</p>
+<h2>Qué hacemos</h2><p>Seguimos las 24 horas los anuncios oficiales de las empresas y a los medios de lucha libre más reconocidos, y actualizamos las noticias cada 15 minutos. Cada noticia de WCN tiene un titular y un resumen propios, indica cuándo se publicó y cuándo se actualizó, y enlaza a los reportes originales.</p>
+<p>Cuando varios medios informan la misma noticia publicamos una sola nota, mencionamos en "Fuentes" los medios que la reportaron y agregamos los reportes posteriores a su cronología en lugar de publicarla otra vez. Los anuncios breves de una o dos líneas siguen disponibles para los lectores, pero no se envían a los buscadores.</p>
 <h2>Cómo producimos las noticias</h2><p>WCN utiliza herramientas automatizadas, incluida la asistencia de inteligencia artificial, para redactar titulares, resúmenes, traducciones al español y artículos más extensos a partir de la información de medios confiables. Nuestras reglas editoriales deciden qué se publica: damos prioridad a las fuentes oficiales y a los medios con buena trayectoria, señalamos las noticias confirmadas por varios medios, no publicamos reportes de una sola fuente poco confiable y no presentamos rumores, columnas de opinión ni listas como noticias. Lee nuestra <a href="/es/politica-editorial/">política editorial y de correcciones</a>.</p>
 <h2>Programas y eventos</h2><p>En nuestras <a href="/es/programas/">páginas de programas</a> reunimos la cartelera, los resultados y las noticias de cada episodio de WWE Raw, SmackDown, NXT, AEW Dynamite, AEW Collision y TNA iMPACT, además de los eventos premium y PPV. Consulta los <a href="/es/proximos-eventos/">próximos eventos</a>.</p>
 <h2>Contacto</h2><p>Datos, correcciones y consultas comerciales: <a href="mailto:{EMAIL}">{EMAIL}</a>. Más en nuestra <a href="/es/contacto/">página de contacto</a>.</p>""")},
@@ -60,6 +62,27 @@ TRUST = {
 <h2 id="correcciones">Correcciones</h2><p>Si nos equivocamos, lo corregimos. Escribe a <a href="mailto:{EMAIL}?subject=Correcci%C3%B3n">{EMAIL}</a> con el enlace de la noticia y lo que hay que corregir. Los errores verificados se corrigen de inmediato y cambia la hora de "actualizado". Las noticias que resulten falsas se eliminan.</p>
 <h2>Imágenes</h2><p>Las fotos provienen del reporte original o de colecciones con licencia libre, como Wikimedia Commons, con el crédito correspondiente.</p>
 <h2>Independencia</h2><p>WCN se financia con publicidad. Los anunciantes no influyen en nuestra cobertura.</p>""")},
+"terms": {
+ "en": ("Terms of Use | Wrestling Central News", "The terms for using Wrestling Central News: our content, linked sources, trademarks, accuracy, advertising and contact.", "Terms of use",
+  f"""<p class="lede">By using wrestlingcentralnews.com (English and Spanish editions, newsletter, alerts and feeds) you agree to these terms.</p>
+<h2>Our content</h2><p>WCN headlines, summaries, write-ups, translations and page layouts are our own work. You may quote short excerpts with a link to the WCN story; please don't republish whole stories or pages.</p>
+<h2>Sources and links</h2><p>WCN stories are based on official promotion announcements and reports from other outlets, which are named and linked on every story. Those reports, and any page we link to, belong to their publishers and are governed by their own terms; WCN is not responsible for their content.</p>
+<h2>Trademarks and images</h2><p>WWE, AEW, TNA, NJPW, CMLL, AAA and other promotion, show and wrestler names and logos are trademarks of their owners and are used only to identify the news. WCN is not affiliated with or endorsed by any promotion. Photos are credited as shown on each story; to ask for a credit change or removal, email us.</p>
+<h2>Accuracy</h2><p>We work to report accurately and fix verified errors promptly under our <a href="/editorial-policy/">editorial and corrections policy</a>. News develops quickly, so stories are provided as they are, without warranty; check the linked sources for the full report.</p>
+<h2>Advertising, cookies and privacy</h2><p>WCN is supported by advertising and uses analytics. How we handle data and cookies is explained in our <a href="/privacy.html">privacy policy</a>.</p>
+<h2>Tips and messages</h2><p>Anything you send us (news tips, corrections, comments) may be used to check and report the news. Don't send anything you don't have the right to share.</p>
+<h2>Changes</h2><p>We may update these terms; the current version is always on this page.</p>
+<h2>Contact</h2><p><a href="mailto:{EMAIL}">{EMAIL}</a></p>"""),
+ "es": ("Términos de uso | Wrestling Central News", "Los términos para usar Wrestling Central News: nuestro contenido, las fuentes enlazadas, marcas, exactitud, publicidad y contacto.", "Términos de uso",
+  f"""<p class="lede">Al usar wrestlingcentralnews.com (ediciones en inglés y español, boletín, alertas y feeds) aceptas estos términos.</p>
+<h2>Nuestro contenido</h2><p>Los titulares, resúmenes, artículos, traducciones y el diseño de las páginas de WCN son obra nuestra. Puedes citar fragmentos breves con un enlace a la noticia de WCN; por favor no republiques noticias o páginas completas.</p>
+<h2>Fuentes y enlaces</h2><p>Las noticias de WCN se basan en anuncios oficiales de las empresas y en reportes de otros medios, que se nombran y enlazan en cada noticia. Esos reportes, y cualquier página que enlazamos, pertenecen a sus editores y se rigen por sus propios términos; WCN no es responsable de su contenido.</p>
+<h2>Marcas e imágenes</h2><p>WWE, AEW, TNA, NJPW, CMLL, AAA y los demás nombres y logotipos de empresas, programas y luchadores son marcas de sus dueños y se usan solo para identificar la noticia. WCN no está afiliado ni avalado por ninguna empresa. Las fotos llevan el crédito indicado en cada noticia; para pedir un cambio de crédito o que se retire una foto, escríbenos.</p>
+<h2>Exactitud</h2><p>Trabajamos para informar con exactitud y corregimos de inmediato los errores verificados según nuestra <a href="/es/politica-editorial/">política editorial y de correcciones</a>. Las noticias evolucionan rápido, así que se ofrecen tal cual, sin garantía; consulta las fuentes enlazadas para el reporte completo.</p>
+<h2>Publicidad, cookies y privacidad</h2><p>WCN se financia con publicidad y usa herramientas de analítica. Cómo tratamos los datos y las cookies se explica en nuestra <a href="/privacy.html">política de privacidad</a> (en inglés).</p>
+<h2>Datos y mensajes</h2><p>Lo que nos envíes (datos, correcciones, comentarios) puede usarse para verificar e informar la noticia. No envíes nada que no tengas derecho a compartir.</p>
+<h2>Cambios</h2><p>Podemos actualizar estos términos; la versión vigente siempre está en esta página.</p>
+<h2>Contacto</h2><p><a href="mailto:{EMAIL}">{EMAIL}</a></p>""")},
 "contact": {
  "en": ("Contact Wrestling Central News", "How to contact Wrestling Central News: news tips, corrections, advertising and partnerships.", "Contact <b>WCN</b>",
   f"""<p class="lede">The best way to reach the WCN Staff is by email: <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
@@ -102,32 +125,34 @@ def build_trust(clusters, tr):
     return out
 # ---------- Spanish home ----------
 BRK_ES = '<span class="tag brk">ÚLTIMA HORA</span>'
+BRK_EN = '<span class="tag brk">BREAKING</span>'
 # a photo that fails to load removes itself and its blurred copy, never the promotion placeholder (.ph) under it (mirrors app.js)
 FGERR = "var b=this.parentNode&&this.parentNode.querySelector('img.bg');b&&b.remove();this.remove()"
-def card_html(c, L, n, hero=False):
+def card_html(c, L, n, hero=False, lang="es"):
     col = CATC.get(c["categories"][0]); img = c.get("image") or ""
     ld = 'fetchpriority="high"' if hero else 'loading="lazy"'   # lead card is the LCP image: load it first, never lazily
     wh = f' width="{c["img_w"]}" height="{c["img_h"]}"' if c.get("img_w") and c.get("img_h") else ""
     im = (f'<img class="bg" {ld} referrerpolicy="no-referrer" src="{e(img)}" alt="" aria-hidden="true" onerror="this.remove()"><img class="fg{imgmeta.fill_cls(c.get('img_w'), c.get('img_h'))}" {ld}{wh} referrerpolicy="no-referrer" src="{e(img)}" alt="" onerror="{FGERR}">' if img else "")
     u = L["url"][3:]   # relative to /es/
     return (f'<article class="card {"hero" if hero else ""} in" style="--c:{col}" data-cat="{c["categories"][0]}" data-pos="{n}"><a class="img" href="{e(u)}" aria-hidden="true" tabindex="-1"><div class="ph">{c["categories"][0]}</div>{im}</a><div class="body">'
-            f'<div class="tags">{BRK_ES if hero and c.get("brk") else ""}{"".join(f"<span class=tag style=--c:{CATC[k]}>{k}</span>" for k in c["categories"])}</div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><p>{e(L["s"])}</p>'
-            f'<div class="meta"><span>{e(c["source"])}</span><a href="{e(u)}">Leer más →</a></div></div></article>')
-def _ago_es(t):   # same wording as app.js ago() (es); app.js re-renders it on load
+            f'<div class="tags">{(BRK_ES if lang == "es" else BRK_EN) if hero and c.get("brk") else ""}{"".join(f"<span class=tag style=--c:{CATC[k]}>{k}</span>" for k in c["categories"])}</div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><p>{e(L["s"])}</p>'
+            f'<div class="meta"><span>{e(c["source"])}</span><a href="{e(u)}">{"Leer más" if lang == "es" else "Read more"} →</a></div></div></article>')
+def _ago_es(t, lang="es"):   # same wording as app.js ago(); app.js re-renders it on load
     m = max(0, time.time() - int(t)) / 60
-    return "hace " + (f"{max(1, int(m))} min" if m < 60 else f"{int(m // 60)}h" if m < 1440 else f"{int(m // 1440)}d")
-def mini_html(c, L, n):
+    a = f"{max(1, int(m))} min" if m < 60 else f"{int(m // 60)}h" if m < 1440 else f"{int(m // 1440)}d"
+    return "hace " + a if lang == "es" else a + " ago"
+def mini_html(c, L, n, lang="es"):
     col = CATC.get(c["categories"][0]); img = c.get("image") or ""; u = L["url"][3:]
     im = f'<img class="fg" loading="lazy" referrerpolicy="no-referrer" src="{e(img)}" alt="" onerror="this.remove()">' if img else ""
     return (f'<article class="card mini in" style="--c:{col}" data-cat="{c["categories"][0]}" data-pos="{n}"><a class="img" href="{e(u)}" aria-hidden="true" tabindex="-1"><div class="ph">{c["categories"][0]}</div>{im}</a><div class="body">'
-            f'<div class="tags">{BRK_ES if c.get("brk") else ""}<span class="tag" style="--c:{col}">{c["categories"][0]}</span></div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><div class="meta"><span>{_ago_es(c["ts"])}</span></div></div></article>')
-def top_html(items):
+            f'<div class="tags">{(BRK_ES if lang == "es" else BRK_EN) if c.get("brk") else ""}<span class="tag" style="--c:{col}">{c["categories"][0]}</span></div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><div class="meta"><span>{_ago_es(c["ts"], lang)}</span></div></div></article>')
+def top_html(items, lang="es"):
     """Top stories block (lead + 4), same pick as app.js for the default all-promotions view."""
     import toppick
     lead, sec = toppick.pick([c for c, L in items])
     if not lead: return "", items
     T = [lead] + sec; Lm = {id(c): L for c, L in items}
-    h = f'<h2 class="top-h">Lo más importante</h2>{card_html(lead, Lm[id(lead)], 0, True)}<div class="minis">{"".join(mini_html(c, Lm[id(c)], k + 1) for k, c in enumerate(sec))}</div>'
+    h = f'<h2 class="top-h">{"Lo más importante" if lang == "es" else "Top stories"}</h2>{card_html(lead, Lm[id(lead)], 0, True, lang)}<div class="minis">{"".join(mini_html(c, Lm[id(c)], k + 1, lang) for k, c in enumerate(sec))}</div>'
     return h, [(c, L) for c, L in items if all(c is not t for t in T)]
 def build_es_home(clusters, tr):
     items = [(c, tr[c["id"]]) for c in clusters if c["id"] in tr]
@@ -164,6 +189,25 @@ def build_es_home(clusters, tr):
         es_items.append(x)
     json.dump({"updated": int(time.time()), "count": len(es_items), "items": es_items}, open(os.path.join(PUB, "es", "news.json"), "w"), ensure_ascii=False)
     return ["es/"]
+# ---------- English home ----------
+# 2026-10-25 (AdSense 'low value content'): the English home page was an empty JS shell (4-34 words in the HTML) while /es/ was
+# server-rendered. The latest stories (top block + 12 cards + ticker) and an H1 are now written into public/index.html at build time,
+# same markup as app.js renders (app.js replaces them on load). Idempotent: re-running replaces the previously injected block.
+EN_H1 = '<h1 class="es-h1">Pro wrestling news: WWE, AEW, TNA, indies and lucha libre</h1>'
+def build_en_home(clusters):
+    p = os.path.join(PUB, "index.html")
+    try: s = open(p).read()
+    except Exception: return []
+    items = [(c, {"t": c["title"], "s": c["summary"], "url": "../" + c["url"]}) for c in clusters if c.get("url")]   # card_html drops 3 chars ("../")
+    if not items: return []
+    top, rest = top_html(items, "en"); o = 5 if top else 0
+    first = "".join(card_html(c, L, i + o, hero=not top and i == 0, lang="en") for i, (c, L) in enumerate(rest[:12]))
+    tick = "".join(f'<span><b>{c["categories"][0]}</b> {e(c["title"])}</span>' for c, L in items[:15])
+    mid = f'<div class="mid"><section id="lead" class="lead" aria-label="Top stories">{top}</section><section id="feed" class="feed">{first}</section></div>'
+    s2 = re.sub(r'<div class="mid"><section id="lead".*?</section><section id="feed" class="feed">.*?</section></div>', lambda m: mid, s, count=1, flags=re.S)
+    s2 = re.sub(r'<div class="ticker"><div id="ticker">.*?</div></div>(?:\n<h1 class="es-h1">[^<]*</h1>)?', lambda m: f'<div class="ticker"><div id="ticker">{tick}</div></div>\n{EN_H1}', s2, count=1, flags=re.S)
+    if s2 != s: open(p, "w").write(s2)
+    return []
 # ---------- sitemaps ----------
 def urlset(entries, alts=False):
     ns = ' xmlns:xhtml="http://www.w3.org/1999/xhtml"' if alts else ""

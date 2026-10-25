@@ -205,3 +205,17 @@ _NOTICE = re.compile(r"(?i)^\s*(?:this|last)\s+week'?s\s+(?:edition|episode)\s+o
 def stream_notice(a):
     """'streaming notice' for content-free 'this week's edition of X is now streaming' bulletins; None otherwise."""
     return "streaming notice" if _NOTICE.search(a.get("raw_title") or a.get("title") or "") else None
+# 2026-10-25 (AdSense 'low value content'): PWInsider-style bulletins whose whole title is '10/23 WWE Smackdown Videos', 'WWE Raw
+# Post Game', 'The Smackdown Post Game Show', 'The AEW Wrestledream 2026 Post PPV Scrum Is Now Streaming', 'This Week's MLW Fusion Is
+# Now Streaming' carry no news (they only say clips/a show were posted). Only articles dated after VIDEO_NOTICE_FROM are dropped, so
+# stories already published keep their ids (the old ones were removed by hand via story_removals.json).
+VIDEO_NOTICE_FROM = 1792951200   # 2026-10-25 18:00 UTC
+_VNOTICE = re.compile(r"(?i)^\s*(?:results\s+recap:\s*)?(?:\d{1,2}/\d{1,2}(?:/\d{2,4})?\s+)?(?:the\s+)?"
+    r"(?:(?:wwe|aew|aaa|tna|nxt|roh|njpw|mlw|cmll|stardom|impact|nwa|gcw)\b[\w!&'. -]{0,40}?\s+(?:highlight\s+)?videos"
+    r"|[\w!&'. -]{2,50}?\s+post[- ]?(?:game|ppv)(?:\s+(?:show|scrum))?(?:\s+is\s+now\s+streaming)?"
+    r"|this\s+week'?s\s+[\w!&'. -]{2,50}?\s+is\s+now\s+streaming)\s*$")
+def video_notice(a):
+    """'video notice' for content-free 'X videos' / 'post game show' / 'this week's X is now streaming' bulletins dated after
+    VIDEO_NOTICE_FROM; None otherwise."""
+    if (a.get("ts") or 0) < VIDEO_NOTICE_FROM: return None
+    return "video notice" if _VNOTICE.search(a.get("raw_title") or a.get("title") or "") else None

@@ -192,9 +192,9 @@ def feed_links(cat=None):
     return s
 def ad(slot, size, cls="ad-feed"): return f'<div class="ad {cls}" data-slot="{slot}" data-size="{size}"></div>'
 S = {
- "en": {"card_h": "The card", "card_story": "Story", "conf": "✔ CONFIRMED BY {n} SOURCES", "timeline": "Story timeline · {n} reports", "source": "Source", "more": "More {cat} news", "by": "By",
+ "en": {"card_h": "The card", "card_story": "Story", "conf": "✔ CONFIRMED BY {n} SOURCES", "timeline": "Story timeline · {n} reports", "source": "Source", "sources": "Sources", "more": "More {cat} news", "by": "By",
         "staff": "WCN Staff", "pub": "Published", "first": "First reported", "upd": "Updated", "part": "Part of our coverage of", "hub_go": "Full card & results →"},
- "es": {"card_h": "Cartelera", "card_story": "Noticia", "conf": "✔ CONFIRMADO POR {n} FUENTES", "timeline": "Cronología · {n} reportes", "source": "Fuente", "more": "Más noticias de {cat}", "by": "Por",
+ "es": {"card_h": "Cartelera", "card_story": "Noticia", "conf": "✔ CONFIRMADO POR {n} FUENTES", "timeline": "Cronología · {n} reportes", "source": "Fuente", "sources": "Fuentes", "more": "Más noticias de {cat}", "by": "Por",
         "staff": "Redacción WCN", "pub": "Publicado", "first": "Publicado", "upd": "Actualizado", "part": "Parte de nuestra cobertura de", "hub_go": "Cartelera y resultados →"},
 }
 def schema_image(c):
@@ -219,6 +219,27 @@ def byline_html(c, lang):
     return s + "</div>"
 # story hero photo that fails to load -> the promotion placeholder (same look as a story with no photo), never an empty frame
 HERO_ERR = "var h=this.parentNode;h.classList.add('ph-h');h.innerHTML='<span></span>';h.firstChild.textContent=h.dataset.cat||''"
+# 2026-10-25 (AdSense 'low value content'): a story whose own text (summary/long-form + quote + timeline lines) is under THIN_WORDS
+# words and that has no card is a stub ('X Results From Oct 9', one-line signings). It stays on the site (readers, links, the
+# timeline it belongs to) but is noindex,follow so search and ad review judge the site by its full stories. Pure function of the
+# story (EN and ES pages follow the English text) -- sitemap code can use pages.thin(c) to leave these out.
+THIN_WORDS = 50
+def own_words(c):
+    k = c.get("kind") or {}
+    txt = list(c.get("long") or [c.get("summary") or ""]) + ([k.get("quote") or ""] if k.get("type") == "quote" else [])
+    txt += [(u.get("line") or "") for u in c.get("updates", [])]
+    return sum(len(x.split()) for x in txt)
+def thin(c): return not c.get("card") and own_words(c) < THIN_WORDS
+def sources_html(c, t):
+    """Every outlet behind the story, lead first (deduplicated by outlet, max 6), each linked to its report."""
+    seen, out = set(), []
+    for x in [{"source": c["source"], "link": c["link"]}] + list(c.get("updates", [])):
+        n = (x.get("source") or "").replace(" (via Google)", "").strip(); k = re.sub(r"\W|com$", "", n.lower())
+        if not n or not x.get("link") or k in seen: continue
+        seen.add(k); out.append(f'<a href="{e(x["link"])}" rel="nofollow noopener" target="_blank">{e(n)}</a>')
+        if len(out) == 6: break
+    lab = t["source"] if len(out) < 2 else t.get("sources", t["source"])
+    return f'<p class="credit">{lab}: {" · ".join(out)}</p>'
 def page(c, related, lang="en", L=None, alt=None):
     """Story page. lang='es' uses L = {'t','s','url','p'} (Spanish translation) and related = [(cluster, L)]."""
     t = S[lang]; es = lang == "es"
@@ -260,6 +281,7 @@ def page(c, related, lang="en", L=None, alt=None):
     home = SITE + ("es/" if es else "")
     crumbs = [("WCN en español" if es else "WCN", home), (title[:70], url)]
     head = chrome.head(title_tag(title), desc, url, lang, alts=alt, og_type="article", image=big, ads=True, ld=[ld, chrome.breadcrumbs(crumbs)],
+                       **({"robots": "noindex,follow,max-image-preview:large"} if thin(c) else {}),
                        extra=(f'<meta property="og:image:alt" content="{e(title)}">{imgx}<meta property="article:publisher" content="{chrome.FB}">'
                               f'<meta property="article:published_time" content="{iso(pub)}"><meta property="article:modified_time" content="{iso(mod)}"><meta property="article:section" content="{e(c["categories"][0])}">'))
     en_u = "/" + (alt or {}).get("en", SITE).replace(SITE, ""); es_u = "/" + (alt or {}).get("es", SITE + "es/").replace(SITE, "")
@@ -271,7 +293,7 @@ def page(c, related, lang="en", L=None, alt=None):
             f'{chrome.header(lang, en_u, es_u, "news", back=True)}\n{ad("leaderboard", "728×90 Leaderboard", "ad-leader")}\n'
             f'<main class="layout"><aside class="side">{ad("leftSkyscraper", "300×600 Half-page", "ad-sky")}</aside>\n'
             f'<article class="story"><div class="tags">{conf}{tags}</div><h1>{e(title)}</h1>{byline_html(c, lang)}\n{hero}\n{credit}{quote}{hub}<div class="prose">{"".join(body)}</div>{tl}\n'
-            f'<p class="credit">{t["source"]}: <a href="{e(c["link"])}" rel="nofollow noopener" target="_blank">{e(c["source"])}</a></p>\n'
+            f'{sources_html(c, t)}\n'
             f'{nl_block("story-es" if es else "story", compact=True, head="h3", base="/", lang=lang)}\n{ad("storyBottom", "Responsive Banner")}\n'
             f'<section class="related"><h2>{t["more"].format(cat=e(c["categories"][0]))}</h2><div class="relgrid">{rel}</div></section></article>\n'
             f'<aside class="side">{ad("rightSkyscraper", "300×600 Half-page", "ad-sky")}</aside></main>\n'
@@ -468,7 +490,7 @@ def _build(clusters):
         x = tr[c["id"]]; return rss_item(dict(c, title=x["t"], summary=x["s"], url=x["url"], byline="Redacción WCN"))
     open(os.path.join(PUB, "es", "feed.xml"), "w").write(rss([es_rss_item(c) for c in es_items], SITE + "es/feed.xml", title="Wrestling Central News en español",
         link=SITE + "es/", desc="Noticias de lucha libre en español: WWE, AEW, TNA, independientes y lucha libre mundial, actualizadas cada 15 minutos.", lang="es"))
-    static = extras.build_trust(clusters, tr) + extras.build_es_home(clusters, tr)
+    static = extras.build_trust(clusters, tr) + extras.build_es_home(clusters, tr) + extras.build_en_home(clusters)
     n_news = extras.news_sitemap(clusters, tr)
     # sitemaps: English (+ trust/hub pages) and Spanish (/es/ only), with hreflang alternates
     # left out of sitemaps (still live, linked and indexable): event/episode pages with no stories yet (hubs.THIN) and utility pages
