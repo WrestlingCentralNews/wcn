@@ -339,12 +339,22 @@ def redirects(clusters, tr, old_tr):
         if x: olds.append((f"es/noticias/{x.get('sl') or translate.slug_es(x['t'])}-{p['id']}.html", True))
         for u, es in olds:
             if u not in (cur_es if es else cur_en) and u not in R:
-                R[u] = {"links": _members(p), "lead": p["link"], "es": es, "at": now}
+                R[u] = {"links": _members(p), "lead": p["link"], "es": es, "at": now, "cat": (p.get("categories") or [""])[0]}
                 if es and p["id"] in tr and tr[p["id"]]["url"] != u:   # same id, new Spanish slug: the old slug names the OLD story
                     ot = x.get("en") or x["t"]       # English headline the old translation was made from (newer cache entries), else the Spanish one
                     best = max(clusters, key=lambda c: translate.topic_score(ot, c["title"]))
                     if translate.topic_score(ot, best["title"]) >= 0.3: R[u]["to_id"] = best["id"]
                     else: R[u]["to_id"] = "-"       # no confident match: Spanish home page, never a different story
+    # every story URL ever published (url_registry.json, plus the pre-Oct-18 URLs in legacy_urls.json that were live before
+    # this redirect system existed): if it is gone and was never recorded above (lost/skipped previous-run state), record it now
+    try: REG = json.load(open(URL_REG))
+    except Exception: REG = {}
+    try:
+        for u in json.load(open(os.path.join(ROOT, "legacy_urls.json"))).get("story", []): REG.setdefault(u, {"es": u.startswith("es/"), "seen": now})
+    except Exception: pass
+    for u, g in REG.items():
+        if u not in R and u not in cur_en and u not in cur_es and now - g.get("seen", now) <= REDIRECT_DAYS * 86400:
+            R[u] = {"links": [], "lead": None, "es": bool(g.get("es")), "at": now, "cat": g.get("cat") or guess_cat(u), "reg": 1}
     by_link = {}
     for c in clusters:
         for l in _members(c): by_link.setdefault(l, c)
@@ -364,11 +374,50 @@ def redirects(clusters, tr, old_tr):
             for l in r.get("links", []):
                 if l in by_link: cnt[by_link[l]["id"]] = cnt.get(by_link[l]["id"], 0) + 1
             if cnt: k = max(cnt, key=cnt.get); c = next(x for x in clusters if x["id"] == k)
+        if not c and r.get("to_id") != "-" and not r["es"]: c = slug_match(u, clusters, r.get("cat")) or same_id_match(u, clusters)
         if c: to = (tr[c["id"]]["url"] if r["es"] and c["id"] in tr else c["url"])
-        else: to = "es/" if r["es"] else ""
+        else:   # story is gone: its promotion's section of the home page (?promo= preselects that filter chip), else home
+            cat = r.get("cat") or guess_cat(u)
+            to = ("es/" if r["es"] else "") + (f"?promo={cat}" if cat in FEED_CATS else "")
         out[u] = {**r, "to": to}
     os.makedirs(os.path.dirname(REDIRECTS), exist_ok=True); json.dump(out, open(REDIRECTS, "w"))
+    for c in clusters:   # remember this run's URLs (EN + ES) so they can never 404 later, whatever happens to the run state
+        REG[c["url"]] = {"es": False, "cat": c["categories"][0], "seen": now}
+        if c["id"] in tr and tr[c["id"]].get("url"): REG[tr[c["id"]]["url"]] = {"es": True, "cat": c["categories"][0], "seen": now}
+    REG = {u: g for u, g in REG.items() if now - g.get("seen", now) <= REDIRECT_DAYS * 86400}
+    json.dump(REG, open(URL_REG, "w"))
     return out
+URL_REG = os.path.join(ROOT, "data", "url_registry.json")   # {story url (EN/ES): {es, cat, seen}}
+_STOP = set("a an the of for in on at to and vs with from by is s his her after as be".split())
+def _slug_toks(u):
+    b = u.rsplit("/", 1)[-1]; b = re.sub(r"-c[0-9a-f]{12}\.html$", "", b)
+    return {w for w in re.split(r"[^a-z0-9]+", b.lower()) if w and w not in _STOP}
+def slug_match(u, clusters, cat=None):
+    """Current story whose URL words nearly equal the old URL's (same story re-published under a new id, e.g. 'WrestleDream
+    2026 Results'). Strict (>=60% word overlap, >=3 shared words, same promotion) so different wrestlers' stories never mix."""
+    t = _slug_toks(u); best, bj = None, 0
+    if len(t) < 3: return None
+    for c in clusters:
+        if cat and c["categories"][0] != cat: continue
+        k = _slug_toks(c["url"]); sh = len(t & k)
+        if sh < 3: continue
+        j = sh / len(t | k)
+        if j > bj: best, bj = c, j
+    return best if bj >= 0.6 else None
+def same_id_match(u, clusters):
+    """The current story with the old URL's id, only if its URL still names the same thing (ids were re-used by
+    re-clustering before Oct 18, e.g. a Collision ratings URL whose id now holds a SmackDown ratings story)."""
+    m = re.search(r"-(c[0-9a-f]{12})\.html$", u)
+    c = next((x for x in clusters if m and x["id"] == m.group(1)), None)
+    if not c: return None
+    t, k = _slug_toks(u), _slug_toks(c["url"])
+    return c if len(t & k) >= 2 and len(t & k) / len(t | k) >= 0.3 else None
+_CATW = [("TNA", r"\btna\b|\bimpact\b|bound-for-glory"), ("AEW", r"\baew\b|collision|dynamite|wrestledream|\broh\b"),
+         ("WWE", r"\bwwe\b|\bwwf\b|smackdown|\braw\b|\bnxt\b|wrestlemania|saturday-night"),
+         ("Global", r"\bnjpw\b|\baaa\b|\bcmll\b|stardom|noah|revpro|\bajpw\b|lucha"), ("Indie", r"\bmlw\b|\bgcw\b|\bnwa\b")]
+def guess_cat(u):
+    b = u.rsplit("/", 1)[-1].replace("-", " ")
+    return next((k for k, rx in _CATW if re.search(rx, b)), "")
 def stub(to):
     t = SITE + to
     return (f'<!doctype html><html><head><meta charset="utf-8"><title>Moved | Wrestling Central News</title>'

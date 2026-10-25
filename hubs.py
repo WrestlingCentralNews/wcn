@@ -519,6 +519,7 @@ def build(clusters, tr_es=None):
         body = f'<p class="lede">{t["disclaimer"]}</p>' + "".join(rows)
         page(path, lang, title, desc, h1, body, [home, (t["upcoming"] if lang == "en" else T["upcoming"], SITE + path)], lds[:40],
              {"en": SITE + UP["en"], "es": SITE + UP["es"]}, active="upcoming")
+    _gone_stubs(now)
     # swap staged dirs in atomically-ish (old episode pages beyond retention disappear = same pruning as stories)
     for rel in ("shows", "events", "upcoming", "es/programas", "es/eventos", "es/proximos-eventos"):
         src = os.path.join(stage, rel); dst = os.path.join(PUB, rel)
@@ -526,4 +527,35 @@ def build(clusters, tr_es=None):
         if os.path.exists(src): os.makedirs(os.path.dirname(dst), exist_ok=True); os.replace(src, dst)
     shutil.rmtree(stage, ignore_errors=True); BUILD = PUB
     return dict(_WRITTEN)
+HUB_SEEN = os.path.join(ROOT, "data", "hub_paths.json")   # {event/episode path: last ts it was built}
+def gone_target(path):
+    """Where a vanished event/episode page goes: its weekly show hub, else the upcoming-events page."""
+    m = re.fullmatch(r"es/eventos/resultados-(.+)-\d{4}-\d{2}-\d{2}/", path)
+    if m: return hub_path(m.group(1), "es") if m.group(1) in SHOWS else UP["es"]
+    m = re.fullmatch(r"events/\d{4}-\d{2}-\d{2}-(.+)/", path)
+    if m: return hub_path(m.group(1), "en") if m.group(1) in SHOWS else UP["en"]
+    return UP["es"] if path.startswith("es/") else UP["en"]
+def _gone_stubs(now):
+    """Event/episode pages that were published before but are not built this run (no tagged story or live results left)
+    get a redirect stub to their show hub for RETENTION_DAYS after they were last built, instead of a 404. Stubs are
+    written straight to the stage dir, never through write(), so they never enter sitemaps or IndexNow."""
+    try: seen = json.load(open(HUB_SEEN))
+    except Exception: seen = {}
+    try: seen.update({p: seen.get(p, 0) or int(time.time()) for p in json.load(open(os.path.join(ROOT, "legacy_urls.json"))).get("hub", [])})
+    except Exception: pass
+    ts = int(time.time()); keep = {}
+    for p in _WRITTEN:
+        if p.startswith(("events/", "es/eventos/")): keep[p] = ts
+    for p, t in seen.items():
+        if p in keep or ts - t > RETENTION_DAYS * 86400 or not p.startswith(("events/", "es/eventos/")): continue
+        keep[p] = t
+        full = os.path.join(BUILD, p, "index.html")
+        if not os.path.exists(full):
+            os.makedirs(os.path.dirname(full), exist_ok=True); open(full, "w").write(stub_html(gone_target(p)))
+    os.makedirs(os.path.dirname(HUB_SEEN), exist_ok=True); json.dump(keep, open(HUB_SEEN, "w"))
+def stub_html(to):
+    t = SITE + to
+    return (f'<!doctype html><html><head><meta charset="utf-8"><title>Moved | Wrestling Central News</title>'
+            f'<link rel="canonical" href="{e(t)}"><meta http-equiv="refresh" content="0; url=/{e(to)}">'
+            f'<script>location.replace("/{e(to)}")</script></head><body><p>This page moved: <a href="/{e(to)}">{e(t)}</a></p></body></html>')
 def L_es_has(cs, tr): return bool(tr) and any(c["id"] in tr and tr[c["id"]].get("url") for c in cs)
