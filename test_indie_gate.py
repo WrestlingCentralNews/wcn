@@ -1,9 +1,15 @@
 """python3 test_indie_gate.py -- AI budget rule (owner 2026-10-24): Indie-only stories get AI rewrites/write-ups only when important."""
 import unittest
 import indie_gate as g
+import llm
 def art(raw, src="Fightful", body="", i="x"):
     return {"id": i, "raw_title": raw, "source": src, "body": body, "summary_src": "", "categories": None}
 class IndieGate(unittest.TestCase):
+    def setUp(self): self._p = llm.pace_ok; llm.pace_ok = lambda margin=0.0, prio=0: prio < 2   # budget tight for Indie/Global work
+    def tearDown(self): llm.pace_ok = self._p
+    def test_room_in_budget_indie_gets_ai(self):
+        llm.pace_ok = lambda margin=0.0, prio=0: True
+        self.assertFalse(g.skip_rewrite(art("MLW Fusion On Tubi Preview")))
     def test_routine_indie_skips(self):
         for t in ("MLW Fusion On Tubi Preview", "Josh Bishop in action on MLW Fusion this Thursday", "GCW Announces New Show In Atlanta",
                   "Carlie Bravo: Lee Moriarty Is One Of The Best Wrestlers On Ring of Honor"):

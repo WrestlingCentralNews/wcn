@@ -1,5 +1,6 @@
-"""AI budget rule (owner, 2026-10-24): stories that are only about Indie promotions get the AI rewrite and the long-form
-write-up only when they matter: reported by 2+ trusted outlets, a title change, a signing/contract/release, a serious
+"""AI budget rule (owner, 2026-10-24; reworked 2026-10-25 for the $20 cap): Indie-only stories are the FIRST to lose the AI
+rewrite and the write-up when the budget is tight (llm.pace_ok(prio=2) fails); while the budget has room they get both like
+everyone else. Even when tight they keep the AI when they matter: reported by 2+ trusted outlets, a title change, a signing/contract/release, a serious
 injury or a death, or an on-record quote from a big name. Everything else keeps the free rule-based headline/summary.
 Stories that fell back to 'Indie' only because nothing matched still get the AI pass (it is what tags them correctly)."""
 import re, json, os
@@ -36,13 +37,16 @@ def kept():
         try: _KEEP = set(json.load(open(FILE)))
         except Exception: _KEEP = set()
     return _KEEP
+def _tight():
+    import llm
+    return not llm.pace_ok(prio=2)
 def skip_rewrite(a):
-    """True = no AI rewrite for this report (Indie-only and not important)."""
-    return indie_only(a) and not important(a) and a["id"] not in kept()
+    """True = no AI rewrite for this report now (Indie-only, not important, and the budget is tight for Indie/Global work)."""
+    return indie_only(a) and not important(a) and a["id"] not in kept() and _tight()
 def skip_long(c, lead):
-    """True = no long-form write-up for this card."""
+    """True = no long-form write-up for this card now (same rule; longer.prio/llm.pace_ok does this per call)."""
     if list(c.get("categories") or []) != ["Indie"] or not indie_only(lead): return False
-    return not (multi_trusted(c) or important(lead) or important_title(c.get("title")))
+    return not (multi_trusted(c) or important(lead) or important_title(c.get("title"))) and _tight()
 def remember(clusters, bylink):
     """Indie-only cards reported by 2+ trusted outlets: their reports get the AI rewrite on the next run."""
     ids = set()

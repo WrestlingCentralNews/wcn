@@ -1,5 +1,5 @@
 """Spanish edition translations. Each story (cluster id) is translated once: headline + summary in batches of 10
-(cheap), plus a Spanish version of the long-form write-up for the most important stories, paced under the AI budget.
+(cheap), plus a Spanish version of every long-form write-up, paced under the AI budget (Indie/Global cut first).
 Cache: data/translations_es.json {cluster_id: {t, s, h, n, p?, ph?, at}}. Entries for pruned stories are dropped."""
 import os, json, re, time, hashlib, unicodedata
 from concurrent.futures import ThreadPoolExecutor
@@ -8,7 +8,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 CACHE = os.path.join(ROOT, "data", "translations_es.json")
 BATCH = 10
 MAX_PER_RUN = 400            # headline+summary items per run (initial backfill ~375 stories ≈ $0.15 one-time)
-LONG_PER_RUN = 6             # Spanish long-form per run (paced; only important stories)
+LONG_PER_RUN = 30            # Spanish long-form per run (paced per call; the daily $ cap is the real limiter)
 RETRANSLATE_MAX = 2          # if the English headline/summary changes (new lead report), re-translate at most twice, only while fresh
 def h(c): return hashlib.md5((c["title"] + "|" + (c.get("summary") or "")).encode()).hexdigest()[:10]
 def slug_es(t):
@@ -117,14 +117,16 @@ def run(clusters):
                     if old.get("p") and old.get("ph") == hashlib.md5(json.dumps(c.get("long") or []).encode()).hexdigest()[:10]:
                         tr[c["id"]]["p"], tr[c["id"]]["ph"] = old["p"], old["ph"]
                     done += 1
-    # Spanish long-form for important stories (newest first), paced
-    lt = [c for c in clusters if c.get("long") and c["id"] in tr and important(c)
-          and tr[c["id"]].get("ph") != hashlib.md5(json.dumps(c["long"]).encode()).hexdigest()[:10]
-          and now - c.get("first_ts", c["ts"]) < 4 * 86400][:LONG_PER_RUN]
+    # Spanish long-form for every story with an English write-up (owner 2026-10-25, AI cap $20): throttle order of
+    # longer.prio (WWE/AEW/TNA new + huge news first, Indie/Global back-fill last), newest first; paced per call
+    import longer
+    lt = [c for c in clusters if c.get("long") and c["id"] in tr
+          and tr[c["id"]].get("ph") != hashlib.md5(json.dumps(c["long"]).encode()).hexdigest()[:10]]
+    lt = sorted(((longer.prio(c, None, now), c) for c in lt), key=lambda x: (x[0], not tr[x[1]["id"]].get("p"), -(x[1].get("first_ts") or x[1]["ts"])))[:LONG_PER_RUN]   # re-translations of a longer English write-up first (the page shows the summary meanwhile)
     nl = 0
-    if lt and llm.pace_ok():
+    if lt and llm.pace_ok(prio=lt[0][0]):
         with ThreadPoolExecutor(3) as ex:
-            for c, p in zip(lt, ex.map(lambda c: llm.translate_es_long(c["long"]), lt)):
+            for (pr, c), p in zip(lt, ex.map(lambda x: llm.translate_es_long(x[1]["long"], prio=x[0]), lt)):
                 if p: tr[c["id"]]["p"] = p; tr[c["id"]]["ph"] = hashlib.md5(json.dumps(c["long"]).encode()).hexdigest()[:10]; nl += 1
     os.makedirs(os.path.dirname(CACHE), exist_ok=True); json.dump(tr, open(CACHE, "w"), ensure_ascii=False)
     out = {}

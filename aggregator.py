@@ -343,15 +343,15 @@ def run():
             d = next((bylink[u["link"]] for u in c.get("updates", []) if u["link"] in bylink and bylink[u["link"]].get("llm_long")
                       and enrich.same_story(bylink[u["link"]], m) and not enrich.long_mismatch(m, bylink[u["link"]]["llm_long"])), None)
             if d: m["llm_long"] = d["llm_long"]; m["llm_long_from"] = d["id"]
-    need = [(c, bylink.get(c["link"])) for c in clusters if bylink.get(c["link"]) and "llm_long" not in bylink[c["link"]]]
     indie_gate.remember(clusters, bylink)
-    need = [(c, m) for c, m in need if m.get("llm") and not indie_gate.skip_long(c, m)][:LONG_MAX_PER_RUN]
-    if need and llm.budget_left() > llm.LONGFORM_RESERVE_USD and llm.pace_ok():
-        with ThreadPoolExecutor(6) as ex:
-            for (c, m), p in zip(need, ex.map(lambda cm: llm.longform(cm[1], cm[0]["title"]), need)):
-                if p: m["llm_long"] = p
+    # write-ups (owner 2026-10-25, AI cap $20): every story under longer.TARGET_WORDS words gets one write-up from all its trusted
+    # reports, new stories first, then the live back-catalogue; paced per call (llm.pace_ok(prio): Indie/Global cut first)
+    import longer
+    _lr = longer.run(clusters, bylink)
+    if _lr["done"]:
         llm.save_usage(); json.dump(arts, open(STORE, "w"))
-        print(f"llm longform: {sum(1 for c, m in need if 'llm_long' in m)}/{len(need)}, month spend ${llm._U['usd']:.3f}", flush=True)
+    print(f"llm longer: {_lr['kept']} kept / {_lr['done']} written, {_lr['eligible']} short stories eligible, "
+          f"today ${llm.day_spend():.3f}, month spend ${llm._U['usd']:.3f}", flush=True)
     for c in clusters:
         m = bylink.get(c["link"]); c["long"] = (m or {}).get("llm_long")
     # image relevance (vision-verified) for top cards and every new card; results cached per card+names
