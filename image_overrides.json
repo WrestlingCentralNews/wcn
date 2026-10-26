@@ -102,6 +102,20 @@
     "url": "https://www.wwe.com/shows/smackdown/2026-10-23",
     "text": "Photo: WWE"
    }
+  },
+  {
+   "note": "2026-10-26 (owner request): product story 'WWE Xavier Woods and Ilja Dragunov Action Figures Up for Pre-Order' showed the AEW logo card (current-promotion rule; both have since signed with AEW, but these are WWE-licensed Mattel Elite 130 figures, tag stays WWE). Now the figures themselves: side-by-side of Ringside Collectibles' own product photos (wwe-elite-130-toy-figures-xavier-elite130-04.html og:image elite130_xavier1.jpg + wwe-elite-130-toy-figures-ilja-elite130-03.html elite130_ilja1.jpg), self-hosted. Product stories now pick product photos automatically (product.py).",
+   "ids": [
+    "c8798825cbab4"
+   ],
+   "links": [
+    "https://www.pwinsider.com/article/213096/from-the-oops-department-brand-new-wwe-action-figures-of-xavier-woods-and-ilja-dragonuv-available-for-preorders.html"
+   ],
+   "image": "https://wrestlingcentralnews.com/img/p/woods-dragunov-elite-figures.jpg",
+   "credit": {
+    "url": "https://www.ringsidecollectibles.com/mattel-toy-wrestling-action-figures-wwe-elite-130.html",
+    "text": "Photos: Ringside Collectibles"
+   }
   }
  ],
  "block": [

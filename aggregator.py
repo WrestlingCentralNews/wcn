@@ -126,7 +126,7 @@ def on_topic(a):
     t = a["raw_title"]; b = (a.get("body") or "") + " " + (a.get("summary_src") or "")
     if classify(re.sub(r"\b(Mexico|Japan|Australia)\b", "", t)) or SIG.search(t): return True
     return len(re.findall(r"wrestl|\bWWE\b|\bAEW\b|\bTNA\b|\bNJPW\b|\bCMLL\b|\bring\b", b, re.I)) >= 3
-import enrich, editorial, llm, pages, vision, breaking, stale, toppick, freshness, pubgate, combat, aliases, framing, indie_gate
+import enrich, editorial, llm, pages, vision, product, breaking, stale, toppick, freshness, pubgate, combat, aliases, framing, indie_gate
 STORE = os.path.join(os.path.dirname(OUT), "..", "data", "articles.json")
 IMG_CHECK_TOP = 60
 LONG_MAX_PER_RUN = 400
@@ -359,6 +359,13 @@ def run():
     def _pick(c):
         # only photos of members that are about the same people as the lead (enrich.cluster), never an off-topic neighbour's
         r = rank[c["id"]]
+        fetch = r < IMG_CHECK_TOP or c["ts"] > time.time() - 3*86400
+        # product stories (figures, merch, games, books, DVDs, cards, pre-orders) show the product itself: official store /
+        # retailer first, then the article's product photo (product.py, owner rule 2026-10-26); none found -> the normal rules
+        try:
+            pr = product.pick(c, [m for m in c.get("member_images", []) if m], vision_ok=fetch, fetch=fetch)
+            if pr: return c, pr
+        except Exception as e: print("product photo:", c.get("id"), str(e)[:100], flush=True)
         return c, vision.choose(c, [m for m in c.get("member_images", []) if m], rank=r, fetch=r < IMG_CHECK_TOP or c["ts"] > time.time() - 3*86400)
     # every card gets the key-person rule (labels/file names are free); article pages are fetched for top + recent cards,
     # vision confirms only for the top vision.VISION_TOP cards when candidates are ambiguous

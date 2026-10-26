@@ -229,7 +229,7 @@ def post_tweet(text, media_ids=None):
         return e.code, body, dict(e.headers)
 
 # (the one-time photo test of 2026-10-18 is done: tweet 2111693639889899743; every post now carries a photo, see below)
-PHOTO_OK = re.compile(r"^(?:cached:)?(?:key-|promo-logo:|no-names-promo:|override$)")   # key person confirmed, promotion logo card, or hand-picked
+PHOTO_OK = re.compile(r"^(?:cached:)?(?:key-|product:|promo-logo:|no-names-promo:|override$)")   # key person confirmed, promotion logo card, or hand-picked
 WCN_CARD = re.compile(r"(?i)/img/(?:og|wcn|default)[^/]*\.(?:png|jpe?g)$")
 UA_IMG = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36", "Accept": "image/jpeg,image/png,image/webp;q=0.9,image/gif;q=0.8"}
 # --- photo on EVERY post (owner rule 2026-10-18 06:20 UTC): the image the site shows for that story --------------------------
@@ -237,7 +237,7 @@ UA_IMG = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHT
 # art, hand-picked, or a no-names story's own report photo). A photo the site could NOT confirm shows the story's key person
 # ('person-photo-unverified' - the Austin Creed/Kofi mix-up kind) is never posted: the promotion logo card is used instead,
 # else the site's default WCN card. If every download fails, or the upload fails, the post goes out text-only (never skipped).
-SITE_IMG_OK = re.compile(r"^(?:cached:)?(?:key-|promo-logo:|no-names-promo|no-names$|override$|event-art$)")
+SITE_IMG_OK = re.compile(r"^(?:cached:)?(?:key-|product:|promo-logo:|no-names-promo|no-names$|override$|event-art$)")
 SITE_DEFAULT_IMG = "https://wrestlingcentralnews.com/og-image.jpg"
 def photo_candidates(c, extra_text=""):
     """-> [(url, why)] in order of preference for this card (deduped)."""

@@ -75,6 +75,10 @@ def load_state(u):
 _PANO = set()                 # probed files carrying Photo Sphere / equirectangular XMP (photoguard.pano_bytes)
 def probe(u):
     if u.startswith("https://wrestlingcentralnews.com/img/promo/"): return (1200, 675) # our own logo cards (may not be deployed yet on the run that first uses them)
+    if u.startswith("https://wrestlingcentralnews.com/img/p/"):   # our own hand-made photos (image_overrides.json): read the file in public/
+        try:
+            with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "public", u.split("wrestlingcentralnews.com/", 1)[1].split("?")[0]), "rb") as f: return dims(f.read(65536))
+        except Exception: pass
     try:
         r = urllib.request.urlopen(urllib.request.Request(qurl(u), headers={"User-Agent": UA, "Range": "bytes=0-65535", "Accept": "image/avif,image/webp,image/*,*/*"}), timeout=8)
         if not (r.headers.get("Content-Type") or "image").startswith("image"): return None
