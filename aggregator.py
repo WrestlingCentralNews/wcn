@@ -363,7 +363,7 @@ def run():
         # product stories (figures, merch, games, books, DVDs, cards, pre-orders) show the product itself: official store /
         # retailer first, then the article's product photo (product.py, owner rule 2026-10-26); none found -> the normal rules
         try:
-            pr = product.pick(c, [m for m in c.get("member_images", []) if m], vision_ok=fetch, fetch=fetch)
+            pr = product.pick(c, [m for m in c.get("member_images", []) if m])   # any age: few stories, cached per story (misses retried after 12 h)
             if pr: return c, pr
         except Exception as e: print("product photo:", c.get("id"), str(e)[:100], flush=True)
         return c, vision.choose(c, [m for m in c.get("member_images", []) if m], rank=r, fetch=r < IMG_CHECK_TOP or c["ts"] > time.time() - 3*86400)
