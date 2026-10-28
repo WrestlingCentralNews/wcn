@@ -74,4 +74,53 @@ class Required(unittest.TestCase):
             hubs.CFG["venues"] = {"wwe-raw/2026-11-02": {"venue": "A", "city": "Austin, Texas"}, "wwe-nxt/2026-11-03": {"venue": "B", "city": "Orlando, Florida", "source": "https://www.wwe.com/x"}}
             self.assertIsNone(hubs.episode_venue("wwe-raw", "2026-11-02")); self.assertEqual(hubs.episode_venue("wwe-nxt", "2026-11-03")["venue"], "B")
         finally: hubs.CFG["venues"] = old
+class Optional(unittest.TestCase):
+    """Optional Event fields: only from real data (2026-10-28)."""
+    def _ev(self, status=False, **kw):
+        return hubs.sports_event("WWE Crown Jewel 2026", datetime.date(2026, 11, 7), "12:00", "events/cj/", "WWE", status, "Riyadh Season Stadium", "Riyadh, Saudi Arabia", **kw)
+    def test_offer_availability_no_price(self):
+        o = self._ev()["offers"]
+        self.assertEqual(o["availability"], "https://schema.org/InStock")
+        for k in ("price", "priceCurrency", "validFrom"): self.assertNotIn(k, o)
+        self.assertEqual(self._ev(tickets="https://www.wwe.com/events/cj")["offers"]["url"], "https://www.wwe.com/events/cj")
+        self.assertNotIn("offers", self._ev(ev_status="cancelled")); self.assertNotIn("offers", self._ev(status=True))
+    def test_no_end_date_without_official_end(self):
+        self.assertNotIn("endDate", self._ev())
+        for ev in hubs.CFG["events"]: self.assertNotIn("endDate", hubs.sports_event(ev["name"], datetime.date.fromisoformat(ev["date"]), ev.get("time"), "e/", ev["brand"], False, ev["venue"], ev["city"], **hubs._evkw(ev)))
+    def test_literal_names_only(self):
+        # a roster alias must never become a different performer (Zilla Fatu is not Jacob Fatu)
+        self.assertNotIn("Jacob Fatu", hubs._literal_names("Zilla Fatu vs Charlie Dempsey Set For NXT Halloween Havoc"))
+        self.assertEqual(hubs._literal_names("IYO SKY and Raquel Rodriguez set for collision"), ["IYO SKY", "Raquel Rodriguez"])
+        self.assertEqual(hubs._literal_names("WWE Adds Tag Title Match To Crown Jewel"), [])
+    def test_match_headlines_performer_not_description(self):
+        d = tempfile.mkdtemp(); os.makedirs(d + "/data"); json.dump({}, open(d + "/data/fullcards.json", "w"))
+        old = hubs.ROOT; hubs.ROOT = d
+        try:
+            ld = [self._ev(desc="Crown Jewel page.")]
+            hubs.event_extras(ld, "wwe-crown-jewel/2026-11-07", [None, "https://x.com/a.jpg", "/rel.jpg"], "en", matches=["Penta and Je'Von Evans challenge The Vision"])
+            nb = [self._ev()]; hubs.event_extras(nb, "wwe-crown-jewel/2026-11-07", None, "en", matches=["WWE Adds Tag Title Match"])
+        finally: hubs.ROOT = old
+        self.assertIn({"@type": "Person", "name": "Penta"}, ld[0]["performer"])
+        self.assertEqual(ld[0]["description"], "Crown Jewel page.")
+        self.assertEqual(ld[0]["image"], ["https://x.com/a.jpg"])
+        self.assertNotIn("performer", nb[0]); self.assertNotIn("image", nb[0])
+    def test_key_art_is_official_and_sourced(self):
+        for ev in hubs.CFG["events"]:
+            if "image" not in ev: continue
+            self.assertTrue(ev["image"].startswith("https://")); self.assertIn("image_source", ev)
+            host = {"WWE": "wwe.com", "AEW": "wixstatic.com"}.get(ev["brand"], "?")   # AEW's site is hosted on Wix
+            self.assertIn(host, ev["image"])
+    def test_about_synced_with_final_event(self):
+        ev = self._ev(); ev["image"] = ["https://x.com/a.jpg"]; ev["performer"] = [{"@type": "Person", "name": "Penta"}]
+        lb = {"@type": "LiveBlogPosting", "about": {"@id": ev["@id"], "@type": "SportsEvent", "name": ev["name"]}}
+        hubs._sync_about([ev, lb])
+        self.assertEqual(lb["about"]["performer"], ev["performer"]); self.assertNotIn("@context", lb["about"])
+    def test_upcoming_reuses_event_page(self):
+        ev = hubs.CFG["events"][0]; d = datetime.date.fromisoformat(ev["date"])
+        hubs.EV_LD["events/test/"] = {"@type": "SportsEvent", "image": ["https://x.com/a.jpg"]}
+        try:
+            x = hubs._ev_ld(ev, d, "events/test/", "en"); x["image"].append("y")
+            self.assertEqual(hubs.EV_LD["events/test/"]["image"], ["https://x.com/a.jpg"])   # deep copy
+        finally: hubs.EV_LD.pop("events/test/", None)
+        self.assertNotIn("image", hubs._ev_ld(ev, d, "events/none/", "en"))
 if __name__ == "__main__": unittest.main()

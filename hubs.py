@@ -244,8 +244,15 @@ def guard_events(ld, where=""):
             print("[hubs] dropped Event markup", where, o.get("name"), event_problems(o), flush=True); return None
         return {k: v for k, v in ((k, clean(v)) for k, v in o.items()) if v is not None}
     return clean(ld)
+def _sync_about(ld):
+    """LiveBlogPosting.about is a copy of the page's SportsEvent taken before image/performers were added - refresh it from the final one (same @id)."""
+    root = {x.get("@id"): x for x in ld if isinstance(x, dict) and _is_event(x) and x.get("@id")}
+    for x in ld:
+        a = x.get("about") if isinstance(x, dict) else None
+        if isinstance(a, dict) and a.get("@id") in root: x["about"] = {k: v for k, v in root[a["@id"]].items() if k != "@context"}
+    return ld
 def page(path, lang, title, desc, h1, body, crumbs, ld, alt, active="shows", image=None, robots=None):
-    url = SITE + path; t = C.T[lang]; ld = guard_events(ld, path)
+    url = SITE + path; t = C.T[lang]; ld = guard_events(_sync_about(ld), path)
     en_url = "/" + (alt.get("en") or "").replace(SITE, "") if alt.get("en") else "/"
     es_url = "/" + (alt.get("es") or "").replace(SITE, "") if alt.get("es") else "/es/"
     html_ = (C.head(title, desc, url, lang, alts=alt, ld=ld + [C.breadcrumbs(crumbs)], image=image, ads=True, **({"robots": robots} if robots else {})) +
@@ -291,7 +298,7 @@ def episode_venue(show, ds):
     promotion's own event page or a trusted outlet. None -> the episode page carries no Event markup (page stays indexable)."""
     v = (CFG.get("venues") or {}).get(f"{show}/{ds}")
     return v if v and v.get("venue") and v.get("city") and v.get("source") else None
-def sports_event(name, d, hhmm, path, brand, status, venue=None, city=None, desc=None, lang="en", show=None, ev_status=None, region=None, country=None):
+def sports_event(name, d, hhmm, path, brand, status, venue=None, city=None, desc=None, lang="en", show=None, ev_status=None, region=None, country=None, tickets=None):
     """SportsEvent JSON-LD, or None when we have no confirmed venue: Google requires location, and we never invent one
     (the old VirtualLocation-pointing-at-our-own-page was wrong for TV shows taped in an arena)."""
     addr = postal_address(city, region, country) if venue else None
@@ -308,41 +315,62 @@ def sports_event(name, d, hhmm, path, brand, status, venue=None, city=None, desc
         ev["description"] = f"{name}: {C.dlong(d, lang)}, {venue}, {city}."
     ou = ORG_URL.get(org)
     if ou: ev["organizer"]["url"] = ou
-    if status is False and ev_status in (None, "scheduled", "rescheduled") and TICKETS.get(org):   # upcoming in-person event: official tickets/events page (no price - we don't know it)
-        ev["offers"] = {"@type": "Offer", "url": TICKETS[org], "category": "primary"}
+    tu = tickets or TICKETS.get(org)
+    if status is False and ev_status in (None, "scheduled", "rescheduled") and tu:   # upcoming in-person event: official tickets/events page (no price/validFrom - we don't know them)
+        ev["offers"] = {"@type": "Offer", "url": tu, "category": "primary", "availability": "https://schema.org/InStock"}
     return ev
 # Official promotion sites (organizer.url) and their official events/tickets pages (Offer url) - checked 2026-10-25, all return 200.
 ORG_URL = {"WWE": "https://www.wwe.com/", "AEW": "https://www.allelitewrestling.com/", "TNA": "https://tnawrestling.com/", "AAA": "https://www.luchalibreaaa.com/",
            "NJPW": "https://www.njpw1972.com/", "ROH": "https://www.rohwrestling.com/", "CMLL": "https://cmll.com/", "MLW": "https://mlw.com/", "GCW": "https://gcwrestling.com/"}
 TICKETS = {"WWE": "https://www.wwe.com/events", "AEW": "https://www.allelitewrestling.com/aew-events", "TNA": "https://tnawrestling.com/events/"}
-def _evkw(ev): return {"ev_status": ev.get("status"), "region": ev.get("region"), "country": ev.get("country")}
+def _evkw(ev): return {"ev_status": ev.get("status"), "region": ev.get("region"), "country": ev.get("country"), "tickets": ev.get("tickets")}
+EV_LD = {}   # event page path -> its final SportsEvent (image/performers/description), reused by /upcoming/ so both pages say the same thing
+def _ev_ld(ev, d, p, lang):
+    x = EV_LD.get(p)
+    return json.loads(json.dumps(x)) if x else sports_event(ev["name"], d, ev.get("time"), p, ev["brand"], False, ev["venue"], ev["city"], lang=lang, **_evkw(ev))
+def _literal_names(text):
+    """Wrestler names in a card line / match headline, only when the name is written out in the text itself
+    (roster aliases like 'Zilla Fatu' -> another Fatu are never turned into a performer)."""
+    import enrich, unicodedata
+    fold = lambda x: "".join(("'" if ch in "\u2018\u2019" else (unicodedata.normalize("NFKD", ch).encode("ascii", "ignore").decode() or ch)[:1]).lower() for ch in x)   # same length as x
+    out = []
+    for n in sorted(enrich.persons(enrich.canon(text)), key=lambda n: fold(text).find(fold(n))):
+        m = re.search(r"(?<![\w])" + re.escape(fold(n)) + r"(?![\w])", fold(text))
+        if not m: continue
+        nm = text[m.start():m.end()] if len(fold(text)) == len(text) else n.title()
+        if nm == nm.lower(): nm = n.title()
+        out.append(nm)
+    return out
 def _cards():
     try:
         with open(os.path.join(ROOT, "data", "fullcards.json")) as f: return json.load(f)
     except Exception: return {}
 def _has_card(key): return bool((_cards().get(key) or {}).get("lines"))
-def event_extras(ld, key, img, lang):
+def event_extras(ld, key, img, lang, matches=()):
     """Fill the page's SportsEvent with what we really have: the page photo (absolute https URL that already passed the photo rules)
     and the announced wrestlers from the official card (fullcard.py state: card lines + advertised appearances) as Person performers,
     named in the description. Nothing known -> field left out."""
     ev = next((x for x in ld if isinstance(x, dict) and x.get("@type") == "SportsEvent"), None)
     if not ev: return ld
-    if (img or "").startswith("https://"): ev["image"] = [img]
+    imgs = [u for u in ([img] if isinstance(img, str) or img is None else list(img)) if (u or "").startswith("https://")]
+    if imgs: ev["image"] = list(dict.fromkeys(imgs))
     card = _cards().get(key) or {}
-    names = []
+    names = []; ncard = 0
     try:
-        import enrich
-        for line in card.get("lines") or []:
-            for n in sorted(enrich.persons(enrich.canon(line)), key=lambda n: line.lower().find(n)):
-                m = re.search(re.escape(n), line, re.I); nm = m.group(0) if m and m.group(0) != m.group(0).lower() else n.title()
+        for i, line in enumerate(list(card.get("lines") or []) + list(matches or [])):   # official card lines, then confirmed match-announcement headlines
+            if i == len(card.get("lines") or []): ncard = len(names)
+            for nm in _literal_names(line):
                 if nm.lower() not in {x.lower() for x in names}: names.append(nm)
+        if not matches: ncard = len(names)
     except Exception as ex: print("[hubs] card performers failed", key, repr(ex)[:120], flush=True)
     for a in card.get("appearances") or []:
-        if a.lower() not in {x.lower() for x in names}: names.append(a)
+        if a.lower() not in {x.lower() for x in names}: names.insert(ncard, a); ncard += 1
     if names:
         ev["performer"] = [{"@type": "Person", "name": n} for n in names[:40]]
         lab = "Anunciados" if lang == "es" else "Announced"
-        ev["description"] = (ev.get("description", "").rstrip() + f" {lab}: " + ", ".join(names[:8]) + (" y más." if lang == "es" and len(names) > 8 else " and more." if len(names) > 8 else ".")).strip()
+    if ncard:   # the description names only the official card (headline-derived names stay in performer)
+        dn = names[:ncard]
+        ev["description"] = (ev.get("description", "").rstrip() + f" {lab}: " + ", ".join(dn[:8]) + (" y más." if lang == "es" and len(dn) > 8 else " and more." if len(dn) > 8 else ".")).strip()
     return ld
 def itemlist(stories, lang):
     return {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [
@@ -527,9 +555,12 @@ def build(clusters, tr_es=None):
             body = fx + sections(st, lang, aired, is_event=True)
             crumbs = [home, (t["events"], SITE + UP[lang]), (nm, SITE + path)]
             ld = [x for x in [sports_event(nm, d, hhmm, path, ev["brand"], aired, ev["venue"], ev["city"], desc, lang, **_evkw(ev))] if x] + ([itemlist(st, lang)] if st else [])
-            img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
+            simg = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
+            img = simg or ev.get("image")   # page photo: story photo, else the promotion's own key art
             title, h1, body, ld, desc = _live(f"{ev['date']}-{ev['slug']}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
-            ld = event_extras(ld, f"{ev['slug']}/{ev['date']}", img, lang)
+            mt = [s["c"]["title"] for s in st if (s["c"].get("kind") or {}).get("type") == "match"]
+            ld = event_extras(ld, f"{ev['slug']}/{ev['date']}", [ev.get("image"), simg], lang, matches=mt)   # Event image: official key art first, then the page photo
+            EV_LD[path] = next((x for x in ld if isinstance(x, dict) and x.get("@type") == "SportsEvent"), None)
             if not st and not card_ok and not (LIVE and (LIVE.page_state(f"{ev['date']}-{ev['slug']}") or {}).get("shown")): THIN.add(path)
             ch, cl = cite(f"{ev['date']}-{ev['slug']}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, active="upcoming", image=img, robots=THIN_ROBOTS if path in THIN else None)
@@ -610,7 +641,7 @@ def build(clusters, tr_es=None):
                     if ev.get("time"): h, m = _hm(ev["time"]); tm = C.tfmt(h, m, lang)
                     lis.append(f'<li class="ple" style="--c:{CATC.get(ev["brand"], "#7cd618")}"><span class="tm">{e(tm) or "—"}</span><a href="/{info}"><b>{e(ev["name"])}</b></a>'
                                f'<span class="wh">{e(ev["venue"])}, {e(ev["city"])}{" · " + e(ev["network"]) if ev.get("network") else ""}</span></li>')
-                    lds.append(sports_event(ev["name"], d, ev.get("time"), info, ev["brand"], False, ev["venue"], ev["city"], lang=lang, **_evkw(ev)))
+                    lds.append(_ev_ld(ev, d, info, lang))
                 elif kind == "skip":
                     lis.append(f'<li class="skip"><span class="tm">—</span><b>{e(SHOWS[k]["name"])}</b><span class="wh">{e(info.get("note_es" if lang == "es" else "note"))}</span></li>')
                 else:
@@ -624,7 +655,7 @@ def build(clusters, tr_es=None):
         if later:
             rows.append(f'<section class="day"><h2>{t["ples"]}</h2><ul class="sched">' + "".join(
                 f'<li class="ple" style="--c:{CATC.get(ev["brand"], "#7cd618")}"><span class="tm">{e(C.dlong(d, lang))}</span><a href="/{p}"><b>{e(ev["name"])}</b></a><span class="wh">{e(ev["venue"])}, {e(ev["city"])}</span></li>' for ev, d, p in later) + "</ul></section>")
-            for ev, d, p in later: lds.append(sports_event(ev["name"], d, ev.get("time"), p, ev["brand"], False, ev["venue"], ev["city"], lang=lang, **_evkw(ev)))
+            for ev, d, p in later: lds.append(_ev_ld(ev, d, p, lang))
         past = [(ev, d, p, n) for ev, d, p, n, a in evs if a]
         if past: rows.append(f'<section class="day"><h2>{t["past"]}</h2><ul class="sched">' + "".join(
             f'<li class="ple" style="--c:{CATC.get(ev["brand"], "#7cd618")}"><span class="tm">{e(C.dlong(d, lang))}</span><a href="/{p}"><b>{e(ev["name"])}</b></a><span class="wh">{t["results"]}{f" · {n} {t["stories"]}" if n else ""}</span></li>' for ev, d, p, n in past) + "</ul></section>")
