@@ -352,7 +352,7 @@ def event_extras(ld, key, img, lang, matches=()):
     named in the description. Nothing known -> field left out."""
     ev = next((x for x in ld if isinstance(x, dict) and x.get("@type") == "SportsEvent"), None)
     if not ev: return ld
-    imgs = [u for u in ([img] if isinstance(img, str) or img is None else list(img)) if (u or "").startswith("https://")]
+    imgs = [u for u in ([img] if isinstance(img, str) or img is None else list(img)) if (u or "").startswith("https://") and "/img/promo/" not in u]   # generic promotion fallback is not an event photo
     if imgs: ev["image"] = list(dict.fromkeys(imgs))
     card = _cards().get(key) or {}
     names = []; ncard = 0

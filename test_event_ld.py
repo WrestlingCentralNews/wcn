@@ -97,7 +97,7 @@ class Optional(unittest.TestCase):
         old = hubs.ROOT; hubs.ROOT = d
         try:
             ld = [self._ev(desc="Crown Jewel page.")]
-            hubs.event_extras(ld, "wwe-crown-jewel/2026-11-07", [None, "https://x.com/a.jpg", "/rel.jpg"], "en", matches=["Penta and Je'Von Evans challenge The Vision"])
+            hubs.event_extras(ld, "wwe-crown-jewel/2026-11-07", [None, "https://x.com/a.jpg", "/rel.jpg", "https://wrestlingcentralnews.com/img/promo/wwe.jpg"], "en", matches=["Penta and Je'Von Evans challenge The Vision"])
             nb = [self._ev()]; hubs.event_extras(nb, "wwe-crown-jewel/2026-11-07", None, "en", matches=["WWE Adds Tag Title Match"])
         finally: hubs.ROOT = old
         self.assertIn({"@type": "Person", "name": "Penta"}, ld[0]["performer"])
