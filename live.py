@@ -447,7 +447,6 @@ def render(key, lang, url):
     iso = lambda ts: datetime.datetime.fromtimestamp(ts, datetime.timezone.utc).isoformat(timespec="seconds")
     ld = {"@context": "https://schema.org", "@type": "LiveBlogPosting", "headline": (("Resultados en vivo: " if es else "Live results: ") if live else ("Resultados: " if es else "Results: ")) + st["name"],
           "url": url, "inLanguage": lang, "coverageStartTime": iso(st["start"]), "coverageEndTime": iso(st["end"]), "datePublished": iso(st["start"]), "dateModified": iso(upd),
-          "about": {"@type": "Event", "name": st["name"], "startDate": iso(st["main"])},
           "author": {"@type": "Organization", "name": "Wrestling Central News", "url": "https://wrestlingcentralnews.com/"},
           "publisher": {"@type": "Organization", "name": "Wrestling Central News", "logo": {"@type": "ImageObject", "url": "https://wrestlingcentralnews.com/logo.png"}},
           "liveBlogUpdate": [{"@type": "BlogPosting", "headline": (m["es"] if es else m["en"])[:110], "datePublished": iso(m["first_seen"]), "url": url + "#" + m["id"],

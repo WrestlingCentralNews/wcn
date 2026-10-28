@@ -8,6 +8,8 @@
   "wwe-smackdown": {"name": "WWE SmackDown", "brand": "WWE", "weekday": 4, "time": "20:00", "network": "USA Network", "source": "https://www.wwe.com/article/wwe-upcoming-events"},
   "aew-collision": {"name": "AEW Collision", "brand": "AEW", "weekday": 5, "time": "20:00", "network": "TNT / HBO Max", "source": "https://www.tpww.net/2026/09/warner-bros-discovery-announces-aew-programming-schedule-for-october-2026/"}
  },
+ "_venues_note": "venues: confirmed venue per TV episode, key \"<show>/<YYYY-MM-DD>\" -> {venue, city (\"City, State\" or \"City, Country\"), source, optional region/country/status}. Only from the promotion's event page or a trusted outlet; episodes without one get no Event markup. Event/episode \"status\": cancelled | postponed | rescheduled | moved_online (default scheduled).",
+ "venues": {},
  "skips": {
   "aew-collision": [{"date": "2026-10-17", "note": "No regular Collision: WrestleDream Tailgate Brawl (7 p.m. ET, TNT) and AEW WrestleDream", "note_es": "Sin Collision regular: WrestleDream Tailgate Brawl (7 p.m. ET, TNT) y AEW WrestleDream"}]
  },

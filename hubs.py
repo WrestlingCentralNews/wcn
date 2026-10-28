@@ -220,8 +220,32 @@ def sections(stories, lang, aired, is_event=False):
     return "".join(out)
 def facts(rows):
     return '<dl class="facts">' + "".join(f"<div><dt>{e(k)}</dt><dd>{v}</dd></div>" for k, v in rows if v) + "</dl>"
+def _is_event(o):
+    t = o.get("@type") if isinstance(o, dict) else None
+    return any(isinstance(x, str) and x.endswith("Event") for x in (t if isinstance(t, list) else [t]))
+def event_problems(ev):
+    """Google Events required fields (name, startDate, location Place with name + address) + the ones Search Console flags
+    (organizer, eventStatus). [] = OK."""
+    p = [k for k in ("name", "startDate", "eventStatus") if not ev.get(k)]
+    loc = ev.get("location")
+    if not isinstance(loc, dict) or loc.get("@type") != "Place" or not loc.get("name"): p.append("location")
+    elif not isinstance(loc.get("address"), dict) or not loc["address"].get("addressLocality") or not loc["address"].get("addressCountry"): p.append("location.address")
+    org = ev.get("organizer")
+    if not isinstance(org, dict) or not org.get("name"): p.append("organizer")
+    if not ev.get("eventAttendanceMode"): p.append("eventAttendanceMode")
+    return p
+def guard_events(ld, where=""):
+    """Last check before a page is written: any Event (top level or nested, e.g. LiveBlogPosting.about) missing required
+    fields is removed rather than published half-filled."""
+    def clean(o):
+        if isinstance(o, list): return [y for y in (clean(x) for x in o) if y is not None]
+        if not isinstance(o, dict): return o
+        if _is_event(o) and event_problems(o):
+            print("[hubs] dropped Event markup", where, o.get("name"), event_problems(o), flush=True); return None
+        return {k: v for k, v in ((k, clean(v)) for k, v in o.items()) if v is not None}
+    return clean(ld)
 def page(path, lang, title, desc, h1, body, crumbs, ld, alt, active="shows", image=None, robots=None):
-    url = SITE + path; t = C.T[lang]
+    url = SITE + path; t = C.T[lang]; ld = guard_events(ld, path)
     en_url = "/" + (alt.get("en") or "").replace(SITE, "") if alt.get("en") else "/"
     es_url = "/" + (alt.get("es") or "").replace(SITE, "") if alt.get("es") else "/es/"
     html_ = (C.head(title, desc, url, lang, alts=alt, ld=ld + [C.breadcrumbs(crumbs)], image=image, ads=True, **({"robots": robots} if robots else {})) +
@@ -237,27 +261,61 @@ def write(path, s):
     os.makedirs(os.path.dirname(full), exist_ok=True); open(full, "w").write(s)
     _WRITTEN[path] = hashlib.md5(re.sub(r'datetime="[^"]*"', "", s).encode()).hexdigest()[:10]
 BUILD = PUB
-def sports_event(name, d, hhmm, path, brand, status, venue=None, city=None, desc=None, lang="en", show=None):
-    ev = {"@context": "https://schema.org", "@type": "SportsEvent", "name": name, "url": SITE + path, "sport": "Professional wrestling",
-          "startDate": start_dt(d, hhmm).isoformat() if hhmm else d.isoformat(), "eventStatus": "https://schema.org/EventScheduled",
-          "organizer": {"@type": "SportsOrganization", "name": brand if brand != "Global" else name.split()[0]}, "inLanguage": lang}
-    if venue: ev["location"] = {"@type": "Place", "name": venue, "address": {"@type": "PostalAddress", "addressLocality": city}}
-    else:
-        ev["eventAttendanceMode"] = "https://schema.org/OnlineEventAttendanceMode"
-        ev["location"] = {"@type": "VirtualLocation", "url": SITE + path}
+US_STATES = {"Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
+             "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+             "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio",
+             "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia",
+             "Washington", "West Virginia", "Wisconsin", "Wyoming", "District of Columbia"}
+REGION_COUNTRY = {"Western Australia": "AU", "New South Wales": "AU", "Victoria": "AU", "Queensland": "AU", "South Australia": "AU",
+                  "Ontario": "CA", "Quebec": "CA", "British Columbia": "CA", "Alberta": "CA", "England": "GB", "Scotland": "GB", "Wales": "GB"}
+COUNTRIES = {"Saudi Arabia": "SA", "Mexico": "MX", "Japan": "JP", "United Kingdom": "GB", "UK": "GB", "Canada": "CA", "Australia": "AU", "Germany": "DE",
+             "France": "FR", "Italy": "IT", "Spain": "ES", "Puerto Rico": "PR", "United States": "US", "USA": "US", "India": "IN", "Ireland": "IE"}
+def postal_address(city, region=None, country=None):
+    """PostalAddress from our sourced 'City, State/Region[, Country]' string (events.json). Explicit region/country win.
+    Nothing is guessed beyond the US-state / known-region / country-name tables."""
+    parts = [x.strip() for x in (city or "").split(",") if x.strip()]
+    if not parts: return None
+    a = {"@type": "PostalAddress", "addressLocality": parts[0]}
+    for x in parts[1:]:
+        if x in US_STATES: a["addressRegion"] = x; a.setdefault("addressCountry", "US")
+        elif x in REGION_COUNTRY: a["addressRegion"] = x; a.setdefault("addressCountry", REGION_COUNTRY[x])
+        elif x in COUNTRIES: a["addressCountry"] = COUNTRIES[x]
+        elif "addressRegion" not in a: a["addressRegion"] = x
+    if region: a["addressRegion"] = region
+    if country: a["addressCountry"] = country
+    return a
+EVENT_STATUS = {None: "https://schema.org/EventScheduled", "scheduled": "https://schema.org/EventScheduled", "cancelled": "https://schema.org/EventCancelled",
+                "postponed": "https://schema.org/EventPostponed", "rescheduled": "https://schema.org/EventRescheduled", "moved_online": "https://schema.org/EventMovedOnline"}
+def episode_venue(show, ds):
+    """Confirmed venue for one TV episode: events.json "venues": {"<show>/<YYYY-MM-DD>": {"venue", "city", "source"}} - only from the
+    promotion's own event page or a trusted outlet. None -> the episode page carries no Event markup (page stays indexable)."""
+    v = (CFG.get("venues") or {}).get(f"{show}/{ds}")
+    return v if v and v.get("venue") and v.get("city") and v.get("source") else None
+def sports_event(name, d, hhmm, path, brand, status, venue=None, city=None, desc=None, lang="en", show=None, ev_status=None, region=None, country=None):
+    """SportsEvent JSON-LD, or None when we have no confirmed venue: Google requires location, and we never invent one
+    (the old VirtualLocation-pointing-at-our-own-page was wrong for TV shows taped in an arena)."""
+    addr = postal_address(city, region, country) if venue else None
+    if not venue or not addr: return None
+    org = brand if brand != "Global" else name.split()[0]
+    ev = {"@context": "https://schema.org", "@type": "SportsEvent", "@id": SITE + path + "#event", "name": name, "url": SITE + path, "sport": "Professional wrestling",
+          "startDate": start_dt(d, hhmm).isoformat() if hhmm else d.isoformat(), "eventStatus": EVENT_STATUS.get(ev_status, EVENT_STATUS[None]),
+          "eventAttendanceMode": "https://schema.org/MixedEventAttendanceMode" if ev_status == "moved_online" else "https://schema.org/OfflineEventAttendanceMode",
+          "location": {"@type": "Place", "name": venue, "address": addr},
+          "organizer": {"@type": "Organization", "name": org}, "inLanguage": lang}
+    if ev_status == "moved_online": ev["eventAttendanceMode"] = "https://schema.org/OnlineEventAttendanceMode"
     if desc: ev["description"] = desc
     else:   # factual line from the sourced schedule data (date, venue / regular slot) - never filler
-        dl = C.dlong(d, lang)
-        if venue: ev["description"] = (f"{name}: {dl}, {venue}, {city}." if lang == "en" else f"{name}: {dl}, {venue}, {city}.")
-        elif show in SHOWS: ev["description"] = show_desc(show, lang)
-    ou = ORG_URL.get(ev["organizer"]["name"])
+        ev["description"] = f"{name}: {C.dlong(d, lang)}, {venue}, {city}."
+    ou = ORG_URL.get(org)
     if ou: ev["organizer"]["url"] = ou
-    if venue and status is False and TICKETS.get(ev["organizer"]["name"]):   # upcoming in-person event: the promotion's official tickets/events page (no price - we don't know it)
-        ev["offers"] = {"@type": "Offer", "url": TICKETS[ev["organizer"]["name"]], "category": "primary"}
+    if status is False and ev_status in (None, "scheduled", "rescheduled") and TICKETS.get(org):   # upcoming in-person event: official tickets/events page (no price - we don't know it)
+        ev["offers"] = {"@type": "Offer", "url": TICKETS[org], "category": "primary"}
     return ev
 # Official promotion sites (organizer.url) and their official events/tickets pages (Offer url) - checked 2026-10-25, all return 200.
-ORG_URL = {"WWE": "https://www.wwe.com/", "AEW": "https://www.allelitewrestling.com/", "TNA": "https://tnawrestling.com/", "AAA": "https://www.luchalibreaaa.com/"}
+ORG_URL = {"WWE": "https://www.wwe.com/", "AEW": "https://www.allelitewrestling.com/", "TNA": "https://tnawrestling.com/", "AAA": "https://www.luchalibreaaa.com/",
+           "NJPW": "https://www.njpw1972.com/", "ROH": "https://www.rohwrestling.com/", "CMLL": "https://cmll.com/", "MLW": "https://mlw.com/", "GCW": "https://gcwrestling.com/"}
 TICKETS = {"WWE": "https://www.wwe.com/events", "AEW": "https://www.allelitewrestling.com/aew-events", "TNA": "https://tnawrestling.com/events/"}
+def _evkw(ev): return {"ev_status": ev.get("status"), "region": ev.get("region"), "country": ev.get("country")}
 def _cards():
     try:
         with open(os.path.join(ROOT, "data", "fullcards.json")) as f: return json.load(f)
@@ -361,6 +419,11 @@ def _live(key, lang, path, nm, dl, title, h1, body, ld, desc=None, img=None):
     if not r: return title, h1, body, ld, desc
     badge, sec, lld = r
     st = LIVE.page_state(key)
+    pev = next((x for x in ld if isinstance(x, dict) and x.get("@type") == "SportsEvent"), None)
+    for x in lld:   # LiveBlogPosting.about: the page's full SportsEvent (location/organizer/eventStatus) - never a bare Event (Search Console: missing location)
+        if x.get("@type") == "LiveBlogPosting":
+            x.pop("about", None)
+            if pev: x["about"] = {k: v for k, v in pev.items() if k != "@context"}
     for x in lld:   # Google wants an image on LiveBlogPosting for rich results: the page's story photo, else the 1200x630 site card
         if x.get("@type") == "LiveBlogPosting" and not x.get("image"): x["image"] = [img if (img or "").startswith("https://") else SITE + "og-image.jpg"]
     if st["shown"] or st["is_live"]:
@@ -422,7 +485,9 @@ def build(clusters, tr_es=None):
             fx = facts([(t["date"], e(C.dfull(d, lang))), (t["time"], e(C.tfmt(h, m, lang))), (t["watch"], e(info["network"] + " (US)")), ("", e(note) if note else None)])
             body = (f'<p class="lede">{e(show_desc(show, lang))} <a href="/{hub_path(show, lang)}">{e(nm)} →</a></p>{fx}' + sections(st, lang, aired))
             crumbs = [home, shows_c, (nm, SITE + hub_path(show, lang)), (dl, SITE + path)]
-            ld = [sports_event(f"{nm} ({dl})", d, info["time"], path, SHOWS[show]["brand"], aired, desc=desc, lang=lang, show=show), itemlist(st, lang)]
+            vv = episode_venue(show, ds) or {}
+            ld = [x for x in (sports_event(f"{nm} ({dl})", d, info["time"], path, SHOWS[show]["brand"], aired, vv.get("venue"), vv.get("city"), desc=desc, lang=lang, show=show,
+                                           ev_status=vv.get("status"), region=vv.get("region"), country=vv.get("country")), itemlist(st, lang)) if x]
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             title, h1, body, ld, desc = _live(f"{ds}-{show}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
             ld = event_extras(ld, f"{show}/{ds}", img, lang)
@@ -461,7 +526,7 @@ def build(clusters, tr_es=None):
                         (t["src"], f'<a href="{e(ev["source"])}" rel="nofollow noopener" target="_blank">{e(re.sub(r"^https?://(www\.)?", "", ev["source"]).split("/")[0])}</a>')])
             body = fx + sections(st, lang, aired, is_event=True)
             crumbs = [home, (t["events"], SITE + UP[lang]), (nm, SITE + path)]
-            ld = [sports_event(nm, d, hhmm, path, ev["brand"], aired, ev["venue"], ev["city"], desc, lang)] + ([itemlist(st, lang)] if st else [])
+            ld = [x for x in [sports_event(nm, d, hhmm, path, ev["brand"], aired, ev["venue"], ev["city"], desc, lang, **_evkw(ev))] if x] + ([itemlist(st, lang)] if st else [])
             img = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             title, h1, body, ld, desc = _live(f"{ev['date']}-{ev['slug']}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
             ld = event_extras(ld, f"{ev['slug']}/{ev['date']}", img, lang)
@@ -504,7 +569,10 @@ def build(clusters, tr_es=None):
             crumbs = [home, shows_c, (nm, SITE + path)]
             ld = [{"@context": "https://schema.org", "@type": "CollectionPage", "name": title.replace(" | WCN", ""), "url": SITE + path, "inLanguage": lang,
                    "about": {"@type": "TVSeries", "name": nm}, "publisher": C.PUBLISHER}]
-            if nxt: ld.append(sports_event(f"{nm} ({C.dlong(nxt[0], lang)})", nxt[0], nxt[1]["time"], path, s["brand"], False, lang=lang, show=show))
+            # next episode: no Event markup unless its venue is confirmed in events.json "venues" (Google requires location)
+            vv = episode_venue(show, nxt[0].isoformat()) if nxt else None
+            if vv: ld.append(sports_event(f"{nm} ({C.dlong(nxt[0], lang)})", nxt[0], nxt[1]["time"], path, s["brand"], False, vv["venue"], vv["city"], lang=lang, show=show,
+                                          ev_status=vv.get("status"), region=vv.get("region"), country=vv.get("country")))
             page(path, lang, title, desc, h1, "".join(parts), crumbs, ld, alt)
             idx_rows.append((show, nm, path, nxt, len(mine)))
         # ---- /shows/ index ----
@@ -542,7 +610,7 @@ def build(clusters, tr_es=None):
                     if ev.get("time"): h, m = _hm(ev["time"]); tm = C.tfmt(h, m, lang)
                     lis.append(f'<li class="ple" style="--c:{CATC.get(ev["brand"], "#7cd618")}"><span class="tm">{e(tm) or "—"}</span><a href="/{info}"><b>{e(ev["name"])}</b></a>'
                                f'<span class="wh">{e(ev["venue"])}, {e(ev["city"])}{" · " + e(ev["network"]) if ev.get("network") else ""}</span></li>')
-                    lds.append(sports_event(ev["name"], d, ev.get("time"), info, ev["brand"], False, ev["venue"], ev["city"], lang=lang))
+                    lds.append(sports_event(ev["name"], d, ev.get("time"), info, ev["brand"], False, ev["venue"], ev["city"], lang=lang, **_evkw(ev)))
                 elif kind == "skip":
                     lis.append(f'<li class="skip"><span class="tm">—</span><b>{e(SHOWS[k]["name"])}</b><span class="wh">{e(info.get("note_es" if lang == "es" else "note"))}</span></li>')
                 else:
@@ -556,7 +624,7 @@ def build(clusters, tr_es=None):
         if later:
             rows.append(f'<section class="day"><h2>{t["ples"]}</h2><ul class="sched">' + "".join(
                 f'<li class="ple" style="--c:{CATC.get(ev["brand"], "#7cd618")}"><span class="tm">{e(C.dlong(d, lang))}</span><a href="/{p}"><b>{e(ev["name"])}</b></a><span class="wh">{e(ev["venue"])}, {e(ev["city"])}</span></li>' for ev, d, p in later) + "</ul></section>")
-            for ev, d, p in later: lds.append(sports_event(ev["name"], d, ev.get("time"), p, ev["brand"], False, ev["venue"], ev["city"], lang=lang))
+            for ev, d, p in later: lds.append(sports_event(ev["name"], d, ev.get("time"), p, ev["brand"], False, ev["venue"], ev["city"], lang=lang, **_evkw(ev)))
         past = [(ev, d, p, n) for ev, d, p, n, a in evs if a]
         if past: rows.append(f'<section class="day"><h2>{t["past"]}</h2><ul class="sched">' + "".join(
             f'<li class="ple" style="--c:{CATC.get(ev["brand"], "#7cd618")}"><span class="tm">{e(C.dlong(d, lang))}</span><a href="/{p}"><b>{e(ev["name"])}</b></a><span class="wh">{t["results"]}{f" · {n} {t["stories"]}" if n else ""}</span></li>' for ev, d, p, n in past) + "</ul></section>")
@@ -568,7 +636,7 @@ def build(clusters, tr_es=None):
             title = "Upcoming Wrestling Events & TV Schedule: WWE, AEW, TNA | WCN"; h1 = "Upcoming Events"
             desc = "Wrestling schedule: WWE Raw, SmackDown, NXT, AEW Dynamite, Collision, TNA iMPACT and upcoming premium live events and PPVs with date, time (ET) and venue."
         body = f'<p class="lede">{t["disclaimer"]}</p>' + "".join(rows)
-        page(path, lang, title, desc, h1, body, [home, (t["upcoming"] if lang == "en" else T["upcoming"], SITE + path)], lds[:40],
+        page(path, lang, title, desc, h1, body, [home, (t["upcoming"] if lang == "en" else T["upcoming"], SITE + path)], [x for x in lds if x][:40],
              {"en": SITE + UP["en"], "es": SITE + UP["es"]}, active="upcoming")
     _gone_stubs(now)
     # swap staged dirs in atomically-ish (old episode pages beyond retention disappear = same pruning as stories)
