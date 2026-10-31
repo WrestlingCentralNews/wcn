@@ -1,0 +1,5813 @@
+{
+ "remaining_usd": 2.945,
+ "spent_usd": 7.045,
+ "loaded_total_usd": 9.62,
+ "low_balance": false,
+ "low_threshold_usd": 2.0,
+ "rebased": {
+  "time": "2026-10-18T06:18:00Z",
+  "at": 1792304280,
+  "total_usd": 9.62,
+  "paid_usd": 5.0,
+  "free_usd": 4.62,
+  "note": "Recalibrated to the X developer console (owner screenshot ~06:18 UTC Oct 18): Total Balance $9.62 = paid Credits $5.00 (untouched) + Free Credits $4.62; X spends free credits first. Console usage (last 30 days): only 2 billable events (~$0.01), 27 requests - our per-post estimate (24 posts x $0.015 + media + delete = $0.37) overcounted. From this point remaining = $9.62 minus estimated spend logged after rebase.at (free credits drawn first); entries before it are kept for history only. low_balance stays true at <= $2.00 total."
+ },
+ "spent_since_rebase_usd": 6.675,
+ "free_remaining_usd": 0.0,
+ "paid_remaining_usd": 2.945,
+ "spent_before_rebase_estimate_usd": 0.37,
+ "counts": {
+  "post": 326,
+  "media": 306,
+  "content_mgmt": 1,
+  "delete": 2,
+  "post_url": 3
+ },
+ "updated": "2026-10-31T16:43:16Z",
+ "estimate_note": "estimated from our own call log; X console is the source of truth",
+ "prices": {
+  "post": 0.015,
+  "post_url": 0.2,
+  "delete": 0.01,
+  "read": 0.005,
+  "media": 0.005
+ },
+ "thread_estimates": {
+  "weekly_root_usd": 0.02,
+  "ppv_root_usd": 0.205,
+  "reply_usd": 0.02,
+  "weekly_thread_13_replies_usd": 0.28,
+  "ppv_thread_13_replies_usd": 0.465,
+  "note": "weekly shows: no link in root or replies (saves ~$0.185 per weekly show vs a linked root); PLE/PPV roots keep the link"
+ },
+ "top_ups": [
+  {
+   "date": "2026-10-17",
+   "usd": 5.0,
+   "note": "initial load (first successful post 2026-10-17 06:48 UTC)"
+  }
+ ],
+ "how_to_top_up": "add {date, usd, note} to x_topups.json on main",
+ "events": [
+  {
+   "at": 1792218369,
+   "type": "credits_depleted",
+   "src": "x_poster",
+   "note": "HTTP 402 before the $5 load (seeded)"
+  }
+ ],
+ "archived": {
+  "usd": 0.0,
+  "counts": {}
+ },
+ "entries": [
+  {
+   "at": 1792219725,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111348676228444566",
+   "seed": true
+  },
+  {
+   "at": 1792221578,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111356448206709114",
+   "seed": true
+  },
+  {
+   "at": 1792223925,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111366292632400312",
+   "seed": true
+  },
+  {
+   "at": 1792225777,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111374059711975546",
+   "seed": true
+  },
+  {
+   "at": 1792227594,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111381681298956418",
+   "seed": true
+  },
+  {
+   "at": 1792248240,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111468275486093373",
+   "seed": true
+  },
+  {
+   "at": 1792251836,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111483359318921288",
+   "seed": true
+  },
+  {
+   "at": 1792280992,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111605646483439982",
+   "seed": true
+  },
+  {
+   "at": 1792282353,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_x",
+   "ref": "2111611356927738275",
+   "seed": true
+  },
+  {
+   "at": 1792282353,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_x",
+   "ref": "2111611357766504913",
+   "seed": true
+  },
+  {
+   "at": 1792282794,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111613203759157398",
+   "seed": true
+  },
+  {
+   "at": 1792282794,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_x",
+   "ref": "2111613205105496469",
+   "seed": true
+  },
+  {
+   "at": 1792283092,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_x",
+   "ref": "2111614456035684653",
+   "seed": true
+  },
+  {
+   "at": 1792284423,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111620037979017405",
+   "seed": true
+  },
+  {
+   "at": 1792285200,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_x",
+   "ref": "2111623295451947279",
+   "seed": true
+  },
+  {
+   "at": 1792285771,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_x",
+   "ref": "2111625692500963747",
+   "seed": true
+  },
+  {
+   "at": 1792287596,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_x",
+   "ref": "2111633344345800968",
+   "seed": true
+  },
+  {
+   "at": 1792289582,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_x",
+   "ref": "2111641675059622232",
+   "seed": true
+  },
+  {
+   "at": 1792290958,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_x",
+   "ref": "2111647448225526015",
+   "seed": true
+  },
+  {
+   "at": 1792295491,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_x",
+   "ref": "2111666462351868146",
+   "seed": true
+  },
+  {
+   "at": 1792295643,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_x",
+   "ref": "2111667096199250047",
+   "seed": true
+  },
+  {
+   "at": 1792297481,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_x",
+   "ref": "2111674803874619774",
+   "note": "one"
+  },
+  {
+   "at": 1792301971,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2111693637696229376",
+   "note": "HTTP 200 image/jpeg 371898B"
+  },
+  {
+   "at": 1792301972,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111693639889899743",
+   "note": "with photo"
+  },
+  {
+   "at": 1792301972,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111693641613725907"
+  },
+  {
+   "at": 1792304160,
+   "kind": "content_mgmt",
+   "usd": 0.005,
+   "endpoint": "DELETE /2/tweets/:id",
+   "src": "manual (parent agent, owner-approved)",
+   "ref": "2111693641613725907",
+   "note": "deleted the La Catalina post (AI headline wrongly said 'Debuts'); content-management charge",
+   "manual_id": "manual-2026-10-18-delete-2111693641613725907"
+  },
+  {
+   "at": 1792306635,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2111713199980695552",
+   "note": "HTTP 200 image/jpeg 48099B"
+  },
+  {
+   "at": 1792306635,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111713201658437763",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792310182,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2111728076618944512",
+   "note": "HTTP 200 image/jpeg 254109B"
+  },
+  {
+   "at": 1792310182,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111728078623842441",
+   "note": "with photo (site:cached:key-verified-cached)"
+  },
+  {
+   "at": 1792312094,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2111736095478317056",
+   "note": "HTTP 200 image/jpeg 48287B"
+  },
+  {
+   "at": 1792312094,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111736096879174141",
+   "note": "with photo (promo-logo:aaa)"
+  },
+  {
+   "at": 1792333860,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2111827389009600512",
+   "note": "HTTP 200 image/jpeg 55161B"
+  },
+  {
+   "at": 1792333860,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111827390989221943",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792335853,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2111835747569315840",
+   "note": "HTTP 200 image/jpeg 81791B"
+  },
+  {
+   "at": 1792335853,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111835749259579738",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792338016,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2111844820259889152",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792338016,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111844822440882508",
+   "note": "with photo (site:promo-logo:tna)"
+  },
+  {
+   "at": 1792364985,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2111957936255967232",
+   "note": "HTTP 200 image/jpeg 1824112B"
+  },
+  {
+   "at": 1792364986,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111957939657580657",
+   "note": "with photo (site:key-verified)"
+  },
+  {
+   "at": 1792367502,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2111968493222670336",
+   "note": "HTTP 200 image/jpeg 71049B"
+  },
+  {
+   "at": 1792367502,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2111968494736847207",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1792389924,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112062537697234944",
+   "note": "HTTP 200 image/png 614695B"
+  },
+  {
+   "at": 1792389924,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112062539320455616",
+   "note": "with photo (site:key-verified-cached)"
+  },
+  {
+   "at": 1792409063,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112142812565180416",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792409063,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112142813856964800",
+   "note": "with photo (promo-logo:wwe)"
+  },
+  {
+   "at": 1792415548,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112170012890804224",
+   "note": "HTTP 200 image/jpeg 180592B"
+  },
+  {
+   "at": 1792415548,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112170014539223117",
+   "note": "with photo (site:no-names)"
+  },
+  {
+   "at": 1792419102,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112184919195525120",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792419102,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112184920655184072",
+   "note": "with photo (site:promo-logo:aew)"
+  },
+  {
+   "at": 1792422740,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112200179940270080",
+   "note": "HTTP 200 image/webp 47926B"
+  },
+  {
+   "at": 1792422740,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112200181412434175",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792426204,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112214709722132480",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792426205,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112214711068475711",
+   "note": "with photo (site:cached:promo-logo:aew)"
+  },
+  {
+   "at": 1792428316,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112223566598995968",
+   "note": "HTTP 200 image/jpeg 111546B"
+  },
+  {
+   "at": 1792428316,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112223568222105647",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792429894,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112230186733166594",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792429895,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112230188293521751",
+   "note": "with photo (site:cached:promo-logo:wwe)"
+  },
+  {
+   "at": 1792451636,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112321379727224833",
+   "note": "HTTP 200 image/jpeg 86887B"
+  },
+  {
+   "at": 1792451637,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112321381153321067",
+   "note": "with photo (site-default)"
+  },
+  {
+   "at": 1792453901,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112330879750066176",
+   "note": "HTTP 200 image/webp 106588B"
+  },
+  {
+   "at": 1792453902,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112330881910153483",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792456470,
+   "kind": "delete",
+   "usd": 0.01,
+   "endpoint": "DELETE /2/tweets/:id",
+   "src": "manual (owner-approved)",
+   "ref": "2112170014539223117",
+   "note": "deleted the 'WWE Crown Jewel Championship explained' post (evergreen explainer, not news)",
+   "manual_id": "manual-2026-10-20-delete-2112170014539223117"
+  },
+  {
+   "at": 1792456874,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112343349378125824",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792456875,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112343350716014726",
+   "note": "with photo (site:cached:promo-logo:wwe)"
+  },
+  {
+   "at": 1792456976,
+   "kind": "post_url",
+   "usd": 0.2,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112342773332594876",
+   "note": "root (seed)"
+  },
+  {
+   "at": 1792456976,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112342773332594876",
+   "note": "root (seed)"
+  },
+  {
+   "at": 1792457292,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112345100269264896",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792457292,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112345102232224195",
+   "note": "reply"
+  },
+  {
+   "at": 1792457534,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112346115366387712",
+   "note": "HTTP 200 image/webp 105408B"
+  },
+  {
+   "at": 1792457534,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112346117123756120",
+   "note": "reply"
+  },
+  {
+   "at": 1792458145,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112348680988876800",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792458146,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112348682683310222",
+   "note": "reply"
+  },
+  {
+   "at": 1792458997,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112352252899753986",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792458998,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112352255470895365",
+   "note": "reply"
+  },
+  {
+   "at": 1792458998,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112352258159464448",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792458999,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112352259984048286",
+   "note": "reply"
+  },
+  {
+   "at": 1792459853,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112355840996814849",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792459853,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112355842884350176",
+   "note": "reply"
+  },
+  {
+   "at": 1792460582,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112358901131722752",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792460583,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112358902742282502",
+   "note": "reply"
+  },
+  {
+   "at": 1792461551,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112362963164377088",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792461551,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112362965118992519",
+   "note": "reply"
+  },
+  {
+   "at": 1792461552,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112362967065120768",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792461552,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112362968977723712",
+   "note": "reply"
+  },
+  {
+   "at": 1792462034,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112364989520453632",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792462034,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112364991344972090",
+   "note": "reply"
+  },
+  {
+   "at": 1792462301,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112366110863761408",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792462301,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112366112558153808",
+   "note": "reply"
+  },
+  {
+   "at": 1792464434,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112375055871262720",
+   "note": "HTTP 200 image/jpeg 342088B"
+  },
+  {
+   "at": 1792464434,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112375058056515777",
+   "note": "reply"
+  },
+  {
+   "at": 1792476340,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112424994546601984",
+   "note": "HTTP 200 image/jpeg 170492B"
+  },
+  {
+   "at": 1792476340,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112424996278882811",
+   "note": "with photo (site:cached:key-verified-cached)"
+  },
+  {
+   "at": 1792498678,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112518685936013312",
+   "note": "HTTP 200 image/png 100441B"
+  },
+  {
+   "at": 1792498678,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112518687315915118",
+   "note": "with photo (site:key-verified-cached)"
+  },
+  {
+   "at": 1792505562,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112547561294974977",
+   "note": "HTTP 200 image/jpeg 654941B"
+  },
+  {
+   "at": 1792505563,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112547563186671882",
+   "note": "with photo (site:cached:event-art)"
+  },
+  {
+   "at": 1792510323,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112567527414861825",
+   "note": "HTTP 200 image/jpeg 298902B"
+  },
+  {
+   "at": 1792510323,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112567529570816177",
+   "note": "with photo (site:no-names)"
+  },
+  {
+   "at": 1792516374,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112592910227300352",
+   "note": "HTTP 200 image/jpeg 219366B"
+  },
+  {
+   "at": 1792516375,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112592911795896715",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792518077,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112600051423870976",
+   "note": "HTTP 200 image/jpeg 69173B"
+  },
+  {
+   "at": 1792518077,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112600053659394250",
+   "note": "with photo (promo-logo:njpw)"
+  },
+  {
+   "at": 1792519811,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112607323063459840",
+   "note": "HTTP 200 image/jpeg 54451B"
+  },
+  {
+   "at": 1792519811,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112607324552454235",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1792533553,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112664963483398144",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792533553,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112664964846510481",
+   "note": "with photo (promo-logo:wwe)"
+  },
+  {
+   "at": 1792538297,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112684859680313344",
+   "note": "HTTP 200 image/jpeg 287228B"
+  },
+  {
+   "at": 1792538297,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112684861647429896",
+   "note": "with photo (site:no-names)"
+  },
+  {
+   "at": 1792540366,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112693536684376064",
+   "note": "HTTP 200 image/jpeg 172397B"
+  },
+  {
+   "at": 1792540366,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112693538446053408",
+   "note": "with photo (site:cached:key-verified)"
+  },
+  {
+   "at": 1792540696,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112694922679619585",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792540696,
+   "kind": "post_url",
+   "usd": 0.2,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112694924244090989",
+   "note": "root"
+  },
+  {
+   "at": 1792541184,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112696968723976193",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792541184,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112696970464661931",
+   "note": "reply"
+  },
+  {
+   "at": 1792541429,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112697998165831681",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792541430,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112698000271352098",
+   "note": "reply"
+  },
+  {
+   "at": 1792543275,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112705739496226816",
+   "note": "HTTP 200 image/jpeg 217767B"
+  },
+  {
+   "at": 1792543275,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112705740800659934",
+   "note": "with photo (site:cached:key-verified-cached)"
+  },
+  {
+   "at": 1792543279,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112705757552824320",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792543280,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112705759180124351",
+   "note": "reply"
+  },
+  {
+   "at": 1792543280,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112705760794992640",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792543280,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112705762506219991",
+   "note": "reply"
+  },
+  {
+   "at": 1792543623,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112707200984772608",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792543624,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112707202628956518",
+   "note": "reply"
+  },
+  {
+   "at": 1792543624,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112707203899748352",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792543624,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112707205703303305",
+   "note": "reply"
+  },
+  {
+   "at": 1792543625,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112707207045550080",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792543625,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112707208639283324",
+   "note": "reply"
+  },
+  {
+   "at": 1792543866,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112708217054642177",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792543866,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112708218992386350",
+   "note": "reply"
+  },
+  {
+   "at": 1792544121,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112709289689411584",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792544122,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112709291346198536",
+   "note": "reply"
+  },
+  {
+   "at": 1792544829,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112712257318871040",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792544829,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112712258929537383",
+   "note": "reply"
+  },
+  {
+   "at": 1792546173,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112717895021010944",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792546173,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112717896681955712",
+   "note": "reply"
+  },
+  {
+   "at": 1792546309,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112718465689907200",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792546309,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112718467053101557",
+   "note": "reply"
+  },
+  {
+   "at": 1792547645,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2112724068952592384",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792547645,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2112724070571635035",
+   "note": "reply"
+  },
+  {
+   "at": 1792562793,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112787603036807168",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792562793,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112787604961894570",
+   "note": "with photo (promo-logo:nxt)"
+  },
+  {
+   "at": 1792585195,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112881563495198720",
+   "note": "HTTP 200 image/jpeg 147893B"
+  },
+  {
+   "at": 1792585195,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112881565047136446",
+   "note": "with photo (site:no-names)"
+  },
+  {
+   "at": 1792599088,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112939836332249088",
+   "note": "HTTP 200 image/jpeg 48287B"
+  },
+  {
+   "at": 1792599088,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112939837754064933",
+   "note": "with photo (site:cached:promo-logo:aaa)"
+  },
+  {
+   "at": 1792601098,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112948268242018304",
+   "note": "HTTP 200 image/jpeg 158918B"
+  },
+  {
+   "at": 1792601099,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112948270813069810",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792611203,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2112990650610380800",
+   "note": "HTTP 200 image/jpeg 108207B"
+  },
+  {
+   "at": 1792611203,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2112990651990372479",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792613502,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113000293097189377",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792613502,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113000294410019069",
+   "note": "with photo (promo-logo:aew)"
+  },
+  {
+   "at": 1792615636,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113009245780381696",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792615637,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113009247395127729",
+   "note": "with photo (promo-logo:wwe)"
+  },
+  {
+   "at": 1792624896,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113048084272078848",
+   "note": "HTTP 200 image/jpeg 399383B"
+  },
+  {
+   "at": 1792624897,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113048086021116185",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1792626818,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113056144893550592",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792626818,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113056146978132308",
+   "note": "with photo (site:cached:promo-logo:wwe)"
+  },
+  {
+   "at": 1792626972,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113056790002987008",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792626972,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113056791437467745",
+   "note": "root"
+  },
+  {
+   "at": 1792628071,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113061401732251648",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792628072,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113061403393155320",
+   "note": "reply"
+  },
+  {
+   "at": 1792628072,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113061404668235776",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792628073,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113061407100899701",
+   "note": "reply"
+  },
+  {
+   "at": 1792629565,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113067666944479232",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792629566,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113067668714525147",
+   "note": "reply"
+  },
+  {
+   "at": 1792629676,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113068132382478336",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792629676,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113068134135742563",
+   "note": "reply"
+  },
+  {
+   "at": 1792629677,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113068135704379392",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792629677,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113068137252098298",
+   "note": "reply"
+  },
+  {
+   "at": 1792629882,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113068997520285696",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792629883,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113068998975688889",
+   "note": "with photo (site:promo-logo:aew)"
+  },
+  {
+   "at": 1792630264,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113070599744458752",
+   "note": "HTTP 200 image/png 820300B"
+  },
+  {
+   "at": 1792630265,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113070601929708024",
+   "note": "with photo (site:no-names)"
+  },
+  {
+   "at": 1792630571,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113071886640746496",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792630572,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113071888419184934",
+   "note": "reply"
+  },
+  {
+   "at": 1792630691,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113072391433736192",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792630692,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113072393283366941",
+   "note": "reply"
+  },
+  {
+   "at": 1792630692,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113072395271471104",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792630693,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113072396953387204",
+   "note": "reply"
+  },
+  {
+   "at": 1792631057,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113073926461091840",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792631058,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113073928109482342",
+   "note": "reply"
+  },
+  {
+   "at": 1792631364,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113075211465854976",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792631364,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113075213500060027",
+   "note": "reply"
+  },
+  {
+   "at": 1792632809,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113081271698030594",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792632809,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113081273316995572",
+   "note": "reply"
+  },
+  {
+   "at": 1792632809,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113081274705272833",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792632810,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113081276248777125",
+   "note": "reply"
+  },
+  {
+   "at": 1792632810,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113081277536481280",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792632811,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113081279293899226",
+   "note": "reply"
+  },
+  {
+   "at": 1792633011,
+   "kind": "delete",
+   "usd": 0.01,
+   "endpoint": "DELETE /2/tweets/:id",
+   "src": "x_fix",
+   "ref": "2113070601929708024",
+   "note": "wrong 'Sting Returns' post (was Sting's son)"
+  },
+  {
+   "at": 1792633012,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_fix",
+   "ref": "2113082122613186561",
+   "note": "HTTP 200 image/jpeg 637931B"
+  },
+  {
+   "at": 1792633012,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_fix",
+   "ref": "2113082125180084729",
+   "note": "corrected Steve Borden post"
+  },
+  {
+   "at": 1792633150,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113082701666226176",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792633150,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113082703159468467",
+   "note": "reply"
+  },
+  {
+   "at": 1792633150,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113082704363237376",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792633151,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113082705915130326",
+   "note": "reply"
+  },
+  {
+   "at": 1792634626,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113088894656774144",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792634627,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113088896284098879",
+   "note": "reply"
+  },
+  {
+   "at": 1792634627,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113088897764700160",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792634627,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113088899643851208",
+   "note": "reply"
+  },
+  {
+   "at": 1792635434,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113092284195512320",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792635435,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113092286191939654",
+   "note": "reply"
+  },
+  {
+   "at": 1792636401,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113096337184944128",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792636401,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113096338854293633",
+   "note": "reply"
+  },
+  {
+   "at": 1792636592,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113097140020842496",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792636592,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113097141828608288",
+   "note": "reply"
+  },
+  {
+   "at": 1792672156,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113246305258528768",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792672156,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113246306927800682",
+   "note": "with photo (site:cached:promo-logo:wwe)"
+  },
+  {
+   "at": 1792682493,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113289660747362304",
+   "note": "HTTP 200 image/jpeg 93440B"
+  },
+  {
+   "at": 1792682493,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113289662274154596",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792685926,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113304062166810624",
+   "note": "HTTP 200 image/webp 129130B"
+  },
+  {
+   "at": 1792685927,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113304063693533483",
+   "note": "with photo (site:no-names)"
+  },
+  {
+   "at": 1792687774,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113311812682997760",
+   "note": "HTTP 200 image/jpeg 103919B"
+  },
+  {
+   "at": 1792687774,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113311814088110469",
+   "note": "with photo (site:cached:event-art)"
+  },
+  {
+   "at": 1792697902,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113354292367118336",
+   "note": "HTTP 200 image/jpeg 76383B"
+  },
+  {
+   "at": 1792697902,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113354293709312177",
+   "note": "with photo (site:cached:key-verified-cached)"
+  },
+  {
+   "at": 1792700077,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113363414781153280",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792700077,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113363416194650168",
+   "note": "with photo (promo-logo:wwe)"
+  },
+  {
+   "at": 1792702957,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113375494108250112",
+   "note": "HTTP 200 image/jpeg 360244B"
+  },
+  {
+   "at": 1792702957,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113375495915966865",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1792711988,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113413371840344064",
+   "note": "HTTP 200 image/jpeg 57537B"
+  },
+  {
+   "at": 1792711988,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113413373186764850",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792713955,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113421623554351104",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792713955,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113421624837914814",
+   "note": "with photo (site:cached:promo-logo:wwe)"
+  },
+  {
+   "at": 1792716641,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113432890579058688",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792716642,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113432891933827279",
+   "note": "with photo (promo-logo:nxt)"
+  },
+  {
+   "at": 1792716943,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113434154381803520",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792716943,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113434155958821286",
+   "note": "root"
+  },
+  {
+   "at": 1792716945,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113434164846592000",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792716945,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113434166394233299",
+   "note": "reply"
+  },
+  {
+   "at": 1792718169,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113439298745708544",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792718169,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113439300675158048",
+   "note": "reply"
+  },
+  {
+   "at": 1792718679,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113441437123584001",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792718679,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113441438834819554",
+   "note": "reply"
+  },
+  {
+   "at": 1792719244,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113443806531997696",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792719244,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113443808591454210",
+   "note": "reply"
+  },
+  {
+   "at": 1792719854,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113446368098553856",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792719855,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113446369830879461",
+   "note": "reply"
+  },
+  {
+   "at": 1792720029,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113447097705910272",
+   "note": "HTTP 200 image/jpeg 203992B"
+  },
+  {
+   "at": 1792720029,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113447099970842695",
+   "note": "with photo (site:override)"
+  },
+  {
+   "at": 1792720200,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113447817301635072",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792720200,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113447819017101764",
+   "note": "reply"
+  },
+  {
+   "at": 1792720201,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113447821441368064",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792720201,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113447823349809258",
+   "note": "reply"
+  },
+  {
+   "at": 1792720557,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113449314500370432",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792720557,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113449316001910802",
+   "note": "reply"
+  },
+  {
+   "at": 1792720945,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113450941869436928",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792720945,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113450944029417958",
+   "note": "reply"
+  },
+  {
+   "at": 1792721327,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113452543917334528",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792721327,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113452545523761437",
+   "note": "reply"
+  },
+  {
+   "at": 1792721328,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113452547402850305",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792721328,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113452549063721363",
+   "note": "reply"
+  },
+  {
+   "at": 1792722420,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113457129491402752",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792722421,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113457131315925387",
+   "note": "reply"
+  },
+  {
+   "at": 1792722421,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113457132779761664",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792722421,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113457134499471482",
+   "note": "reply"
+  },
+  {
+   "at": 1792724088,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113464125313433600",
+   "note": "HTTP 200 image/jpeg 164248B"
+  },
+  {
+   "at": 1792724089,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113464127276347515",
+   "note": "reply"
+  },
+  {
+   "at": 1792724514,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113465910379872256",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792724514,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113465912359547286",
+   "note": "reply"
+  },
+  {
+   "at": 1792724515,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113465914498691072",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1792724515,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113465916079944110",
+   "note": "reply"
+  },
+  {
+   "at": 1792760638,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113617424402587649",
+   "note": "HTTP 200 image/jpeg 940398B"
+  },
+  {
+   "at": 1792760638,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113617426952667400",
+   "note": "with photo (site:event-art)"
+  },
+  {
+   "at": 1792772508,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113667214691749888",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792772509,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113667216549818789",
+   "note": "with photo (site:cached:promo-logo:wwe)"
+  },
+  {
+   "at": 1792774310,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113674769212071936",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792774310,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113674771762139504",
+   "note": "with photo (site:cached:promo-logo:aew)"
+  },
+  {
+   "at": 1792784440,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113717256613928960",
+   "note": "HTTP 200 image/jpeg 1032647B"
+  },
+  {
+   "at": 1792784440,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113717259189231795",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1792786843,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113727336633823232",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792786843,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113727338223444406",
+   "note": "with photo (promo-logo:wwe)"
+  },
+  {
+   "at": 1792789372,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113737944720912384",
+   "note": "HTTP 200 image/jpeg 75344B"
+  },
+  {
+   "at": 1792789372,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113737946025328938",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1792798466,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113776087633190912",
+   "note": "HTTP 200 image/jpeg 167017B"
+  },
+  {
+   "at": 1792798466,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113776089264714116",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1792799797,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113781670189125632",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792799797,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113781671694946456",
+   "note": "root"
+  },
+  {
+   "at": 1792800467,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113784479840169984",
+   "note": "HTTP 200 image/webp 9776B"
+  },
+  {
+   "at": 1792800467,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113784481341661644",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792800838,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113786039794044928",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792800839,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113786041203302545",
+   "note": "reply"
+  },
+  {
+   "at": 1792802231,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113791879095447552",
+   "note": "HTTP 200 image/jpeg 345912B"
+  },
+  {
+   "at": 1792802231,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113791881402290462",
+   "note": "reply"
+  },
+  {
+   "at": 1792802232,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113791883654713344",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792802232,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113791885277884676",
+   "note": "reply"
+  },
+  {
+   "at": 1792803194,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113795921104232448",
+   "note": "HTTP 200 image/jpeg 292617B"
+  },
+  {
+   "at": 1792803195,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113795922853302452",
+   "note": "with photo (site:cached:key-verified-cached)"
+  },
+  {
+   "at": 1792803444,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113796967637606400",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792803444,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113796969155977342",
+   "note": "reply"
+  },
+  {
+   "at": 1792804570,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113801690830839808",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792804571,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113801693188026816",
+   "note": "reply"
+  },
+  {
+   "at": 1792804571,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113801695188639744",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792804571,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113801696824496366",
+   "note": "reply"
+  },
+  {
+   "at": 1792805373,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113805059901300736",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792805374,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113805061713281413",
+   "note": "reply"
+  },
+  {
+   "at": 1792806627,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2113810318652817408",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792806627,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2113810320183709962",
+   "note": "with photo (site:cached:promo-logo:aew)"
+  },
+  {
+   "at": 1792806823,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113811139041587200",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792806823,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113811140631241110",
+   "note": "reply"
+  },
+  {
+   "at": 1792806823,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113811142267068416",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792806824,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113811143982449131",
+   "note": "reply"
+  },
+  {
+   "at": 1792807582,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2113814324821012480",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792807583,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2113814326590996599",
+   "note": "reply"
+  },
+  {
+   "at": 1792854552,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114011332345548800",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792854553,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114011333863862649",
+   "note": "with photo (site:cached:promo-logo:aew)"
+  },
+  {
+   "at": 1792860277,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114035343930335232",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1792860278,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114035345264185632",
+   "note": "with photo (promo-logo:nxt)"
+  },
+  {
+   "at": 1792882552,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114128772521676800",
+   "note": "HTTP 200 image/jpeg 47710B"
+  },
+  {
+   "at": 1792882553,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114128774111416383",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1792884228,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114135802670198784",
+   "note": "HTTP 200 image/jpeg 35052B"
+  },
+  {
+   "at": 1792884229,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114135804024926557",
+   "note": "with photo (site:no-names)"
+  },
+  {
+   "at": 1792886144,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114143835706236928",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792886144,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114143836805206406",
+   "note": "root"
+  },
+  {
+   "at": 1792886145,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114143841850966016",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792886146,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114143843344069080",
+   "note": "reply"
+  },
+  {
+   "at": 1792887323,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114148783504138240",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792887324,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114148785160872235",
+   "note": "reply"
+  },
+  {
+   "at": 1792888807,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114155005309759490",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792888807,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114155007088165202",
+   "note": "reply"
+  },
+  {
+   "at": 1792889780,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114159086170431488",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792889780,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114159087789453779",
+   "note": "reply"
+  },
+  {
+   "at": 1792889780,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114159089471430656",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792889781,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114159091006529608",
+   "note": "reply"
+  },
+  {
+   "at": 1792890274,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114161159230136323",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792890274,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114161160819761378",
+   "note": "reply"
+  },
+  {
+   "at": 1792890275,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114161162208104449",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792890275,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114161163768336888",
+   "note": "reply"
+  },
+  {
+   "at": 1792891464,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114166151668269056",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792891465,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114166153366876179",
+   "note": "reply"
+  },
+  {
+   "at": 1792891964,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114168246920220672",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792891964,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114168248765759747",
+   "note": "reply"
+  },
+  {
+   "at": 1792891965,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114168250913140736",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792891965,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114168252771283396",
+   "note": "reply"
+  },
+  {
+   "at": 1792892807,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114171782521384960",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792892807,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114171783850913916",
+   "note": "with photo (site:promo-logo:aew)"
+  },
+  {
+   "at": 1792893058,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114172837598826496",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792893059,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114172839293223142",
+   "note": "reply"
+  },
+  {
+   "at": 1792893059,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114172841063268352",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792893060,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114172842707447915",
+   "note": "reply"
+  },
+  {
+   "at": 1792893301,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114173855246016512",
+   "note": "HTTP 200 image/jpeg 48287B"
+  },
+  {
+   "at": 1792893301,
+   "kind": "post_url",
+   "usd": 0.2,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114173856554570205",
+   "note": "root"
+  },
+  {
+   "at": 1792894227,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114177738642763776",
+   "note": "HTTP 200 image/jpeg 46113B"
+  },
+  {
+   "at": 1792894227,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114177740429529413",
+   "note": "reply"
+  },
+  {
+   "at": 1792894466,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114178741127544833",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792894466,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114178742746505615",
+   "note": "reply"
+  },
+  {
+   "at": 1792896167,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114185874825232384",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792896167,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114185876645495059",
+   "note": "with photo (promo-logo:aew)"
+  },
+  {
+   "at": 1792897540,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114191635391430656",
+   "note": "HTTP 200 image/jpeg 48287B"
+  },
+  {
+   "at": 1792897540,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114191636892913909",
+   "note": "reply"
+  },
+  {
+   "at": 1792897541,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114191638604234752",
+   "note": "HTTP 200 image/jpeg 48287B"
+  },
+  {
+   "at": 1792897541,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114191640072204792",
+   "note": "reply"
+  },
+  {
+   "at": 1792897768,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114192590543220736",
+   "note": "HTTP 200 image/jpeg 48811B"
+  },
+  {
+   "at": 1792897768,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114192591910527230",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1792898901,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114197343243497472",
+   "note": "HTTP 200 image/jpeg 48287B"
+  },
+  {
+   "at": 1792898901,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114197344917086211",
+   "note": "reply"
+  },
+  {
+   "at": 1792899426,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114199544254648320",
+   "note": "HTTP 200 image/webp 33472B"
+  },
+  {
+   "at": 1792899426,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114199545965899860",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1792900980,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114206063939424256",
+   "note": "HTTP 200 image/jpeg 48287B"
+  },
+  {
+   "at": 1792900980,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114206065671717176",
+   "note": "with photo (promo-logo:aaa)"
+  },
+  {
+   "at": 1792905288,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114224132795637760",
+   "note": "HTTP 200 image/jpeg 31038B"
+  },
+  {
+   "at": 1792905288,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114224134137749788",
+   "note": "with photo (promo-logo:stardom)"
+  },
+  {
+   "at": 1792941101,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114374341567676416",
+   "note": "HTTP 200 image/jpeg 403390B"
+  },
+  {
+   "at": 1792941101,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114374343673200934",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1792946707,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114397858723991552",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1792946708,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114397860078731405",
+   "note": "with photo (promo-logo:aew)"
+  },
+  {
+   "at": 1792969088,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114491730439315456",
+   "note": "HTTP 200 image/jpeg 273999B"
+  },
+  {
+   "at": 1792969089,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114491732259684702",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1792983136,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114550650272890880",
+   "note": "HTTP 200 image/jpeg 558447B"
+  },
+  {
+   "at": 1792983136,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114550652219105786",
+   "note": "with photo (site:key-verified-cached)"
+  },
+  {
+   "at": 1792989067,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114575528137015297",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1792989068,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114575529906958690",
+   "note": "with photo (promo-logo:wwe)"
+  },
+  {
+   "at": 1793013546,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114678198835593216",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793013546,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114678200311992346",
+   "note": "with photo (promo-logo:wwe)"
+  },
+  {
+   "at": 1793027389,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114736259859947520",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793027389,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114736261210513497",
+   "note": "with photo (site:promo-logo:nxt)"
+  },
+  {
+   "at": 1793031693,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114754311930699777",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793031693,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114754313528729733",
+   "note": "with photo (promo-logo:nxt)"
+  },
+  {
+   "at": 1793038348,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114782227880120320",
+   "note": "HTTP 200 image/jpeg 48042B"
+  },
+  {
+   "at": 1793038349,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114782229192945860",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1793039959,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114788984744271872",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793039960,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114788986388394369",
+   "note": "with photo (site:cached:promo-logo:aew)"
+  },
+  {
+   "at": 1793045221,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114811053859057664",
+   "note": "HTTP 200 image/png 753017B"
+  },
+  {
+   "at": 1793045222,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114811056199508155",
+   "note": "with photo (site:key-verified-cached)"
+  },
+  {
+   "at": 1793046777,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114817578636083200",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793046777,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114817580116652116",
+   "note": "with photo (promo-logo:nxt)"
+  },
+  {
+   "at": 1793055623,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114854684858974208",
+   "note": "HTTP 200 image/jpeg 175595B"
+  },
+  {
+   "at": 1793055624,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114854686675091609",
+   "note": "with photo (site:override)"
+  },
+  {
+   "at": 1793058923,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114868526393733120",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793058924,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114868527735918770",
+   "note": "root"
+  },
+  {
+   "at": 1793062062,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114881690501799936",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793062062,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114881692112503104",
+   "note": "reply"
+  },
+  {
+   "at": 1793062335,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114882834561220608",
+   "note": "HTTP 200 image/webp 97702B"
+  },
+  {
+   "at": 1793062335,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114882836217938093",
+   "note": "reply"
+  },
+  {
+   "at": 1793063186,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114886406833422336",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793063187,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114886408225857877",
+   "note": "reply"
+  },
+  {
+   "at": 1793063918,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114889474454790144",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793063918,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114889476090597572",
+   "note": "reply"
+  },
+  {
+   "at": 1793063919,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114889477642440704",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793063919,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114889479261507785",
+   "note": "reply"
+  },
+  {
+   "at": 1793064161,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114890495994277888",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793064162,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114890497722294448",
+   "note": "reply"
+  },
+  {
+   "at": 1793064687,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114892701087027200",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793064687,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114892702601097336",
+   "note": "reply"
+  },
+  {
+   "at": 1793064968,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114893880692768768",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793064969,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114893882362101803",
+   "note": "reply"
+  },
+  {
+   "at": 1793065703,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114896962235576320",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793065703,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114896963976208887",
+   "note": "reply"
+  },
+  {
+   "at": 1793065704,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114896966962593792",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793065705,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114896968531292659",
+   "note": "reply"
+  },
+  {
+   "at": 1793066298,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114899456793403393",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793066298,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114899458412401074",
+   "note": "reply"
+  },
+  {
+   "at": 1793067082,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114902744850890752",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793067082,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114902746608410783",
+   "note": "reply"
+  },
+  {
+   "at": 1793068987,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2114910736006983680",
+   "note": "HTTP 200 image/jpeg 238115B"
+  },
+  {
+   "at": 1793068987,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2114910737877672083",
+   "note": "reply"
+  },
+  {
+   "at": 1793069565,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114913159077138432",
+   "note": "HTTP 200 image/jpeg 173649B"
+  },
+  {
+   "at": 1793069565,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114913160608076222",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793077539,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2114946604662755328",
+   "note": "HTTP 200 image/jpeg 86887B"
+  },
+  {
+   "at": 1793077539,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2114946606218752085",
+   "note": "with photo (site-default)"
+  },
+  {
+   "at": 1793107649,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115072894548037632",
+   "note": "HTTP 200 image/jpeg 86887B"
+  },
+  {
+   "at": 1793107649,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115072895902683627",
+   "note": "with photo (site-default)"
+  },
+  {
+   "at": 1793114060,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115099786215141377",
+   "note": "HTTP 200 image/jpeg 114106B"
+  },
+  {
+   "at": 1793114060,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115099787834138636",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793118726,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115119354450972672",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793118726,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115119356049068300",
+   "note": "with photo (site:cached:promo-logo:wwe)"
+  },
+  {
+   "at": 1793124773,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115144720418488320",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793124774,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115144722012369256",
+   "note": "with photo (site:cached:promo-logo:wwe)"
+  },
+  {
+   "at": 1793126443,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115151723732013057",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793126443,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115151724965146884",
+   "note": "with photo (promo-logo:tna)"
+  },
+  {
+   "at": 1793131686,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115173712664084481",
+   "note": "HTTP 200 image/jpeg 284962B"
+  },
+  {
+   "at": 1793131686,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115173714622927004",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793133240,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115180230683836417",
+   "note": "HTTP 200 image/jpeg 93007B"
+  },
+  {
+   "at": 1793133240,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115180232118251900",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793142463,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115218917023186944",
+   "note": "HTTP 200 image/jpeg 28619B"
+  },
+  {
+   "at": 1793142463,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115218918537375829",
+   "note": "with photo (promo-logo:mlw)"
+  },
+  {
+   "at": 1793145378,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115231143339360256",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793145378,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115231144656417093",
+   "note": "root"
+  },
+  {
+   "at": 1793146471,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115235726941990912",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793146471,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115235728514785745",
+   "note": "with photo (promo-logo:nxt)"
+  },
+  {
+   "at": 1793147657,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115240702443388928",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793147657,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115240703999557655",
+   "note": "reply"
+  },
+  {
+   "at": 1793147658,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115240705450725376",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793147658,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115240707061350866",
+   "note": "reply"
+  },
+  {
+   "at": 1793148191,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115242941505540096",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793148191,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115242943229424043",
+   "note": "reply"
+  },
+  {
+   "at": 1793148432,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115243954014711808",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793148433,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115243955377881371",
+   "note": "reply"
+  },
+  {
+   "at": 1793148743,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115245257692516352",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793148744,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115245259663843835",
+   "note": "reply"
+  },
+  {
+   "at": 1793148910,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115245958501998592",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793148911,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115245960351625415",
+   "note": "reply"
+  },
+  {
+   "at": 1793149708,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115249304776396800",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793149708,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115249306512867428",
+   "note": "reply"
+  },
+  {
+   "at": 1793149709,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115249308349911040",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793149709,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115249309952135250",
+   "note": "reply"
+  },
+  {
+   "at": 1793150001,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115250534068203520",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793150002,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115250535779409934",
+   "note": "reply"
+  },
+  {
+   "at": 1793151407,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115256428625567744",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793151407,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115256430450110675",
+   "note": "reply"
+  },
+  {
+   "at": 1793151407,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115256432455016448",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793151408,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115256434300531181",
+   "note": "reply"
+  },
+  {
+   "at": 1793151938,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115258657281650688",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793151938,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115258658946769183",
+   "note": "reply"
+  },
+  {
+   "at": 1793151939,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115258660393824256",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793151939,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115258661933043882",
+   "note": "reply"
+  },
+  {
+   "at": 1793153261,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115264207289516032",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793153262,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115264209038516265",
+   "note": "reply"
+  },
+  {
+   "at": 1793156115,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115276175589216256",
+   "note": "HTTP 200 image/jpeg 363868B"
+  },
+  {
+   "at": 1793156115,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115276177690505442",
+   "note": "with photo (site:no-names)"
+  },
+  {
+   "at": 1793158196,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115284903768035328",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793158196,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115284905626091728",
+   "note": "reply"
+  },
+  {
+   "at": 1793164632,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115311901940838400",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793164633,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115311903404597643",
+   "note": "with photo (site:cached:promo-logo:nxt)"
+  },
+  {
+   "at": 1793194113,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115435552702873600",
+   "note": "HTTP 200 image/jpeg 38694B"
+  },
+  {
+   "at": 1793194114,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115435554334470512",
+   "note": "with photo (site:cached:key-verified)"
+  },
+  {
+   "at": 1793200680,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115463096923820032",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793200680,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115463098379256042",
+   "note": "with photo (promo-logo:wwe)"
+  },
+  {
+   "at": 1793205127,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115481749505425408",
+   "note": "HTTP 200 image/jpeg 126873B"
+  },
+  {
+   "at": 1793205128,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115481751573127205",
+   "note": "with photo (site:cached:key-verified-cached)"
+  },
+  {
+   "at": 1793211253,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115507442448474113",
+   "note": "HTTP 200 image/jpeg 63540B"
+  },
+  {
+   "at": 1793211253,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115507444071743900",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793212950,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115514559549079552",
+   "note": "HTTP 200 image/jpeg 136096B"
+  },
+  {
+   "at": 1793212951,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115514562803835071",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793218171,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115536457276575744",
+   "note": "HTTP 200 image/jpeg 132205B"
+  },
+  {
+   "at": 1793218171,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115536458874589557",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793219931,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115543840622780416",
+   "note": "HTTP 200 image/jpeg 195527B"
+  },
+  {
+   "at": 1793219931,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115543842669670528",
+   "note": "with photo (site:no-names)"
+  },
+  {
+   "at": 1793229033,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115582016368578560",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793229033,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115582017916268646",
+   "note": "with photo (promo-logo:wwe)"
+  },
+  {
+   "at": 1793231803,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115593635677065216",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793231803,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115593637044380014",
+   "note": "root"
+  },
+  {
+   "at": 1793233403,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115600345389047808",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793233403,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115600346961903766",
+   "note": "reply"
+  },
+  {
+   "at": 1793233403,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115600348794793984",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793233404,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115600350468264445",
+   "note": "reply"
+  },
+  {
+   "at": 1793234364,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115604379646734336",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793234365,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115604381244780807",
+   "note": "reply"
+  },
+  {
+   "at": 1793234365,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115604383065112576",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793234366,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115604384608575966",
+   "note": "reply"
+  },
+  {
+   "at": 1793235315,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115608366550773760",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793235315,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115608368039797040",
+   "note": "reply"
+  },
+  {
+   "at": 1793235618,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115609635168157696",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793235618,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115609637026242809",
+   "note": "reply"
+  },
+  {
+   "at": 1793235975,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115611134556610560",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793235975,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115611136565625007",
+   "note": "reply"
+  },
+  {
+   "at": 1793235976,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115611138306322432",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793235976,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115611140005007518",
+   "note": "reply"
+  },
+  {
+   "at": 1793237221,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115616359006736384",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793237221,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115616360541946170",
+   "note": "reply"
+  },
+  {
+   "at": 1793238723,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115622659492806656",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793238723,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115622661229342848",
+   "note": "reply"
+  },
+  {
+   "at": 1793238724,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115622662886027264",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793238724,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115622664878333980",
+   "note": "reply"
+  },
+  {
+   "at": 1793239040,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115623987875373056",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793239040,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115623989896941635",
+   "note": "reply"
+  },
+  {
+   "at": 1793239040,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115623991725658112",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793239041,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115623993374024036",
+   "note": "reply"
+  },
+  {
+   "at": 1793239041,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115623994779168768",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793239041,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115623996331020706",
+   "note": "reply"
+  },
+  {
+   "at": 1793239781,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115627098282868736",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793239781,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115627100073869697",
+   "note": "reply"
+  },
+  {
+   "at": 1793240152,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115628655812456448",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793240153,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115628657603383382",
+   "note": "reply"
+  },
+  {
+   "at": 1793241127,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115632744055123968",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793241128,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115632746835980427",
+   "note": "reply"
+  },
+  {
+   "at": 1793241128,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115632748832440320",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793241129,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115632750380061114",
+   "note": "reply"
+  },
+  {
+   "at": 1793241129,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115632751936237568",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793241129,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115632753521660032",
+   "note": "reply"
+  },
+  {
+   "at": 1793242578,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115638829889814528",
+   "note": "HTTP 200 image/jpeg 322963B"
+  },
+  {
+   "at": 1793242578,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115638831500378313",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793251249,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115675198955335681",
+   "note": "HTTP 200 image/jpeg 271927B"
+  },
+  {
+   "at": 1793251250,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115675201052528720",
+   "note": "with photo (site:no-names)"
+  },
+  {
+   "at": 1793280890,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115799516477612032",
+   "note": "HTTP 200 image/jpeg 1804600B"
+  },
+  {
+   "at": 1793280890,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115799521686872328",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793287392,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115826794985312256",
+   "note": "HTTP 200 image/jpeg 123087B"
+  },
+  {
+   "at": 1793287393,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115826796365250939",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793294977,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115858608516718593",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793294978,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115858610198614373",
+   "note": "with photo (site:promo-logo:wwe)"
+  },
+  {
+   "at": 1793297714,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115870085999218688",
+   "note": "HTTP 200 image/jpeg 88829B"
+  },
+  {
+   "at": 1793297714,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115870087370752039",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793301769,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115887095726407681",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793301770,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115887096988930216",
+   "note": "with photo (promo-logo:aew)"
+  },
+  {
+   "at": 1793304589,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115898923868966912",
+   "note": "HTTP 200 image/png 198799B"
+  },
+  {
+   "at": 1793304590,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115898926163198016",
+   "note": "with photo (site:cached:key-verified)"
+  },
+  {
+   "at": 1793306998,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115909028135985152",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793306999,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115909029662740628",
+   "note": "with photo (promo-logo:wwe)"
+  },
+  {
+   "at": 1793316059,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2115947029562343424",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793316059,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2115947030891860229",
+   "note": "with photo (site:cached:promo-logo:wwe)"
+  },
+  {
+   "at": 1793321725,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115970797290631168",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793321726,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115970798708215879",
+   "note": "root"
+  },
+  {
+   "at": 1793322098,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115972358804496385",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793322098,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115972360536760597",
+   "note": "reply"
+  },
+  {
+   "at": 1793322098,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115972361996414976",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793322099,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115972363611259350",
+   "note": "reply"
+  },
+  {
+   "at": 1793322378,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115973536519000064",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793322379,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115973538100191232",
+   "note": "reply"
+  },
+  {
+   "at": 1793322379,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115973539559776256",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793322380,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115973541698941381",
+   "note": "reply"
+  },
+  {
+   "at": 1793323055,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115976372560814080",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793323055,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115976374301458686",
+   "note": "reply"
+  },
+  {
+   "at": 1793323055,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115976376234962944",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793323056,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115976378021793987",
+   "note": "reply"
+  },
+  {
+   "at": 1793323565,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115978515120062464",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793323566,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115978516864889010",
+   "note": "reply"
+  },
+  {
+   "at": 1793323809,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115979536600866816",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793323809,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115979538454749341",
+   "note": "reply"
+  },
+  {
+   "at": 1793323810,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115979540639916032",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793323810,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115979542481313982",
+   "note": "reply"
+  },
+  {
+   "at": 1793324743,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115983456534413312",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793324744,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115983458216419421",
+   "note": "reply"
+  },
+  {
+   "at": 1793324744,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115983459399172096",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793324745,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115983460988817805",
+   "note": "reply"
+  },
+  {
+   "at": 1793324745,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115983462788157440",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793324745,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115983464289730636",
+   "note": "reply"
+  },
+  {
+   "at": 1793325107,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115984982950793216",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793325108,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115984984955584841",
+   "note": "reply"
+  },
+  {
+   "at": 1793325504,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2115986646424268800",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793325504,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2115986648034951423",
+   "note": "reply"
+  },
+  {
+   "at": 1793328969,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116001178496512000",
+   "note": "HTTP 200 image/jpeg 44855B"
+  },
+  {
+   "at": 1793328969,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116001180241285222",
+   "note": "reply"
+  },
+  {
+   "at": 1793329318,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116002642698596352",
+   "note": "HTTP 200 image/jpeg 258728B"
+  },
+  {
+   "at": 1793329319,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116002645043302737",
+   "note": "with photo (site:cached:key-verified)"
+  },
+  {
+   "at": 1793338484,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116041087802609664",
+   "note": "HTTP 200 image/webp 56356B"
+  },
+  {
+   "at": 1793338484,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116041089560035385",
+   "note": "with photo (site:cached:key-inline)"
+  },
+  {
+   "at": 1793367498,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116162783809007616",
+   "note": "HTTP 200 image/jpeg 38533B"
+  },
+  {
+   "at": 1793367499,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116162785398620637",
+   "note": "with photo (site:promo-logo:nxt)"
+  },
+  {
+   "at": 1793373795,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116189193743532032",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793373795,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116189195282891186",
+   "note": "with photo (site:promo-logo:wwe)"
+  },
+  {
+   "at": 1793381495,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116221490488131584",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793381496,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116221491918377134",
+   "note": "with photo (site:cached:promo-logo:wwe)"
+  },
+  {
+   "at": 1793384353,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116233474784829440",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793384353,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116233478349963656",
+   "note": "with photo (promo-logo:wwe)"
+  },
+  {
+   "at": 1793388439,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116250614380244993",
+   "note": "HTTP 200 image/jpeg 266182B"
+  },
+  {
+   "at": 1793388439,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116250616187990244",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793391153,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116261997893595136",
+   "note": "HTTP 200 image/jpeg 86887B"
+  },
+  {
+   "at": 1793391153,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116261999571333539",
+   "note": "with photo (site-default)"
+  },
+  {
+   "at": 1793393659,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116272511037894656",
+   "note": "HTTP 200 image/jpeg 161902B"
+  },
+  {
+   "at": 1793393660,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116272512556237288",
+   "note": "with photo (site:key-labelled)"
+  },
+  {
+   "at": 1793402619,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116310089699086337",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793402619,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116310091200622762",
+   "note": "with photo (site:cached:promo-logo:wwe)"
+  },
+  {
+   "at": 1793404576,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116318298107166720",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793404576,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116318299453550788",
+   "note": "root"
+  },
+  {
+   "at": 1793405225,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116321021435289600",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793405226,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116321023247196430",
+   "note": "reply"
+  },
+  {
+   "at": 1793405840,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116323600345247744",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793405841,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116323602052292705",
+   "note": "reply"
+  },
+  {
+   "at": 1793407012,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116328515893133312",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793407013,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116328517696655732",
+   "note": "reply"
+  },
+  {
+   "at": 1793407013,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116328519286312960",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793407013,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116328520871788789",
+   "note": "reply"
+  },
+  {
+   "at": 1793407350,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116329933370712064",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793407351,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116329935371419996",
+   "note": "reply"
+  },
+  {
+   "at": 1793407619,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116331060539559936",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793407619,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116331062506774818",
+   "note": "reply"
+  },
+  {
+   "at": 1793408618,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116335251589070848",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793408618,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116335253300326402",
+   "note": "reply"
+  },
+  {
+   "at": 1793408619,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116335255061938176",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793408619,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116335256655802786",
+   "note": "reply"
+  },
+  {
+   "at": 1793409517,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116339023744483328",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793409518,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116339025417994578",
+   "note": "reply"
+  },
+  {
+   "at": 1793410515,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116343210255499264",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793410516,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116343212025561166",
+   "note": "reply"
+  },
+  {
+   "at": 1793411212,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116346130476781568",
+   "note": "HTTP 200 image/jpeg 58028B"
+  },
+  {
+   "at": 1793411212,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116346131797995694",
+   "note": "with photo (site:key-verified)"
+  },
+  {
+   "at": 1793411216,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116346149728612352",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793411217,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116346151209250881",
+   "note": "reply"
+  },
+  {
+   "at": 1793411217,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "live_thread",
+   "ref": "2116346152652070912",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793411217,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "live_thread",
+   "ref": "2116346154271060075",
+   "note": "reply"
+  },
+  {
+   "at": 1793415772,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116365258495279104",
+   "note": "HTTP 200 image/jpeg 84163B"
+  },
+  {
+   "at": 1793415773,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116365259929772045",
+   "note": "with photo (site:cached:key-labelled)"
+  },
+  {
+   "at": 1793426593,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116410643435638784",
+   "note": "HTTP 200 image/jpeg 34724B"
+  },
+  {
+   "at": 1793426593,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116410644731732387",
+   "note": "with photo (site:cached:promo-logo:wwe)"
+  },
+  {
+   "at": 1793461867,
+   "kind": "media",
+   "usd": 0.005,
+   "endpoint": "POST /2/media/upload",
+   "src": "x_poster",
+   "ref": "2116558592723521536",
+   "note": "HTTP 200 image/jpeg 27479B"
+  },
+  {
+   "at": 1793461867,
+   "kind": "post",
+   "usd": 0.015,
+   "endpoint": "POST /2/tweets",
+   "src": "x_poster",
+   "ref": "2116558595219194193",
+   "note": "with photo (site:cached:promo-logo:aew)"
+  }
+ ],
+ "seeded_at": 1792295795,
+ "manual_ids": [
+  "manual-2026-10-18-delete-2111693641613725907",
+  "manual-2026-10-20-delete-2112170014539223117"
+ ]
+}

@@ -1,0 +1,310 @@
+{
+"key": "2026-10-26-wwe-raw",
+"matches": [
+{
+"winner": "Sami Zayn",
+"loser": "Je\u2019Von Evans",
+"stip": "Undisputed WWE Championship",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": null,
+"id": "m1",
+"first_seen": 1793061517,
+"updated": 1793061517,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2297809/wwe-raw-october-26-2026-results/"
+}
+],
+"order": 10048,
+"pos": {
+"Wrestling Inc": 48
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Sami Zayn beat Je\u2019Von Evans to retain.",
+"es": "Sami Zayn venci\u00f3 a Je\u2019Von Evans y retuvo el t\u00edtulo."
+},
+{
+"winner": "Bayley",
+"loser": "Lyra Valkyria",
+"stip": "",
+"title": null,
+"fin_en": "by submission",
+"fin_es": "por rendici\u00f3n",
+"who": "",
+"field": null,
+"move": null,
+"id": "m2",
+"first_seen": 1793063872,
+"updated": 1793063872,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2297809/wwe-raw-october-26-2026-results/"
+}
+],
+"order": 10071,
+"pos": {
+"Wrestling Inc": 71
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Bayley beat Lyra Valkyria by submission.",
+"es": "Bayley venci\u00f3 a Lyra Valkyria por rendici\u00f3n."
+},
+{
+"winner": "IYO SKY",
+"loser": "Raquel Rodriguez",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": null,
+"id": "m3",
+"first_seen": 1793064918,
+"updated": 1793064918,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2297809/wwe-raw-october-26-2026-results/"
+}
+],
+"order": 10082,
+"pos": {
+"Wrestling Inc": 82
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "IYO SKY beat Raquel Rodriguez.",
+"es": "IYO SKY venci\u00f3 a Raquel Rodriguez."
+},
+{
+"winner": "Ethan Page and Big Cass",
+"loser": "Chad Gable and Dragon Lee",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "Page pinned Lee",
+"field": null,
+"move": null,
+"id": "m4",
+"first_seen": 1793065967,
+"updated": 1793066248,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2297809/wwe-raw-october-26-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-raw-live-results-becky-lynch-stephanie-vaquer-bayley-lyra-valkyria/"
+}
+],
+"order": 10097,
+"pos": {
+"Wrestling Inc": 97,
+"Wrestling Observer": 70
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Ethan Page and Big Cass beat Chad Gable and Dragon Lee by pinfall (Page pinned Lee).",
+"es": "Ethan Page and Big Cass vencieron a Chad Gable and Dragon Lee por conteo de tres (Page cubri\u00f3 a Lee)."
+},
+{
+"winner": "Becky Lynch",
+"loser": "Liv Morgan",
+"stip": "Women\u2019s World Championship",
+"title": "change",
+"fin_en": "by disqualification",
+"fin_es": "por descalificaci\u00f3n",
+"who": "",
+"field": null,
+"move": "",
+"id": "m5",
+"first_seen": 1793068176,
+"updated": 1793069517,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-raw-live-results-becky-lynch-stephanie-vaquer-bayley-lyra-valkyria/"
+}
+],
+"order": 86,
+"pos": {
+"Wrestling Observer": 89
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Becky Lynch beat Liv Morgan by disqualification \u2014 NEW CHAMPION.",
+"es": "Becky Lynch venci\u00f3 a Liv Morgan por descalificaci\u00f3n \u2014 \u00a1CAMBIO DE T\u00cdTULO!"
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/wwe/results/wwe-raw-live-results-becky-lynch-stephanie-vaquer-bayley-lyra-valkyria/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2297809/wwe-raw-october-26-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/wwe-raw-results-10-26-2026-bayley-vs-lyra-valkyria-in-a-no-disqualification-match-more": "Fightful",
+"https://www.f4wonline.com/news/wwe/result-of-womens-world-championship-match-on-wwe-raw/": "Wrestling Observer"
+},
+"kind": "weekly",
+"slug": "wwe-raw",
+"date": "2026-10-26",
+"name": "WWE Raw",
+"brand": "WWE",
+"tag": "#WWERaw",
+"start": 1793059200,
+"main": 1793059200,
+"end": 1793068200,
+"card": [
+{
+"stip": "",
+"sides": [
+"Becky Lynch",
+"Stephanie Vaquer (Women\u2019s World Championship No. 1 contender\u2019s match)"
+],
+"champ": null,
+"pre": false,
+"idx": 8
+},
+{
+"stip": "",
+"sides": [
+"Bayley",
+"Lyra Valkyria (No Disqualification match)"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "",
+"sides": [
+"Raquel Rodriguez",
+"IYO SKY (non-title match)"
+],
+"champ": null,
+"pre": false,
+"idx": 10
+},
+{
+"stip": "",
+"sides": [
+"Chad Gable & Dragon Lee",
+"Ethan Page & Big Cass"
+],
+"champ": null,
+"pre": false,
+"idx": 11
+},
+{
+"stip": "Undisputed WWE Championship",
+"sides": [
+"Sami Zayn",
+"Je\u2019Von Evans"
+],
+"champ": "Sami Zayn",
+"pre": false,
+"idx": 41
+},
+{
+"stip": "",
+"sides": [
+"Bayley",
+"Lyra Valkyria"
+],
+"champ": null,
+"pre": false,
+"idx": 58
+},
+{
+"stip": "",
+"sides": [
+"IYO SKY",
+"Raquel Rodriguez"
+],
+"champ": null,
+"pre": false,
+"idx": 75
+},
+{
+"stip": "",
+"sides": [
+"Ethan Page and Big Cass",
+"Chad Gable and Dragon Lee"
+],
+"champ": null,
+"pre": false,
+"idx": 89
+},
+{
+"stip": "Women\u2019s World Championship",
+"sides": [
+"Liv Morgan",
+"Becky Lynch"
+],
+"champ": "Liv Morgan",
+"pre": false,
+"idx": 101
+},
+{
+"stip": "",
+"sides": [
+"Raquel Rodriguez",
+"Iyo Sky"
+],
+"champ": null,
+"pre": false,
+"idx": 8
+},
+{
+"stip": "",
+"sides": [
+"Chad Gable and Dragon Lee",
+"Big Cass and Ethan Page"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "No DQ",
+"sides": [
+"Bayley",
+"Lyra Valkyria"
+],
+"champ": null,
+"pre": false,
+"idx": 10
+},
+{
+"stip": "WWE Women\u2019s World Championship Number One Contenders Match",
+"sides": [
+"Stephanie Vaquer",
+"Becky Lynch"
+],
+"champ": null,
+"pre": false,
+"idx": 11
+}
+],
+"checked": 1793086490,
+"next_id": 5,
+"updated": 1793069517
+}

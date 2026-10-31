@@ -1,0 +1,325 @@
+{
+"key": "2026-10-30-wwe-smackdown",
+"matches": [
+{
+"winner": "Chelsea Green",
+"loser": "Nikki Bella",
+"stip": "WWE Women\u2019s Championship",
+"title": "retain",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": null,
+"id": "m1",
+"first_seen": 1793406590,
+"updated": 1793406958,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2302585/wwe-smackdown-october-30-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-october-30-2026/"
+}
+],
+"order": 10055,
+"pos": {
+"Wrestling Inc": 129,
+"Wrestling Observer": 20
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Chelsea Green beat Nikki Bella by pinfall to retain.",
+"es": "Chelsea Green venci\u00f3 a Nikki Bella por conteo de tres y retuvo el t\u00edtulo."
+},
+{
+"winner": "Rey Fenix",
+"loser": "Ricky Saints",
+"stip": "AAA Cruiserweight Championship",
+"title": "retain",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1793408555,
+"updated": 1793408555,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-october-30-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2302585/wwe-smackdown-october-30-2026-results/"
+}
+],
+"order": 33,
+"pos": {
+"Wrestling Observer": 33,
+"Wrestling Inc": 76
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Rey Fenix beat Ricky Saints by pinfall to retain.",
+"es": "Rey Fenix venci\u00f3 a Ricky Saints por conteo de tres y retuvo el t\u00edtulo."
+},
+{
+"winner": "Jade Cargill",
+"loser": "Tatum Paxley",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1793409464,
+"updated": 1793409464,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-october-30-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2302585/wwe-smackdown-october-30-2026-results/"
+}
+],
+"order": 41,
+"pos": {
+"Wrestling Observer": 41,
+"Wrestling Inc": 95
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Jade Cargill beat Tatum Paxley by pinfall.",
+"es": "Jade Cargill venci\u00f3 a Tatum Paxley por conteo de tres."
+},
+{
+"winner": "Trick Williams",
+"loser": "Sami Zayn",
+"stip": "Undisputed WWE Championship",
+"title": "retain",
+"fin_en": "by disqualification",
+"fin_es": "por descalificaci\u00f3n",
+"who": "",
+"field": null,
+"move": "",
+"id": "m4",
+"first_seen": 1793412797,
+"updated": 1793412797,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-october-30-2026/"
+}
+],
+"order": 58,
+"pos": {
+"Wrestling Observer": 58
+},
+"card": true,
+"pre": false,
+"conflict": true,
+"confirmed": false,
+"en": "Trick Williams beat Sami Zayn by disqualification to retain.",
+"es": "Trick Williams venci\u00f3 a Sami Zayn por descalificaci\u00f3n y retuvo el t\u00edtulo."
+},
+{
+"winner": "Sami Zayn",
+"loser": "Trick Williams",
+"stip": "Undisputed WWE Championship (No Disqualifications)",
+"title": "retain",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m5",
+"first_seen": 1793412797,
+"updated": 1793412797,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-october-30-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2302585/wwe-smackdown-october-30-2026-results/"
+}
+],
+"order": 63,
+"pos": {
+"Wrestling Observer": 63,
+"Wrestling Inc": 124
+},
+"card": true,
+"pre": false,
+"conflict": true,
+"confirmed": false,
+"en": "Sami Zayn beat Trick Williams by pinfall to retain.",
+"es": "Sami Zayn venci\u00f3 a Trick Williams por conteo de tres y retuvo el t\u00edtulo."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-october-30-2026/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2302585/wwe-smackdown-october-30-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/wwe-smackdown-results-10-30-2026-sami-zayn-vs-trick-williams-nikki-bella-vs-chelsea-green-more": "Fightful",
+"https://www.f4wonline.com/news/wwe/result-of-wwe-championship-match-on-smackdown/": "Wrestling Observer"
+},
+"kind": "weekly",
+"slug": "wwe-smackdown",
+"date": "2026-10-30",
+"name": "WWE SmackDown",
+"brand": "WWE",
+"tag": "#SmackDown",
+"start": 1793404800,
+"main": 1793404800,
+"end": 1793413800,
+"card": [
+{
+"stip": "WWE Women\u2019s Championship",
+"sides": [
+"Chelsea Green",
+"Nikki Bella"
+],
+"champ": "Chelsea Green",
+"pre": false,
+"idx": 16
+},
+{
+"stip": "AAA Cruiserweight Championship",
+"sides": [
+"Rey Fenix",
+"Ricky Saints"
+],
+"champ": "Rey Fenix",
+"pre": false,
+"idx": 29
+},
+{
+"stip": "",
+"sides": [
+"Jade Cargill",
+"Tatum Paxley"
+],
+"champ": null,
+"pre": false,
+"idx": 38
+},
+{
+"stip": "",
+"sides": [
+"We got a hype package for CM Punk",
+"Kevin Owens on next week\u2019s SmackDown, which is now a No Holds Barred match"
+],
+"champ": null,
+"pre": false,
+"idx": 53
+},
+{
+"stip": "Undisputed WWE Championship",
+"sides": [
+"Sami Zayn",
+"Trick Williams"
+],
+"champ": "Sami Zayn",
+"pre": false,
+"idx": 54
+},
+{
+"stip": "Undisputed WWE Championship (No Disqualifications)",
+"sides": [
+"Sami Zayn",
+"Trick Williams"
+],
+"champ": "Sami Zayn",
+"pre": false,
+"idx": 60
+},
+{
+"stip": "",
+"sides": [
+"Chelsea Green",
+"Nikki Bella- WWE Women's Championship"
+],
+"champ": null,
+"pre": false,
+"idx": 43
+},
+{
+"stip": "",
+"sides": [
+"Rey F\u00e9nix",
+"Ricky Saints"
+],
+"champ": null,
+"pre": false,
+"idx": 68
+},
+{
+"stip": "",
+"sides": [
+"Tatum Paxley",
+"Jade Cargill"
+],
+"champ": null,
+"pre": false,
+"idx": 87
+},
+{
+"stip": "",
+"sides": [
+"Sami Zayn",
+"Trick Williams"
+],
+"champ": null,
+"pre": false,
+"idx": 109
+},
+{
+"stip": "Undisputed WWE Championship",
+"sides": [
+"Sami Zayn",
+"Trick Williams"
+],
+"champ": "Sami Zayn",
+"pre": false,
+"idx": 10
+},
+{
+"stip": "WWE Women\u2019s Championship",
+"sides": [
+"Chelsea Green",
+"Nikki Bella"
+],
+"champ": "Chelsea Green",
+"pre": false,
+"idx": 11
+},
+{
+"stip": "AAA World Cruiserweight Championship",
+"sides": [
+"Rey Fenix",
+"Ricky Saints"
+],
+"champ": "Rey Fenix",
+"pre": false,
+"idx": 12
+}
+],
+"checked": 1793433337,
+"next_id": 5,
+"updated": 1793412797
+}

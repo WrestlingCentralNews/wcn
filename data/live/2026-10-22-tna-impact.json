@@ -1,0 +1,276 @@
+{
+"key": "2026-10-22-tna-impact",
+"matches": [
+{
+"winner": "Indi Hartwell",
+"loser": "Xia Brookside",
+"stip": "TNA Knockouts Championship Match",
+"title": "retain",
+"fin_en": "by referee stoppage",
+"fin_es": "por detenci\u00f3n del r\u00e9feri",
+"who": "",
+"field": null,
+"move": "",
+"id": "m1",
+"first_seen": 1792718608,
+"updated": 1792723764,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-preview-october-22-2026-jason-hotch-mustafa-ali/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2293763/tna-thursday-night-impact-october-22-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/uncategorized/tna-impact-results-10-22-mustafa-ali-vs-jason-hotch"
+}
+],
+"order": 20,
+"pos": {
+"Wrestling Observer": 21,
+"Wrestling Inc": 37,
+"Fightful": 7
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Indi Hartwell beat Xia Brookside by referee stoppage to retain.",
+"es": "Indi Hartwell venci\u00f3 a Xia Brookside por detenci\u00f3n del r\u00e9feri y retuvo el t\u00edtulo."
+},
+{
+"winner": "Cedric Alexander",
+"loser": "Rich Swann, KC Navarro, and Fabian Aichner",
+"stip": "TNA X-Division Championship Number One Contenders Four-Way",
+"title": "change",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1792723764,
+"updated": 1792724048,
+"sources": [
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/uncategorized/tna-impact-results-10-22-mustafa-ali-vs-jason-hotch"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2293763/tna-thursday-night-impact-october-22-2026-results/"
+}
+],
+"order": 30011,
+"pos": {
+"Fightful": 11,
+"Wrestling Inc": 50
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Cedric Alexander beat Rich Swann, KC Navarro, and Fabian Aichner \u2014 NEW CHAMPION.",
+"es": "Cedric Alexander venci\u00f3 a Rich Swann, KC Navarro, and Fabian Aichner \u2014 \u00a1CAMBIO DE T\u00cdTULO!"
+},
+{
+"winner": "Avery Styles",
+"loser": "Joe Alonzo",
+"stip": "",
+"title": null,
+"fin_en": "by submission",
+"fin_es": "por rendici\u00f3n",
+"who": "",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1792721288,
+"updated": 1792723764,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-preview-october-22-2026-jason-hotch-mustafa-ali/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2293763/tna-thursday-night-impact-october-22-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/uncategorized/tna-impact-results-10-22-mustafa-ali-vs-jason-hotch"
+}
+],
+"order": 44,
+"pos": {
+"Wrestling Observer": 44,
+"Wrestling Inc": 68,
+"Fightful": 17
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Avery Styles beat Joe Alonzo by submission.",
+"es": "Avery Styles venci\u00f3 a Joe Alonzo por rendici\u00f3n."
+},
+{
+"winner": "Jason Hotch",
+"loser": "Mustafa Ali",
+"stip": "TNA International Championship \u2013 Two-Out-Of-Three Falls",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m4",
+"first_seen": 1792723764,
+"updated": 1792724476,
+"sources": [
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/uncategorized/tna-impact-results-10-22-mustafa-ali-vs-jason-hotch"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-preview-october-22-2026-jason-hotch-mustafa-ali/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2293763/tna-thursday-night-impact-october-22-2026-results/"
+}
+],
+"order": 30022,
+"pos": {
+"Fightful": 22,
+"Wrestling Observer": 66,
+"Wrestling Inc": 107
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Jason Hotch beat Mustafa Ali to retain.",
+"es": "Jason Hotch venci\u00f3 a Mustafa Ali y retuvo el t\u00edtulo."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-preview-october-22-2026-jason-hotch-mustafa-ali/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2293763/tna-thursday-night-impact-october-22-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/tna-impact-results-10-22-mustafa-ali-vs-jason-hotch": "Fightful",
+"https://www.fightful.com/uncategorized/tna-impact-results-10-22-mustafa-ali-vs-jason-hotch": "Fightful",
+"https://www.fightful.com/wrestling/tna-impact-results-10-22-mustafa-ali-vs-jason-hotch/": "Fightful",
+"https://dev.fightful.com/wrestling-news/tna-impact-results-10-22-mustafa-ali-vs-jason-hotch": "Fightful"
+},
+"kind": "weekly",
+"slug": "tna-impact",
+"date": "2026-10-22",
+"name": "TNA iMPACT!",
+"brand": "TNA",
+"tag": "#TNAiMPACT",
+"start": 1792717200,
+"main": 1792717200,
+"end": 1792726200,
+"card": [
+{
+"stip": "TNA Knockouts Championship Match",
+"sides": [
+"Indi Hartwell",
+"Xia Brookside"
+],
+"champ": "Indi Hartwell",
+"pre": false,
+"idx": 16
+},
+{
+"stip": "TNA X-Division Championship #1 Contenders 4-Way",
+"sides": [
+"Rich Swann",
+"KC Navarro",
+"Cedric Alexander",
+"Fabian Aichner"
+],
+"champ": null,
+"pre": false,
+"idx": 25
+},
+{
+"stip": "",
+"sides": [
+"Avery Styles w/ Frankie Kazarian",
+"Joe Alonzo"
+],
+"champ": null,
+"pre": false,
+"idx": 38
+},
+{
+"stip": "TNA International Championship 2 Out of 3 Falls Match",
+"sides": [
+"Jason Hotch",
+"Mustafa Ali"
+],
+"champ": "Jason Hotch",
+"pre": false,
+"idx": 54
+},
+{
+"stip": "X-Division Title",
+"sides": [
+"Amazing Red",
+"Cedric Alexander"
+],
+"champ": null,
+"pre": false,
+"idx": 69
+},
+{
+"stip": "Knockouts World Championship",
+"sides": [
+"Indi Hartwell",
+"Xia Brookside"
+],
+"champ": "Indi Hartwell",
+"pre": false,
+"idx": 32
+},
+{
+"stip": "X-Division Championship",
+"sides": [
+"Cedric Alexander",
+"Rich Swann",
+"Fabian Aichner",
+"KC Navarro"
+],
+"champ": null,
+"pre": false,
+"idx": 45
+},
+{
+"stip": "",
+"sides": [
+"Avery Styles",
+"Joe Alonzo"
+],
+"champ": null,
+"pre": false,
+"idx": 65
+},
+{
+"stip": "International Championship",
+"sides": [
+"Jason Hotch",
+"Mustafa Ali"
+],
+"champ": "Jason Hotch",
+"pre": false,
+"idx": 92
+}
+],
+"checked": 1792745771,
+"next_id": 4,
+"updated": 1792724476
+}

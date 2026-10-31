@@ -1,0 +1,70 @@
+{
+ "generated": "2026-10-31T16:42:37+00:00",
+ "days": 7,
+ "conflicts": [
+  {
+   "date": "2026-10-31",
+   "shows": [
+    {
+     "key": "2026-10-31-wwe-nxt-halloween-havoc",
+     "name": "NXT Halloween Havoc 2026",
+     "kind": "ppv",
+     "rank": 4,
+     "rank_name": "NXT",
+     "start_utc": "2026-10-31T23:00+00:00",
+     "started": false
+    },
+    {
+     "key": "2026-10-31-aew-collision",
+     "name": "AEW Collision",
+     "kind": "weekly",
+     "rank": 2,
+     "rank_name": "AEW",
+     "start_utc": "2026-11-01T00:00+00:00",
+     "started": false
+    }
+   ],
+   "resolved_by_priority": true,
+   "resolved_by": "collision-yields",
+   "collision_yields": true,
+   "auto_pick": "2026-10-31-wwe-nxt-halloween-havoc",
+   "override": null,
+   "override_valid": null,
+   "needs_user": false,
+   "any_started": false,
+   "both_ppv_wwe_aew": false
+  },
+  {
+   "date": "2026-11-07",
+   "shows": [
+    {
+     "key": "2026-11-07-wwe-crown-jewel",
+     "name": "WWE Crown Jewel 2026",
+     "kind": "ppv",
+     "rank": 1,
+     "rank_name": "WWE PPV/PLE",
+     "start_utc": "2026-11-07T17:00+00:00",
+     "started": false
+    },
+    {
+     "key": "2026-11-07-aew-collision",
+     "name": "AEW Collision",
+     "kind": "weekly",
+     "rank": 2,
+     "rank_name": "AEW",
+     "start_utc": "2026-11-08T01:00+00:00",
+     "started": false
+    }
+   ],
+   "resolved_by_priority": true,
+   "resolved_by": "collision-yields",
+   "collision_yields": true,
+   "auto_pick": "2026-11-07-wwe-crown-jewel",
+   "override": null,
+   "override_valid": null,
+   "needs_user": false,
+   "any_started": false,
+   "both_ppv_wwe_aew": false
+  }
+ ]
+}

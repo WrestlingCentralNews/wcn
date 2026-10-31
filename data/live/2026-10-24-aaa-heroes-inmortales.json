@@ -1,0 +1,110 @@
+{
+"key": "2026-10-24-aaa-heroes-inmortales",
+"matches": [
+{
+"winner": "Los Perros del Mal (\u00c1ngel, Berto & Daga)",
+"loser": "La Parka, Mr. Iguana & Ni\u00f1o Hamburguesa",
+"stip": "AAA World Trios Championship",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m1",
+"first_seen": 1792897054,
+"updated": 1792897054,
+"sources": [
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/uncategorized/aaa-heroes-inmortales-results-10-24"
+}
+],
+"order": 10006,
+"pos": {
+"Fightful": 6
+},
+"pre": false,
+"conflict": false,
+"confirmed": null,
+"en": "Los Perros del Mal (\u00c1ngel, Berto & Daga) beat La Parka, Mr. Iguana & Ni\u00f1o Hamburguesa to retain.",
+"es": "Los Perros del Mal (\u00c1ngel, Berto & Daga) vencieron a La Parka, Mr. Iguana & Ni\u00f1o Hamburguesa y retuvieron el t\u00edtulo."
+},
+{
+"winner": "La Catalina",
+"loser": "Flammer and La Hiedra",
+"stip": "AAA Reina de Reinas Championship",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1792897054,
+"updated": 1792897054,
+"sources": [
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/uncategorized/aaa-heroes-inmortales-results-10-24"
+}
+],
+"order": 10008,
+"pos": {
+"Fightful": 8
+},
+"pre": false,
+"conflict": false,
+"confirmed": null,
+"en": "La Catalina beat Flammer and La Hiedra to retain.",
+"es": "La Catalina venci\u00f3 a Flammer and La Hiedra y retuvo el t\u00edtulo."
+},
+{
+"winner": "El Grande Americano",
+"loser": "Dominik Mysterio",
+"stip": "AAA Mega Championship",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1792897499,
+"updated": 1792897499,
+"sources": [
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/uncategorized/aaa-heroes-inmortales-results-10-24"
+}
+],
+"order": 10010,
+"pos": {
+"Fightful": 10
+},
+"pre": false,
+"conflict": false,
+"confirmed": null,
+"en": "El Grande Americano beat Dominik Mysterio to retain.",
+"es": "El Grande Americano venci\u00f3 a Dominik Mysterio y retuvo el t\u00edtulo."
+}
+],
+"pages": {
+"https://www.fightful.com/wrestling-news/aaa-heroes-inmortales-results-10-24": "Fightful",
+"https://www.fightful.com/uncategorized/aaa-heroes-inmortales-results-10-24": "Fightful",
+"https://www.f4wonline.com/news/mexico/result-of-aaa-mega-title-match-at-heroes-inmortales-2026/": "Wrestling Observer"
+},
+"kind": "ppv",
+"slug": "aaa-heroes-inmortales",
+"date": "2026-10-24",
+"name": "AAA H\u00e9roes Inmortales 2026",
+"brand": "Global",
+"tag": "#AAAHroesInmortales",
+"start": 1792893600,
+"main": 1792893600,
+"end": 1792908000,
+"card": [],
+"checked": 1792920460,
+"next_id": 3,
+"updated": 1792897499
+}

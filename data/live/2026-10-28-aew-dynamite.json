@@ -1,0 +1,449 @@
+{
+"key": "2026-10-28-aew-dynamite",
+"matches": [
+{
+"winner": "The Cut",
+"loser": "Death Riders",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "White pinned Garcia",
+"field": null,
+"move": "",
+"id": "m1",
+"first_seen": 1793233688,
+"updated": 1793233688,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-28-2026/"
+}
+],
+"order": 21,
+"pos": {
+"Wrestling Observer": 21
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "The Cut beat Death Riders by pinfall (White pinned Garcia).",
+"es": "The Cut venci\u00f3 a Death Riders por conteo de tres (White cubri\u00f3 a Garcia)."
+},
+{
+"winner": "Kyle Fletcher",
+"loser": "Jungle Jack Perry",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1793235259,
+"updated": 1793235259,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-28-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2297881/aew-fright-night-dynamite-october-28-2026-results/"
+}
+],
+"order": 31,
+"pos": {
+"Wrestling Observer": 31,
+"Wrestling Inc": 51
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Kyle Fletcher beat Jungle Jack Perry.",
+"es": "Kyle Fletcher venci\u00f3 a Jungle Jack Perry."
+},
+{
+"winner": "The Motor City Machine Guns",
+"loser": "FTR",
+"stip": "Best-of-five series, match three",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "Shelley pinned Harwood",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1793238671,
+"updated": 1793238671,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-28-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2297881/aew-fright-night-dynamite-october-28-2026-results/"
+}
+],
+"order": 43,
+"pos": {
+"Wrestling Observer": 43,
+"Wrestling Inc": 74
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "The Motor City Machine Guns beat FTR by pinfall (Shelley pinned Harwood).",
+"es": "The Motor City Machine Guns vencieron a FTR por conteo de tres (Shelley cubri\u00f3 a Harwood)."
+},
+{
+"winner": "Marina Shafir",
+"loser": "Rachel Armstrong",
+"stip": "",
+"title": null,
+"fin_en": "by submission",
+"fin_es": "por rendici\u00f3n",
+"who": "",
+"field": null,
+"move": "",
+"id": "m4",
+"first_seen": 1793238671,
+"updated": 1793238671,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-28-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2297881/aew-fright-night-dynamite-october-28-2026-results/"
+}
+],
+"order": 53,
+"pos": {
+"Wrestling Observer": 54,
+"Wrestling Inc": 87
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Marina Shafir beat Rachel Armstrong by submission.",
+"es": "Marina Shafir venci\u00f3 a Rachel Armstrong por rendici\u00f3n."
+},
+{
+"winner": "Darby Allin",
+"loser": "Josh Alexander",
+"stip": "TNT Title",
+"title": "retain",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m5",
+"first_seen": 1793239738,
+"updated": 1793239738,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-28-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2297881/aew-fright-night-dynamite-october-28-2026-results/"
+}
+],
+"order": 62,
+"pos": {
+"Wrestling Observer": 62,
+"Wrestling Inc": 104
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Darby Allin beat Josh Alexander by pinfall to retain.",
+"es": "Darby Allin venci\u00f3 a Josh Alexander por conteo de tres y retuvo el t\u00edtulo."
+},
+{
+"winner": "Queen Aminata",
+"loser": "Persephone",
+"stip": "TBS Title",
+"title": "change",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m6",
+"first_seen": 1793241074,
+"updated": 1793241074,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-28-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2297881/aew-fright-night-dynamite-october-28-2026-results/"
+}
+],
+"order": 72,
+"pos": {
+"Wrestling Observer": 72,
+"Wrestling Inc": 118
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Queen Aminata beat Persephone by pinfall \u2014 NEW CHAMPION.",
+"es": "Queen Aminata venci\u00f3 a Persephone por conteo de tres \u2014 \u00a1CAMBIO DE T\u00cdTULO!"
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-live-results-october-28-2026/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2297881/aew-fright-night-dynamite-october-28-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/aew-dynamite-fright-night-results-10-28-2026-persephone-vs-queen-aminata-ftr-vs-mcmg-darby-allin-more": "Fightful"
+},
+"kind": "weekly",
+"slug": "aew-dynamite",
+"date": "2026-10-28",
+"name": "AEW Dynamite",
+"brand": "AEW",
+"tag": "#AEWDynamite",
+"start": 1793232000,
+"main": 1793232000,
+"end": 1793241000,
+"card": [
+{
+"stip": "TNT Championship",
+"sides": [
+"Darby Allin",
+"Josh Alexander"
+],
+"champ": "Darby Allin",
+"pre": false,
+"idx": 7
+},
+{
+"stip": "TBS Championship",
+"sides": [
+"Persephone",
+"Queen Aminata"
+],
+"champ": "Persephone",
+"pre": false,
+"idx": 8
+},
+{
+"stip": "Best-of-five series, match three",
+"sides": [
+"FTR",
+"Motor City Machine Guns"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "",
+"sides": [
+"Kyle Fletcher",
+"Jungle Jack Perry"
+],
+"champ": null,
+"pre": false,
+"idx": 10
+},
+{
+"stip": "",
+"sides": [
+"Death Riders (AEW Continental Champion Jon Moxley & Daniel Garcia)",
+"The Cut (Switchblade Jay White & David Finlay)"
+],
+"champ": null,
+"pre": false,
+"idx": 16
+},
+{
+"stip": "",
+"sides": [
+"Kyle Fletcher",
+"Jungle Jack Perry"
+],
+"champ": null,
+"pre": false,
+"idx": 24
+},
+{
+"stip": "",
+"sides": [
+"Marina Shafir",
+"Rachel Armstrong"
+],
+"champ": null,
+"pre": false,
+"idx": 49
+},
+{
+"stip": "TNT Title",
+"sides": [
+"Darby Allin",
+"Josh Alexander"
+],
+"champ": null,
+"pre": false,
+"idx": 57
+},
+{
+"stip": "TBS Title",
+"sides": [
+"Persephone",
+"Queen Aminata"
+],
+"champ": null,
+"pre": false,
+"idx": 66
+},
+{
+"stip": "",
+"sides": [
+"Ilja Dragunov",
+"The Beast Mortos"
+],
+"champ": null,
+"pre": false,
+"idx": 74
+},
+{
+"stip": "",
+"sides": [
+"The Cut (The Gunns & Juice Robinson)",
+"The Conglomeration (Roderick Strong, Orange Cassidy & Kyle O\u2019Reilly)"
+],
+"champ": null,
+"pre": false,
+"idx": 75
+},
+{
+"stip": "",
+"sides": [
+"Tommaso Ciampa",
+"Matt Sydal"
+],
+"champ": null,
+"pre": false,
+"idx": 77
+},
+{
+"stip": "",
+"sides": [
+"Will Ospreay, Adam Copeland, Darby Allin, Steven Borden & The Young Bucks (Matt & Nick Jackson)",
+"Kazuchika Okada, Kyle Fletcher, Kevin Knight, Jake Doyle, Mark Davis & Wardlow in Blood and Guts"
+],
+"champ": null,
+"pre": false,
+"idx": 79
+},
+{
+"stip": "",
+"sides": [
+"Jon Moxley and Daniel Garcia",
+"Jay White and David Finlay"
+],
+"champ": null,
+"pre": false,
+"idx": 24
+},
+{
+"stip": "",
+"sides": [
+"Kyle Fletcher",
+"Jack Perry"
+],
+"champ": null,
+"pre": false,
+"idx": 39
+},
+{
+"stip": "",
+"sides": [
+"The Motor City Machine Guns",
+"FTR"
+],
+"champ": null,
+"pre": false,
+"idx": 66
+},
+{
+"stip": "",
+"sides": [
+"Marina Shafir",
+"Rachel Armstrong"
+],
+"champ": null,
+"pre": false,
+"idx": 85
+},
+{
+"stip": "TNT Championship",
+"sides": [
+"Darby Allin",
+"Josh Alexander"
+],
+"champ": "Darby Allin",
+"pre": false,
+"idx": 94
+},
+{
+"stip": "TBS Championship",
+"sides": [
+"Persephone",
+"Queen Aminata"
+],
+"champ": "Persephone",
+"pre": false,
+"idx": 108
+},
+{
+"stip": "TNT Championship",
+"sides": [
+"Darby Allin",
+"Josh Alexander"
+],
+"champ": "Darby Allin",
+"pre": false,
+"idx": 7
+},
+{
+"stip": "Best-Of-Five Series \u2013 Match Three \u2013 Series Tied 1-1",
+"sides": [
+"FTR (Dax Harwood & Cash Wheeler)",
+"Motor City Machine Guns (Alex Shelley & Chris Sabin)"
+],
+"champ": null,
+"pre": false,
+"idx": 8
+},
+{
+"stip": "TBS Championship",
+"sides": [
+"Persephone",
+"Queen Aminata"
+],
+"champ": "Persephone",
+"pre": false,
+"idx": 9
+}
+],
+"checked": 1793258750,
+"next_id": 6,
+"updated": 1793241074
+}

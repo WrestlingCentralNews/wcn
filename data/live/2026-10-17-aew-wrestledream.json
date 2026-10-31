@@ -1,0 +1,927 @@
+{
+"key": "2026-10-17-aew-wrestledream",
+"matches": [
+{
+"winner": "Divine Dominion (Lena Kross & Megan Bayne)",
+"loser": "Sisters of Sin",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "Kross pinned Hart",
+"id": "m1",
+"first_seen": 1792282315,
+"updated": 1792282757,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/"
+}
+],
+"order": 16,
+"conflict": false,
+"confirmed": true,
+"en": "Divine Dominion (Lena Kross & Megan Bayne) beat Sisters of Sin by pinfall (Kross pinned Hart).",
+"es": "Divine Dominion (Lena Kross & Megan Bayne) vencieron a Sisters of Sin por conteo de tres (Kross cubri\u00f3 a Hart).",
+"pre": true,
+"pos": {
+"Wrestling Observer": 16,
+"Wrestling Inc": 37,
+"Fightful": 18
+},
+"card": true
+},
+{
+"winner": "DCF (Wardlow, Josh Alexander & Jake Doyle)",
+"loser": "Alex Breese, Papi D & Rhys Maddox",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"id": "m2",
+"first_seen": 1792282315,
+"updated": 1792283439,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/"
+}
+],
+"order": 20,
+"conflict": false,
+"confirmed": true,
+"en": "DCF (Wardlow, Josh Alexander & Jake Doyle) beat Alex Breese, Papi D & Rhys Maddox.",
+"es": "DCF (Wardlow, Josh Alexander & Jake Doyle) vencieron a Alex Breese, Papi D & Rhys Maddox.",
+"pre": true,
+"pos": {
+"Wrestling Observer": 20,
+"Wrestling Inc": 43,
+"Fightful": 19
+},
+"card": true
+},
+{
+"winner": "The Dogs (David Finlay & Clark Connors) & Death Riders (Claudio Castagnoli, Wheeler Yuta, Daniel Garcia & Gabe Kidd)",
+"loser": "The Conglomeration & Bang Bang Gang",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "Yuta pinned Colten",
+"id": "m3",
+"first_seen": 1792282315,
+"updated": 1792283058,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/"
+}
+],
+"order": 27,
+"conflict": false,
+"confirmed": true,
+"en": "The Dogs (David Finlay & Clark Connors) & Death Riders (Claudio Castagnoli, Wheeler Yuta, Daniel Garcia & Gabe Kidd) beat The Conglomeration & Bang Bang Gang by pinfall (Yuta pinned Colten).",
+"es": "The Dogs (David Finlay & Clark Connors) & Death Riders (Claudio Castagnoli, Wheeler Yuta, Daniel Garcia & Gabe Kidd) vencieron a The Conglomeration & Bang Bang Gang por conteo de tres (Yuta cubri\u00f3 a Colten).",
+"pre": true,
+"pos": {
+"Wrestling Observer": 27,
+"Wrestling Inc": 53,
+"Fightful": 20
+},
+"card": true
+},
+{
+"winner": "The Motor City Machine Guns",
+"loser": "FTR",
+"stip": "Best-Of-Five",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "Sabin pinned Wheeler",
+"field": null,
+"move": null,
+"id": "m5",
+"first_seen": 1792282757,
+"updated": 1792295614,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/"
+}
+],
+"order": 10075,
+"conflict": false,
+"confirmed": true,
+"en": "The Motor City Machine Guns beat FTR by pinfall (Sabin pinned Wheeler).",
+"es": "The Motor City Machine Guns vencieron a FTR por conteo de tres (Sabin cubri\u00f3 a Wheeler).",
+"pre": false,
+"pos": {
+"Wrestling Observer": 36,
+"Wrestling Inc": 75
+},
+"card": true
+},
+{
+"winner": "Mercedes Mone",
+"loser": "Thekla",
+"stip": "AEW Women\u2019s Title",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m6",
+"first_seen": 1792284391,
+"updated": 1792295614,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/"
+}
+],
+"order": 42,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Mercedes Mone beat Thekla to retain.",
+"es": "Mercedes Mone venci\u00f3 a Thekla y retuvo el t\u00edtulo.",
+"pos": {
+"Wrestling Observer": 42,
+"Fightful": 23,
+"Wrestling Inc": 89
+},
+"card": true
+},
+{
+"winner": "Nick Wayne",
+"loser": "Jericho",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m7",
+"first_seen": 1792285742,
+"updated": 1792287566,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/"
+}
+],
+"order": 48,
+"pos": {
+"Wrestling Observer": 48,
+"Wrestling Inc": 102,
+"Fightful": 24
+},
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Nick Wayne beat Jericho by pinfall.",
+"es": "Nick Wayne venci\u00f3 a Jericho por conteo de tres.",
+"card": true
+},
+{
+"winner": "The Young Bucks (Matt Jackson and Nick Jackson)",
+"loser": "Kevin Knight & Kyle Fletcher",
+"stip": "AEW Tag Team Titles",
+"title": "retain",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "Matt pinned Knight",
+"field": null,
+"move": "",
+"id": "m9",
+"first_seen": 1792287566,
+"updated": 1792295614,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/"
+}
+],
+"order": 56,
+"pos": {
+"Wrestling Observer": 56,
+"Fightful": 25,
+"Wrestling Inc": 114
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "The Young Bucks (Matt Jackson and Nick Jackson) beat Kevin Knight & Kyle Fletcher by pinfall (Matt pinned Knight) to retain.",
+"es": "The Young Bucks (Matt Jackson and Nick Jackson) vencieron a Kevin Knight & Kyle Fletcher por conteo de tres (Matt cubri\u00f3 a Knight) y retuvieron el t\u00edtulo."
+},
+{
+"winner": "Persephone",
+"loser": "Hyan, Queen Aminata & Dani Luna",
+"stip": "TBS Title",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m10",
+"first_seen": 1792288796,
+"updated": 1792295614,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/"
+}
+],
+"order": 63,
+"pos": {
+"Wrestling Observer": 63,
+"Fightful": 26,
+"Wrestling Inc": 129
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Persephone beat Hyan, Queen Aminata & Dani Luna to retain.",
+"es": "Persephone venci\u00f3 a Hyan, Queen Aminata & Dani Luna y retuvo el t\u00edtulo."
+},
+{
+"winner": "Andrade El Idolo",
+"loser": "Tommaso Ciampa",
+"stip": "AEW National Title",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m11",
+"first_seen": 1792290292,
+"updated": 1792295614,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/"
+}
+],
+"order": 70,
+"pos": {
+"Wrestling Observer": 70,
+"Fightful": 27,
+"Wrestling Inc": 147
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Andrade El Idolo beat Tommaso Ciampa to retain.",
+"es": "Andrade El Idolo venci\u00f3 a Tommaso Ciampa y retuvo el t\u00edtulo."
+},
+{
+"winner": "\"Hangman\" Adam Page, Brody King, and Bandido",
+"loser": "Swerve Strickland & The New Level",
+"stip": "AEW Trios Titles",
+"title": "change",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m12",
+"first_seen": 1792292704,
+"updated": 1792295765,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/"
+}
+],
+"order": 80,
+"pos": {
+"Wrestling Observer": 80,
+"Wrestling Inc": 172,
+"Fightful": 28
+},
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "\"Hangman\" Adam Page, Brody King, and Bandido beat Swerve Strickland & The New Level \u2014 NEW CHAMPIONS.",
+"es": "\"Hangman\" Adam Page, Brody King, and Bandido vencieron a Swerve Strickland & The New Level \u2014 \u00a1CAMBIO DE T\u00cdTULO!",
+"card": true
+},
+{
+"winner": "Jon Moxley",
+"loser": "Mark Davis",
+"stip": "AEW Continental Title",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m13",
+"first_seen": 1792294571,
+"updated": 1792295765,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/"
+}
+],
+"order": 90,
+"pos": {
+"Wrestling Observer": 90,
+"Wrestling Inc": 189,
+"Fightful": 30
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Jon Moxley beat Mark Davis to retain.",
+"es": "Jon Moxley venci\u00f3 a Mark Davis y retuvo el t\u00edtulo."
+},
+{
+"winner": "Will Ospreay",
+"loser": "Adam Copeland, Samoa Joe, Darby Allin, Ricochet, Kazuchika Okada, Konosuke Takeshita & Speedball Mike Bailey",
+"stip": "AEW World Title",
+"title": "retain",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m14",
+"first_seen": 1792297448,
+"updated": 1792297448,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/"
+}
+],
+"order": 104,
+"pos": {
+"Wrestling Observer": 104,
+"Wrestling Inc": 227,
+"Fightful": 31
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Will Ospreay beat Adam Copeland, Samoa Joe, Darby Allin, Ricochet, Kazuchika Okada, Konosuke Takeshita & Speedball Mike Bailey by pinfall to retain.",
+"es": "Will Ospreay venci\u00f3 a Adam Copeland, Samoa Joe, Darby Allin, Ricochet, Kazuchika Okada, Konosuke Takeshita & Speedball Mike Bailey por conteo de tres y retuvo el t\u00edtulo."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/aew/aew-results/aew-wrestledream-2026-live-results/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2289498/aew-wrestledream-october-17-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more": "Fightful",
+"https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/": "Fightful",
+"https://www.f4wonline.com/news/aew/result-of-chris-jericho-vs-nick-wayne-from-aew-wrestledream-2026/": "Wrestling Observer",
+"https://www.f4wonline.com/news/aew/result-of-mercedes-mone-vs-thekla-womens-title-match-from-aew-wrestledream-2026/": "Wrestling Observer",
+"https://www.f4wonline.com/news/aew/result-of-clockwork-carnage-match-from-aew-wrestledream-2026/": "Wrestling Observer"
+},
+"kind": "ppv",
+"slug": "aew-wrestledream",
+"date": "2026-10-17",
+"name": "AEW WrestleDream 2026",
+"brand": "AEW",
+"tag": "#AEWWrestleDream",
+"start": 1792278000,
+"main": 1792281600,
+"end": 1792299600,
+"updated": 1792297448,
+"checked": 1792306596,
+"card": [
+{
+"stip": "",
+"sides": [
+"Divine Dominion (Megan Bayne & Lena Kross)",
+"Sisters of Sin (Julia Hart & Skye Blue)"
+],
+"champ": null,
+"pre": false,
+"idx": 12
+},
+{
+"stip": "",
+"sides": [
+"Josh Alexander, Jake Doyle & Wardlow",
+"Alex Breese, Papi D & Rhys Maddox"
+],
+"champ": null,
+"pre": false,
+"idx": 18
+},
+{
+"stip": "Continental Title",
+"sides": [
+"Video package on Jon Moxley",
+"Mark Davis"
+],
+"champ": null,
+"pre": false,
+"idx": 21
+},
+{
+"stip": "",
+"sides": [
+"FTR (Dax Harwood & Cash Wheeler w/Stokely)",
+"Motor City Machine Guns (Chris Sabin & Alex Shelley) in Match #1 of the Best of 5 Series"
+],
+"champ": null,
+"pre": false,
+"idx": 30
+},
+{
+"stip": "AEW Women\u2019s Title",
+"sides": [
+"Mercedes Mone",
+"Thekla"
+],
+"champ": null,
+"pre": false,
+"idx": 37
+},
+{
+"stip": "",
+"sides": [
+"Nick Wayne",
+"Jericho"
+],
+"champ": null,
+"pre": false,
+"idx": 43
+},
+{
+"stip": "AEW Tag Team Titles",
+"sides": [
+"The Young Bucks (Matt & Nick Jackson)",
+"Kevin Knight & Kyle Fletcher"
+],
+"champ": null,
+"pre": false,
+"idx": 49
+},
+{
+"stip": "TBS Title",
+"sides": [
+"Persephone",
+"Queen Aminata",
+"Hyan",
+"Dani Luna"
+],
+"champ": null,
+"pre": false,
+"idx": 58
+},
+{
+"stip": "AEW National Title",
+"sides": [
+"Andrade El Idolo",
+"Tommaso Ciampa"
+],
+"champ": null,
+"pre": false,
+"idx": 64
+},
+{
+"stip": "AEW Trios Titles",
+"sides": [
+"Swerve Strickland & The New Level (Austin Creed & Kofi)",
+"The Good, The Bad & El Guapo (Brody King, Bandido & Hangman Adam Page)"
+],
+"champ": null,
+"pre": false,
+"idx": 71
+},
+{
+"stip": "AEW Continental Title",
+"sides": [
+"Jon Moxley",
+"Mark Davis"
+],
+"champ": null,
+"pre": false,
+"idx": 83
+},
+{
+"stip": "AEW World Title",
+"sides": [
+"Will Ospreay",
+"Konosuke Takeshita",
+"Speedball Mike Bailey",
+"Ricochet",
+"Darby Allin",
+"Kazuchika Okada",
+"Adam Copeland",
+"Samoa Joe in a Clockwork Carnage"
+],
+"champ": null,
+"pre": false,
+"idx": 93
+},
+{
+"stip": "",
+"sides": [
+"Sisters of Sin",
+"Divine Dominion (Saturday Tailgate Brawl)"
+],
+"champ": null,
+"pre": true,
+"idx": 31
+},
+{
+"stip": "",
+"sides": [
+"The Don Callis Family",
+"Papi D, Rhys Maddox, and Alex Breeze"
+],
+"champ": null,
+"pre": false,
+"idx": 41
+},
+{
+"stip": "",
+"sides": [
+"The Death Riders and The Dogs",
+"The Bang Bang Gang and The Conglomeration (Saturday Tailgate Brawl)"
+],
+"champ": null,
+"pre": true,
+"idx": 47
+},
+{
+"stip": "",
+"sides": [
+"The Motor City Machine Guns",
+"FTR"
+],
+"champ": null,
+"pre": true,
+"idx": 58
+},
+{
+"stip": "AEW Women\u2019s World Championship",
+"sides": [
+"Mercedes Mone",
+"Thekla"
+],
+"champ": "Mercedes Mone",
+"pre": false,
+"idx": 79
+},
+{
+"stip": "",
+"sides": [
+"Nick Wayne",
+"Jericho"
+],
+"champ": null,
+"pre": false,
+"idx": 93
+},
+{
+"stip": "AEW World Tag Team Championship",
+"sides": [
+"The Young Bucks",
+"The Don Callis Family"
+],
+"champ": "The Young Bucks",
+"pre": false,
+"idx": 106
+},
+{
+"stip": "TBS Championship",
+"sides": [
+"Persephone",
+"Hyan",
+"Queen Aminata",
+"Dani Luna"
+],
+"champ": "Persephone",
+"pre": false,
+"idx": 118
+},
+{
+"stip": "National Championship",
+"sides": [
+"Andrade El Idolo",
+"Tommaso Ciampa"
+],
+"champ": "Andrade El Idolo",
+"pre": false,
+"idx": 133
+},
+{
+"stip": "AEW World Trios Championship",
+"sides": [
+"Swerve Strickland and New Level",
+"Adam Page, Brody King, and Bandido"
+],
+"champ": "Swerve Strickland and New Level",
+"pre": false,
+"idx": 151
+},
+{
+"stip": "Continental Championship",
+"sides": [
+"Jon Moxley",
+"Mark Davis"
+],
+"champ": "Jon Moxley",
+"pre": false,
+"idx": 182
+},
+{
+"stip": "AEW World Championship",
+"sides": [
+"Will Ospreay",
+"Samoa Joe",
+"Speedball Bailey",
+"Adam Copeland",
+"Konosuke Takeshita",
+"Kazuchika Okada",
+"Ricochet",
+"Darby Allin"
+],
+"champ": "Will Ospreay",
+"pre": false,
+"idx": 193
+},
+{
+"stip": "AEW World Championship \u2014 Clockwork Carnage match",
+"sides": [
+"Will Ospreay",
+"Samoa Joe",
+"\u201cSpeedball\u201d Mike Bailey",
+"Adam Copeland",
+"Konosuke Takeshita",
+"Kazuchika Okada",
+"Ricochet",
+"Darby Allin"
+],
+"champ": "Will Ospreay",
+"pre": false,
+"idx": 7
+},
+{
+"stip": "AEW Women\u2019s World Championship",
+"sides": [
+"Mercedes Mon\u00e9",
+"Thekla"
+],
+"champ": "Mercedes Mon\u00e9",
+"pre": false,
+"idx": 8
+},
+{
+"stip": "AEW World Tag Team Championships",
+"sides": [
+"The Young Bucks (Matt Jackson and Nick Jackson)",
+"Kyle Fletcher and Kevin Knight"
+],
+"champ": "The Young Bucks (Matt Jackson and Nick Jackson)",
+"pre": false,
+"idx": 9
+},
+{
+"stip": "AEW World Trios Championships \u2014 Two-out-of-three falls match",
+"sides": [
+"Swerve Strickland, Kofi Kingston and Austin Creed",
+"\u201cHangman\u201d Adam Page, Bandido and Brody King"
+],
+"champ": "Swerve Strickland, Kofi Kingston and Austin Creed",
+"pre": false,
+"idx": 10
+},
+{
+"stip": "AEW Continental Championship",
+"sides": [
+"Jon Moxley",
+"Mark Davis"
+],
+"champ": "Jon Moxley",
+"pre": false,
+"idx": 11
+},
+{
+"stip": "AEW National Championship",
+"sides": [
+"Andrade El \u00cddolo",
+"Tommaso Ciampa"
+],
+"champ": "Andrade El \u00cddolo",
+"pre": false,
+"idx": 12
+},
+{
+"stip": "AEW Women\u2019s World Tag Team Championships",
+"sides": [
+"The Brawling Birds (Jamie Hayter and Alex Windsor)",
+"Wrathlander (Kris Statlander and Harley Cameron)"
+],
+"champ": "The Brawling Birds (Jamie Hayter and Alex Windsor)",
+"pre": false,
+"idx": 13
+},
+{
+"stip": "AEW TBS Championship",
+"sides": [
+"Persephone",
+"Dani Luna",
+"Hyan",
+"Queen Aminata"
+],
+"champ": "Persephone",
+"pre": false,
+"idx": 14
+},
+{
+"stip": "",
+"sides": [
+"Chris Jericho",
+"Nick Wayne"
+],
+"champ": null,
+"pre": false,
+"idx": 15
+},
+{
+"stip": "Best-Of-Five",
+"sides": [
+"FTR (Dax Harwood & Cash Wheeler)",
+"Motor City Machine Guns (Alex Shelley & Chris Sabin)"
+],
+"champ": null,
+"pre": false,
+"idx": 16
+},
+{
+"stip": "",
+"sides": [
+"Divine Dominion (Lena Kross & Megan Bayne)",
+"Sisters of Sin (Julia Hart & Skye Blue)"
+],
+"champ": null,
+"pre": false,
+"idx": 17
+},
+{
+"stip": "AEW World Championship \u2014 Clockwork Carnage match",
+"sides": [
+"Will Ospreay",
+"Samoa Joe",
+"\u201cSpeedball\u201d Mike Bailey",
+"Adam Copeland",
+"Konosuke Takeshita",
+"Kazuchika Okada",
+"Ricochet",
+"Darby Allin"
+],
+"champ": "Will Ospreay",
+"pre": false,
+"idx": 7
+},
+{
+"stip": "AEW Women\u2019s World Championship",
+"sides": [
+"Mercedes Mon\u00e9",
+"Thekla"
+],
+"champ": "Mercedes Mon\u00e9",
+"pre": false,
+"idx": 8
+},
+{
+"stip": "AEW World Tag Team Championships",
+"sides": [
+"The Young Bucks (Matt Jackson and Nick Jackson)",
+"Kyle Fletcher and Kevin Knight"
+],
+"champ": "The Young Bucks (Matt Jackson and Nick Jackson)",
+"pre": false,
+"idx": 9
+},
+{
+"stip": "AEW World Trios Championships \u2014 2/3 Falls Match",
+"sides": [
+"Swerve Strickland, Kofi Kingston and Austin Creed",
+"\u201cHangman\u201d Adam Page, Bandido and Brody King"
+],
+"champ": "Swerve Strickland, Kofi Kingston and Austin Creed",
+"pre": false,
+"idx": 10
+},
+{
+"stip": "AEW Continental Championship",
+"sides": [
+"Jon Moxley",
+"Mark Davis"
+],
+"champ": "Jon Moxley",
+"pre": false,
+"idx": 11
+}
+],
+"next_id": 14
+}
