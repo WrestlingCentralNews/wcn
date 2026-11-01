@@ -187,7 +187,12 @@ def loc(c, lang, tr):
 def item_html(s, lang, big=False):
     c = s["c"]; col = CATC.get(c["categories"][0], "#7cd618"); img = c.get("image") or ""
     th = f'<a class="hi-img" href="/{e(s["u"])}" style="background-image:url(\'{e(img)}\')" aria-hidden="true" tabindex="-1"></a>' if img else ""
-    body = "".join(f"<p>{e(p)}</p>" for p in (s["p"][:2] if big else []))
+    seen = [re.sub(r"\W+", " ", s["s"]).strip().lower()]; ps = []
+    for p in (s["p"][:3] if big else []):   # no repeated text: skip a paragraph already said by the summary or a kept paragraph
+        k = re.sub(r"\W+", " ", p).strip().lower()
+        if k and not any(k in x or x in k for x in seen if x): ps.append(p); seen.append(k)
+        if len(ps) == 2: break
+    body = "".join(f"<p>{e(p)}</p>" for p in ps)
     return (f'<article class="hi{" big" if big else ""}" style="--c:{col}">{th}<div><h3><a href="/{e(s["u"])}">{e(s["t"])}</a></h3>'
             f'<p class="hs">{e(s["s"])}</p>{body}<p class="hm">{when(c, lang)} · {e(c["source"])}</p></div></article>')
 def when(c, lang):
@@ -425,6 +430,7 @@ def cite(key, path, title, st, lang, aired=True, extra_src=None):
           "citation": [{"@type": "CreativeWork", "name": n, "url": u} for n, u in out]}
     return h, [ld]
 LIVE_PAGES = {}
+RECENT = {}   # lang -> [(start_ts, path, name, date label, n results, live)]: homepage 'Latest results' strip (extras.results_strip)
 def _live_desc(st, nm, dl, lang):
     """Search snippet for a page with live results: the show plus the first reported results (concrete, not 'card and preview')."""
     es = lang == "es"
@@ -455,6 +461,7 @@ def _live(key, lang, path, nm, dl, title, h1, body, ld, desc=None, img=None):
     for x in lld:   # Google wants an image on LiveBlogPosting for rich results: the page's story photo, else the 1200x630 site card
         if x.get("@type") == "LiveBlogPosting" and not x.get("image"): x["image"] = [img if (img or "").startswith("https://") else SITE + "og-image.jpg"]
     if st["shown"] or st["is_live"]:
+        RECENT.setdefault(lang, []).append((st["start"], path, nm, dl, len(st["shown"]), bool(st["is_live"])))
         try: desc = _live_desc(st, nm, dl, lang)
         except Exception as ex: print("[live] desc failed", key, repr(ex)[:120], flush=True)
     if st["is_live"]:
@@ -469,7 +476,7 @@ def build(clusters, tr_es=None):
     """Write all hub pages for en + es. Returns {path: content-hash} for sitemaps/IndexNow."""
     import shutil
     global BUILD
-    _WRITTEN.clear(); LIVE_PAGES.clear(); THIN.clear()
+    _WRITTEN.clear(); LIVE_PAGES.clear(); THIN.clear(); RECENT.clear()
     now = datetime.datetime.now(ET); today = now.date(); cutoff = today - datetime.timedelta(days=RETENTION_DAYS)
     by_ep, by_ev = {}, {}
     for c in clusters:

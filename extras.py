@@ -146,6 +146,17 @@ def mini_html(c, L, n, lang="es"):
     im = f'<img class="fg" loading="lazy" referrerpolicy="no-referrer" src="{e(img)}" alt="" onerror="this.remove()">' if img else ""
     return (f'<article class="card mini in" style="--c:{col}" data-cat="{c["categories"][0]}" data-pos="{n}"><a class="img" href="{e(u)}" aria-hidden="true" tabindex="-1"><div class="ph">{c["categories"][0]}</div>{im}</a><div class="body">'
             f'<div class="tags">{(BRK_ES if lang == "es" else BRK_EN) if c.get("brk") else ""}<span class="tag" style="--c:{col}">{c["categories"][0]}</span></div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><div class="meta"><span>{_ago_es(c["ts"], lang)}</span></div></div></article>')
+def results_strip(lang, n=4, now=None):
+    """Homepage 'Latest results' strip (owner 2026-11-01: results pages are the core): the newest shows with reported results
+    (live ones first), linking to their results pages. Outside #lead/#feed so app.js never replaces it."""
+    import hubs
+    now = now or time.time()
+    rows = sorted({p: r for r in hubs.RECENT.get(lang, []) for p in [r[1]] if now - r[0] < 8 * 86400}.values(), key=lambda r: (not r[5], -r[0]))[:n]
+    if not rows: return ""
+    es = lang == "es"; e = lambda x: html.escape(str(x), quote=True)
+    a = "".join(f'<a href="/{e(p)}"{" class=on" if lv else ""}><b>{e(nm)}</b><span>{("EN VIVO" if es else "LIVE") if lv else e(dl)} · {k} {("resultados" if es else "results") if k != 1 else ("resultado" if es else "result")}</span></a>'
+                for ts, p, nm, dl, k, lv in rows)
+    return f'<section class="rstrip" aria-label="{"Últimos resultados" if es else "Latest results"}"><h2>{"Últimos resultados" if es else "Latest results"}</h2><div>{a}</div></section>'
 def top_html(items, lang="es"):
     """Top stories block (lead + 4), same pick as app.js for the default all-promotions view."""
     import toppick
@@ -168,7 +179,7 @@ def build_es_home(clusters, tr):
 {C.header("es", "/", "/es/", "news").replace('<nav class="navl"', '<div class="rail"><nav class="navl"', 1).replace('</header>', '<nav class="filters" id="filters"></nav></div><div class="tools"><input id="q" placeholder="Busca luchadores, programas, empresas…" aria-label="Buscar"><span id="count"></span><span class="live" style="margin-left:auto"><i></i> EN VIVO · <span id="updated">cargando…</span></span></div></header>')}
 <div class="ad ad-leader" data-slot="leaderboard" data-size="728×90 Leaderboard"></div>
 <div class="ticker"><div id="ticker">{tick}</div></div>
-<h1 class="es-h1">Noticias de lucha libre en español</h1>
+<h1 class="es-h1">Noticias de lucha libre en español</h1>{results_strip("es")}
 <main class="layout"><aside class="side"><div class="ad ad-sky" data-slot="leftSkyscraper" data-size="300×600 Half-page"></div></aside>
 <div class="mid"><section id="lead" class="lead" aria-label="Lo más importante">{top}</section><section id="feed" class="feed">{first}</section></div>
 <aside class="side"><div class="ad ad-sky" data-slot="rightSkyscraper" data-size="300×600 Half-page"></div></aside></main>
@@ -205,7 +216,8 @@ def build_en_home(clusters):
     tick = "".join(f'<span><b>{c["categories"][0]}</b> {e(c["title"])}</span>' for c, L in items[:15])
     mid = f'<div class="mid"><section id="lead" class="lead" aria-label="Top stories">{top}</section><section id="feed" class="feed">{first}</section></div>'
     s2 = re.sub(r'<div class="mid"><section id="lead".*?</section><section id="feed" class="feed">.*?</section></div>', lambda m: mid, s, count=1, flags=re.S)
-    s2 = re.sub(r'<div class="ticker"><div id="ticker">.*?</div></div>(?:\n<h1 class="es-h1">[^<]*</h1>)?', lambda m: f'<div class="ticker"><div id="ticker">{tick}</div></div>\n{EN_H1}', s2, count=1, flags=re.S)
+    strip = results_strip("en")
+    s2 = re.sub(r'<div class="ticker"><div id="ticker">.*?</div></div>(?:\n<h1 class="es-h1">[^<]*</h1>)?(?:<section class="rstrip".*?</div></section>)?', lambda m: f'<div class="ticker"><div id="ticker">{tick}</div></div>\n{EN_H1}{strip}', s2, count=1, flags=re.S)
     if s2 != s: open(p, "w").write(s2)
     return []
 # ---------- sitemaps ----------

@@ -14,7 +14,7 @@ class T(unittest.TestCase):
         self.assertTrue(any("ftr" in x.lower() for x in r), r)
         self.assertTrue(pages.noindex(SEM, "es", bad)); self.assertFalse(pages.noindex(SEM, "en"))
     def test_good_translation_passes(self):
-        ok = {"t": "Motor City Machine Guns impartirán seminario en FLEX Wrestling",
+        ok = {"top": 1, "t": "Motor City Machine Guns impartirán seminario en FLEX Wrestling",
               "s": "FLEX Wrestling en Nueva York realizará un seminario con Motor City Machine Guns en el LECOM Event Center."}
         self.assertEqual(translate.es_issues(SEM, ok), []); self.assertFalse(pages.noindex(SEM, "es", ok))
     def test_surname_or_first_name_counts(self):

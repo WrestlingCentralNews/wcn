@@ -83,7 +83,7 @@ class Plan(unittest.TestCase):
               card(5, ["Indie"], 100, title="Indie legend dies"), card(6, ["WWE"], 1, words=300), card(7, ["TNA"], 1, card={"x": 1})]
         clusters = [c for c, m in cs]; bylink = {m["link"]: m for c, m in cs}
         order = [x[2]["id"] for x in longer.plan(clusters, bylink)]
-        self.assertEqual(order, ["c3", "c2", "c5", "c1", "c4"])   # new big, then back-fill big + huge, then Indie/Global new, back-fill last
+        self.assertEqual(order, ["c3", "c2", "c5"])   # new big, then back-fill big + huge; Indie/Global non-big-news stays short (owner 2026-11-01)
         self.assertNotIn("c6", order); self.assertNotIn("c7", order)
     def test_tried_not_repaid(self):
         c, m = card(1, ["WWE"], 2); bylink = {m["link"]: m}

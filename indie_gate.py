@@ -56,3 +56,12 @@ def remember(clusters, bylink):
                 if l in bylink: ids.add(bylink[l]["id"])
     try: json.dump(sorted(ids), open(FILE, "w"))
     except Exception as e: print("indie_gate: could not save", str(e)[:80], flush=True)
+
+MAJOR = {"WWE", "AEW", "TNA"}   # + NXT (filed under WWE) and AAA (matched by name below)
+def minor(c):
+    """Indie/Global story that isn't big news (owner 2026-11-01): kept short, published on the site but noindex and out of
+    every sitemap. Big news = BREAKING, a title change/death/major signing-release-injury headline, or 2+ trusted outlets."""
+    cats = set(c.get("categories") or [])
+    if not cats or cats & MAJOR or not cats <= {"Indie", "Global"}: return False
+    if re.search(r"\b(AAA|NXT)\b", (c.get("title") or "") + " " + (c.get("raw_title") or "")): return False
+    return not (c.get("brk") or important_title(c.get("title")) or multi_trusted(c))

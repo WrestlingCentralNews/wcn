@@ -40,12 +40,9 @@ def assign_urls(clusters):
     kept = 0
     for c in clusters:
         new = f"story/{slugify(c['title'])}-{c['id']}.html"; old = prev.get(c["id"])
-        if old and old != new:
-            try:
-                if keep_slug(old[6:-len(c["id"]) - 6], c["title"]): new = old; kept += 1
-            except Exception as ex: print("[slug] keep check failed", c["id"], repr(ex)[:120], flush=True)
+        if old and old != new: new = old; kept += 1   # owner 2026-11-01: a published story URL never changes (updates in place)
         c["url"] = new
-    if kept: print(f"pages: kept {kept} story URLs across light headline rewrites", flush=True)
+    if kept: print(f"pages: kept {kept} story URLs across headline rewrites", flush=True)
 KIT_ACTION = "https://app.kit.com/forms/10060065/subscriptions"   # Kit form "WCN Weekly" (double opt-in)
 def nl_block(where, compact=False, head="h2", base="../", lang="en"):
     """WCN Weekly signup. Native form -> Kit; newsletter.js upgrades it to fetch() + inline 'check your inbox' message."""
@@ -234,8 +231,11 @@ def noindex(c, lang="en", L=None):
     """True when the story page in this language carries a robots noindex meta; such pages stay live and linked but are
     never listed in any sitemap (EN, ES or news)."""
     if thin(c): return True
+    import indie_gate
+    if indie_gate.minor(c): return True   # Indie/Global non-big-news (owner 2026-11-01): on the site, not pushed to Google
     if lang == "es" and L:
         import translate
+        if not translate.es_top(c, L): return True   # Spanish copy of a non-top story (owner 2026-11-01): live, never indexed
         return bool(translate.es_issues(c, L))   # Spanish version names wrestlers/numbers the English story doesn't: hidden from search until re-translated
     return False
 def sources_html(c, t):
@@ -248,7 +248,7 @@ def sources_html(c, t):
         if len(out) == 6: break
     lab = t["source"] if len(out) < 2 else t.get("sources", t["source"])
     return f'<p class="credit">{lab}: {" · ".join(out)}</p>'
-def page(c, related, lang="en", L=None, alt=None):
+def page(c, related, lang="en", L=None, alt=None, hrefl=None):
     """Story page. lang='es' uses L = {'t','s','url','p'} (Spanish translation) and related = [(cluster, L)]."""
     t = S[lang]; es = lang == "es"
     title = L["t"] if es else c["title"]; summary = L["s"] if es else c["summary"]
@@ -288,7 +288,7 @@ def page(c, related, lang="en", L=None, alt=None):
           "inLanguage": lang, "isAccessibleForFree": True, "author": [chrome.staff_author(lang)], "publisher": chrome.PUBLISHER}
     home = SITE + ("es/" if es else "")
     crumbs = [("WCN en español" if es else "WCN", home), (title[:70], url)]
-    head = chrome.head(title_tag(title), desc, url, lang, alts=alt, og_type="article", image=big, ads=True, ld=[ld, chrome.breadcrumbs(crumbs)],
+    head = chrome.head(title_tag(title), desc, url, lang, alts=alt if hrefl is None else hrefl, og_type="article", image=big, ads=True, ld=[ld, chrome.breadcrumbs(crumbs)],
                        **({"robots": "noindex,follow,max-image-preview:large"} if noindex(c, lang, L) else {}),
                        extra=(f'<meta property="og:image:alt" content="{e(title)}">{imgx}<meta property="article:publisher" content="{chrome.FB}">'
                               f'<meta property="article:published_time" content="{iso(pub)}"><meta property="article:modified_time" content="{iso(mod)}"><meta property="article:section" content="{e(c["categories"][0])}">'))
@@ -302,10 +302,10 @@ def page(c, related, lang="en", L=None, alt=None):
             f'<main class="layout"><aside class="side">{ad("leftSkyscraper", "300×600 Half-page", "ad-sky")}</aside>\n'
             f'<article class="story"><div class="tags">{conf}{tags}</div><h1>{e(title)}</h1>{byline_html(c, lang)}\n{hero}\n{credit}{quote}{hub}<div class="prose">{"".join(body)}</div>{tl}\n'
             f'{sources_html(c, t)}\n'
-            f'{nl_block("story-es" if es else "story", compact=True, head="h3", base="/", lang=lang)}\n{ad("storyBottom", "Responsive Banner")}\n'
+            f'{ad("storyBottom", "Responsive Banner")}\n'
             f'<section class="related"><h2>{t["more"].format(cat=e(c["categories"][0]))}</h2><div class="relgrid">{rel}</div></section></article>\n'
             f'<aside class="side">{ad("rightSkyscraper", "300×600 Half-page", "ad-sky")}</aside></main>\n'
-            f'{nl_block("footer-story-es" if es else "footer-story", base="/", lang=lang)}\n{chrome.footer(lang)}\n'
+            f'{chrome.footer(lang)}\n'
             f'{ad("mobileSticky", "320×50 Mobile", "ad-mobile")}<script src="/story.js"></script>{chrome.SCRIPTS}</body></html>')
 # Google tag + Consent Mode v2 (region-aware): denied by default in EEA/UK/CH until the banner choice, granted elsewhere;
 # a stored banner choice (wcn_consent) is re-applied before config. Loaded directly in <head> on every page.
@@ -479,10 +479,12 @@ def _build(clusters):
         rel = [r for r in bycat[c["categories"][0]] if r is not c][:6]
         x = tr.get(c["id"])
         alt = {"en": SITE + c["url"], "es": SITE + x["url"]} if x else None
-        open(os.path.join(tmp, os.path.basename(c["url"])), "w").write(page(c, rel, alt=alt or {"en": SITE + c["url"]}))
+        pair = bool(x) and not noindex(c) and not noindex(c, "es", x)   # hreflang only between two indexable versions
+        hl = alt if pair else None
+        open(os.path.join(tmp, os.path.basename(c["url"])), "w").write(page(c, rel, alt=alt or {"en": SITE + c["url"]}, hrefl=hl or {"en": SITE + c["url"]}))
         if x:
             rel_es = [(r, tr[r["id"]]) for r in bycat[c["categories"][0]] if r is not c and r["id"] in tr][:6]
-            open(os.path.join(etmp, os.path.basename(x["url"])), "w").write(page(c, rel_es, lang="es", L=x, alt=alt))
+            open(os.path.join(etmp, os.path.basename(x["url"])), "w").write(page(c, rel_es, lang="es", L=x, alt=alt, hrefl=hl or {}))
     shutil.rmtree(SD, ignore_errors=True); os.replace(tmp, SD)   # only current (<=60 day) stories survive
     shutil.rmtree(ESD, ignore_errors=True); os.replace(etmp, ESD)  # same pruning for Spanish pages
     hub_pages = hubs.build(clusters, tr)

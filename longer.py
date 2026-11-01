@@ -36,7 +36,7 @@ def reports(c, lead, bylink):
         if not m or m is lead or editorial.tier(m.get("source")) > 2: continue
         if not enrich.same_story(m, lead) or enrich.long_mismatch(lead, [m.get("raw_title") or ""]): continue
         if len(txt(m)) >= 150: out.append(txt(m))
-        if len(out) >= 4: break
+        if len(out) >= (6 if not indie_gate.minor(c) else 4): break   # fuller reports for major promotions
     return out
 def sig(rs): return hashlib.md5("|".join(r[:200] for r in rs).encode()).hexdigest()[:10]
 def own(c, lead):
@@ -48,6 +48,7 @@ def plan(clusters, bylink, now=None):
     for c in clusters:
         m = bylink.get(c.get("link"))
         if not m or not m.get("llm") or c.get("card"): continue
+        if indie_gate.minor(c): continue   # owner 2026-11-01: Indie/Global non-big-news keeps its short summary; AI goes to WWE/AEW/NXT/AAA/TNA
         w = own(c, m)
         if w >= TARGET_WORDS: continue
         rs = reports(c, m, bylink); t = m.get("llm_long2") or {}

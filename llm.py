@@ -181,7 +181,7 @@ def longform2(headline, reports, prio=0):
     parts = []; total = 0
     for i, t in enumerate(reports):
         t = re.sub(r"\s+", " ", t or "")[:2400 if i == 0 else 1500]
-        if total + len(t) > 5200: t = t[:max(0, 5200 - total)]
+        if total + len(t) > 7000: t = t[:max(0, 7000 - total)]
         if len(t) >= 150: parts.append(f"Report {len(parts) + 1}: {t}"); total += len(t)
     if total < 300: return None   # not enough facts for any write-up: keep the summary
     body = {"model": MODEL, "max_tokens": 900, "temperature": 0.6, "response_format": {"type": "json_object"},

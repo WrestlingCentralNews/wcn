@@ -87,6 +87,16 @@ def load():
 def important(c):
     k = (c.get("kind") or {}).get("type")
     return c.get("sources", 1) > 1 or k in ("results", "match") or bool(c.get("hub"))
+# Spanish edition scope (owner 2026-11-01): only top stories and results get a Spanish copy (event/episode results pages are
+# always bilingual in hubs.py). Top = BREAKING, a pinned Full Card lead, a results report, or homepage importance >= TOP_IMP
+# (toppick.importance: sources, trusted outlets, WWE/AEW, major-news words). Once a story qualifies it stays Spanish ("top": 1).
+# Older Spanish copies of non-top stories stay live (no 404s) but are noindex, out of the ES/news sitemaps and hreflang.
+TOP_IMP = 17
+def es_top(c, x=None):
+    import indie_gate
+    if indie_gate.minor(c): return False
+    if x and x.get("top"): return True
+    return bool(c.get("brk") or c.get("lead_until") or (c.get("kind") or {}).get("type") == "results" or int(c.get("imp") or 0) >= TOP_IMP)
 def run(clusters):
     tr = load(); now = time.time()
     live = {c["id"] for c in clusters}
@@ -94,6 +104,8 @@ def run(clusters):
     todo = []; moved = set(); fixes = set()
     for c in clusters:
         x = tr.get(c["id"])
+        if x and es_top(c): x["top"] = 1
+        if not es_top(c, x): continue          # non-top: no new Spanish copy, no re-translation (old copy stays live, noindex)
         if not x: todo.append(c)
         elif x.get("h") != h(c) and changed_topic(x.get("en") or x["t"], c["title"]):
             todo.append(c); moved.add(c["id"])      # a different story now: always re-translate, new Spanish slug (old one gets a redirect stub)
@@ -111,7 +123,7 @@ def run(clusters):
                     if not r: continue
                     old = tr.get(c["id"], {}); mv = c["id"] in moved
                     tr[c["id"]] = {"t": r["t"], "s": r["s"], "h": h(c), "n": 1 if mv else old.get("n", 0) + 1, "at": int(now), "en": c["title"],
-                                   "sl": slug_es(r["t"]) if mv else (old.get("sl") or slug_es(r["t"]))}
+                                   "sl": old.get("sl") or slug_es(r["t"])}   # owner 2026-11-01: a published Spanish URL never changes
                     if c["id"] in fixes: tr[c["id"]]["fx"] = h(c)
                     if mv: moved_done.append(c["id"])
                     if old.get("p") and old.get("ph") == hashlib.md5(json.dumps(c.get("long") or []).encode()).hexdigest()[:10]:
@@ -120,7 +132,7 @@ def run(clusters):
     # Spanish long-form for every story with an English write-up (owner 2026-10-25, AI cap $20): throttle order of
     # longer.prio (WWE/AEW/TNA new + huge news first, Indie/Global back-fill last), newest first; paced per call
     import longer
-    lt = [c for c in clusters if c.get("long") and c["id"] in tr
+    lt = [c for c in clusters if c.get("long") and c["id"] in tr and es_top(c, tr[c["id"]])
           and tr[c["id"]].get("ph") != hashlib.md5(json.dumps(c["long"]).encode()).hexdigest()[:10]]
     lt = sorted(((longer.prio(c, None, now), c) for c in lt), key=lambda x: (x[0], not tr[x[1]["id"]].get("p"), -(x[1].get("first_ts") or x[1]["ts"])))[:LONG_PER_RUN]   # re-translations of a longer English write-up first (the page shows the summary meanwhile)
     nl = 0

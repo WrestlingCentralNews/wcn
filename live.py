@@ -417,6 +417,21 @@ def page_state(key, now=None):
     st["is_live"] = st["start"] - PRE_MIN * 60 <= nowi <= st["end"]
     st["shown"] = [m for m in st["matches"] if m.get("sources") and not m.get("conflict")]
     return st
+def glance(shown, lang):
+    """'At a glance' table for an aired show (owner 2026-11-01: results pages are the core): winner / defeated / finish / title,
+    built only from the reported results already on the page (no AI, nothing added). Needs 2+ results with a winner."""
+    es = lang == "es"; ms = [m for m in shown if m.get("winner") and m.get("loser")]
+    if len(ms) < 2: return ""
+    def ttl(m):
+        if m.get("title") == "change": return ("Nuevo campeón" if es else "New champion") + (f" ({_e(m['stip'])})" if m.get("stip") else "")
+        if m.get("title") == "retain": return ("Retiene" if es else "Retained") + (f" ({_e(m['stip'])})" if m.get("stip") else "")
+        return _e(m.get("stip") or "")
+    rows = "".join(f'<tr><td><a href="#{m["id"]}">{_e(m["winner"])}</a></td><td>{_e(m["loser"])}</td><td>{_e(m.get("fin_es" if es else "fin_en") or "")}</td><td>{ttl(m)}</td></tr>' for m in ms)
+    nd = sum(1 for m in ms if m.get("title") == "retain"); nc = sum(1 for m in ms if m.get("title") == "change")
+    sm = (f"{len(ms)} combates · {nd} defensas exitosas · {nc} cambios de título" if es else f"{len(ms)} matches · {nd} successful title defenses · {nc} title changes")
+    h = ("Ganador", "Perdedor", "Final", "Título") if es else ("Winner", "Defeated", "Finish", "Title")
+    return (f'<div class="glance"><h3>{"Resumen rápido" if es else "At a glance"}</h3><p class="glance-sum">{sm}</p>'
+            f'<div class="glance-w"><table><thead><tr>{"".join(f"<th>{x}</th>" for x in h)}</tr></thead><tbody>{rows}</tbody></table></div></div>')
 def render(key, lang, url):
     """-> (badge_html, section_html, [ld]) or None when we have nothing for this page."""
     st = page_state(key)
@@ -439,7 +454,8 @@ def render(key, lang, url):
     if not rows: rows.append(f'<li class="wait"><p>{"Aún no hay resultados confirmados. Esta página se actualiza cada 5 minutos durante el programa." if es else "No confirmed results yet. This page updates every 5 minutes while the show is on."}</p></li>')
     note = ("Se actualiza cada 5 minutos mientras el programa está al aire. " if live else "") + "Solo publicamos un resultado cuando lo reporta al menos una fuente confiable; los enlaces llevan a cada fuente." if es else \
            ("Updates every 5 minutes while the show is on air. " if live else "") + "We only list a result once a trusted outlet reports it; links go to each source."
-    sec = (f'<section class="live-results{" on" if live else ""}" id="live"><h2>{badge}{head}</h2>'
+    sec0 = "" if live else glance(st["shown"], lang)
+    sec = (f'<section class="live-results{" on" if live else ""}" id="live"><h2>{badge}{head}</h2>{sec0}'
            f'<p class="live-upd">{"Última actualización" if es else "Last updated"}: <time datetime="{datetime.datetime.fromtimestamp(upd, datetime.timezone.utc).isoformat()}">{_hhmm(upd, lang)}</time>'
            f'{" · " + ("se actualiza sola" if es else "auto-refreshing") if live else ""}</p>'
            f'<ol class="live-list">{"".join(reversed(rows)) if live else "".join(rows)}</ol><p class="live-note">{note}</p></section>')

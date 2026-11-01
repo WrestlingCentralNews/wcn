@@ -306,3 +306,8 @@ header.hid{transform:translateY(-100%)}
 .fullcard{border:1px solid var(--line,#333);border-radius:10px;padding:12px 16px;margin:16px 0}.fullcard h2{margin:0 0 8px;font-size:1.1rem}.fullcard ol{margin:0;padding-left:1.3em}.fullcard li{margin:6px 0}.fullcard a{white-space:nowrap;font-weight:600}
 /* ads off (ads-config.js enabled:false -> html.noads): no empty 'Advertisement' placeholder boxes anywhere (AdSense review 2026-10-25) */
 html.noads .ad:not(.live-ad){display:none!important}
+.rstrip{max-width:1200px;margin:.4rem auto 1rem;padding:0 16px}.rstrip h2{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--mut);margin:0 0 .5rem}
+.rstrip div{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}.rstrip a{flex:0 0 auto;display:flex;flex-direction:column;gap:2px;padding:10px 14px;border-radius:10px;border:1px solid rgba(124,214,24,.45);background:rgba(124,214,24,.08);color:#fff;text-decoration:none;min-width:170px}
+.rstrip a.on{border-color:#e10600}.rstrip a b{font-size:14px}.rstrip a span{font-size:12px;color:var(--acc)}
+.glance{margin:.2rem 0 1rem}.glance h3{margin:.2rem 0}.glance-sum{opacity:.85;font-size:.92em;margin:.2rem 0 .6rem}.glance-w{overflow-x:auto}
+.glance table{width:100%;border-collapse:collapse;font-size:.92em}.glance th,.glance td{text-align:left;padding:.4rem .5rem;border-bottom:1px solid rgba(255,255,255,.1)}.glance th{opacity:.7;font-weight:600}.glance a{color:var(--acc)}
