@@ -352,7 +352,7 @@ def build_newsletter_page(clusters):
 BUILT = []           # this run's stories (Full Card reports link their match stories)
 PREV = []            # previous run's news.json items (set by aggregator before build)
 REDIRECTS = os.path.join(ROOT, "data", "redirects.json")   # {old_rel_url: {links, lead, es, at, to}}
-REDIRECT_DAYS = 60
+REDIRECT_DAYS = 3650   # owner 2026-11-01: a published story address is kept (as a real page) for good
 def _members(c): return [c["link"]] + [u["link"] for u in c.get("updates", [])]
 def redirects(clusters, tr, old_tr):
     """Record every story URL (EN + ES) from the previous run that no longer exists and point it at the best matching current
@@ -448,12 +448,37 @@ _CATW = [("TNA", r"\btna\b|\bimpact\b|bound-for-glory"), ("AEW", r"\baew\b|colli
 def guess_cat(u):
     b = u.rsplit("/", 1)[-1].replace("-", " ")
     return next((k for k, rx in _CATW if re.search(rx, b)), "")
-def stub(to):
+def stub(to):   # legacy (pre 2026-11-01) redirect stub; no longer written, kept for reference/tests
     t = SITE + to
     return (f'<!doctype html><html><head><meta charset="utf-8"><title>Moved | Wrestling Central News</title>'
             f'<link rel="canonical" href="{e(t)}"><meta http-equiv="refresh" content="0; url=/{e(to)}">'
             f'<script>location.replace("/{e(to)}"+location.hash)</script></head>'
             f'<body><p>This story moved: <a href="/{e(to)}">{e(t)}</a></p></body></html>')
+def archive_page(u, cat, clusters, tr, es=False):
+    """Real 200 page kept at an old story address whose story no longer exists anywhere (owner 2026-11-01: never redirect a
+    published address). Self canonical, noindex (it has no story of its own), latest stories from the same promotion."""
+    lang = "es" if es else "en"; T = {"en": ("Story archived", "This story is no longer on Wrestling Central News. Latest", "news"),
+                                      "es": ("Noticia archivada", "Esta noticia ya no está disponible en Wrestling Central News. Lo último de", "noticias")}[lang]
+    pool = [c for c in sorted(clusters, key=lambda c: -int(c.get("first_ts") or c["ts"])) if (not cat or cat in c.get("categories", [])) and (not es or c["id"] in tr)][:12]
+    li = "".join(f'<li><a href="/{e(tr[c["id"]]["url"] if es else c["url"])}">{e(tr[c["id"]]["t"] if es else c["title"])}</a></li>' for c in pool)
+    h = chrome.head(T[0] + " | WCN", T[1], SITE + u, lang, robots="noindex,follow")
+    home = "/es/" if es else "/"
+    return (f'<!doctype html><html lang="{lang}"><head><meta charset="utf-8">{h}</head><body>\n{chrome.header(lang, "/", "/es/", back=True)}\n'
+            f'<main class="layout"><article class="story"><h1>{T[0]}</h1><p>{T[1]} {e(cat or "")} {T[2]}:</p><ul class="archive-list">{li}</ul>'
+            f'<p><a href="{home}">Wrestling Central News</a></p></article></main>\n{chrome.footer(lang)}\n</body></html>')
+def alias_pages(red, html_by, clusters, tr, tmp, etmp):
+    """Owner 2026-11-01: a published story address never changes or redirects. Each old address of a merged/split story serves
+    the surviving story's full page (HTTP 200, same address) whose canonical names the surviving story, so Google consolidates
+    instead of seeing two competing copies; an address whose story is gone serves a noindex archive page. Not in any sitemap."""
+    n = {"story": 0, "archive": 0}
+    for u, r in red.items():
+        d = etmp if u.startswith("es/noticias/") else tmp if u.startswith("story/") else None
+        if not d or os.path.exists(os.path.join(d, os.path.basename(u))): continue
+        h = html_by.get(r["to"])
+        if h: n["story"] += 1
+        else: h = archive_page(u, r.get("cat") or guess_cat(u), clusters, tr, es=bool(r.get("es"))); n["archive"] += 1
+        open(os.path.join(d, os.path.basename(u)), "w").write(h)
+    return n
 def build(clusters):
     import selfhost
     build_sw()
@@ -470,9 +495,7 @@ def _build(clusters):
     tmp = SD + ".new"; shutil.rmtree(tmp, ignore_errors=True); os.makedirs(tmp)
     ESD = os.path.join(PUB, "es", "noticias"); etmp = ESD + ".new"; shutil.rmtree(etmp, ignore_errors=True); os.makedirs(etmp)
     red = redirects(clusters, tr, old_tr)
-    for u, r in red.items():
-        d = etmp if u.startswith("es/noticias/") else tmp if u.startswith("story/") else None
-        if d and not os.path.exists(os.path.join(d, os.path.basename(u))): open(os.path.join(d, os.path.basename(u)), "w").write(stub(r["to"]))
+    html_by = {}   # this run's rendered story pages by URL, reused for old addresses of merged/split stories
     bycat = {}
     for c in clusters: bycat.setdefault(c["categories"][0], []).append(c)
     for c in clusters:
@@ -481,10 +504,13 @@ def _build(clusters):
         alt = {"en": SITE + c["url"], "es": SITE + x["url"]} if x else None
         pair = bool(x) and not noindex(c) and not noindex(c, "es", x)   # hreflang only between two indexable versions
         hl = alt if pair else None
-        open(os.path.join(tmp, os.path.basename(c["url"])), "w").write(page(c, rel, alt=alt or {"en": SITE + c["url"]}, hrefl=hl or {"en": SITE + c["url"]}))
+        html_by[c["url"]] = page(c, rel, alt=alt or {"en": SITE + c["url"]}, hrefl=hl or {"en": SITE + c["url"]})
+        open(os.path.join(tmp, os.path.basename(c["url"])), "w").write(html_by[c["url"]])
         if x:
             rel_es = [(r, tr[r["id"]]) for r in bycat[c["categories"][0]] if r is not c and r["id"] in tr][:6]
-            open(os.path.join(etmp, os.path.basename(x["url"])), "w").write(page(c, rel_es, lang="es", L=x, alt=alt, hrefl=hl or {}))
+            html_by[x["url"]] = page(c, rel_es, lang="es", L=x, alt=alt, hrefl=hl or {})
+            open(os.path.join(etmp, os.path.basename(x["url"])), "w").write(html_by[x["url"]])
+    n_alias = alias_pages(red, html_by, clusters, tr, tmp, etmp)
     shutil.rmtree(SD, ignore_errors=True); os.replace(tmp, SD)   # only current (<=60 day) stories survive
     shutil.rmtree(ESD, ignore_errors=True); os.replace(etmp, ESD)  # same pruning for Spanish pages
     hub_pages = hubs.build(clusters, tr)
@@ -523,9 +549,9 @@ def _build(clusters):
     idx = {p: h for p, h in hub_pages.items()}
     idx.update({p: "static" for p in static}); idx.update({tr[c["id"]]["url"]: "story" for c in clusters if c["id"] in tr})
     idx.update({"es/feed.xml": "feed", "sitemap-news.xml": "news-" + str(int(time.time() // 21600))})
-    idx.update({u: "redirect:" + r["to"] for u, r in red.items()})   # moved story URLs: pinged once, and again if their target changes
+    idx.update({u: "alias:" + r["to"] for u, r in red.items()})   # old story addresses (real pages now): pinged once, again if their content source changes
     os.makedirs(os.path.join(ROOT, "data"), exist_ok=True); json.dump(idx, open(os.path.join(ROOT, "data", "indexnow_pages.json"), "w"))
-    print(f"pages: redirect stubs {len(red)}", flush=True)
+    print(f"pages: old story addresses kept as pages {n_alias} (0 redirects)", flush=True)
     print(f"pages: hubs tagged {nh} stories, {len(hub_pages)} hub pages, es stories {len(tr)}, news sitemap {n_news}", flush=True)
 SITEMAP_SKIP = {"newsletter/", "contact/", "es/contacto/", "masthead/", "es/equipo/"}
 HUB_LM = os.path.join(ROOT, "data", "hub_lastmod.json")

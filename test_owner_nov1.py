@@ -40,4 +40,19 @@ class U(unittest.TestCase):
         old = "story/old-headline-words-abc.html"; pages.PREV[:] = [{"id": "abc", "url": old}]
         c = st(title="Completely different rewritten headline after update"); pages.assign_urls([c])
         self.assertEqual(c["url"], old); pages.PREV[:] = []
+class Alias(unittest.TestCase):
+    def test_old_addresses_are_real_pages(self):
+        import tempfile, os
+        d = tempfile.mkdtemp(); ed = tempfile.mkdtemp()
+        red = {"story/old-merged-abc.html": {"to": "story/new-xyz.html", "es": False},
+               "story/gone-def.html": {"to": "?promo=WWE", "es": False, "cat": "WWE"}}
+        n = pages.alias_pages(red, {"story/new-xyz.html": "<html>FULL STORY</html>"}, [st()], {}, d, ed)
+        self.assertEqual(n, {"story": 1, "archive": 1})
+        self.assertEqual(open(os.path.join(d, "old-merged-abc.html")).read(), "<html>FULL STORY</html>")
+        a = open(os.path.join(d, "gone-def.html")).read()
+        for bad in ("http-equiv=\"refresh\"", "location.replace(\"/"): self.assertNotIn(bad, a)
+        self.assertIn("noindex,follow", a); self.assertIn('rel="canonical" href="https://wrestlingcentralnews.com/story/gone-def.html"', a)
+        open(os.path.join(d, "keep.html"), "w").write("LIVE")
+        pages.alias_pages({"story/keep.html": {"to": "story/new-xyz.html"}}, {"story/new-xyz.html": "X"}, [], {}, d, ed)
+        self.assertEqual(open(os.path.join(d, "keep.html")).read(), "LIVE")   # a live page is never overwritten
 if __name__ == "__main__": unittest.main()
