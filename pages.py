@@ -454,29 +454,69 @@ def stub(to):   # legacy (pre 2026-11-01) redirect stub; no longer written, kept
             f'<link rel="canonical" href="{e(t)}"><meta http-equiv="refresh" content="0; url=/{e(to)}">'
             f'<script>location.replace("/{e(to)}"+location.hash)</script></head>'
             f'<body><p>This story moved: <a href="/{e(to)}">{e(t)}</a></p></body></html>')
-def archive_page(u, cat, clusters, tr, es=False):
-    """Real 200 page kept at an old story address whose story no longer exists anywhere (owner 2026-11-01: never redirect a
-    published address). Self canonical, noindex (it has no story of its own), latest stories from the same promotion."""
-    lang = "es" if es else "en"; T = {"en": ("Story archived", "This story is no longer on Wrestling Central News. Latest", "news"),
-                                      "es": ("Noticia archivada", "Esta noticia ya no está disponible en Wrestling Central News. Lo último de", "noticias")}[lang]
+def more_page(u, cat, clusters, tr, es=False):
+    """Real 200 page kept at an old story address whose story no longer exists anywhere (owner 2026-11-01: never redirect, never
+    404 a published address). Neutral wording: the latest stories from that promotion and a link home. Self canonical, noindex,
+    never in a sitemap."""
+    lang = "es" if es else "en"
+    h1 = (f"Lo último de {cat}" if cat else "Lo último en lucha libre") if es else (f"Latest {cat} news" if cat else "Latest wrestling news")
     pool = [c for c in sorted(clusters, key=lambda c: -int(c.get("first_ts") or c["ts"])) if (not cat or cat in c.get("categories", [])) and (not es or c["id"] in tr)][:12]
     li = "".join(f'<li><a href="/{e(tr[c["id"]]["url"] if es else c["url"])}">{e(tr[c["id"]]["t"] if es else c["title"])}</a></li>' for c in pool)
-    h = chrome.head(T[0] + " | WCN", T[1], SITE + u, lang, robots="noindex,follow")
+    h = chrome.head(h1 + " | WCN", h1, SITE + u, lang, robots="noindex,follow")
     home = "/es/" if es else "/"
     return (f'<!doctype html><html lang="{lang}"><head><meta charset="utf-8">{h}</head><body>\n{chrome.header(lang, "/", "/es/", back=True)}\n'
-            f'<main class="layout"><article class="story"><h1>{T[0]}</h1><p>{T[1]} {e(cat or "")} {T[2]}:</p><ul class="archive-list">{li}</ul>'
-            f'<p><a href="{home}">Wrestling Central News</a></p></article></main>\n{chrome.footer(lang)}\n</body></html>')
-def alias_pages(red, html_by, clusters, tr, tmp, etmp):
+            f'<main class="layout"><article class="story"><h1>{e(h1)}</h1><ul class="more-list">{li}</ul>'
+            f'<p><a href="{home}">{"Todas las noticias de Wrestling Central News" if es else "All Wrestling Central News stories"}</a></p></article></main>\n{chrome.footer(lang)}\n</body></html>')
+ARTICLES = os.path.join(ROOT, "data", "articles.json")
+def old_title(u, r, A):
+    a = A.get(r.get("lead")) or {}
+    return a.get("title") or re.sub(r"-[0-9a-f]{12,13}\.html$", "", u.rsplit("/", 1)[-1]).replace("-", " ")
+def mismatched(u, r, c, A):
+    """True when the old address's story (its lead report / headline) is a different story from the surviving one: the old lead
+    report is not part of the survivor and neither the survivor's headline nor any of its reports' headlines share its topic."""
+    import translate
+    mem = _members(c)
+    if r.get("lead") in mem: return False
+    ot = old_title(u, r, A)
+    ts = [c["title"]] + [(A.get(l) or {}).get("title") or "" for l in mem]
+    return max(translate.topic_score(ot, t) for t in ts if t) < 0.3
+def rebuild_old(u, r, A):
+    """The old story rebuilt from its own stored reports (our own headline/summary/write-up made under the original-wording rules
+    when they were first published). Self canonical (its own address). None if its lead report is gone."""
+    a = A.get(r.get("lead"))
+    if not a or not a.get("title") or not (a.get("summary") or a.get("llm_long2") or a.get("llm_long")): return None
+    ups = [{"link": l, "source": A[l].get("source") or "", "ts": int(A[l].get("ts") or 0), "title": A[l].get("title") or "", "line": ""}
+           for l in r.get("links", [])[1:] if l in A and l != a["link"] and A[l].get("title")][:6]
+    lg = a.get("llm_long2") or a.get("llm_long")
+    lg = (lg.get("p") or lg.get("paragraphs")) if isinstance(lg, dict) else lg
+    cats = a.get("categories") or [r.get("cat") or "WWE"]
+    cid = re.search(r"-([0-9a-f]{12,13})\.html$", u); cid = cid.group(1) if cid else a.get("id", "")
+    return {"id": cid, "title": a["title"], "summary": a.get("summary") or "", "link": a["link"], "source": a.get("source") or "",
+            "ts": int(a.get("ts") or 0), "first_ts": int(a.get("ts") or 0), "image": a.get("image"), "categories": cats,
+            "updates": ups, "url": u, "kind": a.get("kind") if isinstance(a.get("kind"), dict) else None,
+            "long": lg if isinstance(lg, list) and all(isinstance(x, str) for x in lg) else None}
+def alias_pages(red, html_by, clusters, tr, tmp, etmp, A=None):
     """Owner 2026-11-01: a published story address never changes or redirects. Each old address of a merged/split story serves
     the surviving story's full page (HTTP 200, same address) whose canonical names the surviving story, so Google consolidates
-    instead of seeing two competing copies; an address whose story is gone serves a noindex archive page. Not in any sitemap."""
-    n = {"story": 0, "archive": 0}
+    instead of seeing two competing copies. If the survivor is a DIFFERENT story (a wrong merge), the old address is rebuilt
+    from its own reports (self canonical; English only) or, with no reports left, gets a noindex 'latest stories' page (200, never a redirect or 404). Never in a sitemap."""
+    if A is None:
+        try: A = {a["link"]: a for a in json.load(open(ARTICLES))}
+        except Exception: A = {}
+    by_url = {c["url"]: c for c in clusters}; by_url.update({x["url"]: c for c in clusters for x in [tr.get(c["id"])] if x and x.get("url")})
+    n = {"story": 0, "gone": 0, "mismatch": 0, "rebuilt": 0}
     for u, r in red.items():
         d = etmp if u.startswith("es/noticias/") else tmp if u.startswith("story/") else None
         if not d or os.path.exists(os.path.join(d, os.path.basename(u))): continue
-        h = html_by.get(r["to"])
-        if h: n["story"] += 1
-        else: h = archive_page(u, r.get("cat") or guess_cat(u), clusters, tr, es=bool(r.get("es"))); n["archive"] += 1
+        h = html_by.get(r["to"]); c = by_url.get(r["to"])
+        if h and c and mismatched(u, r, c, A):
+            n["mismatch"] += 1; h = None
+            o = None if r.get("es") else rebuild_old(u, r, A)
+            if o:
+                try: h = page(o, []); n["rebuilt"] += 1
+                except Exception as ex: print("[alias] rebuild failed", u, repr(ex)[:120], flush=True); h = None
+        if h is not None and h is html_by.get(r["to"]): n["story"] += 1
+        if not h: h = more_page(u, r.get("cat") or guess_cat(u), clusters, tr, es=bool(r.get("es"))); n["gone"] += 1   # 200, noindex
         open(os.path.join(d, os.path.basename(u)), "w").write(h)
     return n
 def build(clusters):
