@@ -5,14 +5,20 @@
    "date": "2026-10-17",
    "usd": 5.0,
    "note": "initial load (first successful post 2026-10-17 06:48 UTC)"
+  },
+  {
+   "date": "2026-11-01",
+   "at": 1793555602,
+   "usd": 20.0,
+   "note": "owner top-up"
   }
  ],
  "rebase": {
-  "at": 1792304280,
-  "time": "2026-10-18T06:18:00Z",
-  "total_usd": 9.62,
-  "paid_usd": 5.0,
-  "free_usd": 4.62,
-  "note": "Recalibrated to the X developer console (owner screenshot ~06:18 UTC Oct 18): Total Balance $9.62 = paid Credits $5.00 (untouched) + Free Credits $4.62; X spends free credits first. Console usage (last 30 days): only 2 billable events (~$0.01), 27 requests - our per-post estimate (24 posts x $0.015 + media + delete = $0.37) overcounted. From this point remaining = $9.62 minus estimated spend logged after rebase.at (free credits drawn first); entries before it are kept for history only. low_balance stays true at <= $2.00 total."
+  "at": 1793555267,
+  "time": "2026-11-01T17:47:47Z",
+  "total_usd": 4.84,
+  "paid_usd": 4.84,
+  "free_usd": 0.0,
+  "note": "Recalibrated to X developer console owner screenshot 2026-11-01 ~17:48 UTC: Total Balance $4.84, free $0. Estimate had overcounted (said ~$2.27)."
  }
 }

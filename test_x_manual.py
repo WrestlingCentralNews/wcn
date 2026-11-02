@@ -24,12 +24,12 @@ class T(unittest.TestCase):
         self.assertTrue(S["log"][0]["deleted"]); self.assertIn("2111693641613725907", S["deleted"])
     def test_rebase(self):
         xspend.ensure(); L = json.load(open(xspend.LEDGER))
-        self.assertEqual(L["remaining_usd"], 9.61); self.assertEqual(L["free_remaining_usd"], 4.61); self.assertEqual(L["paid_remaining_usd"], 5.0)
+        self.assertAlmostEqual(L["remaining_usd"], 24.84); self.assertEqual(L["free_remaining_usd"], 0.0); self.assertAlmostEqual(L["paid_remaining_usd"], 24.84)   # Nov 1 rebase $4.84 + $20 top-up
         self.assertFalse(L["low_balance"])
         rb = xspend._rebase()["at"]; D = json.load(open(xspend.LEDGER)); D["entries"].append({"at": rb + 60, "kind": "post", "usd": 4.70, "endpoint": "x", "src": "t"})
         json.dump(D, open(xspend.LEDGER, "w")); xspend.ensure(); L = json.load(open(xspend.LEDGER))
-        self.assertAlmostEqual(L["remaining_usd"], 4.91); self.assertEqual(L["free_remaining_usd"], 0.0); self.assertAlmostEqual(L["paid_remaining_usd"], 4.91)
-        D = json.load(open(xspend.LEDGER)); D["entries"].append({"at": rb + 120, "kind": "post", "usd": 3.0, "endpoint": "x", "src": "t"})
+        self.assertAlmostEqual(L["remaining_usd"], 20.14); self.assertEqual(L["free_remaining_usd"], 0.0); self.assertAlmostEqual(L["paid_remaining_usd"], 20.14)
+        D = json.load(open(xspend.LEDGER)); D["entries"].append({"at": rb + 120, "kind": "post", "usd": 18.2, "endpoint": "x", "src": "t"})
         json.dump(D, open(xspend.LEDGER, "w")); xspend.ensure(); L = json.load(open(xspend.LEDGER))
-        self.assertTrue(L["low_balance"])   # 1.91 <= 2.00 (incl. the 2026-10-20 $0.010 delete)
+        self.assertTrue(L["low_balance"])   # 1.94 <= 2.00
 if __name__ == "__main__": unittest.main()
