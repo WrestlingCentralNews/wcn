@@ -567,7 +567,9 @@ def _build(clusters):
     open(os.path.join(PUB, "es", "feed.xml"), "w").write(rss([es_rss_item(c) for c in es_items], SITE + "es/feed.xml", title="Wrestling Central News en español",
         link=SITE + "es/", desc="Noticias de lucha libre en español: WWE, AEW, TNA, independientes y lucha libre mundial, actualizadas cada 15 minutos.", lang="es"))
     static = extras.build_trust(clusters, tr) + extras.build_es_home(clusters, tr) + extras.build_en_home(clusters)
-    n_news = extras.news_sitemap(clusters, tr, skip=lambda c, lang: noindex(c, lang, tr.get(c["id"]) if lang == "es" else None))
+    res_at = results_landed(getattr(hubs, "RESULTS", {}))   # R2: {path: first time live results showed}
+    extra_news = [(SITE + p, l, t, ts) for p, (l, t) in getattr(hubs, "RESULTS", {}).items() if p in res_at and time.time() - res_at[p] <= 48 * 3600]
+    n_news = extras.news_sitemap(clusters, tr, skip=lambda c, lang: noindex(c, lang, tr.get(c["id"]) if lang == "es" else None), extra=extra_news)
     # sitemaps: English (+ trust/hub pages) and Spanish (/es/ only), with hreflang alternates
     # left out of sitemaps (still live, linked and indexable): event/episode pages with no stories yet (hubs.THIN) and utility pages
     # (contact, masthead, newsletter signup) - sitemaps list the pages worth Google's crawl budget
@@ -575,6 +577,9 @@ def _build(clusters):
     hub_en = sorted(p for p in hub_pages if not p.startswith("es/") and p not in thin); hub_es = sorted(p for p in hub_pages if p.startswith("es/") and p not in thin)
     now_iso = iso(time.time())
     hlm = hub_lastmod(hub_pages)   # lastmod = when the page's content last changed, not every build
+    for _p, _t in res_at.items():   # R2: a page's lastmod is never older than the moment its results landed
+        if _p in hlm and (not hlm[_p] or hlm[_p] < iso(_t)): hlm[_p] = iso(_t)
+    print(f"pages: preview pages noindex {len(getattr(hubs, 'PREVIEW', ()))}, results pages {len(res_at)} ({len(extra_news)} in news sitemap)", flush=True)
     en = [(SITE, now_iso, {"en": SITE, "es": SITE + "es/"})]
     en += [(SITE + p, hlm.get(p), None) for p in hub_en]
     en += [(SITE + p, None, None) for p in static if not p.startswith("es/") and p not in thin]
@@ -594,6 +599,16 @@ def _build(clusters):
     print(f"pages: old story addresses kept as pages {n_alias} (0 redirects)", flush=True)
     print(f"pages: hubs tagged {nh} stories, {len(hub_pages)} hub pages, es stories {len(tr)}, news sitemap {n_news}", flush=True)
 SITEMAP_SKIP = {"newsletter/", "contact/", "es/contacto/", "masthead/", "es/equipo/"}
+RES_AT = os.path.join(ROOT, "data", "results_at.json")
+def results_landed(results):
+    """R2: {path: unix time live results first showed on it}; kept 30 days in data/results_at.json."""
+    try: old = json.load(open(RES_AT))
+    except Exception: old = {}
+    now = time.time(); out = {p: t for p, t in old.items() if now - t <= 30 * 86400}
+    for p in results: out.setdefault(p, now)
+    try: json.dump(out, open(RES_AT, "w"))
+    except Exception: pass
+    return {p: t for p, t in out.items() if p in results}
 HUB_LM = os.path.join(ROOT, "data", "hub_lastmod.json")
 def hub_lastmod(hub_pages):
     """{path: ISO time its content hash last changed} (kept in data/hub_lastmod.json; paths no longer built are dropped)."""
