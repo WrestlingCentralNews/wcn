@@ -273,6 +273,9 @@ THIN = set()   # event/episode pages with no stories and no live results yet: bu
 # Pages that have aired or already show results are never affected.
 PREVIEW = set()
 RESULTS = {}   # R2: {path: (lang, title)} pages showing live results this build -> lastmod bump + news sitemap
+def _start(key):
+    try: return float((LIVE.page_state(key) or {}).get("start") or 0)
+    except Exception: return 0
 def _has_results(key):
     try: return bool(LIVE and (LIVE.page_state(key) or {}).get("shown"))
     except Exception: return False
@@ -540,7 +543,7 @@ def build(clusters, tr_es=None):
             title, h1, body, ld, desc = _live(f"{ds}-{show}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
             ld = event_extras(ld, f"{show}/{ds}", img, lang)
             if not st and not _has_card(f"{show}/{ds}") and not (LIVE and (LIVE.page_state(f"{ds}-{show}") or {}).get("shown")): THIN.add(path)
-            if _has_results(f"{ds}-{show}"): RESULTS[path] = (lang, title)
+            if _has_results(f"{ds}-{show}"): RESULTS[path] = (lang, title, _start(f"{ds}-{show}"))
             elif not aired: THIN.add(path); PREVIEW.add(path)
             ch, cl = cite(f"{ds}-{show}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, image=img, robots=THIN_ROBOTS if path in THIN else None)
@@ -584,7 +587,7 @@ def build(clusters, tr_es=None):
             ld = event_extras(ld, f"{ev['slug']}/{ev['date']}", [ev.get("image"), simg], lang, matches=mt)   # Event image: official key art first, then the page photo
             EV_LD[path] = next((x for x in ld if isinstance(x, dict) and x.get("@type") == "SportsEvent"), None)
             if not st and not card_ok and not (LIVE and (LIVE.page_state(f"{ev['date']}-{ev['slug']}") or {}).get("shown")): THIN.add(path)
-            if _has_results(f"{ev['date']}-{ev['slug']}"): RESULTS[path] = (lang, title)
+            if _has_results(f"{ev['date']}-{ev['slug']}"): RESULTS[path] = (lang, title, _start(f"{ev['date']}-{ev['slug']}"))
             elif not aired: THIN.add(path); PREVIEW.add(path)
             ch, cl = cite(f"{ev['date']}-{ev['slug']}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, active="upcoming", image=img, robots=THIN_ROBOTS if path in THIN else None)

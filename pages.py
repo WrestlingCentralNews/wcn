@@ -568,7 +568,8 @@ def _build(clusters):
         link=SITE + "es/", desc="Noticias de lucha libre en español: WWE, AEW, TNA, independientes y lucha libre mundial, actualizadas cada 15 minutos.", lang="es"))
     static = extras.build_trust(clusters, tr) + extras.build_es_home(clusters, tr) + extras.build_en_home(clusters)
     res_at = results_landed(getattr(hubs, "RESULTS", {}))   # R2: {path: first time live results showed}
-    extra_news = [(SITE + p, l, t, ts) for p, (l, t) in getattr(hubs, "RESULTS", {}).items() if p in res_at and time.time() - res_at[p] <= 48 * 3600]
+    extra_news = [(SITE + p, l, t, res_at[p]) for p, (l, t, st0) in getattr(hubs, "RESULTS", {}).items()
+                  if p in res_at and time.time() - res_at[p] <= 48 * 3600 and (not st0 or time.time() - st0 <= 48 * 3600)]   # never re-date an old show as news
     n_news = extras.news_sitemap(clusters, tr, skip=lambda c, lang: noindex(c, lang, tr.get(c["id"]) if lang == "es" else None), extra=extra_news)
     # sitemaps: English (+ trust/hub pages) and Spanish (/es/ only), with hreflang alternates
     # left out of sitemaps (still live, linked and indexable): event/episode pages with no stories yet (hubs.THIN) and utility pages
