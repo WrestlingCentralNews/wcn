@@ -1,0 +1,106 @@
+{
+ "_note": "Hand-verified PLE/PPV editions for /history/ple/ (one per edition). Editions WCN covered live are built automatically from events.json + full_cards.json + data/live; an entry here fills or overrides one edition by series+date. Each entry needs a tier-1 or official source. Unknown fields stay blank.",
+ "editions": [
+  {
+   "series": "wwe-money-in-the-bank",
+   "date": "2026-10-10",
+   "winner": "Penta",
+   "main_event": "Men's Money in the Bank Ladder Match: Penta def. Bron Breakker, CM Punk, Je'Von Evans, Kevin Owens and Trick Williams",
+   "source": "https://www.wwe.com/shows/moneyinthebank/full-money-in-the-bank-2026-results",
+   "source_name": "WWE.com"
+  },
+  {
+   "series": "tna-bound-for-glory",
+   "date": "2026-10-11",
+   "winner": "Leon Slater",
+   "main_event": "Leon Slater def. Nic Nemeth (TNA World Championship)",
+   "source": "https://www.fightful.com/wrestling/leon-slater-becomes-tna-world-champion-at-bound-for-glory-2026/",
+   "source_name": "Fightful"
+  },
+  {
+   "series": "aaa-heroes-inmortales",
+   "date": "2026-10-24",
+   "winner": "El Grande Americano",
+   "main_event": "El Grande Americano def. Dominik Mysterio (AAA Mega Championship)",
+   "source": "https://www.fightful.com/wrestling/el-grande-americano-receives-assist-from-rey-mysterio-to-retain-aaa-mega-title-at-heroes-inmortales-2026/",
+   "source_name": "Fightful"
+  },
+  {
+   "series": "wwe-money-in-the-bank",
+   "date": "2025-06-07",
+   "name": "WWE Money in the Bank 2025",
+   "venue": "Intuit Dome",
+   "city": "Inglewood, California",
+   "winner": "Cody Rhodes & Jey Uso",
+   "main_event": "Cody Rhodes & Jey Uso def. John Cena & Logan Paul",
+   "source": "https://www.fightful.com/wrestling/wwe-money-bank-672025-results-two-mitb-ladder-matches-john-cena-cody-rhodes-more/",
+   "source_name": "Fightful"
+  },
+  {
+   "series": "wwe-crown-jewel",
+   "date": "2025-10-11",
+   "name": "WWE Crown Jewel 2025",
+   "venue": "RAC Arena",
+   "city": "Perth, Western Australia",
+   "winner": "Seth Rollins",
+   "main_event": "Seth Rollins def. Cody Rhodes (Men's Crown Jewel Championship)",
+   "source": "https://www.fightful.com/wrestling/seth-rollins-defeats-cody-rhodes-to-win-wwe-mens-crown-jewel-championship-at-wwe-crown-jewel-perth/",
+   "source_name": "Fightful"
+  },
+  {
+   "series": "tna-bound-for-glory",
+   "date": "2025-10-12",
+   "name": "TNA Bound for Glory 2025",
+   "venue": "Tsongas Center",
+   "city": "Lowell, Massachusetts",
+   "winner": "Mike Santana",
+   "main_event": "Mike Santana def. Trick Williams (TNA World Championship)",
+   "source": "https://www.fightful.com/wrestling/mike-santana-tna-world-title-tna-bound-for-glory/",
+   "source_name": "Fightful"
+  },
+  {
+   "series": "aew-wrestledream",
+   "date": "2025-10-18",
+   "name": "AEW WrestleDream 2025",
+   "venue": "Chaifetz Arena",
+   "city": "St. Louis, Missouri",
+   "winner": "Darby Allin",
+   "main_event": "Darby Allin def. Jon Moxley (I Quit match)",
+   "source": "https://www.fightful.com/wrestling/darby-allin-makes-jon-moxley-say-i-quit-with-scorpion-deathlock-at-aew-wrestledream/",
+   "source_name": "Fightful"
+  },
+  {
+   "series": "aew-full-gear",
+   "date": "2025-11-22",
+   "name": "AEW Full Gear 2025",
+   "venue": "Prudential Center",
+   "city": "Newark, New Jersey",
+   "winner": "Samoa Joe",
+   "main_event": "Samoa Joe def. \"Hangman\" Adam Page (Steel Cage, AEW World Championship)",
+   "source": "https://www.fightful.com/wrestling/samoa-joe-wins-the-aew-world-championship-at-aew-full-gear/",
+   "source_name": "Fightful"
+  },
+  {
+   "series": "wwe-survivor-series-wargames",
+   "date": "2025-11-29",
+   "name": "WWE Survivor Series: WarGames 2025",
+   "venue": "Petco Park",
+   "city": "San Diego, California",
+   "winner": "Brock Lesnar, Drew McIntyre, Logan Paul, Bron Breakker & Bronson Reed",
+   "main_event": "Men's WarGames: Lesnar, McIntyre, Paul, Breakker & Reed def. CM Punk, Cody Rhodes, Roman Reigns, Jey Uso & Jimmy Uso",
+   "source": "https://www.wwe.com/shows/survivor-series-wargames/full-2025-results",
+   "source_name": "WWE.com"
+  },
+  {
+   "series": "aew-worlds-end",
+   "date": "2025-12-27",
+   "name": "AEW Worlds End 2025",
+   "venue": "Now Arena",
+   "city": "Hoffman Estates, Illinois",
+   "winner": "MJF",
+   "main_event": "MJF def. Samoa Joe, Swerve Strickland and \"Hangman\" Adam Page (four-way, AEW World Championship)",
+   "source": "https://www.allelitewrestling.com/post/aew-worlds-end-results-december-27-2025",
+   "source_name": "AEW"
+  }
+ ]
+}

@@ -593,6 +593,10 @@ def _build(clusters):
     open(os.path.join(PUB, "es", "feed.xml"), "w").write(rss([es_rss_item(c) for c in es_items], SITE + "es/feed.xml", title="Wrestling Central News en español",
         link=SITE + "es/", desc="Noticias de lucha libre en español: WWE, AEW, TNA, independientes y lucha libre mundial, actualizadas cada 15 minutos.", lang="es"))
     static = extras.build_trust(clusters, tr) + extras.build_es_home(clusters, tr) + extras.build_en_home(clusters)
+    stats_skip = set()
+    try:
+        import stats_pages; sp, stats_skip = stats_pages.build(); static += sp   # /champions/, /history/ple/, /records/2026/
+    except Exception as ex: print('[stats] error (ignored)', repr(ex)[:300], flush=True)
     res_at = results_landed(getattr(hubs, "RESULTS", {}))   # R2: {path: first time live results showed}
     extra_news = [(SITE + p, l, t, res_at[p]) for p, (l, t, st0) in getattr(hubs, "RESULTS", {}).items()
                   if p in res_at and time.time() - res_at[p] <= 48 * 3600 and (not st0 or time.time() - st0 <= 48 * 3600)]   # never re-date an old show as news
@@ -600,7 +604,7 @@ def _build(clusters):
     # sitemaps: English (+ trust/hub pages) and Spanish (/es/ only), with hreflang alternates
     # left out of sitemaps (still live, linked and indexable): event/episode pages with no stories yet (hubs.THIN) and utility pages
     # (contact, masthead, newsletter signup) - sitemaps list the pages worth Google's crawl budget
-    thin = set(getattr(hubs, "THIN", ())) | SITEMAP_SKIP
+    thin = set(getattr(hubs, "THIN", ())) | SITEMAP_SKIP | stats_skip
     hub_en = sorted(p for p in hub_pages if not p.startswith("es/") and p not in thin); hub_es = sorted(p for p in hub_pages if p.startswith("es/") and p not in thin)
     now_iso = iso(time.time())
     hlm = hub_lastmod(hub_pages)   # lastmod = when the page's content last changed, not every build
