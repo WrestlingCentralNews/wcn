@@ -177,7 +177,7 @@ def build_es_home(clusters, tr):
 {C.header("es", "/", "/es/", "news").replace('<nav class="navl"', '<div class="rail"><nav class="navl"', 1).replace('</header>', '<nav class="filters" id="filters"></nav></div><div class="tools"><input id="q" placeholder="Busca luchadores, programas, empresas…" aria-label="Buscar"><span id="count"></span><span class="live" style="margin-left:auto"><i></i> EN VIVO · <span id="updated">cargando…</span></span></div></header>')}
 <div class="ad ad-leader" data-slot="leaderboard" data-size="728×90 Leaderboard"></div>
 <div class="ticker"><div id="ticker">{tick}</div></div>
-<h1 class="es-h1">Noticias de lucha libre en español</h1>{results_strip("es")}
+<h1 class="es-h1 sr-only" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0;background:none">Noticias de lucha libre en español</h1>{results_strip("es")}
 <main class="layout"><aside class="side"><div class="ad ad-sky" data-slot="leftSkyscraper" data-size="300×600 Half-page"></div></aside>
 <div class="mid"><section id="lead" class="lead" aria-label="Lo más importante">{top}</section><section id="feed" class="feed">{first}</section></div>
 <aside class="side"><div class="ad ad-sky" data-slot="rightSkyscraper" data-size="300×600 Half-page"></div></aside></main>
@@ -202,7 +202,7 @@ def build_es_home(clusters, tr):
 # 2026-10-25 (AdSense 'low value content'): the English home page was an empty JS shell (4-34 words in the HTML) while /es/ was
 # server-rendered. The latest stories (top block + 12 cards + ticker) and an H1 are now written into public/index.html at build time,
 # same markup as app.js renders (app.js replaces them on load). Idempotent: re-running replaces the previously injected block.
-EN_H1 = '<h1 class="es-h1">Pro wrestling news: WWE, AEW, TNA, indies and lucha libre</h1>'
+EN_H1 = '<h1 class="es-h1 sr-only" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0;background:none">Pro wrestling news: WWE, AEW, TNA, indies and lucha libre</h1>'
 def build_en_home(clusters):
     p = os.path.join(PUB, "index.html")
     try: s = open(p).read()
@@ -215,7 +215,7 @@ def build_en_home(clusters):
     mid = f'<div class="mid"><section id="lead" class="lead" aria-label="Top stories">{top}</section><section id="feed" class="feed">{first}</section></div>'
     s2 = re.sub(r'<div class="mid"><section id="lead".*?</section><section id="feed" class="feed">.*?</section></div>', lambda m: mid, s, count=1, flags=re.S)
     strip = results_strip("en")
-    s2 = re.sub(r'<div class="ticker"><div id="ticker">.*?</div></div>(?:\n<h1 class="es-h1">[^<]*</h1>)?(?:<section class="rstrip".*?</div></section>)?', lambda m: f'<div class="ticker"><div id="ticker">{tick}</div></div>\n{EN_H1}{strip}', s2, count=1, flags=re.S)
+    s2 = re.sub(r'<div class="ticker"><div id="ticker">.*?</div></div>(?:\n<h1 class="es-h1[^"]*"[^>]*>[^<]*</h1>)?(?:<section class="rstrip".*?</div></section>)?', lambda m: f'<div class="ticker"><div id="ticker">{tick}</div></div>\n{EN_H1}{strip}', s2, count=1, flags=re.S)
     tb = C.tabbar("en", "news", "/", "/es/")   # mobile bottom tab bar; idempotent replace-or-insert
     s2 = re.sub(r'<!--tabbar-->.*?<!--/tabbar-->', lambda m: tb, s2, flags=re.S) if "<!--tabbar-->" in s2 else s2.replace('<script src="app.js">', tb + '<script src="app.js">', 1)
     if s2 != s: open(p, "w").write(s2)
