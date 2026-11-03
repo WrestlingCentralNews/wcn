@@ -46,10 +46,10 @@ def head(title, desc, canon, lang="en", alts=None, og_type="website", image=None
             f'<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@wrestlingWCN"><meta name="twitter:image" content="{e(img)}">{extra}{lds}'
             f'{ICONS}<link rel="stylesheet" href="/style.css"><script src="/ads-config.js"></script><script src="/analytics.js"></script></head>')
 T = {
- "en": {"home": "/", "news": "News", "shows": "Shows", "upcoming": "Upcoming", "shows_url": "/shows/", "upcoming_url": "/upcoming/",
+ "en": {"home": "/", "news": "News", "shows": "Shows", "nav_shows": "Results &amp; Shows", "upcoming": "Upcoming", "shows_url": "/shows/", "upcoming_url": "/upcoming/",
         "about": "About", "masthead": "Masthead", "policy": "Editorial & corrections", "contact": "Contact", "privacy": "Privacy Policy", "terms": "Terms of Use", "newsletter": "Newsletter",
         "cookies": "Cookie settings", "follow": "Follow us", "all": "← All news", "lang_label": "Language"},
- "es": {"home": "/es/", "news": "Noticias", "shows": "Programas", "upcoming": "Próximos eventos", "shows_url": "/es/programas/", "upcoming_url": "/es/proximos-eventos/",
+ "es": {"home": "/es/", "news": "Noticias", "shows": "Programas", "nav_shows": "Resultados y programas", "upcoming": "Próximos eventos", "shows_url": "/es/programas/", "upcoming_url": "/es/proximos-eventos/",
         "about": "Quiénes somos", "masthead": "Equipo editorial", "policy": "Política editorial y correcciones", "contact": "Contacto", "privacy": "Política de privacidad (inglés)", "terms": "Términos de uso", "newsletter": "Boletín",
         "cookies": "Configuración de cookies", "follow": "Síguenos", "all": "← Todas las noticias", "lang_label": "Idioma"},
 }
@@ -65,7 +65,7 @@ def lang_toggle(lang, en_url, es_url):
     return f'<nav class="lang" aria-label="{T[lang]["lang_label"]}">{a("en", en_url or "/", "EN")}<span aria-hidden="true">|</span>{a("es", es_url or "/es/", "ES")}</nav>'
 def navlinks(lang, active=None):
     t = T[lang]
-    items = [("news", t["home"], t["news"]), ("shows", t["shows_url"], t["shows"]), ("upcoming", t["upcoming_url"], t["upcoming"])]
+    items = [("news", t["home"], t["news"]), ("shows", t["shows_url"], t["nav_shows"]), ("upcoming", t["upcoming_url"], t["upcoming"])]
     return '<nav class="navl" aria-label="Sections">' + "".join(f'<a href="{u}"{" class=on" if k == active else ""}>{lab}</a>' for k, u, lab in items) + "</nav>"
 def header(lang, en_url, es_url, active=None, back=False):
     t = T[lang]

@@ -248,6 +248,16 @@ def sources_html(c, t):
         if len(out) == 6: break
     lab = t["source"] if len(out) < 2 else t.get("sources", t["source"])
     return f'<p class="credit">{lab}: {" · ".join(out)}</p>'
+LATEST_MARK = "<!--wcn:latest-results-->"   # filled after hubs.build (results pages are built after story pages)
+def fill_latest(dirs):
+    blk = hubs.latest_block("en"); n = 0
+    for d in dirs:
+        for f in (os.listdir(d) if os.path.isdir(d) else []):
+            fp = os.path.join(d, f)
+            if not f.endswith(".html"): continue
+            s = open(fp).read()
+            if LATEST_MARK in s: open(fp, "w").write(s.replace(LATEST_MARK, blk)); n += 1
+    return n
 def page(c, related, lang="en", L=None, alt=None, hrefl=None):
     """Story page. lang='es' uses L = {'t','s','url','p'} (Spanish translation) and related = [(cluster, L)]."""
     t = S[lang]; es = lang == "es"
@@ -282,6 +292,10 @@ def page(c, related, lang="en", L=None, alt=None, hrefl=None):
     conf = f'<span class="tag conf">{t["conf"].format(n=c["sources"])}</span>' if c.get("sources", 1) > 1 else ""
     hl = hubs.hub_link(c, lang)
     hub = f'<a class="hubbox" href="/{hl[1]}"><small>{t["part"]}</small><b>{e(hl[0])}</b><span>{t["hub_go"]}</span></a>' if hl else ""
+    if not hl and not es:   # internal links to the core: a story naming a weekly show links to that show's results hub
+        sh = next((k for k, rx in hubs.SHOW_RX.items() if hubs.SHOWS[k]["brand"] in c["categories"] and rx.search(c.get("raw_title", "") + " " + c["title"])), None)
+        if sh: hub = f'<a class="hubbox" href="/{hubs.hub_path(sh, "en")}"><small>Show</small><b>{e(hubs.SHOWS[sh]["name"])}</b><span>Latest results, card &amp; news →</span></a>'
+    latest = "" if es else LATEST_MARK
     pub, mod = c.get("first_ts", c["ts"]), c["ts"]
     ld = {"@context": "https://schema.org", "@type": "NewsArticle", "headline": title[:110], "description": desc, "image": schema_image(c), "url": url,
           "datePublished": iso(pub), "dateModified": iso(mod), "mainEntityOfPage": {"@type": "WebPage", "@id": url}, "articleSection": c["categories"][0],
@@ -303,7 +317,7 @@ def page(c, related, lang="en", L=None, alt=None, hrefl=None):
             f'<article class="story"><div class="tags">{conf}{tags}</div><h1>{e(title)}</h1>{byline_html(c, lang)}\n{hero}\n{credit}{quote}{hub}<div class="prose">{"".join(body)}</div>{tl}\n'
             f'{sources_html(c, t)}\n'
             f'{ad("storyBottom", "Responsive Banner")}\n'
-            f'<section class="related"><h2>{t["more"].format(cat=e(c["categories"][0]))}</h2><div class="relgrid">{rel}</div></section></article>\n'
+            f'{latest}<section class="related"><h2>{t["more"].format(cat=e(c["categories"][0]))}</h2><div class="relgrid">{rel}</div></section></article>\n'
             f'<aside class="side">{ad("rightSkyscraper", "300×600 Half-page", "ad-sky")}</aside></main>\n'
             f'{chrome.footer(lang)}\n'
             f'{ad("mobileSticky", "320×50 Mobile", "ad-mobile")}<script src="/story.js"></script>{chrome.SCRIPTS}</body></html>')
@@ -554,6 +568,7 @@ def _build(clusters):
     shutil.rmtree(SD, ignore_errors=True); os.replace(tmp, SD)   # only current (<=60 day) stories survive
     shutil.rmtree(ESD, ignore_errors=True); os.replace(etmp, ESD)  # same pruning for Spanish pages
     hub_pages = hubs.build(clusters, tr)
+    print(f"pages: latest-results block on {fill_latest([SD])} story pages ({len(hubs.latest_rows('en'))} results links)", flush=True)
     build_newsletter_page(clusters)
     build_feeds(clusters)
     build_smartnews(clusters)

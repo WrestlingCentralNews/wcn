@@ -31,10 +31,18 @@ class T(unittest.TestCase):
         self.assertIn("At a glance", g); self.assertIn("2 matches · 1 successful title defenses · 0 title changes", g)
         self.assertEqual(live.glance(ms[:1], "en"), "")
     def test_strip(self):
-        hubs.RECENT.clear(); self.assertEqual(extras.results_strip("en"), "")
-        hubs.RECENT["en"] = [(time.time() - 3600, "events/raw-2026-10-27/", "Raw", "Oct 27", 9, False)]
-        s = extras.results_strip("en"); self.assertIn('href="/events/raw-2026-10-27/"', s); self.assertIn("9 results", s)
-        hubs.RECENT.clear()
+        hubs.LATEST.clear(); hubs.THIN.clear(); hubs.PREVIEW.clear(); self.assertEqual(extras.results_strip("en"), "")
+        now = time.time()
+        hubs._add_latest("en", "events/2026-10-27-wwe-raw/", now - 3600, "WWE Raw", "Oct 27", "WWE", "wwe-raw", "x")
+        hubs._add_latest("en", "events/2026-10-24-aaa-heroes-inmortales/", now - 7200, "AAA", "Oct 24", "Global", "aaa-heroes-inmortales", "y")
+        hubs._add_latest("en", "events/2026-10-25-indie/", now - 60, "Indie", "Oct 25", "Indie", "gcw", "z")   # not a core promotion
+        hubs.PREVIEW.add("events/2026-11-09-wwe-raw/")
+        hubs._add_latest("en", "events/2026-11-09-wwe-raw/", now, "WWE Raw", "Nov 9", "WWE", "wwe-raw", "w")   # noindex preview: never linked
+        s = extras.results_strip("en")
+        self.assertIn('href="/events/2026-10-27-wwe-raw/"', s); self.assertIn("aaa-heroes", s)
+        self.assertNotIn("indie", s); self.assertNotIn("11-09", s)
+        self.assertNotIn("10-27", hubs.latest_block("en", skip="events/2026-10-27-wwe-raw/"))
+        hubs.LATEST.clear(); hubs.PREVIEW.clear()
 class U(unittest.TestCase):
     def test_story_url_never_changes(self):
         old = "story/old-headline-words-abc.html"; pages.PREV[:] = [{"id": "abc", "url": old}]

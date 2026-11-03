@@ -522,6 +522,27 @@ def cite(key, path, title, st, lang, aired=True, extra_src=None):
           "citation": [{"@type": "CreativeWork", "name": n, "url": u} for n, u in out]}
     return h, [ld]
 LIVE_PAGES = {}
+LATEST = {}   # lang -> [(start_ts, path, name, date label, live)]: indexable results pages (aired or live results, not THIN/PREVIEW) of the core promotions
+CORE = ("WWE", "AEW", "TNA")
+def _core(brand, slug): return brand in CORE or slug.startswith("aaa-")
+def _add_latest(lang, path, ts, nm, dl, brand, slug, key):
+    if path in THIN or path in PREVIEW or not _core(brand, slug): return
+    lv = False
+    try: lv = bool(LIVE and (LIVE.page_state(key) or {}).get("is_live"))
+    except Exception: pass
+    LATEST.setdefault(lang, []).append((ts, path, nm, dl, lv))
+def latest_rows(lang, n=8, now=None):
+    """Newest indexable results pages (live first), deduplicated by path."""
+    import time as _t
+    now = now or _t.time()
+    rows = {r[1]: r for r in LATEST.get(lang, []) if now - r[0] < 14 * 86400}.values()
+    return sorted(rows, key=lambda r: (not r[4], -r[0]))[:n]
+def latest_block(lang="en", n=8, now=None, skip=None):
+    rows = [r for r in latest_rows(lang, n + 1, now) if r[1] != skip][:n]
+    if not rows: return ""
+    es = lang == "es"; h = "Últimos resultados" if es else "Latest results"
+    a = "".join(f'<a href="/{e(p)}"{" class=on" if lv else ""}><b>{e(nm)}</b><span>{("EN VIVO" if es else "LIVE") if lv else e(dl)}</span></a>' for ts, p, nm, dl, lv in rows)
+    return f'<section class="rstrip" aria-label="{h}"><h2>{h}</h2><div>{a}</div></section>'
 RECENT = {}   # lang -> [(start_ts, path, name, date label, n results, live)]: homepage 'Latest results' strip (extras.results_strip)
 def _live_desc(st, nm, dl, lang):
     """Search snippet for a page with live results: the show plus the first reported results (concrete, not 'card and preview')."""
@@ -568,7 +589,7 @@ def build(clusters, tr_es=None):
     """Write all hub pages for en + es. Returns {path: content-hash} for sitemaps/IndexNow."""
     import shutil
     global BUILD
-    _WRITTEN.clear(); LIVE_PAGES.clear(); THIN.clear(); RECENT.clear(); PREVIEW.clear(); RESULTS.clear()
+    _WRITTEN.clear(); LIVE_PAGES.clear(); THIN.clear(); RECENT.clear(); LATEST.clear(); PREVIEW.clear(); RESULTS.clear()
     now = datetime.datetime.now(ET); today = now.date(); cutoff = today - datetime.timedelta(days=RETENTION_DAYS)
     by_ep, by_ev = {}, {}
     for c in clusters:
@@ -623,6 +644,7 @@ def build(clusters, tr_es=None):
             elif not aired: THIN.add(path); PREVIEW.add(path)
             ch, cl = cite(f"{ds}-{show}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, image=img, robots=THIN_ROBOTS if path in THIN else None)
+            if aired or path in RESULTS: _add_latest(lang, path, _start(f"{ds}-{show}") or start_dt(d, info["time"]).timestamp(), nm, dl, SHOWS[show]["brand"], show, f"{ds}-{show}")
             eps.setdefault(show, []).append((d, path, len(st), aired, st))
         # ---- PLE / PPV event pages ----
         evs = []
@@ -667,6 +689,7 @@ def build(clusters, tr_es=None):
             elif not aired and confirmed_matches(f"{ev['slug']}/{ev['date']}", [x["c"]["title"] for x in st if _confirms_match(x["c"])]) < 2: THIN.add(path); PREVIEW.add(path)   # owner 2026-11-02: PLEs/specials with 2+ confirmed matches stay indexed
             ch, cl = cite(f"{ev['date']}-{ev['slug']}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, active="upcoming", image=img, robots=THIN_ROBOTS if path in THIN else None)
+            if aired or path in RESULTS: _add_latest(lang, path, _start(f"{ev['date']}-{ev['slug']}") or start_dt(d, hhmm or "20:00").timestamp(), nm, dl, ev["brand"], ev["slug"], f"{ev['date']}-{ev['slug']}")
             evs.append((ev, d, path, len(st), aired))
         # ---- evergreen show hubs ----
         idx_rows = []

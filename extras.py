@@ -146,17 +146,11 @@ def mini_html(c, L, n, lang="es"):
     im = f'<img class="fg" loading="lazy" referrerpolicy="no-referrer" src="{e(img)}" alt="" onerror="this.remove()">' if img else ""
     return (f'<article class="card mini in" style="--c:{col}" data-cat="{c["categories"][0]}" data-pos="{n}"><a class="img" href="{e(u)}" aria-hidden="true" tabindex="-1"><div class="ph">{c["categories"][0]}</div>{im}</a><div class="body">'
             f'<div class="tags">{(BRK_ES if lang == "es" else BRK_EN) if c.get("brk") else ""}<span class="tag" style="--c:{col}">{c["categories"][0]}</span></div><h2><a href="{e(u)}">{e(L["t"])}</a></h2><div class="meta"><span>{_ago_es(c["ts"], lang)}</span></div></div></article>')
-def results_strip(lang, n=4, now=None):
-    """Homepage 'Latest results' strip (owner 2026-11-01: results pages are the core): the newest shows with reported results
-    (live ones first), linking to their results pages. Outside #lead/#feed so app.js never replaces it."""
+def results_strip(lang, n=8, now=None):
+    """Homepage 'Latest results' block (owner 2026-11-01: results pages are the core): the newest indexable results pages of
+    WWE/AEW/NXT/AAA/TNA (live first; never noindex previews). Outside #lead/#feed so app.js never replaces it."""
     import hubs
-    now = now or time.time()
-    rows = sorted({p: r for r in hubs.RECENT.get(lang, []) for p in [r[1]] if now - r[0] < 8 * 86400}.values(), key=lambda r: (not r[5], -r[0]))[:n]
-    if not rows: return ""
-    es = lang == "es"; e = lambda x: html.escape(str(x), quote=True)
-    a = "".join(f'<a href="/{e(p)}"{" class=on" if lv else ""}><b>{e(nm)}</b><span>{("EN VIVO" if es else "LIVE") if lv else e(dl)} · {k} {("resultados" if es else "results") if k != 1 else ("resultado" if es else "result")}</span></a>'
-                for ts, p, nm, dl, k, lv in rows)
-    return f'<section class="rstrip" aria-label="{"Últimos resultados" if es else "Latest results"}"><h2>{"Últimos resultados" if es else "Latest results"}</h2><div>{a}</div></section>'
+    return hubs.latest_block(lang, n, now)
 def top_html(items, lang="es"):
     """Top stories block (lead + 4), same pick as app.js for the default all-promotions view."""
     import toppick
