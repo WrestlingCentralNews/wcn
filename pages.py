@@ -95,6 +95,17 @@ def build_feeds(clusters):
         its = [c for c in srt if c["categories"][0] == cat][:30]
         open(os.path.join(PUB, "feed", slug + ".xml"), "w").write(
             rss(its, f"{SITE}feed/{slug}.xml", title=f"Wrestling Central News: {cat}", desc=f"The latest {cat} news from Wrestling Central News. " + TAGLINE))
+    # /rss.xml: same feed content as /feed.xml for readers that guess that address (no redirect, no 404).
+    open(os.path.join(PUB, "rss.xml"), "w").write(rss(srt[:50], SITE + "feed.xml"))
+    open(os.path.join(PUB, "feed", "index.html"), "w").write(feeds_page())
+def feeds_page():
+    """/feed/: 200 HTML list of our RSS feeds (owner rule: no 404s). noindex,follow, never in a sitemap."""
+    h1 = "Wrestling Central News RSS feeds"
+    fs = [("All stories", "feed.xml"), ("Noticias en español", "es/feed.xml")] + [(f"{c} news", f"feed/{s}.xml") for c, s in FEED_CATS.items()]
+    li = "".join(f'<li><a href="/{u}">{e(t)}</a> <code>{SITE}{u}</code></li>' for t, u in fs)
+    h = chrome.head(h1 + " | WCN", h1, SITE + "feed/", "en", robots="noindex,follow")
+    return (f'<!doctype html><html lang="en"><head><meta charset="utf-8">{h}</head><body>\n{chrome.header("en", "/", "/es/", back=True)}\n'
+            f'<main class="layout"><article class="story"><h1>{e(h1)}</h1><ul class="more-list">{li}</ul></article></main>\n{chrome.footer("en")}\n</body></html>')
 SN_MAX, SN_DAYS = 60, 30
 def sn_item(c):
     """SmartFormat v2.2 item: full text (our own wording only) with the lead image first, WCN Staff byline, media:thumbnail."""
