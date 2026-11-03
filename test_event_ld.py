@@ -125,11 +125,3 @@ class Optional(unittest.TestCase):
         self.assertNotIn("image", hubs._ev_ld(ev, d, "events/none/", "en"))
 if __name__ == "__main__": unittest.main()
 
-class Slot(unittest.TestCase):
-    def test_tv_end(self):
-        import datetime
-        e = hubs.sports_event("WWE SmackDown", datetime.date(2026, 11, 6), "20:00", "x/", "WWE", False, "Arena", "Austin", show="wwe-smackdown", country="US", region="Texas")
-        self.assertEqual(e["endDate"], "2026-11-06T22:00:00-05:00")
-        r = hubs.sports_event("WWE Raw", datetime.date(2026, 11, 9), "20:00", "x/", "WWE", False, "Arena", "Austin", show="wwe-raw", country="US", region="Texas")
-        self.assertNotIn("endDate", r)
-if __name__ == "__main__": unittest.main()

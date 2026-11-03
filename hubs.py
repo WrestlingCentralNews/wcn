@@ -314,7 +314,6 @@ def episode_venue(show, ds):
     promotion's own event page or a trusted outlet. None -> the episode page carries no Event markup (page stays indexable)."""
     v = (CFG.get("venues") or {}).get(f"{show}/{ds}")
     return v if v and v.get("venue") and v.get("city") and v.get("source") else None
-SLOT_HOURS = {"wwe-smackdown": 2, "wwe-nxt": 2, "aew-dynamite": 2, "aew-collision": 2, "tna-impact": 2}   # fixed broadcast slot lengths
 def sports_event(name, d, hhmm, path, brand, status, venue=None, city=None, desc=None, lang="en", show=None, ev_status=None, region=None, country=None, tickets=None):
     """SportsEvent JSON-LD, or None when we have no confirmed venue: Google requires location, and we never invent one
     (the old VirtualLocation-pointing-at-our-own-page was wrong for TV shows taped in an arena)."""
@@ -327,9 +326,6 @@ def sports_event(name, d, hhmm, path, brand, status, venue=None, city=None, desc
           "location": {"@type": "Place", "name": venue, "address": addr},
           "organizer": {"@type": "Organization", "name": org}, "inLanguage": lang}
     if ev_status == "moved_online": ev["eventAttendanceMode"] = "https://schema.org/OnlineEventAttendanceMode"
-    if hhmm and show in SLOT_HOURS:   # endDate only for weekly TV with a fixed broadcast slot; PLEs/specials and variable-length shows (Raw on Netflix) left out
-        from datetime import timedelta
-        ev["endDate"] = (start_dt(d, hhmm) + timedelta(hours=SLOT_HOURS[show])).isoformat()
     ev["performer"] = [{"@type": "PerformingGroup", "name": org, **({"url": ORG_URL[org]} if org in ORG_URL else {})}]   # the promotion; announced wrestlers added by event_extras
     if desc: ev["description"] = desc
     else:   # factual line from the sourced schedule data (date, venue / regular slot) - never filler
@@ -583,7 +579,7 @@ def build(clusters, tr_es=None):
             simg = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             img = simg or ev.get("image")   # page photo: story photo, else the promotion's own key art
             title, h1, body, ld, desc = _live(f"{ev['date']}-{ev['slug']}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
-            mt = [s["c"]["title"] for s in st if (s["c"].get("kind") or {}).get("type") == "match"]
+            mt = [s["c"]["title"] for s in st if (s["c"].get("kind") or {}).get("type") == "match" and (s["c"].get("trusted") or 0) >= 1]   # performers only from tier-1 (official / top trusted) reports
             ld = event_extras(ld, f"{ev['slug']}/{ev['date']}", [ev.get("image"), simg], lang, matches=mt)   # Event image: official key art first, then the page photo
             EV_LD[path] = next((x for x in ld if isinstance(x, dict) and x.get("@type") == "SportsEvent"), None)
             if not st and not card_ok and not (LIVE and (LIVE.page_state(f"{ev['date']}-{ev['slug']}") or {}).get("shown")): THIN.add(path)
