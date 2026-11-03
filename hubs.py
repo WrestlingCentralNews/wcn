@@ -371,6 +371,11 @@ def _confirms_match(c):
     if not ((c.get("trusted") or 0) >= 1 or re.match(PERF_SRC, c.get("source") or "", re.I)): return False
     t = c.get("title") or ""
     return (c.get("kind") or {}).get("type") == "match" or (bool(_CONF_RE.search(t)) and not _NOT_CONF.search(t))
+CARD_NOTE = {"en": "Card will be updated as more matches are confirmed.", "es": "La cartelera se actualizará a medida que se confirmen más luchas."}
+def card_note(key, lang, aired):
+    """Upcoming pages only (not aired, no live results): a visible note that the card is still growing; gone once results exist."""
+    if aired or _has_results(key): return ""
+    return f'<p class="card-note"><em>{e(CARD_NOTE.get(lang, CARD_NOTE["en"]))}</em></p>'
 def confirmed_matches(key, mt=()):
     """Matches confirmed by the official card (fullcard.py) or tier-1 match stories (mt is already filtered to those)."""
     return len((_cards().get(key) or {}).get("lines") or []) + len(mt or [])
@@ -541,7 +546,7 @@ def build(clusters, tr_es=None):
             if lang == "es": pass
             note = info.get("note_es" if lang == "es" else "note")
             fx = facts([(t["date"], e(C.dfull(d, lang))), (t["time"], e(C.tfmt(h, m, lang))), (t["watch"], e(info["network"] + " (US)")), ("", e(note) if note else None)])
-            body = (f'<p class="lede">{e(show_desc(show, lang))} <a href="/{hub_path(show, lang)}">{e(nm)} →</a></p>{fx}' + sections(st, lang, aired))
+            body = (f'<p class="lede">{e(show_desc(show, lang))} <a href="/{hub_path(show, lang)}">{e(nm)} →</a></p>{fx}' + card_note(f"{ds}-{show}", lang, aired) + sections(st, lang, aired))
             crumbs = [home, shows_c, (nm, SITE + hub_path(show, lang)), (dl, SITE + path)]
             vv = episode_venue(show, ds) or {}
             ld = [x for x in (sports_event(f"{nm} ({dl})", d, info["time"], path, SHOWS[show]["brand"], aired, vv.get("venue"), vv.get("city"), desc=desc, lang=lang, show=show,
@@ -584,7 +589,7 @@ def build(clusters, tr_es=None):
             if hhmm: h, m = _hm(hhmm); tm = e(C.tfmt(h, m, lang))
             fx = facts([(t["date"], e(C.dfull(d, lang))), (t["time"], tm), (t["where"], e(f"{ev['venue']}, {ev['city']}")), (t["watch"], e(ev.get("network"))),
                         (t["src"], f'<a href="{e(ev["source"])}" rel="nofollow noopener" target="_blank">{e(re.sub(r"^https?://(www\.)?", "", ev["source"]).split("/")[0])}</a>')])
-            body = fx + sections(st, lang, aired, is_event=True)
+            body = fx + card_note(f"{ev['date']}-{ev['slug']}", lang, aired) + sections(st, lang, aired, is_event=True)
             crumbs = [home, (t["events"], SITE + UP[lang]), (nm, SITE + path)]
             ld = [x for x in [sports_event(nm, d, hhmm, path, ev["brand"], aired, ev["venue"], ev["city"], desc, lang, **_evkw(ev))] if x] + ([itemlist(st, lang)] if st else [])
             simg = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)

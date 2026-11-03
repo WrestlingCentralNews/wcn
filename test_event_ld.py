@@ -130,5 +130,13 @@ class Exempt(unittest.TestCase):
             self.assertEqual(hubs.confirmed_matches("cj/2026-11-07", ["C vs. D"]), 2)
             self.assertEqual(hubs.confirmed_matches("x/1", []), 0)
         finally: hubs._cards = old
+class Note(unittest.TestCase):
+    def test_note(self):
+        self.assertIn("more matches are confirmed", hubs.card_note("x", "en", False))
+        self.assertIn("se confirmen", hubs.card_note("x", "es", False))
+        self.assertEqual(hubs.card_note("x", "en", True), "")
+        old = hubs._has_results; hubs._has_results = lambda k: True
+        try: self.assertEqual(hubs.card_note("x", "en", False), "")
+        finally: hubs._has_results = old
 if __name__ == "__main__": unittest.main()
 
