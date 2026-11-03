@@ -112,3 +112,30 @@ PUBLISHER = {"@type": "NewsMediaOrganization", "name": "Wrestling Central News",
 PUBLISHER = {k: v for k, v in PUBLISHER.items() if v}
 def staff_author(lang="en"):
     return {"@type": "Organization", "name": "WCN Staff" if lang == "en" else "Redacción WCN", "url": SITE + STATIC["staff"][1 if lang == "es" else 0].lstrip("/")}
+# ---------- mobile bottom tab bar (owner 2026-11-02): <=768px only, replaces the pill row there ----------
+_IC = {"home": '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+       "results": '<path d="M5 3h14v18H5zM8 7h8M8 11h8M8 15h5"/>',
+       "upcoming": '<path d="M4 5h16v15H4zM4 9h16M8 3v4M16 3v4"/>',
+       "champions": '<path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v4M8 21h8"/>',
+       "more": '<path d="M5 12h.01M12 12h.01M19 12h.01" stroke-width="3.5"/>'}
+def _svg(k): return f'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{_IC[k]}</svg>'
+def tabbar(lang, active=None, en_url=None, es_url=None):
+    es = lang == "es"; t = T[lang]
+    tabs = [("news", t["home"], "Inicio" if es else "Home", "home"), ("shows", t["shows_url"], "Resultados" if es else "Results", "results"),
+            ("upcoming", t["upcoming_url"], "Próximos" if es else "Upcoming", "upcoming"), ("champions", "/champions/", "Campeones" if es else "Champions", "champions")]
+    a = "".join(f'<a href="{u}"{" class=on aria-current=page" if k == active else ""}>{_svg(ic)}<span>{lab}</span></a>' for k, u, lab, ic in tabs)
+    h = t["home"]; sh = "/es/programas/" if es else "/shows/"
+    promos = [("WWE", h + "?promo=WWE"), ("AEW", h + "?promo=AEW"), ("NXT", sh + "wwe-nxt/"), ("TNA", h + "?promo=TNA"), ("AAA / Global", h + "?promo=Global"), ("Indie", h + "?promo=Indie")]
+    p = "".join(f'<a href="{u}">{n}</a>' for n, u in promos)
+    more = (f'<a href="/history/ple/">{"Historial de PLE y PPV" if es else "PLE &amp; PPV history"}</a><a href="/records/2026/">{"Récords 2026" if es else "2026 records"}</a>'
+            f'<a href="{e(en_url or "/")}" hreflang="en" lang="en"{" aria-current=true" if not es else ""}>English</a><a href="{e(es_url or "/es/")}" hreflang="es" lang="es"{" aria-current=true" if es else ""}>Español</a>'
+            f'<a href="{X_URL}" target="_blank" rel="noopener">X @wrestlingWCN</a><a href="{FB}" target="_blank" rel="noopener">Facebook</a>')
+    lm = "Más" if es else "More"
+    return (f'<!--tabbar--><nav class="tabbar" aria-label="{"Navegación principal" if es else "Main navigation"}">{a}'
+            f'<button type="button" id="tb-more" aria-expanded="false" aria-controls="tb-sheet">{_svg("more")}<span>{lm}</span></button></nav>'
+            f'<div class="tb-sheet" id="tb-sheet" role="dialog" aria-modal="true" aria-label="{lm}" hidden><div class="tb-bg" data-x></div><div class="tb-in"><div class="tb-h"><b>{lm}</b><button type="button" data-x aria-label="{"Cerrar" if es else "Close"}">✕</button></div>'
+            f'<h3>{"Empresas" if es else "Promotions"}</h3><div class="tb-g">{p}</div><h3>{"Más de WCN" if es else "More from WCN"}</h3><div class="tb-g">{more}</div></div></div>'
+            '<script>(function(){var L=location.pathname,best=null,n=0;document.querySelectorAll(".tabbar a").forEach(function(a){var h=a.getAttribute("href");if((h===L)||(h.length>4&&L.indexOf(h)===0&&h.length>n)){best=a;n=h.length}});if(best&&!document.querySelector(".tabbar a.on")){best.className="on";best.setAttribute("aria-current","page")}var b=document.getElementById("tb-more"),s=document.getElementById("tb-sheet");if(!b||!s)return;function t(o){s.hidden=!o;b.setAttribute("aria-expanded",o);document.documentElement.classList.toggle("tb-open",o)}'
+            'b.onclick=function(){t(s.hidden)};s.addEventListener("click",function(e){if(e.target.closest("[data-x]"))t(false)});document.addEventListener("keydown",function(e){if(e.key==="Escape")t(false)})})()</script><!--/tabbar-->')
+_footer0 = footer
+def footer(lang, active=None, en_url=None, es_url=None): return _footer0(lang) + tabbar(lang, active, en_url, es_url)

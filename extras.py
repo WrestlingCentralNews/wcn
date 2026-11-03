@@ -184,7 +184,7 @@ def build_es_home(clusters, tr):
 <button id="more" class="more">Cargar más noticias</button>
 <div class="ad ad-footer" data-slot="footer" data-size="970×90 Footer Banner"></div>
 {__import__("pages").nl_block("footer-home-es", base="/", lang="es")}
-{C.footer("es")}
+{C.footer("es", "news", "/", "/es/")}
 <div class="ad ad-mobile" data-slot="mobileSticky" data-size="320×50 Mobile"></div>
 <button id="toTop" title="Volver arriba">▲</button>
 <script src="/app.js"></script>{C.SCRIPTS}</body></html>''')
@@ -216,6 +216,8 @@ def build_en_home(clusters):
     s2 = re.sub(r'<div class="mid"><section id="lead".*?</section><section id="feed" class="feed">.*?</section></div>', lambda m: mid, s, count=1, flags=re.S)
     strip = results_strip("en")
     s2 = re.sub(r'<div class="ticker"><div id="ticker">.*?</div></div>(?:\n<h1 class="es-h1">[^<]*</h1>)?(?:<section class="rstrip".*?</div></section>)?', lambda m: f'<div class="ticker"><div id="ticker">{tick}</div></div>\n{EN_H1}{strip}', s2, count=1, flags=re.S)
+    tb = C.tabbar("en", "news", "/", "/es/")   # mobile bottom tab bar; idempotent replace-or-insert
+    s2 = re.sub(r'<!--tabbar-->.*?<!--/tabbar-->', lambda m: tb, s2, flags=re.S) if "<!--tabbar-->" in s2 else s2.replace('<script src="app.js">', tb + '<script src="app.js">', 1)
     if s2 != s: open(p, "w").write(s2)
     return []
 # ---------- sitemaps ----------
