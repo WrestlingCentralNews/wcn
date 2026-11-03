@@ -39,12 +39,12 @@ def head(title, desc, canon, lang="en", alts=None, og_type="website", image=None
     lds = "".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in (ld or []))
     loc = "es_LA" if lang == "es" else "en_US"
     return (f'<!doctype html><html lang="{lang}"><head><meta charset="utf-8">\n{GA_HEAD}\n{ADSENSE if ads else ""}'
-            f'<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="{robots}">'
+            f'<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="{robots}">'
             f'<title>{e(title)}</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{e(canon)}">{hreflang(alts)}{LANG_JS}{feeds(lang)}'
             f'<meta property="og:type" content="{og_type}"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:locale" content="{loc}"><meta property="og:title" content="{e(title)}">'
             f'<meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{e(canon)}"><meta property="og:image" content="{e(img)}">'
             f'<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@wrestlingWCN"><meta name="twitter:image" content="{e(img)}">{extra}{lds}'
-            f'{ICONS}<link rel="stylesheet" href="/style.css"><script src="/ads-config.js"></script><script src="/analytics.js"></script></head>')
+            f'{ICONS}<link rel="stylesheet" href="/style.css?v={CSS_V}"><script src="/ads-config.js"></script><script src="/analytics.js"></script></head>')
 T = {
  "en": {"home": "/", "news": "News", "shows": "Shows", "nav_shows": "Results &amp; Shows", "upcoming": "Upcoming", "shows_url": "/shows/", "upcoming_url": "/upcoming/",
         "about": "About", "masthead": "Masthead", "policy": "Editorial & corrections", "contact": "Contact", "privacy": "Privacy Policy", "terms": "Terms of Use", "newsletter": "Newsletter",
@@ -59,6 +59,14 @@ STATIC = {  # (en path, es path) for the trust pages, linked from every footer
 }
 SOCIAL = (f'<div class="social"><a class="soc soc-x" href="{X_URL}" target="_blank" rel="noopener me" aria-label="Follow WCN on X" title="Follow @wrestlingWCN on X"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.9 2H22l-7.2 8.2L23.3 22h-6.6l-5.2-6.8L5.5 22H2.4l7.7-8.8L1.9 2h6.8l4.7 6.2L18.9 2zm-1.2 18h1.8L7.4 3.9H5.5L17.7 20z"/></svg></a>'
           f'<a class="soc soc-fb" href="{FB}" target="_blank" rel="noopener me" aria-label="Follow WCN on Facebook" title="Follow WCN on Facebook"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4z"/></svg></a></div>')
+import hashlib as _hl, os as _os
+try: CSS_V = _hl.sha256(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "public", "style.css"), "rb").read()).hexdigest()[:10]
+except Exception: CSS_V = "1"
+def stamp_css(html):
+    """Point every style.css link at the current ?v= hash and add viewport-fit=cover (hand-kept static pages)."""
+    import re as _re
+    html = _re.sub(r'href="(/?)style\.css(?:\?v=\w+)?"', lambda m: f'href="{m.group(1)}style.css?v={CSS_V}"', html)
+    return html.replace('content="width=device-width,initial-scale=1"', 'content="width=device-width,initial-scale=1,viewport-fit=cover"')
 def lang_toggle(lang, en_url, es_url):
     """Prominent EN | ES switch; links to the equivalent page (or the other edition's home). Click saves wcn_lang."""
     a = lambda l, u, lab: f'<a href="{e(u)}" hreflang="{l}" lang="{l}" data-lang="{l}"{" class=on aria-current=true" if l == lang else ""}>{lab}</a>'

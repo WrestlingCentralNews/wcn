@@ -203,6 +203,14 @@ def build_es_home(clusters, tr):
 # server-rendered. The latest stories (top block + 12 cards + ticker) and an H1 are now written into public/index.html at build time,
 # same markup as app.js renders (app.js replaces them on load). Idempotent: re-running replaces the previously injected block.
 EN_H1 = '<h1 class="es-h1 sr-only" style="position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0;background:none">Pro wrestling news: WWE, AEW, TNA, indies and lucha libre</h1>'
+def stamp_static():
+    for f in ("index.html", "offline.html", "privacy.html"):
+        p = os.path.join(PUB, f)
+        try: s = open(p).read()
+        except Exception: continue
+        s2 = C.stamp_css(s)
+        if s2 != s: open(p, "w").write(s2)
+    return []
 def build_en_home(clusters):
     p = os.path.join(PUB, "index.html")
     try: s = open(p).read()

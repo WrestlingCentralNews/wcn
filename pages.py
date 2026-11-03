@@ -185,7 +185,7 @@ def build_live_redirect(target):
     js = ("(function(){var b=" + tj + ",go=function(p){location.replace(p+location.hash)},n=Date.now()/1000,"
           "pick=function(t){return t&&t.until>n?'/'+t.path:'/'},done=0,fb=function(){if(!done){done=1;go(b&&b.u>n?b.p:'/')}};"
           "setTimeout(fb,1500);fetch('/live.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){if(!done){done=1;go(pick(d.target))}}).catch(fb)})();")
-    h = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+    h = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
          '<meta name="robots" content="noindex,follow"><title>WCN Live Results</title>'
          f'<link rel="canonical" href="{e(url)}"><meta http-equiv="refresh" content="3;url={e(url)}">'
          '<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0d10;color:#eee;font:16px/1.4 system-ui,sans-serif;text-align:center}'
@@ -356,11 +356,11 @@ def build_newsletter_page(clusters):
     url = SITE + "newsletter/"; desc = "WCN Weekly: the 10 biggest pro wrestling stories of the week from WWE, AEW, TNA, the indies and around the world, in your inbox every Monday. Free."
     html_ = f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
 {GA_HEAD}
-<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="max-image-preview:large">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="max-image-preview:large">
 <title>WCN Weekly Newsletter: Top Wrestling News Every Monday | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">{feed_links()}
 <meta property="og:type" content="website"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:title" content="WCN Weekly: the week in wrestling, every Monday"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:image" content="{SITE}og-image.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@wrestlingWCN"><meta name="twitter:image" content="{SITE}og-image.jpg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><meta name="theme-color" content="#0a1a18"><link rel="manifest" href="/manifest.webmanifest"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="WCN">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"><script src="/analytics.js"></script></head><body>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css?v={chrome.CSS_V}"><script src="/analytics.js"></script></head><body>
 <div class="spot s1"></div><div class="spot s2"></div>
 {chrome.header("en", "/newsletter/", "/es/", None, back=True)}
 <main class="nl-page"><h1>The week in wrestling, <b>every Monday.</b></h1>
@@ -592,7 +592,7 @@ def _build(clusters):
         x = tr[c["id"]]; return rss_item(dict(c, title=x["t"], summary=x["s"], url=x["url"], byline="Redacción WCN"))
     open(os.path.join(PUB, "es", "feed.xml"), "w").write(rss([es_rss_item(c) for c in es_items], SITE + "es/feed.xml", title="Wrestling Central News en español",
         link=SITE + "es/", desc="Noticias de lucha libre en español: WWE, AEW, TNA, independientes y lucha libre mundial, actualizadas cada 15 minutos.", lang="es"))
-    static = extras.build_trust(clusters, tr) + extras.build_es_home(clusters, tr) + extras.build_en_home(clusters)
+    static = extras.build_trust(clusters, tr) + extras.build_es_home(clusters, tr) + extras.build_en_home(clusters) + extras.stamp_static()
     stats_skip = set()
     try:
         import stats_pages; sp, stats_skip = stats_pages.build(); static += sp   # /champions/, /history/ple/, /records/2026/

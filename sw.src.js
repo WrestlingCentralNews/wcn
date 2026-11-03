@@ -46,7 +46,7 @@ async function networkFirst(ev, key) {
   }
 }
 async function cacheFirst(req, name) {
-  const hit = await caches.match(req, {ignoreSearch: name !== FONTS});
+  const hit = await caches.match(req, {ignoreSearch: name !== FONTS && !new URL(req.url).searchParams.has("v")});
   if (hit) return hit;
   const res = await fetch(req);
   if (res && (res.ok || res.type === "opaque")) { const c = await caches.open(name); c.put(req, res.clone()); }
