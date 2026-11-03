@@ -311,6 +311,7 @@ def episode_venue(show, ds):
     promotion's own event page or a trusted outlet. None -> the episode page carries no Event markup (page stays indexable)."""
     v = (CFG.get("venues") or {}).get(f"{show}/{ds}")
     return v if v and v.get("venue") and v.get("city") and v.get("source") else None
+SLOT_HOURS = {"wwe-smackdown": 2, "wwe-nxt": 2, "aew-dynamite": 2, "aew-collision": 2, "tna-impact": 2}   # fixed broadcast slot lengths
 def sports_event(name, d, hhmm, path, brand, status, venue=None, city=None, desc=None, lang="en", show=None, ev_status=None, region=None, country=None, tickets=None):
     """SportsEvent JSON-LD, or None when we have no confirmed venue: Google requires location, and we never invent one
     (the old VirtualLocation-pointing-at-our-own-page was wrong for TV shows taped in an arena)."""
@@ -323,9 +324,9 @@ def sports_event(name, d, hhmm, path, brand, status, venue=None, city=None, desc
           "location": {"@type": "Place", "name": venue, "address": addr},
           "organizer": {"@type": "Organization", "name": org}, "inLanguage": lang}
     if ev_status == "moved_online": ev["eventAttendanceMode"] = "https://schema.org/OnlineEventAttendanceMode"
-    if hhmm:   # Search Console 'missing endDate': start + typical running time (weekly TV ~3h, premium live event ~4.5h)
+    if hhmm and show in SLOT_HOURS:   # endDate only for weekly TV with a fixed broadcast slot; PLEs/specials and variable-length shows (Raw on Netflix) left out
         from datetime import timedelta
-        ev["endDate"] = (start_dt(d, hhmm) + timedelta(hours=3 if show else 4.5)).isoformat()
+        ev["endDate"] = (start_dt(d, hhmm) + timedelta(hours=SLOT_HOURS[show])).isoformat()
     ev["performer"] = [{"@type": "PerformingGroup", "name": org, **({"url": ORG_URL[org]} if org in ORG_URL else {})}]   # the promotion; announced wrestlers added by event_extras
     if desc: ev["description"] = desc
     else:   # factual line from the sourced schedule data (date, venue / regular slot) - never filler

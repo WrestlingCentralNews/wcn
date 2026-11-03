@@ -85,8 +85,8 @@ class Optional(unittest.TestCase):
         self.assertEqual(self._ev(tickets="https://www.wwe.com/events/cj")["offers"]["url"], "https://www.wwe.com/events/cj")
         self.assertNotIn("offers", self._ev(ev_status="cancelled")); self.assertNotIn("offers", self._ev(status=True))
     def test_no_end_date_without_official_end(self):
-        self.assertEqual(self._ev()["endDate"], "2026-11-07T16:30:00-05:00")  # estimated: start + 4.5h for a PLE (Search Console endDate warning)
-        for ev in hubs.CFG["events"]: e = hubs.sports_event(ev["name"], datetime.date.fromisoformat(ev["date"]), ev.get("time"), "e/", ev["brand"], False, ev["venue"], ev["city"], **hubs._evkw(ev)); self.assertTrue("endDate" not in e or e["endDate"] > e["startDate"])
+        self.assertNotIn("endDate", self._ev())  # PLE: no official runtime -> no endDate
+        for ev in hubs.CFG["events"]: self.assertNotIn("endDate", hubs.sports_event(ev["name"], datetime.date.fromisoformat(ev["date"]), ev.get("time"), "e/", ev["brand"], False, ev["venue"], ev["city"], **hubs._evkw(ev)))
     def test_literal_names_only(self):
         # a roster alias must never become a different performer (Zilla Fatu is not Jacob Fatu)
         self.assertNotIn("Jacob Fatu", hubs._literal_names("Zilla Fatu vs Charlie Dempsey Set For NXT Halloween Havoc"))
@@ -123,4 +123,13 @@ class Optional(unittest.TestCase):
             self.assertEqual(hubs.EV_LD["events/test/"]["image"], ["https://x.com/a.jpg"])   # deep copy
         finally: hubs.EV_LD.pop("events/test/", None)
         self.assertNotIn("image", hubs._ev_ld(ev, d, "events/none/", "en"))
+if __name__ == "__main__": unittest.main()
+
+class Slot(unittest.TestCase):
+    def test_tv_end(self):
+        import datetime
+        e = hubs.sports_event("WWE SmackDown", datetime.date(2026, 11, 6), "20:00", "x/", "WWE", False, "Arena", "Austin", show="wwe-smackdown", country="US", region="Texas")
+        self.assertEqual(e["endDate"], "2026-11-06T22:00:00-05:00")
+        r = hubs.sports_event("WWE Raw", datetime.date(2026, 11, 9), "20:00", "x/", "WWE", False, "Arena", "Austin", show="wwe-raw", country="US", region="Texas")
+        self.assertNotIn("endDate", r)
 if __name__ == "__main__": unittest.main()
