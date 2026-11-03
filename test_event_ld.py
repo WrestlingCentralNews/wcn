@@ -7,7 +7,7 @@ class T(unittest.TestCase):
         self.assertEqual(ev["organizer"]["url"], "https://www.wwe.com/")
         self.assertIn("RAC Arena", ev["description"])
         self.assertEqual(ev["offers"]["url"], "https://www.wwe.com/events"); self.assertNotIn("price", ev["offers"])
-        self.assertNotIn("image", ev); self.assertNotIn("performer", ev)
+        self.assertNotIn("image", ev); self.assertFalse([p for p in ev.get("performer", []) if p["@type"] == "Person"])
     def test_aired_no_offer_and_global(self):
         ev = hubs.sports_event("AAA Heroes Inmortales 2026", datetime.date(2026, 10, 24), None, "events/y/", "Global", True, "Arena", "CDMX")
         self.assertNotIn("offers", ev); self.assertEqual(ev["organizer"]["url"], "https://www.luchalibreaaa.com/")
@@ -23,11 +23,11 @@ class T(unittest.TestCase):
             hubs.event_extras(ld, "wwe-raw/2026-10-26", "https://wrestlingcentralnews.com/img/a.jpg", "en")
             hubs.event_extras(x := [hubs.sports_event("WWE Raw", datetime.date(2026, 10, 26), "20:00", "p/", "WWE", False, "Arena", "Austin, Texas", show="wwe-raw")], "wwe-raw/2026-10-19", "/rel.jpg", "en")
         finally: hubs.ROOT = old
-        names = [p["name"] for p in ld[0]["performer"]]
+        names = [p["name"] for p in ld[0]["performer"] if p["@type"] == "Person"]
         self.assertEqual(names, ["Chelsea Green", "Roxanne Perez", "CM Punk"])
         self.assertEqual(ld[0]["image"], ["https://wrestlingcentralnews.com/img/a.jpg"])
         self.assertIn("Announced: Chelsea Green", ld[0]["description"])
-        self.assertNotIn("performer", x[0]); self.assertNotIn("image", x[0])
+        self.assertFalse([p for p in x[0].get("performer", []) if p["@type"] == "Person"]); self.assertNotIn("image", x[0])
 class Thin(unittest.TestCase):
     def test_has_card_and_page_robots(self):
         d = tempfile.mkdtemp(); os.makedirs(d + "/data")
@@ -85,8 +85,8 @@ class Optional(unittest.TestCase):
         self.assertEqual(self._ev(tickets="https://www.wwe.com/events/cj")["offers"]["url"], "https://www.wwe.com/events/cj")
         self.assertNotIn("offers", self._ev(ev_status="cancelled")); self.assertNotIn("offers", self._ev(status=True))
     def test_no_end_date_without_official_end(self):
-        self.assertNotIn("endDate", self._ev())
-        for ev in hubs.CFG["events"]: self.assertNotIn("endDate", hubs.sports_event(ev["name"], datetime.date.fromisoformat(ev["date"]), ev.get("time"), "e/", ev["brand"], False, ev["venue"], ev["city"], **hubs._evkw(ev)))
+        self.assertEqual(self._ev()["endDate"], "2026-11-07T16:30:00-05:00")  # estimated: start + 4.5h for a PLE (Search Console endDate warning)
+        for ev in hubs.CFG["events"]: e = hubs.sports_event(ev["name"], datetime.date.fromisoformat(ev["date"]), ev.get("time"), "e/", ev["brand"], False, ev["venue"], ev["city"], **hubs._evkw(ev)); self.assertTrue("endDate" not in e or e["endDate"] > e["startDate"])
     def test_literal_names_only(self):
         # a roster alias must never become a different performer (Zilla Fatu is not Jacob Fatu)
         self.assertNotIn("Jacob Fatu", hubs._literal_names("Zilla Fatu vs Charlie Dempsey Set For NXT Halloween Havoc"))
@@ -103,7 +103,7 @@ class Optional(unittest.TestCase):
         self.assertIn({"@type": "Person", "name": "Penta"}, ld[0]["performer"])
         self.assertEqual(ld[0]["description"], "Crown Jewel page.")
         self.assertEqual(ld[0]["image"], ["https://x.com/a.jpg"])
-        self.assertNotIn("performer", nb[0]); self.assertNotIn("image", nb[0])
+        self.assertFalse([p for p in nb[0].get("performer", []) if p["@type"] == "Person"]); self.assertNotIn("image", nb[0])
     def test_key_art_is_official_and_sourced(self):
         for ev in hubs.CFG["events"]:
             if "image" not in ev: continue

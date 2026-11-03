@@ -323,6 +323,10 @@ def sports_event(name, d, hhmm, path, brand, status, venue=None, city=None, desc
           "location": {"@type": "Place", "name": venue, "address": addr},
           "organizer": {"@type": "Organization", "name": org}, "inLanguage": lang}
     if ev_status == "moved_online": ev["eventAttendanceMode"] = "https://schema.org/OnlineEventAttendanceMode"
+    if hhmm:   # Search Console 'missing endDate': start + typical running time (weekly TV ~3h, premium live event ~4.5h)
+        from datetime import timedelta
+        ev["endDate"] = (start_dt(d, hhmm) + timedelta(hours=3 if show else 4.5)).isoformat()
+    ev["performer"] = [{"@type": "PerformingGroup", "name": org, **({"url": ORG_URL[org]} if org in ORG_URL else {})}]   # the promotion; announced wrestlers added by event_extras
     if desc: ev["description"] = desc
     else:   # factual line from the sourced schedule data (date, venue / regular slot) - never filler
         ev["description"] = f"{name}: {C.dlong(d, lang)}, {venue}, {city}."
@@ -379,7 +383,7 @@ def event_extras(ld, key, img, lang, matches=()):
     for a in card.get("appearances") or []:
         if a.lower() not in {x.lower() for x in names}: names.insert(ncard, a); ncard += 1
     if names:
-        ev["performer"] = [{"@type": "Person", "name": n} for n in names[:40]]
+        ev["performer"] = [p for p in (ev.get("performer") or []) if p.get("@type") != "Person"] + [{"@type": "Person", "name": n} for n in names[:40]]
         lab = "Anunciados" if lang == "es" else "Announced"
     if ncard:   # the description names only the official card (headline-derived names stay in performer)
         dn = names[:ncard]
