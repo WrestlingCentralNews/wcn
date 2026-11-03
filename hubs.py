@@ -363,6 +363,7 @@ def _cards():
         with open(os.path.join(ROOT, "data", "fullcards.json")) as f: return json.load(f)
     except Exception: return {}
 def _has_card(key): return bool((_cards().get(key) or {}).get("lines"))
+PERF_SRC = r"^(Chris Van Vliet|CVV|Insight with Chris Van Vliet|Sean Ross Sapp|Fightful( Select)?)$"   # owner: top sources for announced wrestlers, besides editorial tier 1 (official sites, Fightful/SRS, PWInsider, Observer, POST, Wrestling Inc)
 def event_extras(ld, key, img, lang, matches=()):
     """Fill the page's SportsEvent with what we really have: the page photo (absolute https URL that already passed the photo rules)
     and the announced wrestlers from the official card (fullcard.py state: card lines + advertised appearances) as Person performers,
@@ -579,7 +580,7 @@ def build(clusters, tr_es=None):
             simg = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             img = simg or ev.get("image")   # page photo: story photo, else the promotion's own key art
             title, h1, body, ld, desc = _live(f"{ev['date']}-{ev['slug']}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
-            mt = [s["c"]["title"] for s in st if (s["c"].get("kind") or {}).get("type") == "match" and (s["c"].get("trusted") or 0) >= 1]   # performers only from tier-1 (official / top trusted) reports
+            mt = [s["c"]["title"] for s in st if (s["c"].get("kind") or {}).get("type") == "match" and ((s["c"].get("trusted") or 0) >= 1 or re.match(PERF_SRC, s["c"].get("source") or "", re.I))]   # performers only from official sites / top trusted reports
             ld = event_extras(ld, f"{ev['slug']}/{ev['date']}", [ev.get("image"), simg], lang, matches=mt)   # Event image: official key art first, then the page photo
             EV_LD[path] = next((x for x in ld if isinstance(x, dict) and x.get("@type") == "SportsEvent"), None)
             if not st and not card_ok and not (LIVE and (LIVE.page_state(f"{ev['date']}-{ev['slug']}") or {}).get("shown")): THIN.add(path)
