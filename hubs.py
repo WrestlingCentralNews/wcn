@@ -362,6 +362,11 @@ def _cards():
     try:
         with open(os.path.join(ROOT, "data", "fullcards.json")) as f: return json.load(f)
     except Exception: return {}
+def _manual_card(key):
+    """Hand entry in full_cards.json (main_event + main_event_source + date for THIS edition), read directly so it applies outside fullcard.py's window."""
+    try:
+        with open(os.path.join(ROOT, "full_cards.json")) as f: return (json.load(f).get("cards") or {}).get(key) or {}
+    except Exception: return {}
 def _has_card(key): return bool((_cards().get(key) or {}).get("lines"))
 PERF_SRC = r"^(Chris Van Vliet|CVV|Insight with Chris Van Vliet|Sean Ross Sapp|Fightful( Select)?)$"   # owner: top sources for announced wrestlers, besides editorial tier 1 (official sites, Fightful/SRS, PWInsider, Observer, POST, Wrestling Inc)
 _CONF_RE = re.compile(r"\b(vs\.?|versus|set for|set at|confirmed|announced|official|added|challenges?|defen[sc]es?|title match|match set|card updated|card revealed)\b", re.I)
@@ -379,7 +384,53 @@ def card_note(key, lang, aired):
 def confirmed_matches(key, mt=()):
     """Matches confirmed by the official card (fullcard.py) or tier-1 match stories (mt is already filtered to those)."""
     return len((_cards().get(key) or {}).get("lines") or []) + len(mt or [])
-def event_extras(ld, key, img, lang, matches=()):
+# ---- performers tied to THIS edition (owner 2026-11-02: never mix Halloween Havoc 2025 into 2026; same wrestlers may main event
+# different years, so the match is by date, never by name or wrestler) ----
+_YEAR = re.compile(r"\b(20\d\d)\b")
+_RES_RE = re.compile(r"\b(def\.?|defeats?|beats?|retains?|wins?|won|regains?|captures?|battles?|vs\.?|over)\b", re.I)
+_MAIN = re.compile(r"\bmain[- ]event(s|ed)?\b|\bheadlin(e|es|ing)\b", re.I)
+def prev_edition(ev):
+    """Date of the previous same-named edition in events.json (same slug, earlier date), else None."""
+    ds = sorted(x["date"] for x in EVENTS if x.get("slug") == ev.get("slug") and x["date"] < ev["date"])
+    return _d(ds[-1]) if ds else None
+def edition_ok(c, ev_date, aired, prev=None):
+    """A source counts for this edition only if (a) published inside its build-up window: after the previous edition (or at most 120
+    days before this one) and no later than 3 days after it; results-type reports only from the event day on; and (b) any year it
+    names is this edition's year."""
+    ts = c.get("first_ts", c.get("ts"))
+    if not ts: return False
+    day = datetime.datetime.fromtimestamp(int(ts), ET).date()
+    lo = max(prev + datetime.timedelta(days=1) if prev else ev_date - datetime.timedelta(days=120), ev_date - datetime.timedelta(days=120))
+    if not (lo <= day <= ev_date + datetime.timedelta(days=3)): return False
+    kind = (c.get("kind") or {}).get("type")
+    if kind == "results" and (day < ev_date or not aired): return False
+    yrs = {int(y) for y in _YEAR.findall(" ".join([c.get("title") or "", c.get("raw_title") or ""]))}
+    return not yrs or yrs == {ev_date.year}
+def _trusted(c): return (c.get("trusted") or 0) >= 1 or bool(re.match(PERF_SRC, c.get("source") or "", re.I))
+def perf_titles(cs, ev_date, aired, prev=None):
+    """(main-event titles, other confirmed match/result titles) from trusted sources for this edition only."""
+    mains, other = [], []
+    for c in cs:
+        if not _trusted(c) or not edition_ok(c, ev_date, aired, prev): continue
+        k = (c.get("kind") or {}).get("type"); t = c.get("title") or ""
+        if k == "results" and not _RES_RE.search(t): continue   # a results report names performers only when it says who won/lost
+        if k not in ("match", "results"): continue   # news items ('Roman Reigns set for Raw') never feed an event's performers
+        if _NOT_CONF.search(t): continue
+        (mains if _MAIN.search(t) else other).append(t)
+    return mains, other
+def card_ok_for(card, ev_date):
+    """A card whose stated date/year differs from this edition is never used."""
+    sd = str(card.get("date") or "")
+    if sd and sd[:10] != ev_date.isoformat()[:len(sd[:10])]: return False
+    yrs = {int(y) for y in _YEAR.findall(" ".join([str(card.get("name") or ""), str(card.get("source") or "")]))}
+    return not yrs or ev_date.year in yrs
+def _dup(nm, names):
+    """Same person already listed: exact match, or a partial form ('Konosuke') of a listed full name."""
+    l = nm.lower(); w = l.split()
+    return any(l == x.lower() or (len(w) < len(x.split()) and x.lower().split()[:len(w)] == w) for x in names)
+
+
+def event_extras(ld, key, img, lang, matches=(), mains=(), ev_date=None):
     """Fill the page's SportsEvent with what we really have: the page photo (absolute https URL that already passed the photo rules)
     and the announced wrestlers from the official card (fullcard.py state: card lines + advertised appearances) as Person performers,
     named in the description. Nothing known -> field left out."""
@@ -388,12 +439,23 @@ def event_extras(ld, key, img, lang, matches=()):
     imgs = [u for u in ([img] if isinstance(img, str) or img is None else list(img)) if (u or "").startswith("https://") and "/img/promo/" not in u]   # generic promotion fallback is not an event photo
     if imgs: ev["image"] = list(dict.fromkeys(imgs))
     card = _cards().get(key) or {}
+    if ev_date is None:
+        try: ev_date = _d(key.rsplit("/", 1)[1])
+        except Exception: ev_date = None
+    if ev_date and card and not card_ok_for(card, ev_date): card = {}
     names = []; ncard = 0
+    man = _manual_card(key)
+    if ev_date and man and not card_ok_for(man, ev_date): man = {}
+    me = list(card.get("main_event") or []) + list(man.get("main_event") if man.get("main_event_source") else [])   # hand main event only with its source URL
+    for line in me + list(mains or []):   # main event participants first (official card field or trusted 'main event' report)
+        for nm in ([line] if line in me and len(line.split()) <= 4 else _literal_names(line)):   # hand/official names verbatim
+            if not _dup(nm, names): names.append(nm)
+    nmain = len(names)
     try:
         for i, line in enumerate(list(card.get("lines") or []) + list(matches or [])):   # official card lines, then confirmed match-announcement headlines
             if i == len(card.get("lines") or []): ncard = len(names)
             for nm in _literal_names(line):
-                if nm.lower() not in {x.lower() for x in names}: names.append(nm)
+                if not _dup(nm, names): names.append(nm)
         if not matches: ncard = len(names)
     except Exception as ex: print("[hubs] card performers failed", key, repr(ex)[:120], flush=True)
     for a in card.get("appearances") or []:
@@ -401,6 +463,8 @@ def event_extras(ld, key, img, lang, matches=()):
     if names:
         ev["performer"] = [p for p in (ev.get("performer") or []) if p.get("@type") != "Person"] + [{"@type": "Person", "name": n} for n in names[:40]]
         lab = "Anunciados" if lang == "es" else "Announced"
+    if nmain >= 2:   # the main event, marked in the description (schema.org has no main-event field; no extra subEvent so no new warnings)
+        ev["description"] = (ev.get("description", "").rstrip() + (" Evento estelar: " if lang == "es" else " Main event: ") + " vs. ".join(names[:nmain][:8]) + ".").strip()
     if ncard:   # the description names only the official card (headline-derived names stay in performer)
         dn = names[:ncard]
         ev["description"] = (ev.get("description", "").rstrip() + f" {lab}: " + ", ".join(dn[:8]) + (" y más." if lang == "es" and len(dn) > 8 else " and more." if len(dn) > 8 else ".")).strip()
@@ -595,8 +659,8 @@ def build(clusters, tr_es=None):
             simg = next((s["c"].get("image") for s in st if (s["c"].get("image") or "").startswith("https://")), None)
             img = simg or ev.get("image")   # page photo: story photo, else the promotion's own key art
             title, h1, body, ld, desc = _live(f"{ev['date']}-{ev['slug']}", lang, path, nm, dl, title, h1, body, ld, desc=desc, img=img)
-            mt = [s["c"]["title"] for s in st if (s["c"].get("kind") or {}).get("type") == "match" and ((s["c"].get("trusted") or 0) >= 1 or re.match(PERF_SRC, s["c"].get("source") or "", re.I))]   # performers only from official sites / top trusted reports
-            ld = event_extras(ld, f"{ev['slug']}/{ev['date']}", [ev.get("image"), simg], lang, matches=mt)   # Event image: official key art first, then the page photo
+            mains, mt = perf_titles([s["c"] for s in st], d, aired, prev_edition(ev))   # owner 2026-11-02: only THIS edition's trusted sources, main event first
+            ld = event_extras(ld, f"{ev['slug']}/{ev['date']}", [ev.get("image"), simg], lang, matches=mt, mains=mains, ev_date=d)   # Event image: official key art first, then the page photo
             EV_LD[path] = next((x for x in ld if isinstance(x, dict) and x.get("@type") == "SportsEvent"), None)
             if not st and not card_ok and not (LIVE and (LIVE.page_state(f"{ev['date']}-{ev['slug']}") or {}).get("shown")): THIN.add(path)
             if _has_results(f"{ev['date']}-{ev['slug']}"): RESULTS[path] = (lang, title, _start(f"{ev['date']}-{ev['slug']}"))

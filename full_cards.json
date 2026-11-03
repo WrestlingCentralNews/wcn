@@ -1,5 +1,5 @@
 {
- "_note": "Hand card data for fullcard.py, keyed '<show or event slug>/<YYYY-MM-DD>'. 'matches' (+ 'source', 'source_name', optional 'image', 'name', 'time', 'network') = the whole card copied from the promotion's official preview or trusted outlets (any promotion/PLE). For WWE weekly shows the matches come from WWE.com automatically; an entry may add 'appearances' (advertised talent, with 'appearances_source') and 'venue'.",
+ "_note": "Hand card data for fullcard.py, keyed '<show or event slug>/<YYYY-MM-DD>'. 'matches' (+ 'source', 'source_name', optional 'image', 'name', 'time', 'network') = the whole card copied from the promotion's official preview or trusted outlets (any promotion/PLE). For WWE weekly shows the matches come from WWE.com automatically; an entry may add 'appearances' (advertised talent, with 'appearances_source') and 'venue'. 'main_event' (+ 'main_event_source' URL and 'date' = this edition's date) lists THIS edition's main event participants, confirmed by the promotion or tier-1 sources; used first in Event performer markup.",
  "cards": {
   "wwe-smackdown/2026-10-23": {
    "venue": "Toyota Arena in Ontario, California",
@@ -13,6 +13,72 @@
     "Karl Anderson"
    ],
    "appearances_source": "https://www.wwe.com/event/friday-night-smackdown-86"
+  },
+  "wwe-money-in-the-bank/2026-10-10": {
+   "date": "2026-10-10",
+   "main_event": [
+    "Penta",
+    "CM Punk",
+    "Kevin Owens",
+    "Trick Williams",
+    "Je'Von Evans",
+    "Bron Breakker"
+   ],
+   "main_event_source": "https://www.wwe.com/shows/moneyinthebank/full-money-in-the-bank-2026-results"
+  },
+  "tna-bound-for-glory/2026-10-11": {
+   "date": "2026-10-11",
+   "main_event": [
+    "Leon Slater",
+    "Nic Nemeth"
+   ],
+   "main_event_source": "https://tnawrestling.com/news/tna-bound-for-glory-2026-live-results"
+  },
+  "aew-wrestledream/2026-10-17": {
+   "date": "2026-10-17",
+   "main_event": [
+    "Will Ospreay",
+    "Samoa Joe",
+    "Mike Bailey",
+    "Adam Copeland",
+    "Konosuke Takeshita",
+    "Kazuchika Okada",
+    "Ricochet",
+    "Darby Allin"
+   ],
+   "main_event_source": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/"
+  },
+  "aaa-heroes-inmortales/2026-10-24": {
+   "date": "2026-10-24",
+   "main_event": [
+    "El Grande Americano",
+    "Dominik Mysterio"
+   ],
+   "main_event_source": "https://www.wwe.com/shows/aaa/aaa-heroes-inmortales-week-1-results"
+  },
+  "wwe-nxt-halloween-havoc/2026-10-31": {
+   "date": "2026-10-31",
+   "main_event": [
+    "Grayson Waller",
+    "Tony D'Angelo"
+   ],
+   "main_event_source": "https://www.fightful.com/wrestling/grayson-waller-def-tony-dangelo-to-retain-nxt-title-at-halloween-havoc/"
+  },
+  "wwe-crown-jewel/2026-11-07": {
+   "date": "2026-11-07",
+   "main_event": [
+    "Roman Reigns",
+    "Sami Zayn"
+   ],
+   "main_event_source": "https://www.wwe.com/shows/wwe-crown-jewel/crown-jewel-2026"
+  },
+  "aew-full-gear/2026-11-14": {
+   "date": "2026-11-14",
+   "main_event": [
+    "Will Ospreay",
+    "Kyle Fletcher"
+   ],
+   "main_event_source": "https://www.f4wonline.com/news/aew/will-ospreay-vs-kyle-fletcher-aew-full-gear-2026/"
   }
  }
 }
