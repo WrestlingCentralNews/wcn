@@ -708,6 +708,19 @@ def build(clusters, tr_es=None):
         body = f'<p class="lede">{t["disclaimer"]}</p>' + "".join(rows)
         page(path, lang, title, desc, h1, body, [home, (t["upcoming"] if lang == "en" else T["upcoming"], SITE + path)], [x for x in lds if x][:40],
              {"en": SITE + UP["en"], "es": SITE + UP["es"]}, active="upcoming")
+        # ---- /events/ (es: /es/eventos/) index: plain 200 hub of every event/episode page (owner rule: no 404s). It overlaps /shows/ and
+        # /upcoming/, so it is noindex,follow and kept out of sitemaps (THIN); no Event markup here.
+        allp = [(d, p, ev["name"], a) for ev, d, p, n, a in evs] + [(d, p, SHOWS[sh]["name"], a) for sh, lst in eps.items() for d, p, n, a, _ in lst]
+        up_l = sorted([x for x in allp if not x[3]], key=lambda x: x[0]); past_l = sorted([x for x in allp if x[3]], key=lambda x: x[0], reverse=True)
+        li = lambda xs: "".join(f'<li><a href="/{p}">{e(nm)} · {e(C.dfull(d, lang))}</a></li>' for d, p, nm, a in xs)
+        path = "es/eventos/" if lang == "es" else "events/"
+        h1 = t["events"]; title = ("Eventos de lucha libre: resultados y carteleras | WCN" if lang == "es" else "Wrestling Events: Results & Cards | WCN")
+        desc = ("Todas las páginas de eventos y episodios de WCN: próximas carteleras y resultados recientes." if lang == "es" else "Every WCN event and episode page: upcoming cards and recent results.")
+        body = (f'<p class="lede"><a href="/{T["home"].lstrip("/")}">{e(t["home"])}</a> · <a href="/{SH[lang]}">{e(T["shows"])}</a> · <a href="/{UP[lang]}">{e(t["upcoming"])}</a></p>'
+                + (f'<section class="hsec"><h2>{t["upcoming"]}</h2><ul class="eplist">{li(up_l)}</ul></section>' if up_l else "")
+                + (f'<section class="hsec"><h2>{t["past"]}</h2><ul class="eplist">{li(past_l)}</ul></section>' if past_l else ""))
+        THIN.add(path)
+        page(path, lang, title, desc, h1, body, [home, (t["events"], SITE + path)], [], {"en": SITE + "events/", "es": SITE + "es/eventos/"}, active="upcoming", robots=THIN_ROBOTS)
     _gone_stubs(now)
     # swap staged dirs in atomically-ish (old episode pages beyond retention disappear = same pruning as stories)
     for rel in ("shows", "events", "upcoming", "es/programas", "es/eventos", "es/proximos-eventos"):
