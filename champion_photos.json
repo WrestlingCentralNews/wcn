@@ -1,0 +1,2322 @@
+{
+ "a-j-styles": {
+  "name": "A.J. Styles",
+  "file": "/img/champions/a-j-styles.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:AJ_Styles_RR24_(1)_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "a-town-down-under": {
+  "name": "A-Town Down Under",
+  "file": "/img/champions/a-town-down-under.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Austin_Theory_at_Alpha_1.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Tabercil"
+ },
+ "abyss-wrestler": {
+  "name": "Abyss (wrestler)",
+  "file": "/img/champions/abyss-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Abyss_posing_at_Alpha1.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Tabercil"
+ },
+ "ace-austin": {
+  "name": "Ace Austin",
+  "file": "/img/champions/ace-austin.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Ace_Austin_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "adam-cole": {
+  "name": "Adam Cole",
+  "file": "/img/champions/adam-cole.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Adam_Cole_2022-03-23_(AEW_Wrestling,_Dynamite,_HEB_Center,_Cedar_Park).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Ralph Arvesen"
+ },
+ "adam-copeland": {
+  "name": "Adam Copeland",
+  "file": "/img/champions/adam-copeland.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Adam_Copeland_by_Gage_Skidmore.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Gage Skidmore"
+ },
+ "aj-styles": {
+  "name": "AJ Styles",
+  "file": "/img/champions/aj-styles.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:AJ_Styles_RR24_(1)_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "alberto-del-rio": {
+  "name": "Alberto Del Rio",
+  "file": "/img/champions/alberto-del-rio.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Alberto_Del_Rio,_Nov_2025_(cropped).jpg",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0",
+  "author": "Luisito Rey"
+ },
+ "alex-shelley": {
+  "name": "Alex Shelley",
+  "file": "/img/champions/alex-shelley.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Alex_Shelley,_March_2016_(cropped).png",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Courtney Rose"
+ },
+ "alexa-bliss": {
+  "name": "Alexa Bliss",
+  "file": "/img/champions/alexa-bliss.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Alexa_Bliss_RR25_(1)_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "aliyah-wrestler": {
+  "name": "Aliyah (wrestler)",
+  "file": "/img/champions/aliyah-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Aliyah_WrestleMania_Axxess_April_2018.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Shared Account"
+ },
+ "amazing-red": {
+  "name": "Amazing Red",
+  "file": "/img/champions/amazing-red.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Amazing_Red_SCW_2014.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Tabercil"
+ },
+ "american-alpha": {
+  "name": "American Alpha",
+  "file": "/img/champions/american-alpha.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:American_Alpha_NXT_Takeover_Dallas_2016.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "andrade-el-idolo": {
+  "name": "Andrade El Idolo",
+  "file": "/img/champions/andrade-el-idolo.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Andrade_February_2026.jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "House of Glory Wrestling"
+ },
+ "apollo-crews": {
+  "name": "Apollo Crews",
+  "file": "/img/champions/apollo-crews.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Apollo_Crews_WrestleMania_32_Axxess.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "asuka-wrestler": {
+  "name": "Asuka (wrestler)",
+  "file": "/img/champions/asuka-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Asuka,_WrestleMania_XL.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "austin-aries": {
+  "name": "Austin Aries",
+  "file": "/img/champions/austin-aries.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Austin_Aries_2013_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Mike Kalasnik"
+ },
+ "austin-theory": {
+  "name": "Austin Theory",
+  "file": "/img/champions/austin-theory.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Austin_Theory_at_Alpha_1.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Tabercil"
+ },
+ "bad-news-barrett": {
+  "name": "Bad News Barrett",
+  "file": "/img/champions/bad-news-barrett.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Wade_Barrett_WrestleMania_32_Axxess.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "baron-corbin": {
+  "name": "Baron Corbin",
+  "file": "/img/champions/baron-corbin.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Baron_Corbin_April_2018.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "bayley-and-sasha-banks": {
+  "name": "Bayley and Sasha Banks",
+  "file": "/img/champions/bayley-and-sasha-banks.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Sasha_Banks_and_Bayley.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Rtyggu"
+ },
+ "bayley-wrestler": {
+  "name": "Bayley (wrestler)",
+  "file": "/img/champions/bayley-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Bayley,_WrestleMania_XL_in_2024_2.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "diegofernandophotography"
+ },
+ "becky-lynch": {
+  "name": "Becky Lynch",
+  "file": "/img/champions/becky-lynch.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Becky_Lynch_at_Vulture_Festival_2024_03_(cropped).jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "PaulLim11"
+ },
+ "bianca-belair": {
+  "name": "Bianca Belair",
+  "file": "/img/champions/bianca-belair.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Bianca_Belair_Texas_2023.jpg",
+  "license": "Public domain",
+  "license_url": "",
+  "author": "US Air Force / Jason Wilkinson"
+ },
+ "big-e-langston": {
+  "name": "Big E Langston",
+  "file": "/img/champions/big-e-langston.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:BigE2024FebruaryEvent.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "big-e-wrestler": {
+  "name": "Big E (wrestler)",
+  "file": "/img/champions/big-e-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:BigE2024FebruaryEvent.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "big-show": {
+  "name": "Big Show",
+  "file": "/img/champions/big-show.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Big-Show-T4.jpg",
+  "license": "Public domain",
+  "license_url": "",
+  "author": "Sgt. Jessica M. Kuhn"
+ },
+ "blake-monroe": {
+  "name": "Blake Monroe",
+  "file": "/img/champions/blake-monroe.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Mariah_May_in_April_2024_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "J O Y F U L 🐻 V I O L E N C E"
+ },
+ "bo-dallas": {
+  "name": "Bo Dallas",
+  "file": "/img/champions/bo-dallas.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Bo_Dallas_2017-05-12.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Shared Account"
+ },
+ "bobby-lashley": {
+  "name": "Bobby Lashley",
+  "file": "/img/champions/bobby-lashley.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Bobby_Lashley,_WrestleMania_XL_2024_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "bobby-roode": {
+  "name": "Bobby Roode",
+  "file": "/img/champions/bobby-roode.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Bobby_Roode_April_2018.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "braun-strowman": {
+  "name": "Braun Strowman",
+  "file": "/img/champions/braun-strowman.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Braun_Strowman_March_2023_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "bray-wyatt": {
+  "name": "Bray Wyatt",
+  "file": "/img/champions/bray-wyatt.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Bray_Wyatt,_2022_(cropped-2).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "bret-hart": {
+  "name": "Bret Hart",
+  "file": "/img/champions/bret-hart.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Bret_Hart_Photo_Op_GalaxyCon_Raleigh_2023.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals from Ft. Lauderdale, USA"
+ },
+ "brian-cage": {
+  "name": "Brian Cage",
+  "file": "/img/champions/brian-cage.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Brian_Cage_and_Hechicero_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "brian-kendrick": {
+  "name": "Brian Kendrick",
+  "file": "/img/champions/brian-kendrick.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Brian_Kendrick_April_2019.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "John Manard"
+ },
+ "brie-bella": {
+  "name": "Brie Bella",
+  "file": "/img/champions/brie-bella.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Brie_Bella_2016.png",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Gage Skidmore"
+ },
+ "britt-baker": {
+  "name": "Britt Baker",
+  "file": "/img/champions/britt-baker.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Britt_Baker_Photo_Op_GalaxyCon_Raleigh_2023.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals from Ft. Lauderdale, USA"
+ },
+ "brock-lesnar": {
+  "name": "Brock Lesnar",
+  "file": "/img/champions/brock-lesnar.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Brock_Lesnar_At_SummerSlam_2023_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "brodie-lee": {
+  "name": "Brodie Lee",
+  "file": "/img/champions/brodie-lee.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Luke_Harper_April_2015.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "bron-breakker": {
+  "name": "Bron Breakker",
+  "file": "/img/champions/bron-breakker.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Breakker_vs_Rollins_(cropped-2).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "HHH Pedrigree"
+ },
+ "bronson-reed": {
+  "name": "Bronson Reed",
+  "file": "/img/champions/bronson-reed.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Bronson_Reed_2022.jpg",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0",
+  "author": "House of Glory Wrestling"
+ },
+ "bryan-danielson": {
+  "name": "Bryan Danielson",
+  "file": "/img/champions/bryan-danielson.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Bryan_Danielson_2022-03-23_(3x4_cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Ralph Arvesen"
+ },
+ "bully-ray": {
+  "name": "Bully Ray",
+  "file": "/img/champions/bully-ray.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:BubbaRayDudleyApril2016.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Flickr user Miguel Discart"
+ },
+ "cameron-grimes": {
+  "name": "Cameron Grimes",
+  "file": "/img/champions/cameron-grimes.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Trevor_Lee_X_Division_Champ_BFG_17_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Mike Kalasnik from Charlotte, USA"
+ },
+ "carmella-wrestler": {
+  "name": "Carmella (wrestler)",
+  "file": "/img/champions/carmella-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Leah_Van_Dale_(Carmella).jpg",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0",
+  "author": "Diva Insider"
+ },
+ "carmelo-hayes": {
+  "name": "Carmelo Hayes",
+  "file": "/img/champions/carmelo-hayes.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Carmelo_Hayes_RR25_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "cedric-alexander": {
+  "name": "Cedric Alexander",
+  "file": "/img/champions/cedric-alexander.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Cedric_Alexander_2026.png",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "TNA Wrestling"
+ },
+ "cesaro-wrestler": {
+  "name": "Cesaro (wrestler)",
+  "file": "/img/champions/cesaro-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Claudio_Castagnoli,_June_2022_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "chad-gable": {
+  "name": "Chad Gable",
+  "file": "/img/champions/chad-gable.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:WWE_Live_Road_To_WrestleMania,_Toronto,_2022_90_(cropped).jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Noon Plastic"
+ },
+ "charlotte-flair": {
+  "name": "Charlotte Flair",
+  "file": "/img/champions/charlotte-flair.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Charlotte_Flair_Photo_Op_GalaxyCon_Raleigh_2019.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals"
+ },
+ "chelsea-green": {
+  "name": "Chelsea Green",
+  "file": "/img/champions/chelsea-green.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Chelsea_Green_Las_Vegas_2025_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "TaurusEmerald"
+ },
+ "chris-benoit": {
+  "name": "Chris Benoit",
+  "file": "/img/champions/chris-benoit.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Chris_Benoit_in_the_Ring.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
+  "author": "The original uploader was Bbsrock at English Wikipedia.\n\n(Original text: dani nuestro from Bangkok)"
+ },
+ "chris-bey": {
+  "name": "Chris Bey",
+  "file": "/img/champions/chris-bey.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Chris_Bey_in_February_2024_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "J O Y F U L 🐻 V I O L E N C E"
+ },
+ "chris-jericho": {
+  "name": "Chris Jericho",
+  "file": "/img/champions/chris-jericho.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Chris_Jericho_GalaxyCon_Raleigh_July,_25,_2026_681.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "John Manard"
+ },
+ "chris-sabin": {
+  "name": "Chris Sabin",
+  "file": "/img/champions/chris-sabin.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Chris_Sabin_February_2016.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Courtney Rose"
+ },
+ "christian-cage": {
+  "name": "Christian Cage",
+  "file": "/img/champions/christian-cage.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Christian_Cage_Photo_Op_Nightmare_Weekend_Chicago_2025.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals"
+ },
+ "christian-wrestler": {
+  "name": "Christian (wrestler)",
+  "file": "/img/champions/christian-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Christian_Cage_Photo_Op_Nightmare_Weekend_Chicago_2025.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals"
+ },
+ "christopher-daniels": {
+  "name": "Christopher Daniels",
+  "file": "/img/champions/christopher-daniels.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Zayda_Steel_and_Christopher_Daniels_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "cm-punk": {
+  "name": "CM Punk",
+  "file": "/img/champions/cm-punk.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:CM_Punk_at_San_Diego_Comic_Con_2026.jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Kevin Paul"
+ },
+ "cody-rhodes": {
+  "name": "Cody Rhodes",
+  "file": "/img/champions/cody-rhodes.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Cody_Rhodes_Fort_Bragg_Army_250_Birthday_Celebration_(headshot).jpg",
+  "license": "Public domain",
+  "license_url": "",
+  "author": "Sgt. Gianna Elle Sulger"
+ },
+ "curtis-axel": {
+  "name": "Curtis Axel",
+  "file": "/img/champions/curtis-axel.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Curtis_Axel_WrestleMania_32_Axxess.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "damian-priest": {
+  "name": "Damian Priest",
+  "file": "/img/champions/damian-priest.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Damien_Priest_Las_Vegas_Fall_20925.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "TaurusEmerald"
+ },
+ "daniel-bryan": {
+  "name": "Daniel Bryan",
+  "file": "/img/champions/daniel-bryan.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Bryan_Danielson_2022-03-23_(3x4_cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Ralph Arvesen"
+ },
+ "daniel-garcia-wrestler": {
+  "name": "Daniel Garcia (wrestler)",
+  "file": "/img/champions/daniel-garcia-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Daniel_Garcia,_May_2024_03_(cropped).jpg",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0",
+  "author": "House of Glory Wrestling"
+ },
+ "darby-allin": {
+  "name": "Darby Allin",
+  "file": "/img/champions/darby-allin.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Darby_Allin_Photo_Op_GalaxyCon_Raleigh_2025.jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Super Festivals"
+ },
+ "dave-bautista": {
+  "name": "Dave Bautista",
+  "file": "/img/champions/dave-bautista.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Dave_Bautista_Photo_Op_GalaxyCon_Minneapolis_2019.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals"
+ },
+ "dean-ambrose": {
+  "name": "Dean Ambrose",
+  "file": "/img/champions/dean-ambrose.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Jon_Moxley_Oct_2021.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "West Smith"
+ },
+ "diy-professional-wrestling": {
+  "name": "DIY (professional wrestling)",
+  "file": "/img/champions/diy-professional-wrestling.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:DIY_RR25_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "dolph-ziggler": {
+  "name": "Dolph Ziggler",
+  "file": "/img/champions/dolph-ziggler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Dolph_Ziggler_Photo_Op_GalaxyCon_St._Louis_2025.jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Super Festivals from Ft. Lauderdale, USA"
+ },
+ "dominik-mysterio": {
+  "name": "Dominik Mysterio",
+  "file": "/img/champions/dominik-mysterio.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Dominik_Mysterio_2024.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "doug-williams-wrestler": {
+  "name": "Doug Williams (wrestler)",
+  "file": "/img/champions/doug-williams-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Doug_Williams,_2010_(cropped).JPG",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "KnightNephrite"
+ },
+ "dragon-lee-wrestler": {
+  "name": "Dragon Lee (wrestler)",
+  "file": "/img/champions/dragon-lee-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Dragon_Lee,_April_2019_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "grenwail"
+ },
+ "drake-maverick": {
+  "name": "Drake Maverick",
+  "file": "/img/champions/drake-maverick.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Rockstar_Spud_2014.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Mike Kalasnik from Fort Mill, USA"
+ },
+ "drew-mcintyre": {
+  "name": "Drew McIntyre",
+  "file": "/img/champions/drew-mcintyre.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Drew_McIntyre,_WrestleMania_XL_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "dustin-rhodes": {
+  "name": "Dustin Rhodes",
+  "file": "/img/champions/dustin-rhodes.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Dustin_Rhodes_Mar_2019_(cropped).jpg",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0",
+  "author": "German Comic Con"
+ },
+ "dwayne-johnson": {
+  "name": "Dwayne Johnson",
+  "file": "/img/champions/dwayne-johnson.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Dwayne_Johnson-1764_(4x5_cropped_with_moderate_headroom).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Harald Krichel"
+ },
+ "eddie-edwards-wrestler": {
+  "name": "Eddie Edwards (wrestler)",
+  "file": "/img/champions/eddie-edwards-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Eddie_Edwards_entrance_2019_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Brandon Oliver"
+ },
+ "eddie-kingston": {
+  "name": "Eddie Kingston",
+  "file": "/img/champions/eddie-kingston.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Eddie_Kingston,_Jan_2022_(cropped)_(cropped).jpg",
+  "license": "Public domain",
+  "license_url": "",
+  "author": "ZekeDane"
+ },
+ "edge-wrestler": {
+  "name": "Edge (wrestler)",
+  "file": "/img/champions/edge-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Adam_Copeland_by_Gage_Skidmore.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Gage Skidmore"
+ },
+ "el-hijo-de-dr-wagner-jr": {
+  "name": "El Hijo de Dr. Wagner Jr.",
+  "file": "/img/champions/el-hijo-de-dr-wagner-jr.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:El_Hijo_del_Dr._Wagner_Jr._2026.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Ferfive"
+ },
+ "el-hijo-del-vikingo": {
+  "name": "El Hijo del Vikingo",
+  "file": "/img/champions/el-hijo-del-vikingo.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:El_Hijo_del_Vikingo,_Jan_2023_(headshot).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Earl Gardner"
+ },
+ "el-mesias": {
+  "name": "El Mesias",
+  "file": "/img/champions/el-mesias.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:El_Mes%C3%ADas_en_2026.jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Koffermejia"
+ },
+ "eli-drake": {
+  "name": "Eli Drake",
+  "file": "/img/champions/eli-drake.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:LA_Knight_RR24_(2)_(headshot).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "ember-moon": {
+  "name": "Ember Moon",
+  "file": "/img/champions/ember-moon.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Athena_-_August_29_2025_(cropped1).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "eric-young-wrestler": {
+  "name": "Eric Young (wrestler)",
+  "file": "/img/champions/eric-young-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Eric_Young_2026_(cropped).png",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Total Nonstop Action Wrestling"
+ },
+ "ethan-carter-iii": {
+  "name": "Ethan Carter III",
+  "file": "/img/champions/ethan-carter-iii.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:EC3_in_May_2017_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Brandon Oliver"
+ },
+ "ethan-page": {
+  "name": "Ethan Page",
+  "file": "/img/champions/ethan-page.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Ethan_Page_Josh_Alexander_celebrating_Impact_Tag_Team_Championship_win_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Brandon Oliver"
+ },
+ "ezekiel-jackson": {
+  "name": "Ezekiel Jackson",
+  "file": "/img/champions/ezekiel-jackson.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:EzekielJackson2012Cropped.png",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Flickr user \"Anton\""
+ },
+ "fallon-henley": {
+  "name": "Fallon Henley",
+  "file": "/img/champions/fallon-henley.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:SHIMMER_Volume_101_-_Tesha_Price_01_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Goddess of Cats on Flickr"
+ },
+ "fatal-influence": {
+  "name": "Fatal Influence",
+  "file": "/img/champions/fatal-influence.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Fatal_influence_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "HHH Pedrigree"
+ },
+ "fenix-wrestler": {
+  "name": "Fénix (wrestler)",
+  "file": "/img/champions/fenix-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Rey_Fenix_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "grenwail"
+ },
+ "finn-balor": {
+  "name": "Finn Bálor",
+  "file": "/img/champions/finn-balor.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Finn_Balor_2024_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "frankie-kazarian": {
+  "name": "Frankie Kazarian",
+  "file": "/img/champions/frankie-kazarian.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Frankie_Kazarian_2026.png",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Total Nonstop Action Wrestling"
+ },
+ "giulia-wrestler": {
+  "name": "Giulia (wrestler)",
+  "file": "/img/champions/giulia-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Giulia_RR25_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "golden-magic": {
+  "name": "Golden Magic",
+  "file": "/img/champions/golden-magic.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Octag%C3%B3n_Jr._in_2026.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Ferfive"
+ },
+ "grayson-waller": {
+  "name": "Grayson Waller",
+  "file": "/img/champions/grayson-waller.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Grayson_Waller_-_2023_(cropped).jpg",
+  "license": "CC0",
+  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "author": "Mechanical Elephant"
+ },
+ "gunther-wrestler": {
+  "name": "Gunther (wrestler)",
+  "file": "/img/champions/gunther-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Gunther_August_2024_(headshot).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "hangman-adam-page": {
+  "name": "\"Hangman\" Adam Page",
+  "file": "/img/champions/hangman-adam-page.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Adam_Page,_July_2022_2_(headshot).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals"
+ },
+ "heath-and-rhino": {
+  "name": "Heath and Rhino",
+  "file": "/img/champions/heath-and-rhino.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Heath_Slater_%26_Rhyno.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Miguel Discart &amp; Tabercil"
+ },
+ "hikaru-shida": {
+  "name": "Hikaru Shida",
+  "file": "/img/champions/hikaru-shida.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:20220717shida1_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Yuzunet"
+ },
+ "homicide-wrestler": {
+  "name": "Homicide (wrestler)",
+  "file": "/img/champions/homicide-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Homicide_in_July_2020_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "grenwail"
+ },
+ "ilja-dragunov": {
+  "name": "Ilja Dragunov",
+  "file": "/img/champions/ilja-dragunov.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Ilja_Dragunov_2019.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Photos N Effect"
+ },
+ "indi-hartwell": {
+  "name": "Indi Hartwell",
+  "file": "/img/champions/indi-hartwell.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Indi_Hartwell_in_April_2025_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "J O Y F U L 🐻 V I O L E N C E"
+ },
+ "io-shirai": {
+  "name": "Io Shirai",
+  "file": "/img/champions/io-shirai.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Iyo_Sky_2024_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "iyo-sky": {
+  "name": "Iyo Sky",
+  "file": "/img/champions/iyo-sky.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Iyo_Sky_2024_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "jack-perry": {
+  "name": "Jack Perry",
+  "file": "/img/champions/jack-perry.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Jungle_Boy_at_New_York_Comic_Con_2019.png",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0",
+  "author": "dante luna"
+ },
+ "jack-swagger": {
+  "name": "Jack Swagger",
+  "file": "/img/champions/jack-swagger.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Jack_Swagger_April_2014.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "jacob-fatu": {
+  "name": "Jacob Fatu",
+  "file": "/img/champions/jacob-fatu.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Jacob_Fatu_RR25_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "jacy-jayne": {
+  "name": "Jacy Jayne",
+  "file": "/img/champions/jacy-jayne.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Jacy_Jayne_2023.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Jonathan Rivera"
+ },
+ "jade-cargill": {
+  "name": "Jade Cargill",
+  "file": "/img/champions/jade-cargill.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:All_Elite_Wrestling_TBS_Champion_-_Jade_Cargill_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "jake-crist": {
+  "name": "Jake Crist",
+  "file": "/img/champions/jake-crist.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Willia_Mack_vs_OVW_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Brandon Oliver"
+ },
+ "james-storm": {
+  "name": "James Storm",
+  "file": "/img/champions/james-storm.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:James_Storm_Nov_2015_(cropped).jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Tabercil"
+ },
+ "jamie-hayter": {
+  "name": "Jamie Hayter",
+  "file": "/img/champions/jamie-hayter.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Jamie_Hayter,_March_2023_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "jay-lethal": {
+  "name": "Jay Lethal",
+  "file": "/img/champions/jay-lethal.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Jay_Lethal_ROH_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "jeff-hardy": {
+  "name": "Jeff Hardy",
+  "file": "/img/champions/jeff-hardy.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Jeff_Hardy_GalaxyCon_Des_Moines_September,11,20262107.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "John Manard"
+ },
+ "jey-uso": {
+  "name": "Jey Uso",
+  "file": "/img/champions/jey-uso.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Jey_Uso_RR25_(1)_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "jinder-mahal": {
+  "name": "Jinder Mahal",
+  "file": "/img/champions/jinder-mahal.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Jinder_Mahal,_September_2024_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Earl Gardner"
+ },
+ "joaquin-wilde": {
+  "name": "Joaquin Wilde",
+  "file": "/img/champions/joaquin-wilde.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:DJZ_June_2017_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Mike Kalasnik"
+ },
+ "joe-hendry": {
+  "name": "Joe Hendry",
+  "file": "/img/champions/joe-hendry.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Joe_Hendry_headshot_(cropped).jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Tabercil"
+ },
+ "john-bradshaw-layfield": {
+  "name": "John \"Bradshaw\" Layfield",
+  "file": "/img/champions/john-bradshaw-layfield.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:John_Bradshaw_Layfield,_Dec_2022.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals"
+ },
+ "john-cena": {
+  "name": "John Cena",
+  "file": "/img/champions/john-cena.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:John_Cena_by_Gage_Skidmore.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Gage Skidmore"
+ },
+ "john-morrison-and-the-miz": {
+  "name": "John Morrison and The Miz",
+  "file": "/img/champions/john-morrison-and-the-miz.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:John_Morrison_and_The_Miz_20081203-RCT1-LIENEMANN-WWE005.JPG",
+  "license": "Public domain",
+  "license_url": "",
+  "author": "Cpl. Nicholas J. Lienemann"
+ },
+ "john-morrison-wrestler": {
+  "name": "John Morrison (wrestler)",
+  "file": "/img/champions/john-morrison-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Johnny_Impact_Alpha_1_alt_(cropped).jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Tabercil"
+ },
+ "johnny-devine": {
+  "name": "Johnny Devine",
+  "file": "/img/champions/johnny-devine.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Johnny_Devine_at_RSW_2016.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Tabercil"
+ },
+ "johnny-gargano": {
+  "name": "Johnny Gargano",
+  "file": "/img/champions/johnny-gargano.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Johnny_Gargano_at_Charity_Softball_Game_2025_(cropped).jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Erik Drost"
+ },
+ "johnny-impact": {
+  "name": "Johnny Impact",
+  "file": "/img/champions/johnny-impact.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Johnny_Impact_Alpha_1_alt_(cropped).jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Tabercil"
+ },
+ "jon-moxley": {
+  "name": "Jon Moxley",
+  "file": "/img/champions/jon-moxley.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Jon_Moxley_Oct_2021.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "West Smith"
+ },
+ "josh-alexander": {
+  "name": "Josh Alexander",
+  "file": "/img/champions/josh-alexander.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Josh_Alexander_Alpha-1_2018B.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Tabercil"
+ },
+ "julia-hart-wrestler": {
+  "name": "Julia Hart (wrestler)",
+  "file": "/img/champions/julia-hart-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Julia_Hart,_December_2022_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "kairi-sane": {
+  "name": "Kairi Sane",
+  "file": "/img/champions/kairi-sane.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kairi_Sane_2024_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "kalisto-wrestler": {
+  "name": "Kalisto (wrestler)",
+  "file": "/img/champions/kalisto-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kalisto_United_States_champion_WrestleMania_32_Axxess.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "karrion-kross": {
+  "name": "Karrion Kross",
+  "file": "/img/champions/karrion-kross.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Karrion_Kross,_WrestleMania_XL_(2).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "katana-chance": {
+  "name": "Katana Chance",
+  "file": "/img/champions/katana-chance.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kacy_Catanzaro,_Dec._2016.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "U.S. Army"
+ },
+ "kazuchika-okada": {
+  "name": "Kazuchika Okada",
+  "file": "/img/champions/kazuchika-okada.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kazuchika_Okada_-_03-07-2024_EDIT-12.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "keith-lee-wrestler": {
+  "name": "Keith Lee (wrestler)",
+  "file": "/img/champions/keith-lee-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Keith_Lee,_May_2018_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "grenwail"
+ },
+ "ken-anderson-wrestler": {
+  "name": "Ken Anderson (wrestler)",
+  "file": "/img/champions/ken-anderson-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Ken_Anderson_by_Ryan_Bognar.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Ryan Bognar"
+ },
+ "kenny-king-wrestler": {
+  "name": "Kenny King (wrestler)",
+  "file": "/img/champions/kenny-king-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kenny_King_in_August_2011_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Steve Wright Jr."
+ },
+ "kenny-omega": {
+  "name": "Kenny Omega",
+  "file": "/img/champions/kenny-omega.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:All_Elite_Wrestling_Executive_Vice_President_-_Kenny_Omega_(headshot).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "kevin-knight": {
+  "name": "Kevin Knight",
+  "file": "/img/champions/kevin-knight.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kevin_Knight_at_AEW_Dynamite_-_August_27_2025_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "kevin-owens": {
+  "name": "Kevin Owens",
+  "file": "/img/champions/kevin-owens.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kevin_Owens_at_IGN_Live_2026.jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Kevin Paul"
+ },
+ "kevin-owens-and-sami-zayn": {
+  "name": "Kevin Owens and Sami Zayn",
+  "file": "/img/champions/kevin-owens-and-sami-zayn.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kevin_Owens_%26_Sami_Zayn_March_2023_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "king-nakamura": {
+  "name": "King Nakamura",
+  "file": "/img/champions/king-nakamura.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Shinsuke_Nakamura_2024_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "kofi-kingston": {
+  "name": "Kofi Kingston",
+  "file": "/img/champions/kofi-kingston.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kofi_GalaxyCon_Oklahoma_City_052026-3.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "John Manard"
+ },
+ "konosuke-takeshita": {
+  "name": "Konosuke Takeshita",
+  "file": "/img/champions/konosuke-takeshita.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:KONOSUKE_TAKESHITA,2026%E5%B9%B48%E6%9C%8816%E6%97%A5%E6%92%AE%E5%BD%B1_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "結牙"
+ },
+ "kris-statlander": {
+  "name": "Kris Statlander",
+  "file": "/img/champions/kris-statlander.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kris_Statlander_Photo_Op_GalaxyCon_Richmond_2022_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals from Ft. Lauderdale, USA"
+ },
+ "kurt-angle": {
+  "name": "Kurt Angle",
+  "file": "/img/champions/kurt-angle.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kurt_Angle_(54570231913).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Tim Blackmon, Super Festivals from Ft. Lauderdale, USA"
+ },
+ "kyle-fletcher": {
+  "name": "Kyle Fletcher",
+  "file": "/img/champions/kyle-fletcher.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kyle_Fletcher.jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "House of Glory Wrestling"
+ },
+ "la-hiedra": {
+  "name": "La Hiedra",
+  "file": "/img/champions/la-hiedra.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:La_Hiedra_in_2026.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Ferfive"
+ },
+ "la-knight": {
+  "name": "LA Knight",
+  "file": "/img/champions/la-knight.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:LA_Knight_RR24_(2)_(headshot).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "la-parka-wrestler-born-1999": {
+  "name": "La Parka (wrestler, born 1999)",
+  "file": "/img/champions/la-parka-wrestler-born-1999.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:AAA_AGS_3-2026_(165).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Ferfive"
+ },
+ "lady-flammer": {
+  "name": "Lady Flammer",
+  "file": "/img/champions/lady-flammer.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Lady_Flammer_in_2026.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Ferfive"
+ },
+ "leon-ruff": {
+  "name": "Leon Ruff",
+  "file": "/img/champions/leon-ruff.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Leof_Ruff_and_A._R._Fox_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "grenwail"
+ },
+ "leon-slater": {
+  "name": "Leon Slater",
+  "file": "/img/champions/leon-slater.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Leon_Slater_(SovPro)_(cropped).jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Sceptre"
+ },
+ "lio-rush": {
+  "name": "Lio Rush",
+  "file": "/img/champions/lio-rush.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Lio_Rush_in_February_2024.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "J O Y F U L 🐻 V I O L E N C E"
+ },
+ "liv-morgan": {
+  "name": "Liv Morgan",
+  "file": "/img/champions/liv-morgan.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Big_E,_Liv_Morgan_%26_Tyler_Breeze_(1)_(cropped_2).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "liv-morgan-and-raquel-rodriguez": {
+  "name": "Liv Morgan and Raquel Rodriguez",
+  "file": "/img/champions/liv-morgan-and-raquel-rodriguez.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Liv_Morgan_RR25_(1).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "logan-paul": {
+  "name": "Logan Paul",
+  "file": "/img/champions/logan-paul.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Logan_Paul_in_2026_(crop).jpg",
+  "license": "Public domain",
+  "license_url": "",
+  "author": "U.S. Air Force Staff Sgt. Eugene Oliver"
+ },
+ "low-ki": {
+  "name": "Low Ki",
+  "file": "/img/champions/low-ki.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Low_Ki_March_2016.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Mike Kalasnik"
+ },
+ "luchasaurus": {
+  "name": "Luchasaurus",
+  "file": "/img/champions/luchasaurus.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Luchasaurus_in_January_2022.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "LockedIN Magazine"
+ },
+ "luke-harper": {
+  "name": "Luke Harper",
+  "file": "/img/champions/luke-harper.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Luke_Harper_April_2015.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "lyra-valkyria": {
+  "name": "Lyra Valkyria",
+  "file": "/img/champions/lyra-valkyria.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Lyra_Valkyria_RR25_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "m-by-elegance": {
+  "name": "M by Elegance",
+  "file": "/img/champions/m-by-elegance.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:M_by_Elegance.png",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Total Nonstop Action Wrestling"
+ },
+ "malakai-black": {
+  "name": "Malakai Black",
+  "file": "/img/champions/malakai-black.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Aleister_Black_2017_WWE_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "mandy-rose": {
+  "name": "Mandy Rose",
+  "file": "/img/champions/mandy-rose.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Mandy_Rose_WrestleMania_32_Axxess_original.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart &amp; Kiri Karma"
+ },
+ "mariah-may": {
+  "name": "Mariah May",
+  "file": "/img/champions/mariah-may.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Mariah_May_in_April_2024_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "J O Y F U L 🐻 V I O L E N C E"
+ },
+ "mark-briscoe": {
+  "name": "Mark Briscoe",
+  "file": "/img/champions/mark-briscoe.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Mark_Briscoe_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "mark-davis-wrestler": {
+  "name": "Mark Davis (wrestler)",
+  "file": "/img/champions/mark-davis-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Mark_Davis_(wrestler)_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "matt-hardy": {
+  "name": "Matt Hardy",
+  "file": "/img/champions/matt-hardy.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Matt_Hardy_GalaxyCon_Des_Moines_September,11,20262108.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "John Manard"
+ },
+ "matt-riddle": {
+  "name": "Matt Riddle",
+  "file": "/img/champions/matt-riddle.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Riddle3_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "ZekeDane"
+ },
+ "matt-sydal": {
+  "name": "Matt Sydal",
+  "file": "/img/champions/matt-sydal.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Matt_Sydal_2015_crop.JPG",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "ゾーヒョー"
+ },
+ "maya-world": {
+  "name": "Maya World",
+  "file": "/img/champions/maya-world.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Maya_World_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "mercedes-mone": {
+  "name": "Mercedes Moné",
+  "file": "/img/champions/mercedes-mone.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Mercedes_Mon%C3%A9_Dynamite_2024_03_13_094.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "michin": {
+  "name": "Michin",
+  "file": "/img/champions/michin.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:SHIMMER_Volume_82_-_Mia_Yim_02_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Goddess Of Cats"
+ },
+ "mick-foley": {
+  "name": "Mick Foley",
+  "file": "/img/champions/mick-foley.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Mick_Foley_Photo_Op_GalaxyCon_Oklahoma_City_2024.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals from Ft. Lauderdale, USA"
+ },
+ "mike-bailey-wrestler": {
+  "name": "Mike Bailey (wrestler)",
+  "file": "/img/champions/mike-bailey-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Mike_Bailey_Fest.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "mike-bennett-wrestler": {
+  "name": "Mike Bennett (wrestler)",
+  "file": "/img/champions/mike-bennett-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Mike_Bennett_ROH_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "mike-santana": {
+  "name": "Mike Santana",
+  "file": "/img/champions/mike-santana.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Mike_Santana_2026.png",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Total Nonstop Action Wrestling"
+ },
+ "miro-wrestler": {
+  "name": "Miro (wrestler)",
+  "file": "/img/champions/miro-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:WMC_AEWMIRO-CHAMP.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Adam Marantz/All Elite Wrestling"
+ },
+ "mjf": {
+  "name": "MJF",
+  "file": "/img/champions/mjf.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Maxwell_Jacob_Friedman,_July_2024_04.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals"
+ },
+ "montel-vontavious-porter": {
+  "name": "Montel Vontavious Porter",
+  "file": "/img/champions/montel-vontavious-porter.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:MVP_2019-2.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Brandon Oliver"
+ },
+ "moose-wrestler": {
+  "name": "Moose (wrestler)",
+  "file": "/img/champions/moose-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Moose_TNA_X-Division_champion_2025_(cropped-2).jpg",
+  "license": "Public domain",
+  "license_url": "",
+  "author": "ZekeDane"
+ },
+ "motor-city-machine-guns": {
+  "name": "Motor City Machine Guns",
+  "file": "/img/champions/motor-city-machine-guns.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Sabin_TNA_Tag_Champion.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "daysofthundr46"
+ },
+ "mustafa-ali": {
+  "name": "Mustafa Ali",
+  "file": "/img/champions/mustafa-ali.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Mustafa_Ali_as_TNA_X_Division_champion_2024_(cropped).jpg",
+  "license": "Public domain",
+  "license_url": "",
+  "author": "ZekeDane"
+ },
+ "myles-borne": {
+  "name": "Myles Borne",
+  "file": "/img/champions/myles-borne.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Myles_Borne_in_November_2024_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "naomi-wrestler": {
+  "name": "Naomi (wrestler)",
+  "file": "/img/champions/naomi-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Naomi_at_WrestleMania_Axxess_2017.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Sleeper11"
+ },
+ "natalya-neidhart": {
+  "name": "Natalya Neidhart",
+  "file": "/img/champions/natalya-neidhart.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Natalya_WrestleMania_32_Axxess.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "nia-jax": {
+  "name": "Nia Jax",
+  "file": "/img/champions/nia-jax.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Nia_Jax_RR25_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "nic-nemeth": {
+  "name": "Nic Nemeth",
+  "file": "/img/champions/nic-nemeth.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Dolph_Ziggler_Photo_Op_GalaxyCon_St._Louis_2025.jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Super Festivals from Ft. Lauderdale, USA"
+ },
+ "nick-aldis": {
+  "name": "Nick Aldis",
+  "file": "/img/champions/nick-aldis.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Magnus_Jan_2013.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Simon Q"
+ },
+ "nikki-a-s-h": {
+  "name": "Nikki A.S.H.",
+  "file": "/img/champions/nikki-a-s-h.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Nikki_Cross_2018_cropped.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Shared Account"
+ },
+ "nikki-cross": {
+  "name": "Nikki Cross",
+  "file": "/img/champions/nikki-cross.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Nikki_Cross_2018_cropped.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Shared Account"
+ },
+ "nyla-rose": {
+  "name": "Nyla Rose",
+  "file": "/img/champions/nyla-rose.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Nyla_Rose_(2020-02-12)_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Ralph Arvesen"
+ },
+ "oba-femi": {
+  "name": "Oba Femi",
+  "file": "/img/champions/oba-femi.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Oba_Femi_2024_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Jonathan Rivera"
+ },
+ "orange-cassidy": {
+  "name": "Orange Cassidy",
+  "file": "/img/champions/orange-cassidy.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Orange_Cassidy_Photo_Op_Nightmare_Weekend_Chicago_2025.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals"
+ },
+ "pac-wrestler": {
+  "name": "Pac (wrestler)",
+  "file": "/img/champions/pac-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Neville2017.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Shared Account"
+ },
+ "paige-wrestler": {
+  "name": "Paige (wrestler)",
+  "file": "/img/champions/paige-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Saraya_Bevis,_September_2022_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "pentagon-jr": {
+  "name": "Pentagón Jr.",
+  "file": "/img/champions/pentagon-jr.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Penta_RR25_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "persephone-wrestler": {
+  "name": "Persephone (wrestler)",
+  "file": "/img/champions/persephone-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Persephone_AEW_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "petey-williams": {
+  "name": "Petey Williams",
+  "file": "/img/champions/petey-williams.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Petey_Williams_at_AlphaOne_2012.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Tabercil"
+ },
+ "powerhouse-hobbs": {
+  "name": "Powerhouse Hobbs",
+  "file": "/img/champions/powerhouse-hobbs.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Will_%22Powerhouse%22_Hobbs,_2022_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "West Smith"
+ },
+ "q-t-marshall": {
+  "name": "Q.T. Marshall",
+  "file": "/img/champions/q-t-marshall.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Forbidden_Door_(AEW_x_NJPW)_(52291674272)_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "queen-aminata": {
+  "name": "Queen Aminata",
+  "file": "/img/champions/queen-aminata.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Queen_Aminata_in_April_2025_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "BEAR FROM SPACE"
+ },
+ "r-truth": {
+  "name": "R-Truth",
+  "file": "/img/champions/r-truth.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:R-Truth_2024_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "randy-orton": {
+  "name": "Randy Orton",
+  "file": "/img/champions/randy-orton.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Randy_Orton_RR24_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "raquel-gonzalez-wrestler": {
+  "name": "Raquel González (wrestler)",
+  "file": "/img/champions/raquel-gonzalez-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Raquel_Rodriguez_RR25_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "rey-fenix": {
+  "name": "Rey Fénix",
+  "file": "/img/champions/rey-fenix.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Rey_Fenix_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "grenwail"
+ },
+ "rey-mysterio": {
+  "name": "Rey Mysterio",
+  "file": "/img/champions/rey-mysterio.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Rey_Mysterio_at_San_Diego_Comic_Con_2026_(3x4_cropped).jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Kevin Paul"
+ },
+ "rhea-ripley": {
+  "name": "Rhea Ripley",
+  "file": "/img/champions/rhea-ripley.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Rhea_Ripley,_April_2024_(cropped)_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "rich-swann": {
+  "name": "Rich Swann",
+  "file": "/img/champions/rich-swann.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Rich_Swann_2019-07-05_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Brandon Oliver"
+ },
+ "ricky-saints": {
+  "name": "Ricky Saints",
+  "file": "/img/champions/ricky-saints.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:WMC_AEWSTARKS-CHAMP.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Adam Marantz/All Elite Wrestling"
+ },
+ "ricochet-wrestler": {
+  "name": "Ricochet (wrestler)",
+  "file": "/img/champions/ricochet-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Ricochet_ALL_IN_2024_08_25_127_(headshot).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "riho": {
+  "name": "Riho",
+  "file": "/img/champions/riho.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Riho,_2021_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "rob-van-dam": {
+  "name": "Rob Van Dam",
+  "file": "/img/champions/rob-van-dam.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Rob_Van_Dam_Photo_Op_GalaxyCon_Raleigh_2021.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals from Ft. Lauderdale, USA"
+ },
+ "robert-stone-wrestler": {
+  "name": "Robert Stone (wrestler)",
+  "file": "/img/champions/robert-stone-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Robert_Stone_in_February_2020_(cropped).jpg",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0",
+  "author": "Diva Insider"
+ },
+ "roderick-strong": {
+  "name": "Roderick Strong",
+  "file": "/img/champions/roderick-strong.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Roderick_Strong_2016_(cropped2).png",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Courtney Rose"
+ },
+ "roman-reigns": {
+  "name": "Roman Reigns",
+  "file": "/img/champions/roman-reigns.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Roman_Reigns_RR25_(1)_(headshot).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "ronda-rousey": {
+  "name": "Ronda Rousey",
+  "file": "/img/champions/ronda-rousey.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Rousey_HOF_2018_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Shared Account"
+ },
+ "roxanne-perez": {
+  "name": "Roxanne Perez",
+  "file": "/img/champions/roxanne-perez.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Roxanne_Perez_RR25.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "rusev-wrestler": {
+  "name": "Rusev (wrestler)",
+  "file": "/img/champions/rusev-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:WMC_AEWMIRO-CHAMP.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Adam Marantz/All Elite Wrestling"
+ },
+ "ryback": {
+  "name": "Ryback",
+  "file": "/img/champions/ryback.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Ryback_April_2014.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "sami-callihan": {
+  "name": "Sami Callihan",
+  "file": "/img/champions/sami-callihan.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Sami_Callihan_July_2019.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Brandon Oliver"
+ },
+ "sami-zayn": {
+  "name": "Sami Zayn",
+  "file": "/img/champions/sami-zayn.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Sami_Zayn_March_2023.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "sammy-guevara": {
+  "name": "Sammy Guevara",
+  "file": "/img/champions/sammy-guevara.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Sammy_Guevara_Supercard_Of_Honor_2026_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "samoa-joe": {
+  "name": "Samoa Joe",
+  "file": "/img/champions/samoa-joe.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Samoa_Joe,_2022_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "santino-marella": {
+  "name": "Santino Marella",
+  "file": "/img/champions/santino-marella.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Santino_Marella_as_the_TNA_Director_of_Authority.png",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "TNA Wrestling"
+ },
+ "saraya-bevis": {
+  "name": "Saraya Bevis",
+  "file": "/img/champions/saraya-bevis.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Saraya_Bevis,_September_2022_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "sasha-banks": {
+  "name": "Sasha Banks",
+  "file": "/img/champions/sasha-banks.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Mercedes_Mon%C3%A9_Dynamite_2024_03_13_094.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "scorpio-sky": {
+  "name": "Scorpio Sky",
+  "file": "/img/champions/scorpio-sky.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:All_Elite_Wrestling_TNT_Champion_-_Scorpio_Sky_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "seiya-sanada": {
+  "name": "Seiya Sanada",
+  "file": "/img/champions/seiya-sanada.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:SANADA_2025.jpg",
+  "license": "CC0",
+  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "author": "ゾーヒョー"
+ },
+ "seth-freakin-rollins": {
+  "name": "Seth \"Freakin\" Rollins",
+  "file": "/img/champions/seth-freakin-rollins.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Seth_Rollins_July_2019.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals"
+ },
+ "seth-rollins": {
+  "name": "Seth  Rollins",
+  "file": "/img/champions/seth-rollins.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Seth_Rollins_July_2019.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals"
+ },
+ "shawn-daivari": {
+  "name": "Shawn Daivari",
+  "file": "/img/champions/shawn-daivari.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Shawn_Daivari_2012_Shankbone.JPG",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0",
+  "author": "David Shankbone"
+ },
+ "shawn-spears": {
+  "name": "Shawn Spears",
+  "file": "/img/champions/shawn-spears.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Shawn_Spears_RCW_.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Brandon Oliver"
+ },
+ "shayna-baszler": {
+  "name": "Shayna Baszler",
+  "file": "/img/champions/shayna-baszler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:SHIMMER_Volume_88_-_Shayna_Baszler_04_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Goddess of Cats on Flickr"
+ },
+ "sheamus": {
+  "name": "Sheamus",
+  "file": "/img/champions/sheamus.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Sheamus_April_2014.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Megan Elice Meadows"
+ },
+ "shelton-benjamin": {
+  "name": "Shelton Benjamin",
+  "file": "/img/champions/shelton-benjamin.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Shelton_Benjamin_ROH_Cropped_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Anton"
+ },
+ "shinsuke-nakamura": {
+  "name": "Shinsuke Nakamura",
+  "file": "/img/champions/shinsuke-nakamura.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Shinsuke_Nakamura_2024_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "sol-ruca": {
+  "name": "Sol Ruca",
+  "file": "/img/champions/sol-ruca.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Sol_Ruca_as_women%27s_IC_Champion_(cropped).jpg",
+  "license": "CC0",
+  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "author": "RadoslavSV"
+ },
+ "solo-sikoa": {
+  "name": "Solo Sikoa",
+  "file": "/img/champions/solo-sikoa.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Solo_Sikoa_2024_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "sonjay-dutt": {
+  "name": "Sonjay Dutt",
+  "file": "/img/champions/sonjay-dutt.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Sonjay_Dutt_Slammiversary_2017.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Mike Kalasnik"
+ },
+ "stephanie-vaquer": {
+  "name": "Stephanie Vaquer",
+  "file": "/img/champions/stephanie-vaquer.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Stephanie_Vaquer,_April_2024_2.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "J O Y F U L 🐻 V I O L E N C E"
+ },
+ "steve-maclin": {
+  "name": "Steve Maclin",
+  "file": "/img/champions/steve-maclin.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Steve_Maclin_2026.png",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Total Nonstop Action Wrestling"
+ },
+ "sting-wrestler": {
+  "name": "Sting (wrestler)",
+  "file": "/img/champions/sting-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Sting_Photo_Op_GalaxyCon_Oklahoma_City_2025.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Super Festivals from Ft. Lauderdale, USA"
+ },
+ "suicide-wrestling": {
+  "name": "Suicide (wrestling)",
+  "file": "/img/champions/suicide-wrestling.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Frankie_Kazarian03_tna2010.JPG",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Chatsam"
+ },
+ "swerve-strickland": {
+  "name": "Swerve Strickland",
+  "file": "/img/champions/swerve-strickland.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Swerve_Strickland,_Feb_2022_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "West Smith"
+ },
+ "t-j-perkins": {
+  "name": "T. J. Perkins",
+  "file": "/img/champions/t-j-perkins.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:TJP_20250317.jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "結牙"
+ },
+ "taiji-ishimori": {
+  "name": "Taiji Ishimori",
+  "file": "/img/champions/taiji-ishimori.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Ishimori20191103.jpg",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "ハイエナジー"
+ },
+ "tessa-blanchard": {
+  "name": "Tessa Blanchard",
+  "file": "/img/champions/tessa-blanchard.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Tessa_Blanchard_2019.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Brandon Oliver"
+ },
+ "the-bar-professional-wrestling": {
+  "name": "The Bar (professional wrestling)",
+  "file": "/img/champions/the-bar-professional-wrestling.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Cesaro_and_Sheamus_2017.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Shared Account"
+ },
+ "the-bloodline": {
+  "name": "The Bloodline",
+  "file": "/img/champions/the-bloodline.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Wrestling_-_Sikeston,_MO_1938_-_1.jpg",
+  "license": "Public domain",
+  "license_url": "",
+  "author": "Russell Lee"
+ },
+ "the-bludgeon-brothers": {
+  "name": "The Bludgeon Brothers",
+  "file": "/img/champions/the-bludgeon-brothers.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Harper%26Rowan_WM34_crop.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Shared Account"
+ },
+ "the-boss-n-hug-connection": {
+  "name": "The Boss 'n' Hug Connection",
+  "file": "/img/champions/the-boss-n-hug-connection.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Sasha_Banks_and_Bayley.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "Rtyggu"
+ },
+ "the-dirty-dawgs": {
+  "name": "The Dirty Dawgs",
+  "file": "/img/champions/the-dirty-dawgs.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Dolph_Ziggler_Axxess_2016_crop.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "the-hardy-boyz": {
+  "name": "The Hardy Boyz",
+  "file": "/img/champions/the-hardy-boyz.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Hardys_Raw_Tag_Champions.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Shared Account"
+ },
+ "the-iiconics": {
+  "name": "The IIconics",
+  "file": "/img/champions/the-iiconics.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:IIconics.png",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Universalis"
+ },
+ "the-irresistible-forces": {
+  "name": "The Irresistible Forces",
+  "file": "/img/champions/the-irresistible-forces.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Nia_Jax_RR25_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "the-judgment-day": {
+  "name": "The Judgment Day",
+  "file": "/img/champions/the-judgment-day.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Wrestling_-_Sikeston,_MO_1938_-_1.jpg",
+  "license": "Public domain",
+  "license_url": "",
+  "author": "Russell Lee"
+ },
+ "the-kabuki-warriors": {
+  "name": "The Kabuki Warriors",
+  "file": "/img/champions/the-kabuki-warriors.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:The_Kabuki_Warriors_Champions_02.jpg",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0",
+  "author": "Diva Insider"
+ },
+ "the-miz": {
+  "name": "The Miz",
+  "file": "/img/champions/the-miz.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:The_Miz_Dec_2017.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Chairman of the Joint Chiefs of Staff from Washington D.C, United States"
+ },
+ "the-new-day-professional-wrestling": {
+  "name": "The New Day (professional wrestling)",
+  "file": "/img/champions/the-new-day-professional-wrestling.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Kofi_and_Creed_2024.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "the-revival-professional-wrestling": {
+  "name": "The Revival (professional wrestling)",
+  "file": "/img/champions/the-revival-professional-wrestling.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:FTR,_June_2022.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "the-street-profits": {
+  "name": "The Street Profits",
+  "file": "/img/champions/the-street-profits.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Street_Profits_March_2023_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "the-tongans": {
+  "name": "The Tongans",
+  "file": "/img/champions/the-tongans.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:2023.11.04-tama_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "ハイエナジー"
+ },
+ "the-usos": {
+  "name": "The Usos",
+  "file": "/img/champions/the-usos.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:The_Usos_as_Undisputed_Tag_Team_Champions_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "the-wyatt-family": {
+  "name": "The Wyatt Family",
+  "file": "/img/champions/the-wyatt-family.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:The_Wyatt_Family.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Megan Elice Meadows"
+ },
+ "thekla-wrestler": {
+  "name": "Thekla (wrestler)",
+  "file": "/img/champions/thekla-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Thekla_in_April_2025.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "J O Y F U L 🐻 V I O L E N C E"
+ },
+ "thunder-rosa": {
+  "name": "Thunder Rosa",
+  "file": "/img/champions/thunder-rosa.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:All_Elite_Wrestling_Women%27s_World_Champion_-_Thunder_Rosa_(cropped).jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "All Elite Wrestling"
+ },
+ "tiffany-stratton": {
+  "name": "Tiffany Stratton",
+  "file": "/img/champions/tiffany-stratton.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Tiffany_Stratton_Las_Vegas_2026.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "TaurusEmerald"
+ },
+ "tigre-uno": {
+  "name": "Tigre Uno",
+  "file": "/img/champions/tigre-uno.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Tigre_Uno_BFG_2015.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Mike Kalasnik"
+ },
+ "timeless-toni-storm": {
+  "name": "\"Timeless\" Toni Storm",
+  "file": "/img/champions/timeless-toni-storm.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Toni_Storm_in_April_2024_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "J O Y F U L 🐻 V I O L E N C E"
+ },
+ "tommaso-ciampa": {
+  "name": "Tommaso Ciampa",
+  "file": "/img/champions/tommaso-ciampa.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Tommaso_Ciampa_RR25_(cropped_for_preview).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Diego Serrano"
+ },
+ "toni-storm": {
+  "name": "Toni Storm",
+  "file": "/img/champions/toni-storm.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Toni_Storm_in_April_2024_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "J O Y F U L 🐻 V I O L E N C E"
+ },
+ "tony-d-angelo": {
+  "name": "Tony D'Angelo",
+  "file": "/img/champions/tony-d-angelo.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Tony_D%E2%80%99Angelo_(cropped).jpg",
+  "license": "CC0",
+  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "author": "WrestlingGeek5196"
+ },
+ "trevor-lee": {
+  "name": "Trevor Lee",
+  "file": "/img/champions/trevor-lee.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Trevor_Lee_X_Division_Champ_BFG_17_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Mike Kalasnik from Charlotte, USA"
+ },
+ "trey-miguel": {
+  "name": "Trey Miguel",
+  "file": "/img/champions/trey-miguel.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Trey_Miguel_June_2019.jpg",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "author": "Tabercil"
+ },
+ "trick-williams": {
+  "name": "Trick Williams",
+  "file": "/img/champions/trick-williams.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Trick_Williams_FOS_2026_version_3_(cropped).png",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "Front Office Sports"
+ },
+ "triple-h": {
+  "name": "Triple H",
+  "file": "/img/champions/triple-h.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:P20250731DT-0076_Paul_Levesque_2025.jpg",
+  "license": "Public domain",
+  "license_url": "",
+  "author": "The White House"
+ },
+ "umaga-wrestler": {
+  "name": "Umaga (wrestler)",
+  "file": "/img/champions/umaga-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:UmagaWrestler2009.png",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Gregory Davis"
+ },
+ "velveteen-dream": {
+  "name": "Velveteen Dream",
+  "file": "/img/champions/velveteen-dream.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Velveteen_Dream_June_2016.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart (Shared Account)"
+ },
+ "wade-barrett": {
+  "name": "Wade Barrett",
+  "file": "/img/champions/wade-barrett.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Wade_Barrett_WrestleMania_32_Axxess.jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Miguel Discart"
+ },
+ "wardlow-wrestler": {
+  "name": "Wardlow (wrestler)",
+  "file": "/img/champions/wardlow-wrestler.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Wardlow,_2018_(cropped_2).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Damian Lynch"
+ },
+ "wes-lee": {
+  "name": "Wes Lee",
+  "file": "/img/champions/wes-lee.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Dezmond_Xavier_May_2026.jpg",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "author": "KMcWrestling Photography"
+ },
+ "will-ospreay": {
+  "name": "Will Ospreay",
+  "file": "/img/champions/will-ospreay.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Will_Ospreay,_AEW_Revolution_2024_(cropped).jpg",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0",
+  "author": "JJ Williams, Digital media staff at Wrestling Observer Newsletter"
+ },
+ "william-regal": {
+  "name": "William Regal",
+  "file": "/img/champions/william-regal.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:William_Regal_-_Forbidden_Door_(AEW_x_NJPW)_(52292651031)_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Carter Sterling"
+ },
+ "willie-mack": {
+  "name": "Willie Mack",
+  "file": "/img/champions/willie-mack.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Willie_Mack_wrestler.jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Brandon Oliver"
+ },
+ "willow-nightingale": {
+  "name": "Willow Nightingale",
+  "file": "/img/champions/willow-nightingale.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Willow_Nightingale,_Jan_2023_02_(cropped).jpg",
+  "license": "Public domain",
+  "license_url": "",
+  "author": "ZekeDane"
+ },
+ "zachary-wentz": {
+  "name": "Zachary Wentz",
+  "file": "/img/champions/zachary-wentz.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Zachary_Wentz_2025_(2).png",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "author": "TNA Wrestling"
+ },
+ "zack-ryder": {
+  "name": "Zack Ryder",
+  "file": "/img/champions/zack-ryder.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:Matt_Cardona,_March_2022_(cropped).jpg",
+  "license": "CC BY 2.0",
+  "license_url": "https://creativecommons.org/licenses/by/2.0",
+  "author": "Brandon Oliver"
+ },
+ "zema-ion": {
+  "name": "Zema Ion",
+  "file": "/img/champions/zema-ion.webp",
+  "source": "https://commons.wikimedia.org/wiki/File:DJZ_June_2017_(cropped).jpg",
+  "license": "CC BY-SA 2.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/2.0",
+  "author": "Mike Kalasnik"
+ }
+}

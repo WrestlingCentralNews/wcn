@@ -5,7 +5,7 @@
 Title changes are applied only when every guard in title_change() passes; anything else goes to data/champ_flags.json (never guessed).
 Stateless: everything is recomputed each build from champions.json, ple_history.json, events.json, full_cards.json and data/live/*.json."""
 import os, re, json, glob, html, datetime, unicodedata
-import chrome
+import chrome, timeline
 ROOT = os.path.dirname(os.path.abspath(__file__)); PUB = os.path.join(ROOT, "public"); SITE = "https://wrestlingcentralnews.com/"
 LIVE = os.path.join(ROOT, "data", "live"); FLAGS = os.path.join(ROOT, "data", "champ_flags.json")
 e = lambda s: html.escape(s or "", quote=True)
@@ -142,6 +142,7 @@ def champions_html(champ, groups, now):
                      f'<td><a href="{e(t["source"])}" rel="noopener" target="_blank">{e(t.get("source_name") or "Source")}</a></td></tr>')
             items.append({"@type": "ListItem", "position": len(items) + 1, "name": f'{t["name"]}: {t["champion"]}'})
         body += "</tbody></table></div>"
+    body += timeline.html_block(timeline.lineage(champ), now)
     body += xlinks("champions")
     ld = {"@context": "https://schema.org", "@type": "ItemList", "name": "Current wrestling champions", "url": SITE + PATHS["champions"], "itemListElement": items}
     return page(PATHS["champions"], "Current wrestling champions", "Current WWE, NXT, AEW, TNA and AAA champions, the date each reign began and days held.", body, ld=ld)
