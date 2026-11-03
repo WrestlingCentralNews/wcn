@@ -116,7 +116,7 @@ def page(path, h1, desc, body, robots="index,follow,max-image-preview:large,max-
     css = ("<style>.stat{width:100%;border-collapse:collapse;font-size:.95rem;margin:.5rem 0 1.5rem}.stat th,.stat td{text-align:left;padding:.4rem .5rem;border-bottom:1px solid #8883;vertical-align:top}"
            ".stat th{font-size:.8rem;text-transform:uppercase;opacity:.75}.stat td.n{text-align:right;white-space:nowrap}.wrap{overflow-x:auto}.note{opacity:.8;font-size:.9rem}</style>")
     return (f'<!doctype html><html lang="en"><head><meta charset="utf-8">{h}{css}</head><body>\n{chrome.header("en", "/" + path, "/es/", back=True)}\n'
-            f'<main class="layout"><article class="story"><h1>{e(h1)}</h1>{body}</article></main>\n{chrome.footer("en")}\n</body></html>')
+            f'<main class="layout statpage"><article class="story"><h1>{e(h1)}</h1>{body}</article></main>\n{chrome.footer("en")}\n</body></html>')
 def write(path, html_):
     d = os.path.join(PUB, path); os.makedirs(d, exist_ok=True); open(os.path.join(d, "index.html"), "w").write(html_)
 def xlinks(cur):
@@ -128,6 +128,7 @@ def champions_html(champ, groups, now):
     for t in champ.values(): rows.setdefault(t["group"], []).append(t)
     body = (f'<p>Every active title in WWE (Raw, SmackDown, NXT), AEW, TNA and AAA, with the date each reign began and how many days it has lasted as of '
             f'{e(now.strftime("%B %-d, %Y"))}. Each reign links to the promotion or a tier-1 report. Title changes are added from WCN\'s own results once a trusted outlet confirms them.</p>')
+    body += timeline.html_block(timeline.lineage(champ), now)
     items = []
     for g in groups:
         if g not in rows: continue
@@ -142,7 +143,6 @@ def champions_html(champ, groups, now):
                      f'<td><a href="{e(t["source"])}" rel="noopener" target="_blank">{e(t.get("source_name") or "Source")}</a></td></tr>')
             items.append({"@type": "ListItem", "position": len(items) + 1, "name": f'{t["name"]}: {t["champion"]}'})
         body += "</tbody></table></div>"
-    body += timeline.html_block(timeline.lineage(champ), now)
     body += xlinks("champions")
     ld = {"@context": "https://schema.org", "@type": "ItemList", "name": "Current wrestling champions", "url": SITE + PATHS["champions"], "itemListElement": items}
     return page(PATHS["champions"], "Current wrestling champions", "Current WWE, NXT, AEW, TNA and AAA champions, the date each reign began and days held.", body, ld=ld)

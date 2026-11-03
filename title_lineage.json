@@ -94,7 +94,8 @@
 "end": null,
 "photo": "roman-reigns"
 }
-]
+],
+"created": true
 },
 "wwe-womens-world": {
 "name": "Women's World Championship",
@@ -403,7 +404,8 @@
 "end": null,
 "photo": "liv-morgan"
 }
-]
+],
+"created": true
 },
 "wwe-ic": {
 "name": "Intercontinental Championship",
@@ -1982,7 +1984,8 @@
 "end": null,
 "photo": "ethan-page"
 }
-]
+],
+"created": true
 },
 "wwe-womens-ic": {
 "name": "Women's Intercontinental Championship",
@@ -1996,7 +1999,8 @@
 "source": "https://www.fightful.com/wrestling/raquel-rodriguez-defeats-sol-ruca-to-win-womens-intercontinental-title-on-wwe-raw/",
 "end": null
 }
-]
+],
+"created": false
 },
 "wwe-world-tag": {
 "name": "World Tag Team Championship",
@@ -2010,7 +2014,8 @@
 "source": "https://www.fightful.com/wrestling/maxxine-dupri-helps-the-vision-win-back-world-tag-team-titles-on-wwe-raw/",
 "end": null
 }
-]
+],
+"created": false
 },
 "wwe-undisputed": {
 "name": "Undisputed WWE Championship",
@@ -3318,7 +3323,8 @@
 "end": null,
 "photo": "sami-zayn"
 }
-]
+],
+"created": true
 },
 "wwe-womens": {
 "name": "WWE Women's Championship",
@@ -3590,7 +3596,8 @@
 "end": null,
 "photo": "chelsea-green"
 }
-]
+],
+"created": true
 },
 "wwe-us": {
 "name": "United States Championship",
@@ -5216,7 +5223,8 @@
 "end": null,
 "photo": "trick-williams"
 }
-]
+],
+"created": true
 },
 "wwe-womens-us": {
 "name": "Women's United States Championship",
@@ -5230,7 +5238,8 @@
 "source": "https://www.fightful.com/wrestling/jacy-jayne-wins-womens-united-states-title-on-8-14-wwe-smackdown/",
 "end": null
 }
-]
+],
+"created": false
 },
 "wwe-tag": {
 "name": "WWE Tag Team Championship",
@@ -5564,7 +5573,8 @@
 "end": null,
 "photo": "the-tongans"
 }
-]
+],
+"created": true
 },
 "wwe-womens-tag": {
 "name": "WWE Women's Tag Team Championship",
@@ -5886,7 +5896,8 @@
 "end": null,
 "photo": "michin"
 }
-]
+],
+"created": true
 },
 "nxt": {
 "name": "NXT Championship",
@@ -6226,7 +6237,8 @@
 "end": null,
 "photo": "grayson-waller"
 }
-]
+],
+"created": true
 },
 "nxt-womens": {
 "name": "NXT Women's Championship",
@@ -6475,7 +6487,8 @@
 "source": "https://www.fightful.com/wrestling/kelani-jordan-def-kendal-grey-to-become-nxt-womens-champion-at-heatwave-ple/",
 "end": null
 }
-]
+],
+"created": true
 },
 "nxt-na": {
 "name": "NXT North American Championship",
@@ -6720,7 +6733,8 @@
 "source": "https://www.fightful.com/wrestling/vanity-project-helps-jackson-drake-win-nxt-north-american-championship-at-heatwave-ple/",
 "end": null
 }
-]
+],
+"created": true
 },
 "nxt-womens-na": {
 "name": "NXT Women's North American Championship",
@@ -6802,7 +6816,8 @@
 "source": "https://www.fightful.com/wrestling/zaria-def-tatum-paxley-to-capture-womens-north-american-championship-on-6-9-wwe-nxt/",
 "end": null
 }
-]
+],
+"created": true
 },
 "nxt-tag": {
 "name": "NXT Tag Team Championship",
@@ -6816,7 +6831,8 @@
 "source": "https://www.fightful.com/wrestling/vanity-project-ends-myles-borne-tavion-heights-nxt-tag-team-title-reign-at-heatwave-ple/",
 "end": null
 }
-]
+],
+"created": false
 },
 "aew-world": {
 "name": "AEW World Championship",
@@ -6998,7 +7014,8 @@
 "end": null,
 "photo": "will-ospreay"
 }
-]
+],
+"created": true
 },
 "aew-women": {
 "name": "AEW Women's World Championship",
@@ -7157,7 +7174,8 @@
 "end": null,
 "photo": "mercedes-mone"
 }
-]
+],
+"created": true
 },
 "aew-international": {
 "name": "AEW International Championship",
@@ -7285,7 +7303,8 @@
 "end": null,
 "photo": "kazuchika-okada"
 }
-]
+],
+"created": true
 },
 "aew-continental": {
 "name": "AEW Continental Championship",
@@ -7317,7 +7336,8 @@
 "end": null,
 "photo": "jon-moxley"
 }
-]
+],
+"created": true
 },
 "aew-national": {
 "name": "AEW National Championship",
@@ -7357,7 +7377,8 @@
 "end": null,
 "photo": "andrade-el-idolo"
 }
-]
+],
+"created": true
 },
 "aew-tnt": {
 "name": "AEW TNT Championship",
@@ -7657,7 +7678,8 @@
 "end": null,
 "photo": "darby-allin"
 }
-]
+],
+"created": true
 },
 "aew-tbs": {
 "name": "AEW TBS Championship",
@@ -7752,7 +7774,8 @@
 "end": null,
 "photo": "queen-aminata"
 }
-]
+],
+"created": true
 },
 "aew-tag": {
 "name": "AEW World Tag Team Championship",
@@ -7766,7 +7789,8 @@
 "source": "https://www.allelitewrestling.com/post/aew-all-out-results-september-26-2026",
 "end": null
 }
-]
+],
+"created": false
 },
 "aew-women-tag": {
 "name": "AEW Women's World Tag Team Championship",
@@ -7780,7 +7804,8 @@
 "source": "https://www.fightful.com/wrestling/aew-all-in-results-8-30-2026-kenny-omega-vs-will-ospreay-willow-nightingale-vs-mercedes-mone-more/",
 "end": null
 }
-]
+],
+"created": false
 },
 "aew-trios": {
 "name": "AEW World Trios Championship",
@@ -7794,7 +7819,8 @@
 "source": "https://www.fightful.com/wrestling/aew-wrestledream-results-10-17-2026-mercedes-mone-vs-thekla-clockwork-carnage-more/",
 "end": null
 }
-]
+],
+"created": false
 },
 "tna-world": {
 "name": "TNA World Championship",
@@ -8387,7 +8413,8 @@
 "end": null,
 "photo": "leon-slater"
 }
-]
+],
+"created": true
 },
 "tna-international": {
 "name": "TNA International Championship",
@@ -8401,7 +8428,8 @@
 "source": "https://www.fightful.com/wrestling/jason-hotch-regains-tna-international-championship-at-bound-for-glory/",
 "end": null
 }
-]
+],
+"created": false
 },
 "tna-x": {
 "name": "TNA X Division Championship",
@@ -9404,7 +9432,8 @@
 "end": null,
 "photo": "amazing-red"
 }
-]
+],
+"created": true
 },
 "tna-tag": {
 "name": "TNA World Tag Team Championship",
@@ -9418,7 +9447,8 @@
 "source": "https://www.fightful.com/wrestling/nemeth-brothers-capture-tna-world-tag-team-titles-at-lockdown/",
 "end": null
 }
-]
+],
+"created": false
 },
 "tna-ko": {
 "name": "TNA Knockouts World Championship",
@@ -9432,7 +9462,8 @@
 "source": "https://www.fightful.com/wrestling/indi-hartwell-wins-tna-knockouts-world-title-at-tna-bound-for-glory/",
 "end": null
 }
-]
+],
+"created": false
 },
 "tna-ko-tv": {
 "name": "TNA Knockouts Television Championship",
@@ -9448,7 +9479,8 @@
 "end": null,
 "photo": "m-by-elegance"
 }
-]
+],
+"created": true
 },
 "tna-ko-tag": {
 "name": "TNA Knockouts World Tag Team Championship",
@@ -9462,7 +9494,8 @@
 "source": "https://www.fightful.com/wrestling/shayna-baszler-zoey-serrano-capture-knockouts-world-tag-team-titles-at-tna-bound-for-glory/",
 "end": null
 }
-]
+],
+"created": false
 },
 "aaa-mega": {
 "name": "AAA Mega Championship",
@@ -9476,7 +9509,8 @@
 "source": "https://www.fightful.com/wrestling/el-grande-americano-def-dominik-mysterio-for-aaa-mega-championship-at-triplemania-34/",
 "end": null
 }
-]
+],
+"created": false
 },
 "aaa-reina": {
 "name": "AAA Reina de Reinas Championship",
@@ -9490,7 +9524,8 @@
 "source": "https://www.fightful.com/wrestling/la-catalina-ends-flammers-reign-as-aaa-reina-de-reinas-champion-at-triplemania-34/",
 "end": null
 }
-]
+],
+"created": false
 },
 "aaa-latin": {
 "name": "AAA Latin American Championship",
@@ -9561,7 +9596,8 @@
 "end": null,
 "photo": "la-parka-wrestler-born-1999"
 }
-]
+],
+"created": true
 },
 "aaa-cruiser": {
 "name": "AAA World Cruiserweight Championship",
@@ -9575,7 +9611,8 @@
 "source": "https://www.fightful.com/wrestling/rey-fenix-ends-laredo-kids-aaa-world-cruiserweight-title-reign-at-noches-de-los-grandes/",
 "end": null
 }
-]
+],
+"created": false
 },
 "aaa-tag": {
 "name": "AAA World Tag Team Championship",
@@ -9589,7 +9626,8 @@
 "source": "https://www.fightful.com/wrestling/the-wagner-brothers-answer-the-war-raiders-open-challenge-at-aaa-triplemania-34-win-aaa-world-tag-team-titles/",
 "end": null
 }
-]
+],
+"created": false
 },
 "aaa-mixed": {
 "name": "AAA World Mixed Tag Team Championship",
@@ -9650,7 +9688,8 @@
 "end": null,
 "photo": "la-hiedra"
 }
-]
+],
+"created": true
 },
 "aaa-trios": {
 "name": "AAA World Trios Championship",
@@ -9664,7 +9703,8 @@
 "source": "https://www.fightful.com/wrestling/perros-del-mal-capture-aaa-world-trios-titles-at-triplemania-34/",
 "end": null
 }
-]
+],
+"created": false
 }
 }
 }

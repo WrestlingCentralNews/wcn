@@ -36,3 +36,10 @@ def test_js_pick_boundary_in_node():
     code = "function pick" + body + "var r=[['A','2024-01-01','2025-10-05','',''],['B','2025-10-05',null,'','']];console.log(pick(r,'2025-10-04')[0]+pick(r,'2025-10-05')[0]+(pick(r,'2023-01-01')===null))"
     out = subprocess.run([node, "-e", code], capture_output=True, text=True).stdout.strip()
     assert out == "ABtrue"
+def test_created_vs_gap_label_and_placement():
+    lin = tl.lineage(CH, DATA); assert lin["x"]["created"] is True
+    gap = tl.lineage(CH, {}); assert gap["x"]["created"] is False
+    assert "Title created " in tl.JS and "History from " in tl.JS
+    import stats_pages as sp
+    h = sp.champions_html({k: dict(v, id=k, group="G", promo="P") for k, v in CH.items()}, ["G"], NOW)
+    assert h.index('class="tl"') < h.index('<table class="stat"')

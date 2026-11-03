@@ -150,7 +150,11 @@ def results_strip(lang, n=8, now=None):
     """Homepage 'Latest results' block (owner 2026-11-01: results pages are the core): the newest indexable results pages of
     WWE/AEW/NXT/AAA/TNA (live first; never noindex previews). Outside #lead/#feed so app.js never replaces it."""
     import hubs
-    return hubs.latest_block(lang, n, now)
+    es = lang == "es"
+    teaser = (f'<a class="tl-teaser" href="/champions/"><b>{"Historial de campeones" if es else "Title history timeline"}</b>'
+              f'<span>{"¿Quién era campeón en tu fecha? Desliza 20 años de reinados →" if es else "Who held the belt on any date? Slide through 20 years of reigns →"}</span></a>')
+    b = hubs.latest_block(lang, n, now)
+    return b[:-len('</section>')] + '<div class="tlt">' + teaser + '</div></section>' if b else ''
 def top_html(items, lang="es"):
     """Top stories block (lead + 4), same pick as app.js for the default all-promotions view."""
     import toppick

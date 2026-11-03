@@ -92,7 +92,7 @@ def main(dirp, pages):
         else:
             reigns = [cur]
         for i, r in enumerate(reigns): r["end"] = reigns[i+1]["start"] if i + 1 < len(reigns) else None
-        out[t["id"]] = {"name": t["name"], "promo": t["promo"], "list_source": wp if ok else t["source"], "history_from": reigns[0]["start"], "reigns": reigns}
+        out[t["id"]] = {"name": t["name"], "promo": t["promo"], "list_source": wp if ok else t["source"], "history_from": reigns[0]["start"], "created": ok, "reigns": reigns}
         report[t["id"]] = (ok, reigns[0]["start"], len(reigns))
     json.dump({"_note": "Built by tools/build_lineage.py from Wikipedia title-history lists (each reign keeps the source Wikipedia cites); only kept when the newest reign matches champions.json. stats_pages.py extends it automatically from champions.json.", "titles": out},
               open(os.path.join(ROOT, "title_lineage.json"), "w"), indent=0, ensure_ascii=False)
