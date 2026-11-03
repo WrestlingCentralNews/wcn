@@ -123,5 +123,12 @@ class Optional(unittest.TestCase):
             self.assertEqual(hubs.EV_LD["events/test/"]["image"], ["https://x.com/a.jpg"])   # deep copy
         finally: hubs.EV_LD.pop("events/test/", None)
         self.assertNotIn("image", hubs._ev_ld(ev, d, "events/none/", "en"))
+class Exempt(unittest.TestCase):
+    def test_confirmed(self):
+        old = hubs._cards; hubs._cards = lambda: {"cj/2026-11-07": {"lines": ["A vs. B"]}}
+        try:
+            self.assertEqual(hubs.confirmed_matches("cj/2026-11-07", ["C vs. D"]), 2)
+            self.assertEqual(hubs.confirmed_matches("x/1", []), 0)
+        finally: hubs._cards = old
 if __name__ == "__main__": unittest.main()
 

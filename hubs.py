@@ -364,6 +364,16 @@ def _cards():
     except Exception: return {}
 def _has_card(key): return bool((_cards().get(key) or {}).get("lines"))
 PERF_SRC = r"^(Chris Van Vliet|CVV|Insight with Chris Van Vliet|Sean Ross Sapp|Fightful( Select)?)$"   # owner: top sources for announced wrestlers, besides editorial tier 1 (official sites, Fightful/SRS, PWInsider, Observer, POST, Wrestling Inc)
+_CONF_RE = re.compile(r"\b(vs\.?|versus|set for|set at|confirmed|announced|official|added|challenges?|defen[sc]es?|title match|match set|card updated|card revealed)\b", re.I)
+_NOT_CONF = re.compile(r"\b(rumou?r|could|might|may|plans?|pitched|considered|possible|reportedly|wants?|hopes?|preview|predict)\b", re.I)
+def _confirms_match(c):
+    """A tier-1 / owner-top-source story that announces a match for the event (kind 'match', or a headline that says one is set)."""
+    if not ((c.get("trusted") or 0) >= 1 or re.match(PERF_SRC, c.get("source") or "", re.I)): return False
+    t = c.get("title") or ""
+    return (c.get("kind") or {}).get("type") == "match" or (bool(_CONF_RE.search(t)) and not _NOT_CONF.search(t))
+def confirmed_matches(key, mt=()):
+    """Matches confirmed by the official card (fullcard.py) or tier-1 match stories (mt is already filtered to those)."""
+    return len((_cards().get(key) or {}).get("lines") or []) + len(mt or [])
 def event_extras(ld, key, img, lang, matches=()):
     """Fill the page's SportsEvent with what we really have: the page photo (absolute https URL that already passed the photo rules)
     and the announced wrestlers from the official card (fullcard.py state: card lines + advertised appearances) as Person performers,
@@ -585,7 +595,7 @@ def build(clusters, tr_es=None):
             EV_LD[path] = next((x for x in ld if isinstance(x, dict) and x.get("@type") == "SportsEvent"), None)
             if not st and not card_ok and not (LIVE and (LIVE.page_state(f"{ev['date']}-{ev['slug']}") or {}).get("shown")): THIN.add(path)
             if _has_results(f"{ev['date']}-{ev['slug']}"): RESULTS[path] = (lang, title, _start(f"{ev['date']}-{ev['slug']}"))
-            elif not aired: THIN.add(path); PREVIEW.add(path)
+            elif not aired and confirmed_matches(f"{ev['slug']}/{ev['date']}", [x["c"]["title"] for x in st if _confirms_match(x["c"])]) < 2: THIN.add(path); PREVIEW.add(path)   # owner 2026-11-02: PLEs/specials with 2+ confirmed matches stay indexed
             ch, cl = cite(f"{ev['date']}-{ev['slug']}", path, title, st, lang, aired); body += ch; ld = ld + cl
             page(path, lang, title + " | WCN", desc, h1, body, crumbs, ld, alt, active="upcoming", image=img, robots=THIN_ROBOTS if path in THIN else None)
             evs.append((ev, d, path, len(st), aired))
