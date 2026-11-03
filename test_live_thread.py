@@ -56,4 +56,14 @@ class T(unittest.TestCase):
         for w in L.live.shows_on(datetime.date(2026, 10, 21)): self.assertEqual(w["kind"], "weekly", w["key"])
         k = {w["slug"]: w["kind"] for w in L.live.shows_on(datetime.date(2026, 10, 24))}
         self.assertEqual(k.get("aaa-heroes-inmortales"), "ppv")
+class ExtraSlot(unittest.TestCase):
+  def test_extra_overrides_weekly_slot(self):
+      import live, datetime
+      old = live.CFG.get("extra"); live.CFG["extra"] = {"wwe-raw": [{"date": "2026-11-02", "time": "18:00"}]}
+      try:
+          w = [x for x in live.shows_on(datetime.date(2026, 11, 2)) if x["slug"] == "wwe-raw"]
+          assert len(w) == 1 and w[0]["start"].hour == 18
+      finally:
+          if old is None: live.CFG.pop("extra", None)
+          else: live.CFG["extra"] = old
 if __name__ == "__main__": unittest.main()

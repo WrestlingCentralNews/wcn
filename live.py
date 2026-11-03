@@ -43,9 +43,9 @@ def shows_on(day):
                     "results_pages": ev.get("results_pages", []), "tag": ev.get("hashtag") or "#" + re.sub(r"[^A-Za-z0-9]", "", re.sub(r"\s*\d{4}$", "", ev["name"]))})
     for show, s in CFG["shows"].items():
         skip = {x["date"] for x in CFG.get("skips", {}).get(show, [])}
-        slots = []
-        if day.weekday() == s["weekday"] and day.isoformat() not in skip: slots.append(s["time"])
-        slots += [x.get("time", s["time"]) for x in CFG.get("extra", {}).get(show, []) if x["date"] == day.isoformat()]
+        # a sourced 'extra' entry for this date (special start time, extra airing) wins over the regular weekly slot
+        slots = [x.get("time", s["time"]) for x in CFG.get("extra", {}).get(show, []) if x["date"] == day.isoformat()]
+        if not slots and day.weekday() == s["weekday"] and day.isoformat() not in skip: slots.append(s["time"])
         for t in slots[:1]:
             st = _dt(day, t)
             out.append({"key": f"{day.isoformat()}-{show}", "kind": "weekly", "slug": show, "date": day.isoformat(), "name": s["name"], "brand": s["brand"],

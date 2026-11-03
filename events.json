@@ -15,7 +15,8 @@
   "aew-collision": [{"date": "2026-10-17", "note": "No regular Collision: WrestleDream Tailgate Brawl (7 p.m. ET, TNT) and AEW WrestleDream", "note_es": "Sin Collision regular: WrestleDream Tailgate Brawl (7 p.m. ET, TNT) y AEW WrestleDream"}]
  },
  "extra": {
-  "aew-collision": [{"date": "2026-10-14", "time": "22:00", "network": "TBS / HBO Max", "note": "Aired Wednesday after Dynamite (3-hour special)", "note_es": "Se emitió el miércoles después de Dynamite (especial de 3 horas)"}]
+  "aew-collision": [{"date": "2026-10-14", "time": "22:00", "network": "TBS / HBO Max", "note": "Aired Wednesday after Dynamite (3-hour special)", "note_es": "Se emitió el miércoles después de Dynamite (especial de 3 horas)"}],
+  "wwe-raw": [{"date": "2026-11-02", "time": "18:00", "network": "Netflix", "note": "Special 6 PM ET start (Brooklyn, SmackDown taped the same night)", "note_es": "Inicio especial a las 6 PM ET (Brooklyn, SmackDown se grabó la misma noche)", "source": "https://www.pwinsider.com/article/213317/reminder-6-pm-eastern-live-start-for-wwe-raw-on-netflix-tonight.html"}]
  },
  "events": [
   {"slug": "wwe-money-in-the-bank", "name": "WWE Money in the Bank 2026", "brand": "WWE", "date": "2026-10-10", "venue": "Smoothie King Center", "city": "New Orleans, Louisiana", "match": "Money in the Bank|\\bMITB\\b", "source": "https://www.wwe.com/article/new-orleans-to-host-money-in-the-bank-on-saturday-october-10", "image": "https://www.wwe.com/f/styles/og_image/public/2026/06/CS-062252_LVE_MITB_LOGO_ONLY_1920x1080.jpg", "image_source": "og:image of the official event page in source, checked 2026-10-28"},
