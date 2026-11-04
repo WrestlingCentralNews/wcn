@@ -56,3 +56,5 @@ document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
 syncClarity();
 document.addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('upd')&&e.target.open)track('timeline_open')},true);
 })();
+// Owner opt-out confirmation toast (shown only right after ?wcn_internal=on|off / ?wcn_me=1|0).
+(function(){const v=window.wcnMeToast;if(!v)return;const go=()=>{const d=document.createElement('div');d.setAttribute('role','status');d.textContent=v==='1'?'This device is excluded from WCN analytics':'WCN analytics re-enabled on this device';d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom));z-index:99999;background:#111;color:#fff;padding:10px 16px;border-radius:10px;font:600 14px/1.3 system-ui,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.35);max-width:90vw;text-align:center';document.body.appendChild(d);setTimeout(()=>d.remove(),4000)};document.body?go():document.addEventListener('DOMContentLoaded',go)})();
