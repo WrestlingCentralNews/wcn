@@ -82,12 +82,13 @@ function show(r,d){var c=$('tl-card'),ph=r&&D.photos[r[4]];
  c.innerHTML=(ph?'<img src="'+ph+'" alt="'+r[0].replace(/"/g,'&quot;')+'" width="88" height="88">':'<div class="tl-ini" aria-hidden="true">'+ini(r[0])+'</div>')+
  '<div><div class="tl-n"><strong></strong></div><div class="tl-m"></div></div>';c.querySelector('strong').textContent=r[0];
  c.querySelector('.tl-m').textContent='Reign: '+fmt(r[1])+' – '+(r[2]?fmt(r[2]):'present')}
-$('tl-t').onchange=draw;$('tl-r').onchange=draw;$('tl-s').addEventListener('input',function(){go(+this.value)});
+function tk(n,o){try{window.track&&track(n,o||{})}catch(e){}}var tld=0;
+$('tl-t').onchange=function(){draw();tk('timeline_title',{title:T.n})};$('tl-r').onchange=function(){draw();tk('timeline_range',{years:+this.value,title:T.n})};$('tl-s').addEventListener('input',function(){go(+this.value);if(!tld){tld=1;tk('timeline_drag',{title:T.n})}});
 $('tl-q').addEventListener('change',function(){var v=this.value;if(!/^\d{4}-\d\d-\d\d$/.test(v))return;var n=dn(v);
  if(n>today){$('tl-msg').textContent='That date is in the future, so here is today.';n=today}
  else if(n<lo){var y=$('tl-r');if(n>=dn(T.f)){y.value=20;draw()}
   if(n<lo){$('tl-msg').textContent=v<T.f?'Our history for the '+T.n+' starts '+fmt(T.f)+', so here is the first champion on record.':'That date is outside the range shown, so here is the earliest date available.';n=lo}else $('tl-msg').textContent=''}
- else $('tl-msg').textContent='';go(n)});
+ else $('tl-msg').textContent='';go(n);tk('timeline_date_search',{search_date:v,title:T.n})});
 draw()})();"""
 def html_block(lin, now, credits=None):
     p = payload(lin, now); credits = credits if credits is not None else jload("champion_photos.json", {})
