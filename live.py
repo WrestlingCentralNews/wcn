@@ -111,6 +111,14 @@ def lines_of(page):
 DEF = r"(?:def\.|defeated|defeats)"
 TITLE_RX = re.compile(r"(?i)\b(champion(?:ship)?s?|titles?)\b")
 CHANGE_RX = re.compile(r"(?i)\b(new (?:\w+ )?champions?|to (?:win|capture|become)|wins? the|captur(?:e|es|ed)|crowned|title change|dethron)")
+NOCHANGE_FIN = re.compile(r"(?i)disqualif|\bdq\b|count.?out|no contest|\bdraw\b")   # titles do not change hands on these finishes
+EXPLICIT_CHANGE_RX = re.compile(r"(?i)\b(?:new (?:\w+ )?champions?|and new\b|title change|dethron\w*)")   # the source itself says the belt moved
+NONTITLE_RX = re.compile(r"(?i)\beliminator\b|contender|non-?title")
+def guard_title(m):
+    """A DQ / count-out / no-contest / draw result is never a title change unless the source line explicitly says so (owner rule)."""
+    if m.get("title") == "change" and NOCHANGE_FIN.search(m.get("fin_en") or "") and not m.get("change_explicit"): m["title"] = "no_change"
+    if m.get("title") == "change" and NONTITLE_RX.search(m.get("stip") or "") and not m.get("change_explicit"): m["title"] = None
+    return m
 RETAIN_RX = re.compile(r"(?i)\b(retain(?:s|ed)?|successful(?:ly)? defen[cs]e|still (?:the )?champion)")
 NOTE = re.compile(r"(?i)^(?:result|match result|winner|winners)\s*:")
 def clean_side(s):
@@ -183,7 +191,8 @@ def card_of(lines):
         sides = [re.sub(r"\s*\((?:" + PRE_RX + r")[^)]*\)", "", x, flags=re.I) for x in sides]
         sides = [re.sub(r"\s+[-–—]\s+.*$", "", x) for x in sides]
         champ = next((clean_side(re.sub(r"\s*\(c\.?\)", "", x)) for x in sides if re.search(r"\(c\.?\)", x)), None)
-        out.append({"stip": stip, "sides": [clean_side(re.sub(r"\s*\(c\.?\)", "", x)) for x in sides], "champ": champ, "pre": pre, "idx": idx})
+        out.append({"stip": stip, "sides": [clean_side(re.sub(r"\s*\(c\.?\)", "", x)) for x in sides], "champ": champ, "pre": pre, "idx": idx,
+                    "nontitle": bool(NONTITLE_RX.search(l))})
     return out
 def card_match(card, r):
     """Best card entry for result r (winner must overlap one side; loser, if known, another)."""
@@ -209,7 +218,8 @@ def apply_card(r, card):
         elif len(others) > 2: r["field"] = len(c["sides"])
     if c["stip"] and not r.get("stip"): r["stip"] = c["stip"]
     if c.get("pre"): r["pre"] = True
-    if c["champ"] and TITLE_RX.search(c["stip"] or "Championship") and r.get("title") is None:
+    if c.get("nontitle") and r.get("title") == "change" and not r.get("change_explicit"): r["title"] = None   # eliminator / contender / non-title: belt can't move
+    if c["champ"] and not c.get("nontitle") and TITLE_RX.search(c["stip"] or "Championship") and r.get("title") is None:
         CT = toks(c["champ"]); W = toks(r["winner"])
         r["title"] = "retain" if CT and W and len(CT & W) / min(len(CT), len(W)) >= 0.5 else "change"
 CARD = {}
@@ -247,6 +257,7 @@ def parse_page(page):
                 elif re.search(r"(?i)\band still\b", par) or re.search(r"(?i)\b(?:and still|retain)", m.group(3) + " " + ctx[-200:]): r["title"] = "retain"
         if r:
             if pre_sec: r["pre"] = True
+            if EXPLICIT_CHANGE_RX.search(line): r["change_explicit"] = True
             local = [c for c in card if c["idx"] < i and i - c["idx"] <= 80]
             near = None
             for c in reversed(local):                      # the match header just above this result line
@@ -256,6 +267,7 @@ def parse_page(page):
             elif r.get("need_card") or not r.get("loser"): continue   # winner-only line with no header above it: ignore
             if r.pop("need_card", False) and not r.get("card"): continue   # 'X wins…' lines only count for announced matches
             k = norm(r["winner"]) + "|" + norm(r["loser"])
+            guard_title(r)
             if k not in seen: seen.add(k); r["pos"] = i; out.append(r)
     return out
 
@@ -285,6 +297,7 @@ def text_en(m):
     if m.get("who") and m["who"].split()[0].lower() not in (m.get("fin_en") or ""): s += f" ({m['who']})"
     if m.get("title") == "change": s += " — NEW CHAMPION" + ("S" if re.search(r"&| and |,", w) else "")
     elif m.get("title") == "retain": s += " to retain"
+    elif m.get("title") == "no_change": s += "; the title does not change hands"
     return s if s.endswith("!") else s + "."
 def text_es(m):
     w, l = m["winner"], m["loser"]
@@ -296,12 +309,16 @@ def text_es(m):
         s += " (" + m["who"].replace(" pinned ", " cubrió a ").replace(" submitted ", " rindió a ") + ")"
     if m.get("title") == "change": s += " — ¡CAMBIO DE TÍTULO!"
     elif m.get("title") == "retain": s += (" y retuvieron el título" if re.search(r"&| and | y |,", w) else " y retuvo el título")
+    elif m.get("title") == "no_change": s += "; el título no cambia de manos"
     return s if s.endswith("!") else s + "."
 
 def path(key): return os.path.join(LIVE_DIR, key + ".json")
 def load(key):
-    try: return json.load(open(path(key)))
+    try: st = json.load(open(path(key)))
     except Exception: return None
+    for m in st.get("matches") or []:   # old files may still carry a DQ "change" from before the guard
+        if m.get("title") == "change" and guard_title(m)["title"] == "no_change": m["en"], m["es"] = text_en(m), text_es(m)
+    return st
 def update(store_articles=(), now=None):
     """Called from the aggregator every run (cheap no-op outside windows). Returns list of updated keys."""
     now = now or datetime.datetime.now(ET); changed = []
@@ -352,6 +369,7 @@ def update(store_articles=(), now=None):
                 if not m.get(k) and r.get(k): m[k] = r[k]; m["updated"] = nowi
             if r.get("loser") and m.get("loser", "").startswith(r["loser"]) and len(m["loser"]) > len(r["loser"]):   # parser fix trimmed junk ("... 2 falls to 1")
                 m["loser"] = r["loser"]; m["updated"] = nowi
+            if r.get("change_explicit") and not m.get("change_explicit"): m["change_explicit"] = True
             if r.get("title") and m.get("title") != r["title"] and (m.get("title") is None or r["title"] == "change"): m["title"] = r["title"]; m["updated"] = nowi
             if len(r.get("winner", "")) > len(m["winner"]) and same(r, m): m["winner"] = r["winner"]
             if not any(s["name"] == r["src"] for s in m["sources"]): m["sources"].append({"name": r["src"], "url": r["url"]}); m["updated"] = nowi
@@ -376,7 +394,7 @@ def update(store_articles=(), now=None):
             if v is not None: m["pre"] = sum(v.values()) * 2 > len(v)   # strict majority of the sources reporting it
             m["conflict"] = any(contradicts(m, o) for o in st["matches"] if o is not m)
             m["confirmed"] = not m["conflict"] and (len(m["sources"]) >= 2 or (m.get("card") and nowi - m["first_seen"] >= 600))
-            m["en"], m["es"] = text_en(m), text_es(m)
+            guard_title(m); m["en"], m["es"] = text_en(m), text_es(m)
         # order: by position in the source with the most results (show order), new unknowns at the end
         cnt = {}
         for m in st["matches"]:
