@@ -44,7 +44,7 @@ def head(title, desc, canon, lang="en", alts=None, og_type="website", image=None
             f'<meta property="og:type" content="{og_type}"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:locale" content="{loc}"><meta property="og:title" content="{e(title)}">'
             f'<meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{e(canon)}"><meta property="og:image" content="{e(img)}">'
             f'<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@wrestlingWCN"><meta name="twitter:image" content="{e(img)}">{extra}{lds}'
-            f'{ICONS}<link rel="stylesheet" href="/style.css?v={CSS_V}"><script src="/ads-config.js"></script><script src="/analytics.js"></script></head>')
+            f'{ICONS}<link rel="stylesheet" href="/style.css?v={CSS_V}"><script src="/ads-config.js"></script><script src="/analytics.js?v={JS_V}"></script></head>')
 T = {
  "en": {"home": "/", "news": "News", "shows": "Shows", "nav_shows": "Results &amp; Shows", "upcoming": "Upcoming", "shows_url": "/shows/", "upcoming_url": "/upcoming/",
         "about": "About", "masthead": "Masthead", "policy": "Editorial & corrections", "contact": "Contact", "privacy": "Privacy Policy", "terms": "Terms of Use", "newsletter": "Newsletter",
@@ -62,6 +62,8 @@ SOCIAL = (f'<div class="social"><a class="soc soc-x" href="{X_URL}" target="_bla
 import hashlib as _hl, os as _os
 try: CSS_V = _hl.sha256(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "public", "style.css"), "rb").read()).hexdigest()[:10]
 except Exception: CSS_V = "1"
+try: JS_V = _hl.sha256(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "public", "analytics.js"), "rb").read()).hexdigest()[:10]
+except Exception: JS_V = "1"
 def stamp_css(html):
     """Point every style.css link at the current ?v= hash and add viewport-fit=cover (hand-kept static pages)."""
     import re as _re
@@ -85,7 +87,7 @@ def footer(lang):
     t = T[lang]; i = 1 if lang == "es" else 0
     rss = "/es/feed.xml" if lang == "es" else "/feed.xml"
     nl = "/newsletter/"
-    return (f'<footer>© 2026 Wrestling Central News (WCN) · <a href="{STATIC["about"][i]}">{t["about"]}</a> · <a href="{STATIC["masthead"][i]}">{t["masthead"]}</a> · '
+    return (f'<footer><span class="wcn-lp" style="-webkit-user-select:none;user-select:none;-webkit-touch-callout:none">© 2026 Wrestling Central News (WCN)</span> · <a href="{STATIC["about"][i]}">{t["about"]}</a> · <a href="{STATIC["masthead"][i]}">{t["masthead"]}</a> · '
             f'<a href="{STATIC["policy"][i]}">{t["policy"]}</a> · <a href="{STATIC["contact"][i]}">{t["contact"]}</a> · <a href="/privacy.html">{t["privacy"]}</a> · <a href="{STATIC["terms"][i]}">{t["terms"]}</a> · '
             f'<a class="nl-link" href="{nl}">{t["newsletter"]}</a> · <a class="rss-link" href="{rss}" type="application/rss+xml">RSS</a> · '
             f'{t["follow"]}: <a href="{X_URL}" target="_blank" rel="noopener">X @wrestlingWCN</a> · <a href="{FB}" target="_blank" rel="noopener">Facebook</a> · '
