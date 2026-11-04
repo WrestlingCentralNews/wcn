@@ -35,13 +35,32 @@ def meta_desc(s, n=158):
 def title_tag(title):
     """<title>: the headline first; ' | WCN' only when it still fits ~60 chars (Google shows the site name on its own line)."""
     return f"{title} | WCN" if len(title) <= 54 else title
-def assign_urls(clusters):
+SLUGS = os.path.join(ROOT, "data", "story_slugs.json")   # {story id: first published EN url}; frozen, never rewritten
+def _seed_slugs(S, prev):
+    """Existing stories keep their CURRENT URL: previous run's URL first, else the most recently served registry URL for that id."""
+    for i, u in prev.items(): S.setdefault(i, u)
+    try: REG = json.load(open(URL_REG))
+    except Exception: REG = {}
+    best = {}
+    for u, g in REG.items():
+        m = re.match(r"story/.+-(c[0-9a-f]{12})\.html$", u)
+        if m and g.get("seen", 0) >= best.get(m.group(1), ("", -1))[1]: best[m.group(1)] = (u, g.get("seen", 0))
+    for i, (u, _) in best.items(): S.setdefault(i, u)
+def assign_urls(clusters, path=None):
+    """owner 2026-11-01/11-04: a published story URL never changes. The first slug a story id is published under is stored in
+    data/story_slugs.json and reused forever, whatever the headline becomes (old URLs stay live as redirect pages)."""
+    path = path or SLUGS
     prev = {p["id"]: p["url"] for p in PREV if p.get("id") and (p.get("url") or "").startswith("story/")}
+    try: S = json.load(open(path))
+    except Exception: S = {}
+    _seed_slugs(S, prev)
     kept = 0
     for c in clusters:
-        new = f"story/{slugify(c['title'])}-{c['id']}.html"; old = prev.get(c["id"])
-        if old and old != new: new = old; kept += 1   # owner 2026-11-01: a published story URL never changes (updates in place)
-        c["url"] = new
+        new = f"story/{slugify(c['title'])}-{c['id']}.html"; old = S.get(c["id"])
+        if old and old != new: new = old; kept += 1
+        c["url"] = new; S.setdefault(c["id"], new)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    tmp = path + ".tmp"; json.dump(S, open(tmp, "w")); os.replace(tmp, path)
     if kept: print(f"pages: kept {kept} story URLs across headline rewrites", flush=True)
 KIT_ACTION = "https://app.kit.com/forms/10060065/subscriptions"   # Kit form "WCN Weekly" (double opt-in)
 def nl_block(where, compact=False, head="h2", base="../", lang="en"):
