@@ -210,6 +210,13 @@ def stamp_static():
         except Exception: continue
         s2 = C.stamp_css(s)
         if s2 != s: open(p, "w").write(s2)
+    # /privacy/ (no 404s, 2026-11-04): noindex forwarder to the canonical /privacy.html (URL /privacy.html never changes)
+    d = os.path.join(PUB, "privacy"); os.makedirs(d, exist_ok=True)
+    open(os.path.join(d, "index.html"), "w").write('<!doctype html><html lang="en"><head><meta charset="utf-8">'
+        '<meta name="robots" content="noindex,follow"><link rel="canonical" href="https://wrestlingcentralnews.com/privacy.html">'
+        '<meta http-equiv="refresh" content="0;url=/privacy.html"><title>Privacy Policy | WCN</title>'
+        '<script>location.replace("/privacy.html"+location.hash)</script></head>'
+        '<body><p>This page moved to <a href="/privacy.html">our privacy policy</a>.</p></body></html>')
     return []
 def build_en_home(clusters):
     p = os.path.join(PUB, "index.html")
