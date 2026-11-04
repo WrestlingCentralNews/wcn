@@ -2,14 +2,14 @@ const CATS={WWE:'#f26a14',AEW:'#7cd618',TNA:'#4ea8ff',Indie:'#f05fc1',Global:'#2
 const LANG=document.documentElement.lang==='es'?'es':'en';
 const TX={en:{conf:n=>`✔ CONFIRMED BY ${n} SOURCES`,dev:n=>`DEVELOPING · ${n} REPORTS`,off:'OFFICIAL MATCH',nw:'NEW',dflt:s=>`Developing story reported by ${s}. Tap through for the full report.`,upd:n=>`🔄 ${n} related update${n>1?'s':''} · story timeline`,more:'Read more →',stories:'stories',updated:'updated ',none:'No stories for these filters yet — pick another promotion.',fail:'Could not load news.',first:'first reported ',upd2:'updated ',top:'Top Stories',brk:'BREAKING'},
 es:{conf:n=>`✔ CONFIRMADO POR ${n} FUENTES`,dev:n=>`EN DESARROLLO · ${n} REPORTES`,off:'COMBATE OFICIAL',nw:'NUEVO',dflt:s=>`Noticia en desarrollo reportada por ${s}. Toca para ver el reporte completo.`,upd:n=>`🔄 ${n} actualización${n>1?'es':''} relacionada${n>1?'s':''} · cronología`,more:'Leer más →',stories:'noticias',updated:'actualizado ',none:'Todavía no hay noticias con estos filtros. Elige otra empresa.',fail:'No se pudieron cargar las noticias.',first:'publicado ',upd2:'actualizado ',top:'Lo más importante',brk:'ÚLTIMA HORA'}}[LANG];
-const KEY='wcn_filters';let sel=JSON.parse(localStorage.getItem(KEY)||'null')||Object.keys(CATS);{const P=new URLSearchParams(location.search).get('promo');if(P&&CATS[P])sel=[P]}
+const KEY='wcn_filters';let sel=JSON.parse(localStorage.getItem(KEY)||'null')||Object.keys(CATS);{const P=new URLSearchParams(location.search).get('promo');if(P&&CATS[P])sel=[P];sel=sel.filter(k=>CATS[k]);if(!sel.length)sel=Object.keys(CATS)}
 let items=[],shown=12,lastSeen=+localStorage.getItem('wcn_seen')||0,q='';
 const $=s=>document.querySelector(s),esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function ago(t){const m=(Date.now()/1000-t)/60,v=m<60?Math.max(1,m|0)+(LANG==='es'?' min':'m'):m<1440?(m/60|0)+'h':(m/1440|0)+'d';return LANG==='es'?'hace '+v:v+' ago'}
 // cards are sorted by latest activity (ts); show when the story was first reported too, so a long-running story never looks brand new
 function when(i){const f=i.first_ts||i.ts;return (i.updates||[]).length&&i.ts-f>300?TX.first+ago(f)+' · '+TX.upd2+ago(i.ts):ago(f)}
 function chips(){$('#filters').innerHTML=Object.entries(CATS).map(([k,c])=>`<button class="chip ${sel.includes(k)?'on':''}" style="--c:${c}" data-k="${k}">${k}<small>${items.filter(i=>i.categories.includes(k)).length}</small></button>`).join('')}
-$('#filters').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;const k=b.dataset.k;sel=sel.includes(k)?sel.filter(x=>x!==k):[...sel,k];localStorage.setItem(KEY,JSON.stringify(sel));shown=12;chips();render()};
+$('#filters').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;const k=b.dataset.k;sel=sel.includes(k)?sel.filter(x=>x!==k):[...sel,k];if(!sel.length)sel=Object.keys(CATS);localStorage.setItem(KEY,JSON.stringify(sel));shown=12;chips();render()};
 let qt;$('#q').oninput=e=>{q=e.target.value.toLowerCase();clearTimeout(qt);qt=setTimeout(()=>window.track&&track('search',{search_term:q}),1200);shown=12;render()};
 function list(){return items.filter(i=>i.categories.some(c=>sel.includes(c))&&(!q||(i.title+i.summary+i.source+(i.updates||[]).map(u=>u.title).join(' ')).toLowerCase().includes(q)))}
 // photo fallback (2026-10-22): a photo that fails to load removes only itself and the blurred copy, never the promotion placeholder under it
@@ -37,7 +37,7 @@ if(top){top.classList.remove('wait');top.innerHTML=T.length?`<h2 class="top-h">$
 const o=top&&T.length?T.length:0;
 F.slice(0,shown).forEach((i,n)=>{h+=card(i,n+o,!top&&n===0);if((n+1)%every===0)h+=`<div class="ad ad-feed" data-slot="inFeed" data-size="Responsive In-Feed"></div>`});
 $('#feed').innerHTML=h||'<div class="empty">'+TX.none+'</div>';$('#more').style.display=F.length>shown?'block':'none';
-$('#count').textContent=L.length+' '+TX.stories;observe();fillAds()}
+$('#count').textContent=(L.length<items.length?L.length+' / ':'')+items.length+' '+TX.stories;observe();fillAds()}
 const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.08});
 function observe(){document.querySelectorAll('.card:not(.in)').forEach(c=>io.observe(c))}
 $('#more').onclick=()=>{shown+=12;render()};

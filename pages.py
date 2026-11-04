@@ -45,20 +45,13 @@ def assign_urls(clusters):
     if kept: print(f"pages: kept {kept} story URLs across headline rewrites", flush=True)
 KIT_ACTION = "https://app.kit.com/forms/10060065/subscriptions"   # Kit form "WCN Weekly" (double opt-in)
 def nl_block(where, compact=False, head="h2", base="../", lang="en"):
-    """WCN Weekly signup. Native form -> Kit; newsletter.js upgrades it to fetch() + inline 'check your inbox' message."""
+    """Follow block (owner 2026-11-03: Kit dropped, so no email form). RSS only; push prompts come from push.js."""
     if lang == "es":
-        title = "Recibe el <b>WCN Weekly</b>" if not compact else "No te pierdas nada: <b>WCN Weekly</b>"
-        sub = "Las 10 noticias más importantes de la lucha libre de la semana, cada lunes por la mañana (boletín en inglés). Gratis, sin spam."
-        ph, btn, fine = "Tu correo electrónico", "Suscribirme", f'Doble confirmación vía Kit. Consulta nuestra <a href="/privacy.html">Política de privacidad</a>.'
+        title, sub, rss, lbl = "Sigue a <b>WCN</b>", "Recibe cada noticia en tu lector de feeds favorito.", "/es/feed.xml", "Feed RSS"
     else:
-        title = "Get the <b>WCN Weekly</b>" if not compact else "Never miss a big story: <b>WCN Weekly</b>"
-        sub = "The 10 biggest wrestling stories of the week, every Monday morning. Free, no spam, unsubscribe anytime."
-        ph, btn, fine = "Your email address", "Subscribe", f'Double opt-in via Kit. See our <a href="{base}privacy.html">Privacy Policy</a>.'
-    return (f'<section class="nl{" nl-box" if compact else ""}" aria-label="WCN Weekly newsletter"><div><{head}>{title}</{head}><p class="nl-sub">{sub}</p></div>'
-            f'<form class="nl-form" action="{KIT_ACTION}" method="post" data-where="{where}"><div class="nl-row">'
-            f'<input type="email" name="email_address" required autocomplete="email" inputmode="email" placeholder="{ph}" aria-label="{ph}">'
-            f'<button type="submit">{btn}</button></div><p class="nl-msg" role="status" aria-live="polite"></p>'
-            f'<p class="nl-fine">{fine}</p></form></section>')
+        title, sub, rss, lbl = "Follow <b>WCN</b>", "Get every story in your favorite feed reader.", "/feed.xml", "RSS feed"
+    return (f'<section class="nl{" nl-box" if compact else ""}" aria-label="Follow WCN" data-where="{where}"><div><{head}>{title}</{head}><p class="nl-sub">{sub}</p></div>'
+            f'<p class="nl-row"><a class="nl-rss" href="{rss}" rel="alternate" type="application/rss+xml">{lbl}</a></p></section>')
 TAGLINE = "Wrestling news from WWE, AEW, TNA, the indies and around the world, updated around the clock."
 FEED_CATS = {"WWE": "wwe", "AEW": "aew", "TNA": "tna", "Indie": "indie", "Global": "global"}
 _CTRL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\ufffe\uffff]")
