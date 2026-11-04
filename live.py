@@ -128,7 +128,7 @@ def clean_side(s):
     return s
 def split_method(rest):
     """rest = text after the loser -> (loser, method_text)."""
-    m = re.search(r"(?i)\s+(?:via|by|with|when|after|following|to (?:retain|win|capture|become|advance|earn)|in\s+\d|\(\d|\d\s*-\s*\d|\d\s+falls?\s+to\s+\d|- |– |— )", rest)
+    m = re.search(r"(?i)\s+(?:via|by|with|when|after|following|to (?:retain|win|capture|become|advance|earn|go up|take|move|improve)\b|pinning\b|submitting\b|in an? [^()]{0,60}?match\b|in\s+\d|\(\d|\d\s*-\s*\d|\d\s+falls?\s+to\s+\d|- |– |— )", rest)
     if not m: return rest, ""
     return rest[:m.start()], rest[m.start():].strip()
 def finish(method, line):
@@ -207,10 +207,25 @@ def card_match(card, r):
         if sc >= 2: sc += 0.5 if (c["stip"] or c["champ"]) else 0
         if sc >= 2 and sc > bs: best, bs = c, sc
     return best
+MEMBER_PREFIX = re.compile(r"(?i)^(?:(?:AEW|WWE|TNA|NXT|ROH|AAA|IWGP)\s+)?(?:[\w'’.-]+\s+){0,4}?(?:co-)?champions?\s+|^(?:Switchblade)\s+")
+def _bare_members(grp):
+    parts = [re.sub(r"(?i)^(?:&|and)\s+", "", p.strip()) for p in re.split(r"\s*,\s*|\s+&\s+|\s+and\s+", grp)]
+    parts = [MEMBER_PREFIX.sub("", p).strip() for p in parts if p.strip(" &")]
+    return ", ".join(parts[:-1]) + " & " + parts[-1] if len(parts) > 2 else " & ".join(parts)
+def with_members(side, card_sides):
+    """Result lines often print only team names ('The Cut defeated Death Riders') while the match header lists the members
+    ('Death Riders (AEW Continental Champion Jon Moxley & Daniel Garcia) vs. ...'). Pull the members in so records credit every wrestler."""
+    if not side or "(" in side: return side
+    for sd in card_sides:
+        m = re.match(r"^(?P<team>[^()]+?)\s*\((?P<mem>[^()]+)\)\s*$", sd or "")
+        if m and norm(m.group("team")) and norm(m.group("team")) == norm(side) and re.search(r"&|,| and ", m.group("mem")):
+            return f"{side} ({_bare_members(m.group('mem'))})"
+    return side
 def apply_card(r, card):
     c = card_match(card, r)
     if not c: return
     r["card"] = True
+    r["winner"] = with_members(r.get("winner"), c["sides"]); r["loser"] = with_members(r.get("loser"), c["sides"])
     if not r.get("loser"):
         W = toks(r["winner"])
         others = [sd for sd in c["sides"] if not (toks(sd) and W and len(toks(sd) & W) / min(len(toks(sd)), len(W)) >= 0.5)]
