@@ -1,6 +1,7 @@
 name: WCN Weekly newsletter (Kit)
 on:
-  schedule: [{cron: "1 13 * * 1"}, {cron: "41 13 * * 1"}, {cron: "11 15 * * 1"}]   # Mondays ~13:00 UTC = 9:00 AM Puerto Rico (AST, no DST); later slots are retries, no-ops once the week is sent
+  # schedule disabled 2026-11-03 (Kit dropped); manual dispatch only
+  # schedule: [{cron: "1 13 * * 1"}, {cron: "41 13 * * 1"}, {cron: "11 15 * * 1"}]   # Mondays ~13:00 UTC = 9:00 AM Puerto Rico (AST, no DST); later slots are retries, no-ops once the week is sent
   workflow_dispatch:
     inputs:
       mode:

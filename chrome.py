@@ -64,10 +64,14 @@ try: CSS_V = _hl.sha256(open(_os.path.join(_os.path.dirname(_os.path.abspath(__f
 except Exception: CSS_V = "1"
 try: JS_V = _hl.sha256(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "public", "analytics.js"), "rb").read()).hexdigest()[:10]
 except Exception: JS_V = "1"
+try: APP_V = _hl.sha256(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "public", "app.js"), "rb").read()).hexdigest()[:10]
+except Exception: APP_V = "1"
 def stamp_css(html):
     """Point every style.css link at the current ?v= hash and add viewport-fit=cover (hand-kept static pages)."""
     import re as _re
     html = _re.sub(r'href="(/?)style\.css(?:\?v=\w+)?"', lambda m: f'href="{m.group(1)}style.css?v={CSS_V}"', html)
+    html = _re.sub(r'src="(/?)app\.js(?:\?v=\w+)?"', lambda m: f'src="{m.group(1)}app.js?v={APP_V}"', html)
+    html = _re.sub(r'src="(/?)analytics\.js(?:\?v=\w+)?"', lambda m: f'src="{m.group(1)}analytics.js?v={JS_V}"', html)
     return html.replace('content="width=device-width,initial-scale=1"', 'content="width=device-width,initial-scale=1,viewport-fit=cover"')
 def lang_toggle(lang, en_url, es_url):
     """Prominent EN | ES switch; links to the equivalent page (or the other edition's home). Click saves wcn_lang."""

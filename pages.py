@@ -340,30 +340,28 @@ def build_sw():
     out = src.replace("__VERSION__", h.hexdigest()[:12]).replace("__PRECACHE__", json.dumps(SW_PRECACHE))
     open(os.path.join(PUB, "sw.js"), "w").write(out)
 def build_newsletter_page(clusters):
-    """/newsletter/ landing page: pitch, signup form, and a live sample of this week's top stories (same ranking as the email)."""
+    """/newsletter/ (URL kept, 200): Follow WCN page, noindex (owner 2026-11-03: Kit dropped, no email newsletter)."""
     try:
         from newsletter import top_week
         sample = top_week(clusters, n=5)
     except Exception: sample = []
     lis = "".join(f'<li><a href="/{c["url"]}">{e(c["title"])}</a><span>{e(c["categories"][0])}</span></li>' for c in sample)
-    url = SITE + "newsletter/"; desc = "WCN Weekly: the 10 biggest pro wrestling stories of the week from WWE, AEW, TNA, the indies and around the world, in your inbox every Monday. Free."
+    url = SITE + "newsletter/"; desc = "Follow Wrestling Central News: RSS feeds, X, Facebook and breaking news alerts."
     html_ = f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
 {GA_HEAD}
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="max-image-preview:large">
-<title>WCN Weekly Newsletter: Top Wrestling News Every Monday | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">{feed_links()}
-<meta property="og:type" content="website"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:title" content="WCN Weekly: the week in wrestling, every Monday"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:image" content="{SITE}og-image.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@wrestlingWCN"><meta name="twitter:image" content="{SITE}og-image.jpg">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,follow">
+<title>Follow WCN: RSS, X, Facebook and Alerts | WCN</title><meta name="description" content="{e(desc)}"><link rel="canonical" href="{url}">{feed_links()}
+<meta property="og:type" content="website"><meta property="og:site_name" content="Wrestling Central News"><meta property="og:title" content="Follow WCN"><meta property="og:description" content="{e(desc)}"><meta property="og:url" content="{url}"><meta property="og:image" content="{SITE}og-image.jpg"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@wrestlingWCN"><meta name="twitter:image" content="{SITE}og-image.jpg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><meta name="theme-color" content="#0a1a18"><link rel="manifest" href="/manifest.webmanifest"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="WCN">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css?v={chrome.CSS_V}"><script src="/analytics.js"></script></head><body>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css?v={chrome.CSS_V}"><script src="/analytics.js?v={chrome.JS_V}"></script></head><body>
 <div class="spot s1"></div><div class="spot s2"></div>
 {chrome.header("en", "/newsletter/", "/es/", None, back=True)}
-<main class="nl-page"><h1>The week in wrestling, <b>every Monday.</b></h1>
-<p class="lede">WCN Weekly brings you the 10 biggest stories from WWE, AEW, TNA, the indies and around the world: our own headlines, a quick summary of each, and a link to the full story.</p>
-{nl_block("newsletter-page", base="/")}
-<ul class="nl-perks"><li><b>10 stories, 2 minutes</b>Ranked by how big the story is and how many trusted outlets confirmed it.</li><li><b>Every Monday morning</b>Lands at 9:00 AM Puerto Rico time (AST), right before Raw week kicks off.</li><li><b>Free, no spam</b>One email a week. Unsubscribe with one click, anytime.</li></ul>
-{f'<section class="nl-sample"><h2>This week so far</h2><ol>{lis}</ol></section>' if lis else ''}
+<main class="nl-page"><h1>Follow <b>WCN</b></h1>
+<p class="lede">WCN no longer sends an email newsletter. Here is how to get every story from WWE, AEW, TNA, the indies and around the world.</p>
+<ul class="nl-perks"><li><b>RSS</b><a href="/feed.xml">English feed</a> · <a href="/es/feed.xml">Spanish feed</a></li><li><b>X</b><a href="https://x.com/wrestlingWCN" rel="noopener">@wrestlingWCN</a></li><li><b>Facebook</b><a href="https://www.facebook.com/p/Wrestling-Central-News-61595290838604/" rel="noopener">Wrestling Central News</a></li><li><b>Push notifications</b>Tap the bell (“Get breaking news alerts”) at the bottom of any page.</li></ul>
 <p style="margin-top:28px"><a href="/" style="color:#7cd618">← Back to the news</a></p></main>
 {chrome.footer("en")}
-<script src="/newsletter.js" defer></script><script src="/pwa.js" defer></script><script src="/push.js" defer></script></body></html>'''
+<script src="/pwa.js" defer></script><script src="/push.js" defer></script></body></html>'''
     os.makedirs(os.path.join(PUB, "newsletter"), exist_ok=True)
     open(os.path.join(PUB, "newsletter", "index.html"), "w").write(html_)
 # ---------- redirect stubs for story URLs that changed (re-clustering splits/merges, new lead headline) ----------

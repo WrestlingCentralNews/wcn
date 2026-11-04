@@ -187,7 +187,7 @@ def build_es_home(clusters, tr):
 {C.footer("es", "news", "/", "/es/")}
 <div class="ad ad-mobile" data-slot="mobileSticky" data-size="320×50 Mobile"></div>
 <button id="toTop" title="Volver arriba">▲</button>
-<script src="/app.js"></script>{C.SCRIPTS}</body></html>''')
+<script src="/app.js?v={C.APP_V}"></script>{C.SCRIPTS}</body></html>''')
     write("es/", s)
     # Spanish feed data for app.js (urls relative to /es/)
     es_items = []
@@ -225,7 +225,8 @@ def build_en_home(clusters):
     strip = results_strip("en")
     s2 = re.sub(r'<div class="ticker"><div id="ticker">.*?</div></div>(?:\n<h1 class="es-h1[^"]*"[^>]*>[^<]*</h1>)?(?:<section class="rstrip".*?</div></section>)?', lambda m: f'<div class="ticker"><div id="ticker">{tick}</div></div>\n{EN_H1}{strip}', s2, count=1, flags=re.S)
     tb = C.tabbar("en", "news", "/", "/es/")   # mobile bottom tab bar; idempotent replace-or-insert
-    s2 = re.sub(r'<!--tabbar-->.*?<!--/tabbar-->', lambda m: tb, s2, flags=re.S) if "<!--tabbar-->" in s2 else s2.replace('<script src="app.js">', tb + '<script src="app.js">', 1)
+    s2 = re.sub(r'<!--tabbar-->.*?<!--/tabbar-->', lambda m: tb, s2, flags=re.S) if "<!--tabbar-->" in s2 else re.sub(r'<script src="app\.js(\?v=\w+)?">', lambda m: tb + m.group(0), s2, count=1)
+    s2 = C.stamp_css(s2)
     if s2 != s: open(p, "w").write(s2)
     return []
 # ---------- sitemaps ----------
