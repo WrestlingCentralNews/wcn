@@ -152,7 +152,9 @@ def results_strip(lang, n=8, now=None):
     import hubs
     es = lang == "es"
     teaser = (f'<a class="tl-teaser" href="/champions/"><b>{"Historial de campeones" if es else "Title history timeline"}</b>'
-              f'<span>{"¿Quién era campeón en tu fecha? Desliza 20 años de reinados →" if es else "Who held the belt on any date? Slide through 20 years of reigns →"}</span></a>')
+              f'<span>{"¿Quién era campeón en tu fecha? Desliza 20 años de reinados →" if es else "Who held the belt on any date? Slide through 20 years of reigns →"}</span></a>'
+              + f'<a class="tl-teaser" href="/champions/"><b>{"Campeones actuales" if es else "Current champions"}</b>'
+              f'<span>{"Todos los campeones de WWE, AEW, NXT, AAA y TNA hoy →" if es else "Every WWE, AEW, NXT, AAA and TNA titleholder right now →"}</span></a>')
     b = hubs.latest_block(lang, n, now)
     return b[:-len('</section>')] + '<div class="tlt">' + teaser + '</div></section>' if b else ''
 def top_html(items, lang="es"):
@@ -231,6 +233,7 @@ def build_en_home(clusters):
     s2 = re.sub(r'<div class="mid"><section id="lead".*?</section><section id="feed" class="feed">.*?</section></div>', lambda m: mid, s, count=1, flags=re.S)
     strip = results_strip("en")
     s2 = re.sub(r'<div class="ticker"><div id="ticker">.*?</div></div>(?:\n<h1 class="es-h1[^"]*"[^>]*>[^<]*</h1>)?(?:<section class="rstrip".*?</div></section>)?', lambda m: f'<div class="ticker"><div id="ticker">{tick}</div></div>\n{EN_H1}{strip}', s2, count=1, flags=re.S)
+    s2 = re.sub(r'<nav class="navl" aria-label="Sections">.*?</nav>', lambda m: C.navlinks("en", "news"), s2, count=1, flags=re.S)   # desktop section pills (shared with chrome.header)
     tb = C.tabbar("en", "news", "/", "/es/")   # mobile bottom tab bar; idempotent replace-or-insert
     s2 = re.sub(r'<!--tabbar-->.*?<!--/tabbar-->', lambda m: tb, s2, flags=re.S) if "<!--tabbar-->" in s2 else re.sub(r'<script src="app\.js(\?v=\w+)?">', lambda m: tb + m.group(0), s2, count=1)
     s2 = C.stamp_css(s2)

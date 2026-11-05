@@ -333,3 +333,4 @@ body{padding-bottom:calc(78px + max(10px,env(safe-area-inset-bottom)))}
 html.tb-open{overflow:hidden}}
 
 @media(max-width:768px){.tabbar span{display:block;overflow:visible;text-overflow:clip}.tabbar svg{width:26px;height:26px}}
+.tlt{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0 12px}

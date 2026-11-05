@@ -80,7 +80,7 @@ def lang_toggle(lang, en_url, es_url):
 def navlinks(lang, active=None):
     t = T[lang]
     items = [("news", t["home"], t["news"]), ("shows", t["shows_url"], t["nav_shows"]), ("upcoming", t["upcoming_url"], t["upcoming"])]
-    if lang == "en": items.append(("champions", "/champions/", "Champions"))   # stats_pages.py (English only)
+    items.append(("champions", "/champions/", "Campeones" if lang == "es" else "Champions"))   # stats_pages.py (English page; /es/ links to it)
     return '<nav class="navl" aria-label="Sections">' + "".join(f'<a href="{u}"{" class=on" if k == active else ""}>{lab}</a>' for k, u, lab in items) + "</nav>"
 def header(lang, en_url, es_url, active=None, back=False):
     t = T[lang]
