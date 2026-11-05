@@ -41,6 +41,10 @@ jobs:
         with: {path: public, include-hidden-files: true}   # v4+ drops dotfiles by default; keep v3 behaviour
       - id: deploy
         uses: actions/deploy-pages@v5
+        with:
+          # Default 10m; Pages has hung on updating_pages for 10m+ three times today
+          # (runs 42088923156, 42089474618, 42094268818). Give it 20m before abort.
+          timeout: 1200000
       - name: Post new stories to X (never fails the run)
         continue-on-error: true
         env:
