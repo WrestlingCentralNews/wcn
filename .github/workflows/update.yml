@@ -6,7 +6,7 @@ on:
       x_test_top: {description: 'Post the current top story to X once (test)', type: boolean, default: false}
   push: {branches: [main]}
 permissions: {contents: write, pages: write, id-token: write, actions: write}
-concurrency: {group: wcn-update, cancel-in-progress: true}  # Pages hangs when queued deploys stack; cancel older runs
+concurrency: {group: wcn-update, cancel-in-progress: false}  # never cancel mid deploy-pages; cancelling wedges updating_pages
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -41,10 +41,6 @@ jobs:
         with: {path: public, include-hidden-files: true}   # v4+ drops dotfiles by default; keep v3 behaviour
       - id: deploy
         uses: actions/deploy-pages@v5
-        with:
-          # Default 10m; Pages has hung on updating_pages for 10m+ three times today
-          # (runs 42088923156, 42089474618, 42094268818). Give it 20m before abort.
-          timeout: 1200000
       - name: Post new stories to X (never fails the run)
         continue-on-error: true
         env:
