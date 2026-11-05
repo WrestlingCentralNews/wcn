@@ -27,7 +27,7 @@ jobs:
         with: {path: public/img/s, key: wcn-img-v1-none, restore-keys: wcn-img-v1-}
       - name: Fetch, enrich, filter, cluster (60-day retention)
         id: agg
-        env: {AI_API_KEY: "${{ secrets.AI_API_KEY }}"}
+        env: {AI_API_KEY: "${{ secrets.AI_API_KEY }}", WCN_INDEX_TIER: "1"}
         run: cp public/news.json /tmp/prev_news.json 2>/dev/null || true; python aggregator.py > agg.log 2>&1 || { tail -n 60 agg.log; exit 1; }; grep -vE '^( |\{|\})' agg.log | tail -n 30; cat data/stats.json data/llm_usage.json
       - name: URL guard (R5) - fail before deploy if a live story URL changed or a published/sitemap URL would 404
         run: python urlguard.py --prev /tmp/prev_news.json
