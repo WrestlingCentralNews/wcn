@@ -70,7 +70,16 @@
     "Roman Reigns",
     "Sami Zayn"
    ],
-   "main_event_source": "https://www.wwe.com/shows/wwe-crown-jewel/crown-jewel-2026"
+   "main_event_source": "https://www.wwe.com/shows/wwe-crown-jewel/crown-jewel-2026",
+   "matches": [
+    "World Heavyweight Champion Roman Reigns vs. Undisputed WWE Champion Sami Zayn for the Men's Crown Jewel Championship",
+    "WWE Women's Champion Chelsea Green vs. Women's World Champion Liv Morgan for the Women's Crown Jewel Championship",
+    "Cody Rhodes vs. Randy Orton in a Last Man Standing Match",
+    "World Tag Team Champions Bron Breakker and Austin Theory vs. Penta and Je'Von Evans"
+   ],
+   "source": "https://www.wwe.com/shows/wwe-crown-jewel/crown-jewel-2026",
+   "source_name": "WWE.com",
+   "image": "https://www.wwe.com/f/styles/og_image/public/2026/10/20261012_CJ26_RomanSami_16x9_Date.jpg"
   },
   "aew-full-gear/2026-11-14": {
    "date": "2026-11-14",

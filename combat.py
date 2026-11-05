@@ -9,7 +9,7 @@ or a named wrestler).
 import re
 URL_RX = re.compile(r"(?i)^https?://[^/]+(?:/[\w-]+)?/(?:ufc|mma|boxing|bellator|pfl|one-championship|kickboxing|bkfc|bare-knuckle)(?:/|-news/)")
 TERM_RX = re.compile(r"\bUFC\b|\bMMA\b|mixed martial arts|\bBellator\b|\bPFL\b|Professional Fighters League|\bONE Championship\b|ONE Fight Night|"
-                     r"\b[Bb]oxing\b|\b[Bb]oxers?\b|\bZUFFA\b|\bZuffa\b|\b[Kk]ickboxing\b|\bBKFC\b|[Bb]are[- ][Kk]nuckle|\bDana White's Contender|"
+                     r"\b[Bb]oxing\b|\b[Bb]oxers?\b|\bCanelo\b|\b(?:WBC|WBA|IBF|WBO)\b|\bZUFFA\b|\bZuffa\b|\b[Kk]ickboxing\b|\bBKFC\b|[Bb]are[- ][Kk]nuckle|\bDana White's Contender|"
                      r"\b[Oo]ctagon\b|\b(?:[Ff]eather|[Bb]antam|[Ww]elter|[Ff]ly|[Ss]traw)weight\b|\bTKO Boxing\b|\bRizin\b")
 WREST_RX = re.compile(r"\bWWE\b|\bAEW\b|\bTNA\b|\bNXT\b|\bROH\b|Ring of Honor|\bNJPW\b|New Japan|\bCMLL\b|\bAAA\b|[Ll]ucha|[Ww]restl(?!e[Tt]ix)|SmackDown|"
                       r"\bRaw\b|\bRAW\b|Dynamite|Collision|Rampage|WrestleMania|Royal Rumble|SummerSlam|Crown Jewel|Survivor Series|Money in the Bank|"
@@ -26,7 +26,7 @@ def _wrestling_head(t):
 # pro wrestling (Jake Paul in WWE, 'Former UFC Fighter Signs With AEW'). Business news that merely covers both (TKO earnings for
 # WWE and UFC, UFC ticket sales, Zuffa Boxing) is dropped.
 STRONG_RX = re.compile(r"\bUFC\b|\bMMA\b|mixed martial arts|\bBellator\b|\bPFL\b|Professional Fighters League|\bONE Championship\b|ONE Fight Night|"
-                       r"\b[Bb]oxing\b|\b[Bb]oxers?\b|\bZUFFA\b|\bZuffa\b|\b[Kk]ickboxing\b|\bBKFC\b|[Bb]are[- ][Kk]nuckle|\bRizin\b|\bTKO Boxing\b|"
+                       r"\b[Bb]oxing\b|\b[Bb]oxers?\b|\bCanelo\b|\b(?:WBC|WBA|IBF|WBO)\b|\bZUFFA\b|\bZuffa\b|\b[Kk]ickboxing\b|\bBKFC\b|[Bb]are[- ][Kk]nuckle|\bRizin\b|\bTKO Boxing\b|"
                        r"\bprizefight\w*|\bcage ?fight\w*|\b(?:UFC|MMA|cage) fighters?\b", re.I)   # not "Street Fighter" (WWE 2K26 collab)
 # wrestlers whose fights count as crossovers even if enrich doesn't know the name
 WRESTLERS_EXTRA = re.compile(r"\b(?:Ronda Rousey|Shayna Baszler|Cain Velasquez|Bobby Lashley|Brock Lesnar|Logan Paul|Gable Steveson|Matt Riddle|"
