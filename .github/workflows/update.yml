@@ -6,7 +6,7 @@ on:
       x_test_top: {description: 'Post the current top story to X once (test)', type: boolean, default: false}
   push: {branches: [main]}
 permissions: {contents: write, pages: write, id-token: write, actions: write}
-concurrency: {group: wcn-update, cancel-in-progress: false}
+concurrency: {group: wcn-update, cancel-in-progress: true}  # Pages hangs when queued deploys stack; cancel older runs
 jobs:
   update:
     runs-on: ubuntu-latest
