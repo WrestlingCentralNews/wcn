@@ -256,6 +256,8 @@ def noindex(c, lang="en", L=None):
     if thin(c): return True
     import indie_gate
     if indie_gate.minor(c): return True   # Indie/Global non-big-news (owner 2026-11-01): on the site, not pushed to Google
+    import index_tier
+    if index_tier.noindex(c): return True   # index tier (owner 2026-11-05), OFF unless WCN_INDEX_TIER=1
     if lang == "es" and L:
         import translate
         if not translate.es_top(c, L): return True   # Spanish copy of a non-top story (owner 2026-11-01): live, never indexed
