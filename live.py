@@ -11,6 +11,7 @@ State: data/live/<date>-<slug>.json (saved to the data branch). No AI needed (co
 import os, re, json, time, html, datetime, urllib.request
 ROOT = os.path.dirname(os.path.abspath(__file__))
 LIVE_DIR = os.path.join(ROOT, "data", "live")
+MATCH_OV_PATH = os.path.join(ROOT, "live_match_overrides.json")  # on main; survives data-branch orphan force-push
 CFG = json.load(open(os.path.join(ROOT, "events.json")))
 try:
     from zoneinfo import ZoneInfo; ET = ZoneInfo("America/New_York")
@@ -115,10 +116,35 @@ NOCHANGE_FIN = re.compile(r"(?i)disqualif|\bdq\b|count.?out|no contest|\bdraw\b"
 EXPLICIT_CHANGE_RX = re.compile(r"(?i)\b(?:new (?:\w+ )?champions?|and new\b|title change|dethron\w*)")   # the source itself says the belt moved
 NONTITLE_RX = re.compile(r"(?i)\beliminator\b|contender|non-?title")
 def guard_title(m):
-    """A DQ / count-out / no-contest / draw result is never a title change unless the source line explicitly says so (owner rule)."""
+    """Titles never change on DQ/count-out/NC/draw, and never on eliminator/contender/non-title matches, unless the source explicitly says the belt moved."""
     if m.get("title") == "change" and NOCHANGE_FIN.search(m.get("fin_en") or "") and not m.get("change_explicit"): m["title"] = "no_change"
-    if m.get("title") == "change" and NONTITLE_RX.search(m.get("stip") or "") and not m.get("change_explicit"): m["title"] = None
+    nontitle = bool(m.get("nontitle")) or bool(NONTITLE_RX.search(m.get("stip") or ""))
+    if m.get("title") in ("change", "retain") and nontitle and not m.get("change_explicit"): m["title"] = None
     return m
+def _match_overrides():
+    try: return json.load(open(MATCH_OV_PATH))
+    except Exception: return {}
+def _ov_hit(m, ov):
+    w, l = (m.get("winner") or ""), (m.get("loser") or "")
+    return (ov.get("winner") or "").lower() in w.lower() and (ov.get("loser") or "").lower() in l.lower()
+def apply_match_overrides(st):
+    """Apply hand fixes from live_match_overrides.json (main branch). Mutates matches in place; returns count changed."""
+    key = st.get("key") or ""
+    rows = _match_overrides().get(key) or []
+    if not rows: return 0
+    n = 0
+    for m in st.get("matches") or []:
+        for ov in rows:
+            if not _ov_hit(m, ov): continue
+            before = (m.get("title"), m.get("stip"), m.get("en"), m.get("es"))
+            if "title" in ov: m["title"] = ov["title"]
+            if ov.get("stip"): m["stip"] = ov["stip"]
+            if NONTITLE_RX.search(m.get("stip") or ""): m["nontitle"] = True
+            guard_title(m)
+            m["en"], m["es"] = text_en(m), text_es(m)
+            if (m.get("title"), m.get("stip"), m.get("en"), m.get("es")) != before: n += 1
+            break
+    return n
 RETAIN_RX = re.compile(r"(?i)\b(retain(?:s|ed)?|successful(?:ly)? defen[cs]e|still (?:the )?champion)")
 NOTE = re.compile(r"(?i)^(?:result|match result|winner|winners)\s*:")
 def clean_side(s):
@@ -204,7 +230,10 @@ def card_match(card, r):
             T = toks(sd)
             if W and T and (len(W & T) / len(W) >= 0.6 or len(W & T) / len(T) >= 0.6): sc += 2
             elif Lo and T and (len(Lo & T) / len(Lo) >= 0.6 or len(Lo & T) / len(T) >= 0.6): sc += 1
-        if sc >= 2: sc += 0.5 if (c["stip"] or c["champ"]) else 0
+        if sc >= 2:
+            # Prefer an eliminator/contender listing over a bare Championship/(c) listing from another source
+            if c.get("nontitle"): sc += 1.0
+            elif c["stip"] or c["champ"]: sc += 0.5
         if sc >= 2 and sc > bs: best, bs = c, sc
     return best
 MEMBER_PREFIX = re.compile(r"(?i)^(?:(?:AEW|WWE|TNA|NXT|ROH|AAA|IWGP)\s+)?(?:[\w'’.-]+\s+){0,4}?(?:co-)?champions?\s+|^(?:Switchblade)\s+")
@@ -233,7 +262,14 @@ def apply_card(r, card):
         elif len(others) > 2: r["field"] = len(c["sides"])
     if c["stip"] and not r.get("stip"): r["stip"] = c["stip"]
     if c.get("pre"): r["pre"] = True
-    if c.get("nontitle") and r.get("title") == "change" and not r.get("change_explicit"): r["title"] = None   # eliminator / contender / non-title: belt can't move
+    if c.get("nontitle"):
+        r["nontitle"] = True
+        if r.get("title") in ("change", "retain") and not r.get("change_explicit"): r["title"] = None   # eliminator / contender / non-title: belt can't move
+        # Keep a championship name on the stip but mark it Eliminator so load()/guard_title stay correct after data-branch restores
+        if r.get("stip") and TITLE_RX.search(r["stip"]) and not NONTITLE_RX.search(r["stip"]):
+            r["stip"] = r["stip"].rstrip() + " Eliminator"
+        elif c.get("stip") and not r.get("stip"):
+            r["stip"] = c["stip"] if NONTITLE_RX.search(c["stip"]) else (c["stip"] + " Eliminator")
     if c["champ"] and not c.get("nontitle") and TITLE_RX.search(c["stip"] or "Championship") and r.get("title") is None:
         CT = toks(c["champ"]); W = toks(r["winner"])
         r["title"] = "retain" if CT and W and len(CT & W) / min(len(CT), len(W)) >= 0.5 else "change"
@@ -331,9 +367,37 @@ def path(key): return os.path.join(LIVE_DIR, key + ".json")
 def load(key):
     try: st = json.load(open(path(key)))
     except Exception: return None
-    for m in st.get("matches") or []:   # old files may still carry a DQ "change" from before the guard
-        if m.get("title") == "change" and guard_title(m)["title"] == "no_change": m["en"], m["es"] = text_en(m), text_es(m)
+    if not st.get("key"): st["key"] = key
+    apply_match_overrides(st)   # durable hand fixes (main); bbdaf21 JSON-only patches were wiped by the data orphan push
+    for m in st.get("matches") or []:
+        before = (m.get("title"), m.get("stip"), m.get("en"))
+        guard_title(m)
+        # Rewrite display text whenever the title flag moved, or stale NEW CHAMPION/retain wording remains
+        dirty = (m.get("title"), m.get("stip")) != (before[0], before[1])
+        dirty = dirty or (m.get("title") not in ("change", "retain") and before[2] and re.search(r"NEW CHAMPION|to retain|CAMBIO DE T|retuvo el t|retuvieron el t", before[2]))
+        if dirty: m["en"], m["es"] = text_en(m), text_es(m)
     return st
+def repair_stored():
+    """Rewrite data/live/*.json in place with overrides + guards. Call from aggregator so the next data-branch orphan keeps the fix."""
+    if not os.path.isdir(LIVE_DIR): return []
+    fixed = []
+    for f in sorted(os.listdir(LIVE_DIR)):
+        if not f.endswith(".json"): continue
+        key = f[:-5]
+        try: raw = open(path(key)).read()
+        except Exception: continue
+        st = load(key)
+        if not st: continue
+        new = json.dumps(st, indent=0, sort_keys=False)
+        # compare semantically via matches title/stip/en
+        try: old = json.loads(raw)
+        except Exception: old = {}
+        def sig(x):
+            return [(m.get("winner"), m.get("title"), m.get("stip"), m.get("en")) for m in (x.get("matches") or [])]
+        if sig(old) != sig(st):
+            json.dump(st, open(path(key), "w"), indent=0)
+            fixed.append(key)
+    return fixed
 def update(store_articles=(), now=None):
     """Called from the aggregator every run (cheap no-op outside windows). Returns list of updated keys."""
     now = now or datetime.datetime.now(ET); changed = []
@@ -385,7 +449,10 @@ def update(store_articles=(), now=None):
             if r.get("loser") and m.get("loser", "").startswith(r["loser"]) and len(m["loser"]) > len(r["loser"]):   # parser fix trimmed junk ("... 2 falls to 1")
                 m["loser"] = r["loser"]; m["updated"] = nowi
             if r.get("change_explicit") and not m.get("change_explicit"): m["change_explicit"] = True
-            if r.get("title") and m.get("title") != r["title"] and (m.get("title") is None or r["title"] == "change"): m["title"] = r["title"]; m["updated"] = nowi
+            if r.get("title") and m.get("title") != r["title"] and (m.get("title") is None or r["title"] == "change"):
+                blocked = (m.get("nontitle") or r.get("nontitle") or NONTITLE_RX.search(m.get("stip") or "") or NONTITLE_RX.search(r.get("stip") or "")) and not r.get("change_explicit")
+                if not blocked: m["title"] = r["title"]; m["updated"] = nowi
+            if r.get("nontitle"): m["nontitle"] = True
             if len(r.get("winner", "")) > len(m["winner"]) and same(r, m): m["winner"] = r["winner"]
             if not any(s["name"] == r["src"] for s in m["sources"]): m["sources"].append({"name": r["src"], "url": r["url"]}); m["updated"] = nowi
         hit = {id(m) for r in reports for m in st["matches"] if same(m, r)}
@@ -410,6 +477,7 @@ def update(store_articles=(), now=None):
             m["conflict"] = any(contradicts(m, o) for o in st["matches"] if o is not m)
             m["confirmed"] = not m["conflict"] and (len(m["sources"]) >= 2 or (m.get("card") and nowi - m["first_seen"] >= 600))
             guard_title(m); m["en"], m["es"] = text_en(m), text_es(m)
+        apply_match_overrides(st)   # hand overrides win after every parse merge
         # order: by position in the source with the most results (show order), new unknowns at the end
         cnt = {}
         for m in st["matches"]:

@@ -1,0 +1,26 @@
+{
+  "_note": "Hand corrections for live result matches. Applied on every load() and repair_stored(), so they survive the data-branch orphan force-push (bbdaf21 JSON-only fixes did not). Keys are live event keys (date-slug). Match by winner/loser substring. title null clears change/retain; stip replaces the stored stipulation.",
+  "2026-10-21-aew-dynamite": [
+    {
+      "winner": "Mark Davis",
+      "loser": "Young Bucks",
+      "title": null,
+      "stip": "AEW World Tag Team Championship Eliminator",
+      "why": "Tag title eliminator opener, not a title match. Young Bucks remain AEW World Tag Team Champions (confirmed champions.json / Fightful / site story text)."
+    },
+    {
+      "winner": "Jon Moxley",
+      "loser": "Roderick Strong",
+      "title": null,
+      "stip": "AEW Continental Championship Eliminator",
+      "why": "Continental Classic eliminator, not a title defense. Moxley remains Continental Champion."
+    },
+    {
+      "winner": "Queen Aminata",
+      "loser": "Maya World",
+      "title": null,
+      "stip": "TBS Championship #1 Contender's Match",
+      "why": "Contender match for a shot at Persephone's TBS title (site story text). Aminata won the TBS title later on Oct 28 Dynamite; leaving Oct 21 as NEW CHAMPION was wrong."
+    }
+  ]
+}

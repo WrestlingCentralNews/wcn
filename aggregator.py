@@ -418,6 +418,8 @@ def run():
     try:   # live results for shows on air / just finished (no-op outside show windows; no AI spend)
         import live; ch = live.update(arts)
         if ch: print("live: updated", ch, flush=True)
+        fixed = live.repair_stored()   # durable overrides/guards -> data/live so the orphan data push keeps them
+        if fixed: print("live: repaired", fixed, flush=True)
     except Exception as ex: print("live: error (ignored)", repr(ex)[:200], flush=True)
     # previous run's stories: redirect stubs for URLs that change, and 'resplit' flags. A story whose id is new but whose every
     # report was already on the site (a split/re-cluster, not news) must never trigger an X post or push alert; the flag is sticky.
