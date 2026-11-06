@@ -77,10 +77,12 @@ def lang_toggle(lang, en_url, es_url):
     """Prominent EN | ES switch; links to the equivalent page (or the other edition's home). Click saves wcn_lang."""
     a = lambda l, u, lab: f'<a href="{e(u)}" hreflang="{l}" lang="{l}" data-lang="{l}"{" class=on aria-current=true" if l == lang else ""}>{lab}</a>'
     return f'<nav class="lang" aria-label="{T[lang]["lang_label"]}">{a("en", en_url or "/", "EN")}<span aria-hidden="true">|</span>{a("es", es_url or "/es/", "ES")}</nav>'
+ORIGINALS_NAV = False   # originals library link (desktop nav + mobile More); flip with originals.ORIGINALS_LIVE after approval
 def navlinks(lang, active=None):
     t = T[lang]
     items = [("news", t["home"], t["news"]), ("shows", t["shows_url"], t["nav_shows"]), ("upcoming", t["upcoming_url"], t["upcoming"])]
     items.append(("champions", "/champions/", "Campeones" if lang == "es" else "Champions"))   # stats_pages.py (English page; /es/ links to it)
+    if ORIGINALS_NAV: items.append(("originals", "/originals/", "Originales" if lang == "es" else "Originals"))
     return '<nav class="navl" aria-label="Sections">' + "".join(f'<a href="{u}"{" class=on" if k == active else ""}>{lab}</a>' for k, u, lab in items) + "</nav>"
 def header(lang, en_url, es_url, active=None, back=False):
     t = T[lang]
@@ -141,7 +143,7 @@ def tabbar(lang, active=None, en_url=None, es_url=None):
     h = t["home"]; sh = "/es/programas/" if es else "/shows/"
     promos = [("WWE", h + "?promo=WWE"), ("AEW", h + "?promo=AEW"), ("NXT", sh + "wwe-nxt/"), ("TNA", h + "?promo=TNA"), ("AAA / Global", h + "?promo=Global"), ("Indie", h + "?promo=Indie")]
     p = "".join(f'<a href="{u}">{n}</a>' for n, u in promos)
-    more = (f'<a href="/history/ple/">{"Historial de PLE y PPV" if es else "PLE &amp; PPV history"}</a><a href="/records/2026/">{"Récords 2026" if es else "2026 records"}</a>'
+    more = ((f'<a href="/originals/">{"Originales WCN" if es else "WCN Originals"}</a>' if ORIGINALS_NAV else "") + f'<a href="/history/ple/">{"Historial de PLE y PPV" if es else "PLE &amp; PPV history"}</a><a href="/records/2026/">{"Récords 2026" if es else "2026 records"}</a>'
             f'<a href="{e(en_url or "/")}" hreflang="en" lang="en"{" aria-current=true" if not es else ""}>English</a><a href="{e(es_url or "/es/")}" hreflang="es" lang="es"{" aria-current=true" if es else ""}>Español</a>'
             f'<a href="{X_URL}" target="_blank" rel="noopener">X @wrestlingWCN</a><a href="{FB}" target="_blank" rel="noopener">Facebook</a>')
     lm = "Más" if es else "More"
