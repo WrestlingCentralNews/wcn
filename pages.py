@@ -609,9 +609,14 @@ def _build(clusters):
     try:
         import stats_pages; sp, stats_skip = stats_pages.build(); static += sp   # /champions/, /history/ple/, /records/2026/
     except Exception as ex: print('[stats] error (ignored)', repr(ex)[:300], flush=True)
+    orig_urls, orig_news = [], []
+    try:   # /originals/: permanent WCN Originals library (never pruned, always indexed, in sitemap; <48h pieces in the news sitemap)
+        import originals; n_orig = originals.build(PUB); orig_urls = originals.sitemap_urls(); orig_news = originals.news_entries()
+        print(f"pages: originals {n_orig} published pieces", flush=True)
+    except Exception as ex: print('[originals] error (ignored)', repr(ex)[:300], flush=True)
     res_at = results_landed(getattr(hubs, "RESULTS", {}))   # R2: {path: first time live results showed}
     extra_news = [(SITE + p, l, t, res_at[p]) for p, (l, t, st0) in getattr(hubs, "RESULTS", {}).items()
-                  if p in res_at and time.time() - res_at[p] <= 48 * 3600 and (not st0 or time.time() - st0 <= 48 * 3600)]   # never re-date an old show as news
+                  if p in res_at and time.time() - res_at[p] <= 48 * 3600 and (not st0 or time.time() - st0 <= 48 * 3600)] + orig_news   # never re-date an old show as news
     n_news = extras.news_sitemap(clusters, tr, skip=lambda c, lang: noindex(c, lang, tr.get(c["id"]) if lang == "es" else None), extra=extra_news)
     # sitemaps: English (+ trust/hub pages) and Spanish (/es/ only), with hreflang alternates
     # left out of sitemaps (still live, linked and indexable): event/episode pages with no stories yet (hubs.THIN) and utility pages
@@ -626,6 +631,7 @@ def _build(clusters):
     en = [(SITE, now_iso, {"en": SITE, "es": SITE + "es/"})]
     en += [(SITE + p, hlm.get(p), None) for p in hub_en]
     en += [(SITE + p, None, None) for p in static if not p.startswith("es/") and p not in thin]
+    en += [(u, None, None) for u in orig_urls]
     en += [(SITE + c["url"], iso(c["ts"]), {"en": SITE + c["url"], "es": SITE + tr[c["id"]]["url"]} if c["id"] in tr and not noindex(c, "es", tr[c["id"]]) else None) for c in clusters if not noindex(c)]
     open(os.path.join(PUB, "sitemap.xml"), "w").write(extras.urlset(en, alts=True))
     es = [(SITE + "es/", now_iso, {"en": SITE, "es": SITE + "es/"})] + [(SITE + p, hlm.get(p), None) for p in hub_es]
@@ -635,7 +641,7 @@ def _build(clusters):
     extras.robots()
     # pages for IndexNow beyond story URLs: hubs/events (with content hash so changed pages are re-pinged), static pages, Spanish stories
     idx = {p: h for p, h in hub_pages.items()}
-    idx.update({p: "static" for p in static}); idx.update({tr[c["id"]]["url"]: "story" for c in clusters if c["id"] in tr})
+    idx.update({p: "static" for p in static}); idx.update({u.replace(SITE, ""): "original" for u in orig_urls}); idx.update({tr[c["id"]]["url"]: "story" for c in clusters if c["id"] in tr})
     idx.update({"es/feed.xml": "feed", "sitemap-news.xml": "news-" + str(int(time.time() // 21600))})
     idx.update({u: "alias:" + r["to"] for u, r in red.items()})   # old story addresses (real pages now): pinged once, again if their content source changes
     os.makedirs(os.path.join(ROOT, "data"), exist_ok=True); json.dump(idx, open(os.path.join(ROOT, "data", "indexnow_pages.json"), "w"))

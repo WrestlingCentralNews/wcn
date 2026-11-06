@@ -113,7 +113,7 @@ def _txt(c): return (c.get("title") or "") + " " + (c.get("raw_title") or "")
 def tier(c):
     """-> ('index'|'noindex', reason). Pure function of the story dict."""
     k = (c.get("kind") or {}).get("type") or "news"; t = _txt(c); cats = set(c.get("categories") or [])
-    if c.get("original") or c.get("analysis"): return "index", "original analysis"
+    if c.get("original") or c.get("analysis") or "/originals/" in "/" + (c.get("url") or "").lstrip("/"): return "index", "original analysis"
     if c.get("results_page") or c.get("card") or FULLCARD.search(t): return "index", "results/card"
     if BUSINESS.search(t): return "index", "business/ratings"
     if k == "results":
