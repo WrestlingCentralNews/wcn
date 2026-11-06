@@ -77,7 +77,7 @@ def lang_toggle(lang, en_url, es_url):
     """Prominent EN | ES switch; links to the equivalent page (or the other edition's home). Click saves wcn_lang."""
     a = lambda l, u, lab: f'<a href="{e(u)}" hreflang="{l}" lang="{l}" data-lang="{l}"{" class=on aria-current=true" if l == lang else ""}>{lab}</a>'
     return f'<nav class="lang" aria-label="{T[lang]["lang_label"]}">{a("en", en_url or "/", "EN")}<span aria-hidden="true">|</span>{a("es", es_url or "/es/", "ES")}</nav>'
-ORIGINALS_NAV = False   # originals library link (desktop nav + mobile More); flip with originals.ORIGINALS_LIVE after approval
+ORIGINALS_NAV = True    # originals library link (desktop nav + mobile More); flip with originals.ORIGINALS_LIVE after approval
 def navlinks(lang, active=None):
     t = T[lang]
     items = [("news", t["home"], t["news"]), ("shows", t["shows_url"], t["nav_shows"]), ("upcoming", t["upcoming_url"], t["upcoming"])]

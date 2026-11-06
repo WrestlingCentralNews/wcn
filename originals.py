@@ -7,8 +7,9 @@ from chrome import SITE, e
 
 COLUMN_NAME = "GONEdii Gazette G."          # ONE place to change the column brand / byline
 COLUMN_SHORT = "GG"
+DISCLOSURE = "Drafted with AI from WCN's confirmed records, then edited and fact-checked by our team."
 COLUMN_SLUG = "gonedii-gazette"            # column page: /originals/<COLUMN_SLUG>/ (keep stable once live)
-ORIGINALS_LIVE = False                      # flip to True only after owner approval
+ORIGINALS_LIVE = True                       # owner approved Nov 5 2026 (t643u)
 SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "originals")
 CATC = {"WWE": "#f26a14", "AEW": "#7cd618", "TNA": "#4ea8ff", "NXT": "#f5c518", "AAA": "#2fd3b4", "Global": "#2fd3b4", "Indie": "#f05fc1"}
 PROMO_RX = [(re.compile(r"\bAEW\b|Continental|Dynamite|Collision"), "AEW"), (re.compile(r"\bNXT\b"), "NXT"),
@@ -23,6 +24,7 @@ def load(path):
         meta[k.strip()] = json.loads(v) if v[:1] in '"[{' else v
     meta["body"] = body.strip(); meta["d"] = datetime.date.fromisoformat(meta["date"])
     meta["url"] = f"/originals/{meta['slug']}/"
+    if meta.get("published"): meta["ts"] = datetime.datetime.fromisoformat(meta["published"]).timestamp()
     meta["mins"] = max(1, round(len(re.findall(r"\w+", body)) / 230))
     return meta
 
@@ -111,7 +113,7 @@ BELT_SVG = ('<svg class="og-bg" viewBox="0 0 200 120" aria-hidden="true"><g fill
 def article_ld(p):
     col = {"@type": "Organization", "name": COLUMN_NAME, "url": SITE + f"originals/{COLUMN_SLUG}/", "parentOrganization": {"@type": "NewsMediaOrganization", "name": "Wrestling Central News", "url": SITE}}
     return {"@context": "https://schema.org", "@type": "AnalysisNewsArticle", "headline": p["title"], "description": p.get("dek", ""),
-            "datePublished": p["d"].isoformat(), "dateModified": p.get("updated", p["date"]), "mainEntityOfPage": SITE + p["url"].lstrip("/"),
+            "datePublished": p.get("published") or p["d"].isoformat(), "dateModified": p.get("updated", p["date"]), "mainEntityOfPage": SITE + p["url"].lstrip("/"),
             "author": col, "publisher": chrome.PUBLISHER, "isAccessibleForFree": True, "inLanguage": "en", "image": SITE + "og-image.jpg"}
 
 def render_piece(p, draft=False):
@@ -121,8 +123,8 @@ def render_piece(p, draft=False):
     hero = (f'<header class="og-hero">{BELT_SVG}<div class="og-kick"><span class="og-col">{e(COLUMN_NAME)}</span>'
             f'<span class="og-pill">{e(p.get("promo",""))}</span><span class="og-orig">WCN Original · Analysis</span></div>'
             f'<h1>{e(p["title"])}</h1><p class="og-dek">{e(p.get("dek",""))}</p>'
-            f'<div class="og-by"><span class="og-mono">{COLUMN_SHORT}</span><div>By <a href="/originals/{COLUMN_SLUG}/">{e(COLUMN_NAME)}</a> · WCN'
-            f'<small><time datetime="{p["d"].isoformat()}">{chrome.dlong(p["d"], "en")}</time> · {p["mins"]} min read</small></div></div></header>')
+            f'<div class="og-by"><span class="og-mono">{COLUMN_SHORT}</span><div>By <a href="/originals/{COLUMN_SLUG}/">{e(COLUMN_NAME)}</a>'
+            f'<small class="og-disc">{e(DISCLOSURE)}</small><small><time datetime="{p["d"].isoformat()}">{chrome.dlong(p["d"], "en")}</time> · {p["mins"]} min read</small></div></div></header>')
     more = ('<nav class="og-more" aria-label="Related"><a href="/champions/">Current champions</a><a href="/shows/">Results &amp; shows</a>'
             '<a href="/upcoming/">Upcoming events</a><a href="/originals/">More WCN Originals</a></nav>')
     return (chrome.head(p["title"] + " | WCN Originals", p.get("dek", ""), canon, "en", og_type="article", ld=ld, robots=robots, extra=f"<style>{CSS}</style>")
@@ -137,8 +139,7 @@ def render_index(ps):
             f'<p class="og-dek">Analysis columns by <a href="/originals/{COLUMN_SLUG}/">{e(COLUMN_NAME)}</a>. Every piece stays here permanently.</p></header><div class="og-list">{cards}</div></main>{chrome.footer("en")}</body></html>')
 
 def render_column():
-    body = (f"<p>{e(COLUMN_NAME)} is the name of WCN's original analysis column. It is not a person. Pieces are written by the WCN team, "
-            "with AI-assisted drafting, from WCN's own champions board and confirmed results pages. Every result we cite is backed by a trusted source "
+    body = (f"<p><strong>By {e(COLUMN_NAME)} {e(DISCLOSURE)}</strong></p><p>{e(COLUMN_NAME)} is the name of WCN's original analysis column. It is not a person. Pieces are built from WCN's own champions board and confirmed results pages. Every result we cite is backed by a trusted source "
             "(Wrestling Observer, Wrestling Inc or Fightful), and each piece is reviewed before it is published.</p>"
             "<p>Corrections follow our <a href=\"/editorial-policy/#corrections\">editorial policy</a>. Contact: wcn@mail.grokbot.com.</p>")
     ld = [{"@context": "https://schema.org", "@type": "Organization", "name": COLUMN_NAME, "url": SITE + f"originals/{COLUMN_SLUG}/", "parentOrganization": chrome.PUBLISHER}]
@@ -150,6 +151,16 @@ def sitemap_urls():
     """Published pieces + index + column page; empty until ORIGINALS_LIVE. Always strong index tier."""
     if not ORIGINALS_LIVE: return []
     ps = pieces(); return ([SITE + "originals/", SITE + f"originals/{COLUMN_SLUG}/"] + [SITE + p["url"].lstrip("/") for p in ps]) if ps else []
+
+def news_entries(hours=48, now=None):
+    """[(url, 'en', title, ts)] for published pieces first published within `hours` (Google News sitemap rule)."""
+    import time
+    if not ORIGINALS_LIVE: return []
+    now = now or time.time(); out = []
+    for p in pieces():
+        ts = p.get("ts")
+        if ts and now - ts <= hours * 3600: out.append((SITE + p["url"].lstrip("/"), "en", p["title"], ts))
+    return out
 
 def is_original(path): return path.startswith("/originals/") or "/originals/" in path   # for stale/cleanup/index_tier guards
 

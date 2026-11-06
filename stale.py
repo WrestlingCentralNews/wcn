@@ -25,6 +25,7 @@ def _img_year(url):
     m = re.search(r"/((?:19|20)\d\d)/(?:0[1-9]|1[0-2])/", url or "") or re.search(r"/((?:19|20)\d\d)(?:0[1-9]|1[0-2])[0-3]\d_", url or "")
     return int(m.group(1)) if m else None
 def reason(a):
+    if "/originals/" in "/" + re.sub(r"^[a-z]+://[^/]+", "", a.get("link") or a.get("url") or "", flags=re.I).lstrip("/"): return None   # WCN Originals are permanent
     ts = a.get("ts") or a.get("first_ts")
     if not ts: return None
     fd = dt.datetime.fromtimestamp(int(ts), dt.timezone.utc).date(); y = fd.year
