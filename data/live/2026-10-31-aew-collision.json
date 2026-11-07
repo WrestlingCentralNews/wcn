@@ -1,0 +1,479 @@
+{
+"key": "2026-10-31-aew-collision",
+"matches": [
+{
+"winner": "Tommaso Ciampa",
+"loser": "Matt Sydal",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": null,
+"id": "m1",
+"first_seen": 1793492239,
+"updated": 1793499450,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2303207/aew-collision-october-31-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-fright-night-october-31-2026/"
+}
+],
+"order": 10038,
+"pos": {
+"Wrestling Inc": 38,
+"Wrestling Observer": 13
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Tommaso Ciampa beat Matt Sydal.",
+"es": "Tommaso Ciampa venci\u00f3 a Matt Sydal."
+},
+{
+"winner": "The Hurt Syndicate",
+"loser": "Soloroto",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": null,
+"id": "m2",
+"first_seen": 1793492937,
+"updated": 1793499450,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2303207/aew-collision-october-31-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-fright-night-october-31-2026/"
+}
+],
+"order": 10044,
+"pos": {
+"Wrestling Inc": 44,
+"Wrestling Observer": 16
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "The Hurt Syndicate beat Soloroto by pinfall.",
+"es": "The Hurt Syndicate venci\u00f3 a Soloroto por conteo de tres."
+},
+{
+"winner": "The Triangle of Madness",
+"loser": "TRINITY",
+"stip": "Artist of Stardom Championship",
+"title": "retain",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": null,
+"id": "m3",
+"first_seen": 1793494459,
+"updated": 1793499450,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2303207/aew-collision-october-31-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-fright-night-october-31-2026/"
+}
+],
+"order": 10071,
+"pos": {
+"Wrestling Inc": 71,
+"Wrestling Observer": 24
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "The Triangle of Madness beat TRINITY by pinfall to retain.",
+"es": "The Triangle of Madness vencieron a TRINITY por conteo de tres y retuvo el t\u00edtulo."
+},
+{
+"winner": "Ilja Dragunov",
+"loser": "The Beast Mortos",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": null,
+"id": "m4",
+"first_seen": 1793495569,
+"updated": 1793499450,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2303207/aew-collision-october-31-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-fright-night-october-31-2026/"
+}
+],
+"order": 10088,
+"pos": {
+"Wrestling Inc": 88,
+"Wrestling Observer": 30
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Ilja Dragunov beat The Beast Mortos.",
+"es": "Ilja Dragunov venci\u00f3 a The Beast Mortos."
+},
+{
+"winner": "The Cut",
+"loser": "The Conglomeration",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m8",
+"first_seen": 1793499450,
+"updated": 1793499450,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-fright-night-october-31-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2303207/aew-collision-october-31-2026-results/"
+}
+],
+"order": 55,
+"pos": {
+"Wrestling Observer": 55,
+"Wrestling Inc": 140
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "The Cut beat The Conglomeration.",
+"es": "The Cut venci\u00f3 a The Conglomeration."
+},
+{
+"winner": "Speedball Mike Bailey",
+"loser": "Darius Martin",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": null,
+"id": "m5",
+"first_seen": 1793496347,
+"updated": 1793496347,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2303207/aew-collision-october-31-2026-results/"
+}
+],
+"order": 10102,
+"pos": {
+"Wrestling Inc": 155
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Speedball Mike Bailey beat Darius Martin.",
+"es": "Speedball Mike Bailey venci\u00f3 a Darius Martin."
+},
+{
+"winner": "Divine Dominion",
+"loser": "Nixi XS and Leela Fiest",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": null,
+"id": "m6",
+"first_seen": 1793496705,
+"updated": 1793499450,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2303207/aew-collision-october-31-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-fright-night-october-31-2026/"
+}
+],
+"order": 10109,
+"pos": {
+"Wrestling Inc": 156,
+"Wrestling Observer": 41
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Divine Dominion beat Nixi XS and Leela Fiest by pinfall.",
+"es": "Divine Dominion venci\u00f3 a Nixi XS and Leela Fiest por conteo de tres."
+},
+{
+"winner": "Konosuke Takeshita",
+"loser": "Adam Priest",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m7",
+"first_seen": 1793499450,
+"updated": 1793501015,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-fright-night-october-31-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2303207/aew-collision-october-31-2026-results/"
+}
+],
+"order": 46,
+"pos": {
+"Wrestling Observer": 46,
+"Wrestling Inc": 157
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Konosuke Takeshita beat Adam Priest.",
+"es": "Konosuke Takeshita venci\u00f3 a Adam Priest."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-fright-night-october-31-2026/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2303207/aew-collision-october-31-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/aew-fight-night-collision-results-10-31-ilja-dragunov-competes": "Fightful"
+},
+"kind": "weekly",
+"slug": "aew-collision",
+"date": "2026-10-31",
+"name": "AEW Collision",
+"brand": "AEW",
+"tag": "#AEWCollision",
+"start": 1793491200,
+"main": 1793491200,
+"end": 1793500200,
+"card": [
+{
+"stip": "Artist of Stardom Championship",
+"sides": [
+"AEW Fright Night Collision match graphic featuring Triangle of Madness",
+"Hazuki, Koguma and Fuwa-chan"
+],
+"champ": null,
+"pre": false,
+"idx": 0
+},
+{
+"stip": "",
+"sides": [
+"Tommaso Ciampa",
+"Matt Sydal"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "",
+"sides": [
+"The Hurt Syndicate (Bobby Lashley & Shelton Benjamin)",
+"Soloroto (Aaron Solo & Nick Comoroto)"
+],
+"champ": null,
+"pre": false,
+"idx": 14
+},
+{
+"stip": "Artist of Stardom Championship",
+"sides": [
+"Trinity (Hazuki, Koguma, & Fuwa-chan)",
+"The Triangle of Madness (Thekla, Julia Hart, & Skye Blue)"
+],
+"champ": null,
+"pre": false,
+"idx": 19
+},
+{
+"stip": "",
+"sides": [
+"The Beast Mortos",
+"Ilya Dragunov"
+],
+"champ": null,
+"pre": false,
+"idx": 26
+},
+{
+"stip": "",
+"sides": [
+"Darius Martin",
+"Mike Bailey"
+],
+"champ": null,
+"pre": false,
+"idx": 34
+},
+{
+"stip": "",
+"sides": [
+"Divine Dominion (Megan Bayne & Lena Kross)",
+"Nixi Xs & Leela Feist"
+],
+"champ": null,
+"pre": false,
+"idx": 39
+},
+{
+"stip": "",
+"sides": [
+"Konosuke Takeshita",
+"Adam Priest"
+],
+"champ": null,
+"pre": false,
+"idx": 43
+},
+{
+"stip": "",
+"sides": [
+"The Cut (Juice Robinson, Colten Gunn, & Austin Gunn)",
+"The Conglomeration (Orange Cassidy, Kyle O\u2019Reilly, & Roderick Strong)"
+],
+"champ": null,
+"pre": false,
+"idx": 50
+},
+{
+"stip": "",
+"sides": [
+"Tommaso Ciampa",
+"Matt Sydal"
+],
+"champ": null,
+"pre": false,
+"idx": 29
+},
+{
+"stip": "",
+"sides": [
+"Hurt Syndicate",
+"Soloroto"
+],
+"champ": null,
+"pre": false,
+"idx": 41
+},
+{
+"stip": "",
+"sides": [
+"TRINITY",
+"Triangle of Madness"
+],
+"champ": null,
+"pre": false,
+"idx": 52
+},
+{
+"stip": "",
+"sides": [
+"Ilja Dragunov",
+"The Beast Mortos"
+],
+"champ": null,
+"pre": false,
+"idx": 78
+},
+{
+"stip": "",
+"sides": [
+"Darius Martin",
+"Speedball Mike Bailey"
+],
+"champ": null,
+"pre": false,
+"idx": 92
+},
+{
+"stip": "",
+"sides": [
+"Divine Dominion",
+"Nixi XS and Leela Fiest"
+],
+"champ": null,
+"pre": false,
+"idx": 106
+},
+{
+"stip": "",
+"sides": [
+"Adam Priest",
+"Konosuke Takeshita"
+],
+"champ": null,
+"pre": false,
+"idx": 112
+},
+{
+"stip": "",
+"sides": [
+"The Cut",
+"The Conglomeration"
+],
+"champ": null,
+"pre": false,
+"idx": 123
+},
+{
+"stip": "Women's World Championship",
+"sides": [
+"Mercedes Mon\u00e9",
+"Marina Shafir"
+],
+"champ": null,
+"pre": false,
+"idx": 147
+}
+],
+"checked": 1793521878,
+"next_id": 8,
+"updated": 1793501015
+}

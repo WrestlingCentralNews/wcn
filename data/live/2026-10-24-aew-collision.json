@@ -1,0 +1,545 @@
+{
+"key": "2026-10-24-aew-collision",
+"matches": [
+{
+"winner": "FTR (Dax Harwood & Cash Wheeler)",
+"loser": "Motor City Machine Guns",
+"stip": "Best-of-Five Series Match #2",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m1",
+"first_seen": 1792888533,
+"updated": 1792889496,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2296264/aew-collision-october-24-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-ftr-vs-mcmg-swerve-strickland-vs-myron-reed/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-collision-results-10-24-2026-mcmg-vs-ftr-divine-dominion-vs-wrathlander-jay-white-speak-swerve-strickalnd-more/"
+}
+],
+"order": 10066,
+"pos": {
+"Wrestling Inc": 66,
+"Wrestling Observer": 28,
+"Fightful": 11
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "FTR (Dax Harwood & Cash Wheeler) beat Motor City Machine Guns by pinfall.",
+"es": "FTR (Dax Harwood & Cash Wheeler) vencieron a Motor City Machine Guns por conteo de tres."
+},
+{
+"winner": "Death Riders (Jon Moxley, Claudio Castagnoli, Daniel Garcia & Marina Shafir)",
+"loser": "STP (Shane Taylor, Carlie Bravo, Shawn Dean & Trish Adora)",
+"stip": "",
+"title": null,
+"fin_en": "by submission",
+"fin_es": "por rendici\u00f3n",
+"who": "",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1792889496,
+"updated": 1792889740,
+"sources": [
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-collision-results-10-24-2026-mcmg-vs-ftr-divine-dominion-vs-wrathlander-jay-white-speak-swerve-strickalnd-more/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-ftr-vs-mcmg-swerve-strickland-vs-myron-reed/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2296264/aew-collision-october-24-2026-results/"
+}
+],
+"order": 30016,
+"pos": {
+"Fightful": 13,
+"Wrestling Observer": 37,
+"Wrestling Inc": 90
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Death Riders (Jon Moxley, Claudio Castagnoli, Daniel Garcia & Marina Shafir) beat STP (Shane Taylor, Carlie Bravo, Shawn Dean & Trish Adora) by submission.",
+"es": "Death Riders (Jon Moxley, Claudio Castagnoli, Daniel Garcia & Marina Shafir) vencieron a STP (Shane Taylor, Carlie Bravo, Shawn Dean & Trish Adora) por rendici\u00f3n."
+},
+{
+"winner": "Josh Alexander",
+"loser": "Blade Brown",
+"stip": "",
+"title": null,
+"fin_en": "by referee stoppage",
+"fin_es": "por detenci\u00f3n del r\u00e9feri",
+"who": "",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1792889917,
+"updated": 1792890956,
+"sources": [
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-collision-results-10-24-2026-mcmg-vs-ftr-divine-dominion-vs-wrathlander-jay-white-speak-swerve-strickalnd-more/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2296264/aew-collision-october-24-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-ftr-vs-mcmg-swerve-strickland-vs-myron-reed/"
+}
+],
+"order": 30018,
+"pos": {
+"Fightful": 15,
+"Wrestling Inc": 101,
+"Wrestling Observer": 44
+},
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Josh Alexander beat Blade Brown by referee stoppage.",
+"es": "Josh Alexander venci\u00f3 a Blade Brown por detenci\u00f3n del r\u00e9feri.",
+"card": true
+},
+{
+"winner": "Swerve Strickland",
+"loser": "Myron Reed",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m4",
+"first_seen": 1792891425,
+"updated": 1792891924,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2296264/aew-collision-october-24-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-collision-results-10-24-2026-mcmg-vs-ftr-divine-dominion-vs-wrathlander-jay-white-speak-swerve-strickalnd-more/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-ftr-vs-mcmg-swerve-strickland-vs-myron-reed/"
+}
+],
+"order": 10124,
+"pos": {
+"Wrestling Inc": 124,
+"Fightful": 18,
+"Wrestling Observer": 51
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Swerve Strickland beat Myron Reed by pinfall.",
+"es": "Swerve Strickland venci\u00f3 a Myron Reed por conteo de tres."
+},
+{
+"winner": "United Empire (Mike Bailey & Andrade El Idolo)",
+"loser": "Steve Allen & Robert Allen",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m5",
+"first_seen": 1792891618,
+"updated": 1792891924,
+"sources": [
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-collision-results-10-24-2026-mcmg-vs-ftr-divine-dominion-vs-wrathlander-jay-white-speak-swerve-strickalnd-more/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-ftr-vs-mcmg-swerve-strickland-vs-myron-reed/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2296264/aew-collision-october-24-2026-results/"
+}
+],
+"order": 30022,
+"pos": {
+"Fightful": 19,
+"Wrestling Observer": 57,
+"Wrestling Inc": 130
+},
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "United Empire (Mike Bailey & Andrade El Idolo) beat Steve Allen & Robert Allen by pinfall.",
+"es": "United Empire (Mike Bailey & Andrade El Idolo) vencieron a Steve Allen & Robert Allen por conteo de tres.",
+"card": true
+},
+{
+"winner": "Wrathlander (Kris Statlander & Harley Cameron)",
+"loser": "Divine Dominion",
+"stip": "",
+"title": null,
+"fin_en": "by disqualification",
+"fin_es": "por descalificaci\u00f3n",
+"who": "",
+"field": null,
+"move": "",
+"id": "m6",
+"first_seen": 1792892771,
+"updated": 1792893264,
+"sources": [
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-collision-results-10-24-2026-mcmg-vs-ftr-divine-dominion-vs-wrathlander-jay-white-speak-swerve-strickalnd-more/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2296264/aew-collision-october-24-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-ftr-vs-mcmg-swerve-strickland-vs-myron-reed/"
+}
+],
+"order": 30024,
+"pos": {
+"Fightful": 21,
+"Wrestling Inc": 155,
+"Wrestling Observer": 64
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Wrathlander (Kris Statlander & Harley Cameron) beat Divine Dominion by disqualification.",
+"es": "Wrathlander (Kris Statlander & Harley Cameron) vencieron a Divine Dominion por descalificaci\u00f3n."
+},
+{
+"winner": "\u201cSwitchblade Jay White",
+"loser": "Kyle O'Reilly",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m7",
+"first_seen": 1792894193,
+"updated": 1792894836,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2296264/aew-collision-october-24-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/aew-collision-results-10-24-2026-mcmg-vs-ftr-divine-dominion-vs-wrathlander-jay-white-speak-swerve-strickalnd-more/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-ftr-vs-mcmg-swerve-strickland-vs-myron-reed/"
+}
+],
+"order": 10188,
+"pos": {
+"Wrestling Inc": 188,
+"Fightful": 24,
+"Wrestling Observer": 73
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "\u201cSwitchblade Jay White beat Kyle O'Reilly by pinfall.",
+"es": "\u201cSwitchblade Jay White venci\u00f3 a Kyle O'Reilly por conteo de tres."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/aew/aew-results/aew-collision-live-results-ftr-vs-mcmg-swerve-strickland-vs-myron-reed/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2296264/aew-collision-october-24-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/aew-collision-results-10-24-2026-mcmg-vs-ftr-divine-dominion-vs-wrathlander-jay-white-speak-swerve-strickalnd-more": "Fightful",
+"https://www.fightful.com/wrestling/aew-collision-results-10-24-2026-mcmg-vs-ftr-divine-dominion-vs-wrathlander-jay-white-speak-swerve-strickalnd-more/": "Fightful"
+},
+"kind": "weekly",
+"slug": "aew-collision",
+"date": "2026-10-24",
+"name": "AEW Collision",
+"brand": "AEW",
+"tag": "#AEWCollision",
+"start": 1792886400,
+"main": 1792886400,
+"end": 1792895400,
+"card": [
+{
+"stip": "",
+"sides": [
+"FTR",
+"Motor City Machine Guns"
+],
+"champ": null,
+"pre": false,
+"idx": 7
+},
+{
+"stip": "",
+"sides": [
+"Swerve Strickland",
+"Myron Reed"
+],
+"champ": null,
+"pre": false,
+"idx": 8
+},
+{
+"stip": "",
+"sides": [
+"Wrathlander",
+"Divine Dominion"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "",
+"sides": [
+"The Death Riders",
+"Shane Taylor Promotions (8-Person Mixed Tag Match)"
+],
+"champ": null,
+"pre": false,
+"idx": 11
+},
+{
+"stip": "Best-of-Five Series Match #2",
+"sides": [
+"FTR (Dax \u201cThe Axe\u201d Harwood & Cash Wheeler)",
+"Motor City Machine Guns (Chris Sabin & Alex Shelley) (MCMG lead series 1-0)"
+],
+"champ": null,
+"pre": false,
+"idx": 22
+},
+{
+"stip": "",
+"sides": [
+"Shane Taylor Promotions (Shane Taylor, Carlie Bravo, Capt. Shawn Dean & Trish Adora)",
+"The Death Riders (Jon Moxley, Daniel Garcia, Claudio Castagnoli & Marina Shafir)"
+],
+"champ": null,
+"pre": false,
+"idx": 32
+},
+{
+"stip": "",
+"sides": [
+"Josh Alexander",
+"Blade Brown"
+],
+"champ": null,
+"pre": false,
+"idx": 40
+},
+{
+"stip": "",
+"sides": [
+"Swerve Strickland",
+"Myron Reed"
+],
+"champ": null,
+"pre": false,
+"idx": 48
+},
+{
+"stip": "",
+"sides": [
+"United Empire (Speedball Mike Bailey & Andrade el Idolo)",
+"Steve Allen & Robert Allen"
+],
+"champ": null,
+"pre": false,
+"idx": 54
+},
+{
+"stip": "",
+"sides": [
+"Divine Dominion (Megan Bayne & Lena Kross)",
+"Wrathlander (Kris Statlander & Harley Cameron)"
+],
+"champ": null,
+"pre": false,
+"idx": 60
+},
+{
+"stip": "",
+"sides": [
+"\u201cSwitchblade\u201d Jay White",
+"Kyle O\u2019Reilly"
+],
+"champ": null,
+"pre": false,
+"idx": 68
+},
+{
+"stip": "",
+"sides": [
+"FTR (0)",
+"Motor City Machine Guns (1)"
+],
+"champ": null,
+"pre": false,
+"idx": 36
+},
+{
+"stip": "",
+"sides": [
+"Death Riders",
+"Shane Taylor Promotions"
+],
+"champ": null,
+"pre": false,
+"idx": 69
+},
+{
+"stip": "",
+"sides": [
+"Josh Alexander",
+"Blade Brown"
+],
+"champ": null,
+"pre": false,
+"idx": 97
+},
+{
+"stip": "",
+"sides": [
+"Swerve Strickland",
+"Myron Reed"
+],
+"champ": null,
+"pre": false,
+"idx": 110
+},
+{
+"stip": "",
+"sides": [
+"Mike Bailey & Andrade",
+"The Allen Brothers"
+],
+"champ": null,
+"pre": false,
+"idx": 127
+},
+{
+"stip": "",
+"sides": [
+"Divine Dominion",
+"WrathLander"
+],
+"champ": null,
+"pre": false,
+"idx": 136
+},
+{
+"stip": "",
+"sides": [
+"Jay White",
+"Kyle O'Reilly"
+],
+"champ": null,
+"pre": false,
+"idx": 164
+},
+{
+"stip": "Best-Of-Five Series \u2013 Match Two \u2013 MCMG Lead 1-0",
+"sides": [
+"FTR (Dax Harwood & Cash Wheeler)",
+"Motor City Machine Guns (Alex Shelley & Chris Sabin)"
+],
+"champ": null,
+"pre": false,
+"idx": 7
+},
+{
+"stip": "",
+"sides": [
+"Myron Reed",
+"Swerve Strickland"
+],
+"champ": null,
+"pre": false,
+"idx": 8
+},
+{
+"stip": "",
+"sides": [
+"Divine Dominion (Megan Bayne & Lena Kross)",
+"Wrathlander (Kris Statlander & Harley Cameron)"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "Best-Of-Five Series \u2013 Match Two \u2013 MCMG Lead 1-0",
+"sides": [
+"FTR (Dax Harwood & Cash Wheeler)",
+"Motor City Machine Guns (Alex Shelley & Chris Sabin)"
+],
+"champ": null,
+"pre": false,
+"idx": 4
+},
+{
+"stip": "",
+"sides": [
+"Myron Reed",
+"Swerve Strickland"
+],
+"champ": null,
+"pre": false,
+"idx": 5
+},
+{
+"stip": "",
+"sides": [
+"Divine Dominion (Megan Bayne & Lena Kross)",
+"Wrathlander (Kris Statlander & Harley Cameron)"
+],
+"champ": null,
+"pre": false,
+"idx": 6
+}
+],
+"checked": 1792914908,
+"next_id": 7,
+"updated": 1792901605
+}

@@ -1,0 +1,435 @@
+{
+"key": "2026-10-31-wwe-nxt-halloween-havoc",
+"matches": [
+{
+"winner": "Myles Borne",
+"loser": "Tavion Heights",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": null,
+"id": "m1",
+"first_seen": 1793489538,
+"updated": 1793491866,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2301904/wwe-nxt-halloween-havoc-october-31-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-halloween-havoc-live-results-grayson-waller-tony-dangelo/"
+}
+],
+"order": 10053,
+"pos": {
+"Wrestling Inc": 53,
+"Wrestling Observer": 14
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Myles Borne beat Tavion Heights.",
+"es": "Myles Borne venci\u00f3 a Tavion Heights."
+},
+{
+"winner": "Izzi Dame",
+"loser": "Zaria",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": null,
+"id": "m2",
+"first_seen": 1793490971,
+"updated": 1793491866,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2301904/wwe-nxt-halloween-havoc-october-31-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-halloween-havoc-live-results-grayson-waller-tony-dangelo/"
+}
+],
+"order": 10074,
+"pos": {
+"Wrestling Inc": 74,
+"Wrestling Observer": 18
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Izzi Dame beat Zaria by pinfall.",
+"es": "Izzi Dame venci\u00f3 a Zaria por conteo de tres."
+},
+{
+"winner": "Zilla Fatu",
+"loser": "Charlie Dempsey",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1793492621,
+"updated": 1793492621,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-halloween-havoc-live-results-grayson-waller-tony-dangelo/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2301904/wwe-nxt-halloween-havoc-october-31-2026-results/"
+}
+],
+"order": 22,
+"pos": {
+"Wrestling Observer": 22,
+"Wrestling Inc": 92
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Zilla Fatu beat Charlie Dempsey by pinfall.",
+"es": "Zilla Fatu venci\u00f3 a Charlie Dempsey por conteo de tres."
+},
+{
+"winner": "Grayson Waller",
+"loser": "Tony D",
+"stip": "NXT Title",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": null,
+"id": "m4",
+"first_seen": 1793498373,
+"updated": 1793498373,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-halloween-havoc-live-results-grayson-waller-tony-dangelo/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2301904/wwe-nxt-halloween-havoc-october-31-2026-results/"
+}
+],
+"order": 33,
+"pos": {
+"Wrestling Observer": 33,
+"Wrestling Inc": 136
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Grayson Waller beat Tony D to retain.",
+"es": "Grayson Waller venci\u00f3 a Tony D y retuvo el t\u00edtulo."
+},
+{
+"winner": "The Dropouts (Jackson Goonrey & Tyran Tuckey)",
+"loser": "Harley Riggins & Jax Presley",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "double superkick on Jax.",
+"id": "m5",
+"first_seen": 1793500703,
+"updated": 1793500703,
+"sources": [
+{
+"name": "PWInsider",
+"url": "https://www.pwinsider.com/article/213281/wwe-nxt-halloween-havoc-dark-match-results-more.html"
+}
+],
+"order": 30044,
+"pos": {
+"PWInsider": 44
+},
+"pre": true,
+"conflict": false,
+"confirmed": null,
+"en": "The Dropouts (Jackson Goonrey & Tyran Tuckey) beat Harley Riggins & Jax Presley with the double superkick on Jax..",
+"es": "The Dropouts (Jackson Goonrey & Tyran Tuckey) vencieron a Harley Riggins & Jax Presley (remate: double superkick on Jax.)."
+},
+{
+"winner": "Elio LeFleur",
+"loser": "Brooks Jensen",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "neckscissor slam.",
+"id": "m6",
+"first_seen": 1793500703,
+"updated": 1793500703,
+"sources": [
+{
+"name": "PWInsider",
+"url": "https://www.pwinsider.com/article/213281/wwe-nxt-halloween-havoc-dark-match-results-more.html"
+}
+],
+"order": 30045,
+"pos": {
+"PWInsider": 45
+},
+"pre": true,
+"conflict": false,
+"confirmed": null,
+"en": "Elio LeFleur beat Brooks Jensen with the neckscissor slam..",
+"es": "Elio LeFleur venci\u00f3 a Brooks Jensen (remate: neckscissor slam.)."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-halloween-havoc-live-results-grayson-waller-tony-dangelo/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2301904/wwe-nxt-halloween-havoc-october-31-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/wwe-nxt-halloween-havoc-results-10-31-2026-danhausen-hosts-grayson-waller-kelani-jordan-zilla-fatu-more": "Fightful",
+"https://www.pwinsider.com/article/213281/wwe-nxt-halloween-havoc-dark-match-results-more.html": "PWInsider",
+"https://www.f4wonline.com/news/nxt/result-of-nxt-championship-match-at-halloween-havoc-2026/": "Wrestling Observer",
+"https://pwinsider.com/article/213281/wwe-nxt-halloween-havoc-dark-match-results-more.html?p=1": "PWInsider"
+},
+"kind": "ppv",
+"slug": "wwe-nxt-halloween-havoc",
+"date": "2026-10-31",
+"name": "NXT Halloween Havoc 2026",
+"brand": "WWE",
+"tag": "#NXTHalloweenHavoc",
+"start": 1793487600,
+"main": 1793487600,
+"end": 1793502000,
+"card": [
+{
+"stip": "",
+"sides": [
+"Tavion Heights",
+"Myles Borne"
+],
+"champ": null,
+"pre": false,
+"idx": 11
+},
+{
+"stip": "",
+"sides": [
+"Zaria",
+"Izzi Dame"
+],
+"champ": null,
+"pre": false,
+"idx": 16
+},
+{
+"stip": "",
+"sides": [
+"Zilla Fatu",
+"Charlie Dempsey"
+],
+"champ": null,
+"pre": false,
+"idx": 20
+},
+{
+"stip": "Womens Title",
+"sides": [
+"Kelani Jordan",
+"Wren Sinclair"
+],
+"champ": null,
+"pre": false,
+"idx": 24
+},
+{
+"stip": "",
+"sides": [
+"Shiloh Hill",
+"Niraku"
+],
+"champ": null,
+"pre": false,
+"idx": 27
+},
+{
+"stip": "NXT Title",
+"sides": [
+"Grayson Waller",
+"Tony D"
+],
+"champ": null,
+"pre": false,
+"idx": 31
+},
+{
+"stip": "",
+"sides": [
+"Myles Borne",
+"Tavion Heights"
+],
+"champ": null,
+"pre": false,
+"idx": 34
+},
+{
+"stip": "",
+"sides": [
+"Naraku",
+"Shiloh Hill"
+],
+"champ": null,
+"pre": false,
+"idx": 57
+},
+{
+"stip": "",
+"sides": [
+"Zaria",
+"Izzi Dame"
+],
+"champ": null,
+"pre": false,
+"idx": 63
+},
+{
+"stip": "",
+"sides": [
+"Zilla Fatu",
+"Charlie Dempsey"
+],
+"champ": null,
+"pre": false,
+"idx": 85
+},
+{
+"stip": "NXT Women\u2019s Championship",
+"sides": [
+"Kelani Jordan",
+"Wren Sinclair"
+],
+"champ": "Kelani Jordan",
+"pre": false,
+"idx": 104
+},
+{
+"stip": "",
+"sides": [
+"Shiloh Hill",
+"Naraku"
+],
+"champ": null,
+"pre": false,
+"idx": 114
+},
+{
+"stip": "NXT Championship",
+"sides": [
+"Grayson Waller",
+"Tony D\u2019Angelo"
+],
+"champ": "Grayson Waller",
+"pre": false,
+"idx": 124
+},
+{
+"stip": "NXT Championship Match",
+"sides": [
+"Grayson Waller",
+"Tony D\u2019Angelo"
+],
+"champ": "Grayson Waller",
+"pre": false,
+"idx": 8
+},
+{
+"stip": "NXT Women\u2019s Championship Match",
+"sides": [
+"Kelani Jordan",
+"Wren Sinclair"
+],
+"champ": "Kelani Jordan",
+"pre": false,
+"idx": 9
+},
+{
+"stip": "Spin the Wheel, Make the Deal Match",
+"sides": [
+"Zilla Fatu",
+"Charlie Dempsey"
+],
+"champ": null,
+"pre": false,
+"idx": 10
+},
+{
+"stip": "Weapons Wild Match",
+"sides": [
+"Tavion Heights",
+"Myles Borne"
+],
+"champ": null,
+"pre": false,
+"idx": 11
+},
+{
+"stip": "Non-Title Match",
+"sides": [
+"Zaria",
+"Izzi Dame"
+],
+"champ": null,
+"pre": false,
+"idx": 12
+},
+{
+"stip": "Singles Match",
+"sides": [
+"Shiloh Hill",
+"NARAKU"
+],
+"champ": null,
+"pre": false,
+"idx": 13
+},
+{
+"stip": "",
+"sides": [
+"The identity of the woman shown during the Izzi Dame",
+"Zaria match was Kenzie (Marie Malenko.)"
+],
+"champ": null,
+"pre": false,
+"idx": 46
+},
+{
+"stip": "",
+"sides": [
+"The identity of the woman shown during the Izzi Dame",
+"Zaria match was Kenzie (Marie Malenko.)"
+],
+"champ": null,
+"pre": false,
+"idx": 46
+}
+],
+"checked": 1793518622,
+"next_id": 6,
+"updated": 1793500703
+}

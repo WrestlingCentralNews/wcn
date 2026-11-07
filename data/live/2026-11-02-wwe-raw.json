@@ -1,0 +1,270 @@
+{
+"key": "2026-11-02-wwe-raw",
+"matches": [
+{
+"winner": "Ethan Page",
+"loser": "Chad Gable",
+"stip": "Intercontinental Championship",
+"title": "change",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m1",
+"first_seen": 1793667007,
+"updated": 1793667007,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/wwe-raw-live-results-crown-jewel-go-home-show-john-cena-announcement/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2303334/wwe-raw-november-2-2026-results/"
+}
+],
+"order": 10036,
+"pos": {
+"Wrestling Observer": 36,
+"Wrestling Inc": 47
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Ethan Page beat Chad Gable by pinfall \u2014 NEW CHAMPION.",
+"es": "Ethan Page venci\u00f3 a Chad Gable por conteo de tres \u2014 \u00a1CAMBIO DE T\u00cdTULO!"
+},
+{
+"winner": "Liv Morgan, Roxanne Perez & Raquel Rodriguez",
+"loser": "Iyo Sky, Tiffany Stratton & Chelsea Green",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "Morgan pinned Perez",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1793667007,
+"updated": 1793667007,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/wwe-raw-live-results-crown-jewel-go-home-show-john-cena-announcement/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2303334/wwe-raw-november-2-2026-results/"
+}
+],
+"order": 10048,
+"pos": {
+"Wrestling Observer": 48,
+"Wrestling Inc": 59
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Liv Morgan, Roxanne Perez & Raquel Rodriguez beat Iyo Sky, Tiffany Stratton & Chelsea Green by pinfall (Morgan pinned Perez).",
+"es": "Liv Morgan, Roxanne Perez & Raquel Rodriguez vencieron a Iyo Sky, Tiffany Stratton & Chelsea Green por conteo de tres (Morgan cubri\u00f3 a Perez)."
+},
+{
+"winner": "Bron Breakker, Bronson Reed, and Austin Theory",
+"loser": "Penta, Je\u2019Von Evans & Dragon Lee",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "Breakker pinned Evans",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1793667851,
+"updated": 1793667851,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/wwe-raw-live-results-crown-jewel-go-home-show-john-cena-announcement/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2303334/wwe-raw-november-2-2026-results/"
+}
+],
+"order": 10073,
+"pos": {
+"Wrestling Observer": 73,
+"Wrestling Inc": 82
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Bron Breakker, Bronson Reed, and Austin Theory beat Penta, Je\u2019Von Evans & Dragon Lee by pinfall (Breakker pinned Evans).",
+"es": "Bron Breakker, Bronson Reed, and Austin Theory vencieron a Penta, Je\u2019Von Evans & Dragon Lee por conteo de tres (Breakker cubri\u00f3 a Evans)."
+},
+{
+"winner": "Solo Sikoa (via disqualification)",
+"loser": "Royce Keys",
+"stip": "",
+"title": null,
+"fin_en": "by disqualification",
+"fin_es": "por descalificaci\u00f3n",
+"who": "",
+"field": null,
+"move": "",
+"id": "m4",
+"first_seen": 1793670657,
+"updated": 1793670657,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2303334/wwe-raw-november-2-2026-results/"
+}
+],
+"order": 20109,
+"pos": {
+"Wrestling Inc": 109
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Solo Sikoa (via disqualification) beat Royce Keys by disqualification.",
+"es": "Solo Sikoa (via disqualification) venci\u00f3 a Royce Keys por descalificaci\u00f3n."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/wwe/ethan-page-chad-gable-intercontinental-title-match-wwe-raw-result/": "Wrestling Observer",
+"https://www.f4wonline.com/news/wwe/wwe-raw-live-results-crown-jewel-go-home-show-john-cena-announcement/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2303334/wwe-raw-november-2-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/wwe-raw-results-11-2-2026-solo-sikoa-vs-royce-keys-john-cena-roman-reigns-more": "Fightful"
+},
+"kind": "weekly",
+"slug": "wwe-raw",
+"date": "2026-11-02",
+"name": "WWE Raw",
+"brand": "WWE",
+"tag": "#WWERaw",
+"start": 1793660400,
+"main": 1793660400,
+"end": 1793669400,
+"card": [
+{
+"stip": "Intercontinental Championship",
+"sides": [
+"Chad Gable",
+"Ethan Page"
+],
+"champ": "Chad Gable",
+"pre": false,
+"idx": 8
+},
+{
+"stip": "",
+"sides": [
+"Penta, Je\u2019Von Evans & Dragon Lee",
+"The Vision"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "",
+"sides": [
+"Royce Keys",
+"Solo Sikoa"
+],
+"champ": null,
+"pre": false,
+"idx": 10
+},
+{
+"stip": "Intercontinental Championship",
+"sides": [
+"Chad Gable",
+"Ethan Page"
+],
+"champ": "Chad Gable",
+"pre": false,
+"idx": 37
+},
+{
+"stip": "",
+"sides": [
+"Judgment Day",
+"Chelsea Green, IYO SKY, and Tiffany Stratton"
+],
+"champ": null,
+"pre": false,
+"idx": 51
+},
+{
+"stip": "",
+"sides": [
+"The Vision",
+"Je'Von Evans, Dragon \ufeffLee, and Penta"
+],
+"champ": null,
+"pre": false,
+"idx": 76
+},
+{
+"stip": "",
+"sides": [
+"Royce Keys",
+"Solo Sikoa"
+],
+"champ": null,
+"pre": false,
+"idx": 89
+},
+{
+"stip": "",
+"sides": [
+"Solo Sikoa",
+"Royce Keys"
+],
+"champ": null,
+"pre": false,
+"idx": 8
+},
+{
+"stip": "",
+"sides": [
+"Penta, Je\u2019Von Evans & Dragon Lee",
+"The Vision (Bronson Reed, Austin Theory, & Bron Breakker)"
+],
+"champ": null,
+"pre": false,
+"idx": 11
+},
+{
+"stip": "Intercontinental Championship",
+"sides": [
+"Chad Gable",
+"Ethan Page"
+],
+"champ": "Chad Gable",
+"pre": false,
+"idx": 12
+},
+{
+"stip": "",
+"sides": [
+"Chelsea Green, IYO SKY, & Tiffany Stratton",
+"Judgment Day (Liv Morgan, Raquel Rodriguez, & Roxanne Perez)"
+],
+"champ": null,
+"pre": false,
+"idx": 13
+}
+],
+"next_id": 4,
+"updated": 1793671372,
+"checked": 1793689186
+}

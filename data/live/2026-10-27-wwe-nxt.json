@@ -1,0 +1,324 @@
+{
+"key": "2026-10-27-wwe-nxt",
+"matches": [
+{
+"winner": "Romeo Moreno & Noam Dar",
+"loser": "Brad Baylor & Ricky Smokes",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1793146945,
+"updated": 1793146945,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2299130/wwe-nxt-october-27-2026-results/"
+}
+],
+"order": 10038,
+"pos": {
+"Wrestling Inc": 38
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Romeo Moreno & Noam Dar beat Brad Baylor & Ricky Smokes by pinfall.",
+"es": "Romeo Moreno & Noam Dar vencieron a Brad Baylor & Ricky Smokes por conteo de tres."
+},
+{
+"winner": "Noam Dar & Romeo Moreno",
+"loser": "Vanity Project",
+"stip": "Dusty Rhodes Tag Team Classic semifinal",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m1",
+"first_seen": 1793146945,
+"updated": 1793146945,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-live-results-halloween-havoc-go-home-show-4/"
+}
+],
+"order": 27,
+"pos": {
+"Wrestling Observer": 27
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Noam Dar & Romeo Moreno beat Vanity Project.",
+"es": "Noam Dar & Romeo Moreno vencieron a Vanity Project."
+},
+{
+"winner": "Chantel Monroe",
+"loser": "Lizzy Rain",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1793147804,
+"updated": 1793148874,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2299130/wwe-nxt-october-27-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-live-results-halloween-havoc-go-home-show-4/"
+}
+],
+"order": 10056,
+"pos": {
+"Wrestling Inc": 56,
+"Wrestling Observer": 36
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Chantel Monroe beat Lizzy Rain by pinfall.",
+"es": "Chantel Monroe venci\u00f3 a Lizzy Rain por conteo de tres."
+},
+{
+"winner": "Sean Legacy",
+"loser": "Saquon Shugars",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m4",
+"first_seen": 1793148690,
+"updated": 1793148874,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2299130/wwe-nxt-october-27-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-live-results-halloween-havoc-go-home-show-4/"
+}
+],
+"order": 10080,
+"pos": {
+"Wrestling Inc": 80,
+"Wrestling Observer": 46
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Sean Legacy beat Saquon Shugars by pinfall.",
+"es": "Sean Legacy venci\u00f3 a Saquon Shugars por conteo de tres."
+},
+{
+"winner": "Hank Walker & Tank Ledger",
+"loser": "El Hijo de Dr. Wagner Jr. & Galeno",
+"stip": "Dusty Rhodes Tag Team Classic semifinal",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m5",
+"first_seen": 1793150683,
+"updated": 1793151353,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2299130/wwe-nxt-october-27-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-live-results-halloween-havoc-go-home-show-4/"
+}
+],
+"order": 10112,
+"pos": {
+"Wrestling Inc": 112,
+"Wrestling Observer": 62
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Hank Walker & Tank Ledger beat El Hijo de Dr. Wagner Jr. & Galeno by pinfall.",
+"es": "Hank Walker & Tank Ledger vencieron a El Hijo de Dr. Wagner Jr. & Galeno por conteo de tres."
+},
+{
+"winner": "Jackson Drake",
+"loser": "EK Prosper",
+"stip": "NXT North American Championship",
+"title": "retain",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m6",
+"first_seen": 1793152345,
+"updated": 1793153209,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2299130/wwe-nxt-october-27-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-live-results-halloween-havoc-go-home-show-4/"
+}
+],
+"order": 10144,
+"pos": {
+"Wrestling Inc": 144,
+"Wrestling Observer": 77
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Jackson Drake beat EK Prosper by pinfall to retain.",
+"es": "Jackson Drake venci\u00f3 a EK Prosper por conteo de tres y retuvo el t\u00edtulo."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/nxt/nxt-results/wwe-nxt-live-results-halloween-havoc-go-home-show-4/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2299130/wwe-nxt-october-27-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/wwe-nxt-results-10-27-2026-jackson-drake-vs-ek-prosper-dusty-classic-semifinals-more": "Fightful"
+},
+"kind": "weekly",
+"slug": "wwe-nxt",
+"date": "2026-10-27",
+"name": "WWE NXT",
+"brand": "WWE",
+"tag": "#WWENXT",
+"start": 1793145600,
+"main": 1793145600,
+"end": 1793154600,
+"card": [
+{
+"stip": "",
+"sides": [
+"Romeo Moreno & Noam Dar",
+"Brad Baylor & Ricky Smokes"
+],
+"champ": null,
+"pre": false,
+"idx": 20
+},
+{
+"stip": "",
+"sides": [
+"Lizzy Rain",
+"Chantel Monroe"
+],
+"champ": null,
+"pre": false,
+"idx": 45
+},
+{
+"stip": "",
+"sides": [
+"Saquon Shugars",
+"Sean Legacy"
+],
+"champ": null,
+"pre": false,
+"idx": 63
+},
+{
+"stip": "",
+"sides": [
+"Hank & Tank",
+"Galeno & El Hijo de Dr. Wagner Jr"
+],
+"champ": null,
+"pre": false,
+"idx": 98
+},
+{
+"stip": "",
+"sides": [
+"Jackson Drake (C)",
+"EK Prosper"
+],
+"champ": null,
+"pre": false,
+"idx": 128
+},
+{
+"stip": "Dusty Rhodes Tag Team Classic",
+"sides": [
+"Vanity Project (Brad Baylor & Ricky Smokes)",
+"Noam Dar & Romeo Moreno"
+],
+"champ": null,
+"pre": false,
+"idx": 8
+},
+{
+"stip": "Dusty Rhodes Tag Team Classic",
+"sides": [
+"Hank and Tank (Hank Walker & Tank Ledger)",
+"The Wagner Brothers (Galeno & El Hijo de Dr. Wagner Jr.)"
+],
+"champ": null,
+"pre": false,
+"idx": 9
+},
+{
+"stip": "NXT North American Championship",
+"sides": [
+"Jackson Drake",
+"EK Prosper"
+],
+"champ": "Jackson Drake",
+"pre": false,
+"idx": 10
+},
+{
+"stip": "",
+"sides": [
+"Lizzy Rain",
+"Chantel Monroe"
+],
+"champ": null,
+"pre": false,
+"idx": 11
+},
+{
+"stip": "",
+"sides": [
+"Saquon Shugars",
+"Sean Legacy"
+],
+"champ": null,
+"pre": false,
+"idx": 12
+}
+],
+"checked": 1793174240,
+"next_id": 6,
+"updated": 1793153209
+}

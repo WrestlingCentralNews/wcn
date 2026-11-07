@@ -1,0 +1,282 @@
+{
+"key": "2026-11-07-wwe-crown-jewel",
+"matches": [
+{
+"winner": "Cody Rhodes",
+"loser": "Randy Orton",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": null,
+"id": "m1",
+"first_seen": 1794074016,
+"updated": 1794074016,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2310034/wwe-crown-jewel-2026-results/"
+}
+],
+"order": 50,
+"pos": {
+"Wrestling Inc": 50
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Cody Rhodes beat Randy Orton.",
+"es": "Cody Rhodes venci\u00f3 a Randy Orton."
+},
+{
+"winner": "Penta & Je\u2019Von Evans",
+"loser": "Bron Breakker & Austin Theory",
+"stip": "World Tag Team Championships",
+"title": "change",
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "Evans pinned Theory",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1794075403,
+"updated": 1794076419,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-crown-jewel-2026-live-results-roman-reigns-sami-zayn/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2310034/wwe-crown-jewel-2026-results/"
+}
+],
+"order": 30043,
+"pos": {
+"Wrestling Observer": 43,
+"Wrestling Inc": 75
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Penta & Je\u2019Von Evans beat Bron Breakker & Austin Theory by pinfall (Evans pinned Theory) \u2014 NEW CHAMPIONS.",
+"es": "Penta & Je\u2019Von Evans vencieron a Bron Breakker & Austin Theory por conteo de tres (Evans cubri\u00f3 a Theory) \u2014 \u00a1CAMBIO DE T\u00cdTULO!",
+"change_explicit": true
+}
+],
+"pages": {
+"https://www.wrestlinginc.com/2310034/wwe-crown-jewel-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/wwe-crown-jewel-results-11-7-2026-roman-reigns-vs-sami-zayn-chelsea-green-vs-liv-morgan-more": "Fightful",
+"https://www.fightful.com/podcasts/is-sami-zayn-on-roman-reignss-level-wwe-crown-jewel-2026-full-show-review-results-w-srs/": "Fightful",
+"https://www.f4wonline.com/news/wwe/results/wwe-crown-jewel-2026-live-results-roman-reigns-sami-zayn/": "Wrestling Observer",
+"https://www.f4wonline.com/news/wwe/result-of-cody-rhodes-vs-randy-orton-last-man-standing-match-at-wwe-crown-jewel/": "Wrestling Observer",
+"https://www.f4wonline.com/news/wwe/wwe-crown-jewel-2026-penta-jevon-evans-vision-world-tag-team-title-result/": "Wrestling Observer",
+"https://www.f4wonline.com/news/wwe/wwe-crown-jewel-2026-liv-morgan-vs-chelsea-green-result-tiffany-stratton-mitb-cash-in/": "Wrestling Observer",
+"https://www.f4wonline.com/news/wwe/wwe-crown-jewel-2026-roman-reigns-sami-zayn-result/": "Wrestling Observer"
+},
+"kind": "ppv",
+"slug": "wwe-crown-jewel",
+"date": "2026-11-07",
+"name": "WWE Crown Jewel 2026",
+"brand": "WWE",
+"tag": "#WWECrownJewel",
+"start": 1794070800,
+"main": 1794070800,
+"end": 1794090600,
+"card": [
+{
+"stip": "",
+"sides": [
+"Randy Orton",
+"Cody Rhodes"
+],
+"champ": null,
+"pre": false,
+"idx": 26,
+"nontitle": false
+},
+{
+"stip": "World Tag Team Championship",
+"sides": [
+"The Vision",
+"Je\u2019Von Evans and Penta"
+],
+"champ": "The Vision",
+"pre": false,
+"idx": 54,
+"nontitle": false
+},
+{
+"stip": "Women\u2019s Crown Jewel Championship",
+"sides": [
+"Chelsea Green",
+"Liv Morgan"
+],
+"champ": null,
+"pre": false,
+"idx": 79,
+"nontitle": false
+},
+{
+"stip": "Men\u2019s Crown Jewel Championship",
+"sides": [
+"Roman Reigns",
+"Sami Zayn"
+],
+"champ": null,
+"pre": false,
+"idx": 109,
+"nontitle": false
+},
+{
+"stip": "Crown Jewel Championship",
+"sides": [
+"Roman Reigns",
+"Sami Zayn"
+],
+"champ": null,
+"pre": false,
+"idx": 8,
+"nontitle": false
+},
+{
+"stip": "Women\u2019s Crown Jewel Championship",
+"sides": [
+"Liv Morgan",
+"Chelsea Green"
+],
+"champ": null,
+"pre": false,
+"idx": 9,
+"nontitle": false
+},
+{
+"stip": "Last Man Standing",
+"sides": [
+"Cody Rhodes",
+"Randy Orton"
+],
+"champ": null,
+"pre": false,
+"idx": 10,
+"nontitle": false
+},
+{
+"stip": "WWE World Tag Team Championships",
+"sides": [
+"The Vision (Bron Breakker & Austin Theory)",
+"Penta & Je\u2019Von Evans"
+],
+"champ": "The Vision (Bron Breakker & Austin Theory)",
+"pre": false,
+"idx": 11,
+"nontitle": false
+},
+{
+"stip": "World Tag Team Championships",
+"sides": [
+"The Vision (Bron Breakker & Austin Theory)",
+"Penta & Je\u2019Von Evans"
+],
+"champ": "The Vision (Bron Breakker & Austin Theory)",
+"pre": false,
+"idx": 1,
+"nontitle": false
+},
+{
+"stip": "Last Man Standing",
+"sides": [
+"Cody Rhodes",
+"Randy Orton"
+],
+"champ": null,
+"pre": false,
+"idx": 2,
+"nontitle": false
+},
+{
+"stip": "Women\u2019s Crown Jewel Championship",
+"sides": [
+"Liv Morgan",
+"Chelsea Green"
+],
+"champ": null,
+"pre": false,
+"idx": 3,
+"nontitle": false
+},
+{
+"stip": "Crown Jewel Championship",
+"sides": [
+"Roman Reigns",
+"Sami Zayn"
+],
+"champ": null,
+"pre": false,
+"idx": 4,
+"nontitle": false
+},
+{
+"stip": "Men\u2019s Crown Jewel Championship",
+"sides": [
+"Roman Reigns",
+"Sami Zayn"
+],
+"champ": null,
+"pre": false,
+"idx": 6,
+"nontitle": false
+},
+{
+"stip": "Women\u2019s Crown Jewel Championship",
+"sides": [
+"Liv Morgan",
+"Chelsea Green"
+],
+"champ": null,
+"pre": false,
+"idx": 7,
+"nontitle": false
+},
+{
+"stip": "Last Man Standing match",
+"sides": [
+"Cody Rhodes",
+"Randy Orton"
+],
+"champ": null,
+"pre": false,
+"idx": 8,
+"nontitle": false
+},
+{
+"stip": "World Tag Team Championships",
+"sides": [
+"Bron Breakker & Austin Theory",
+"Penta & Je\u2019Von Evans"
+],
+"champ": "Bron Breakker & Austin Theory",
+"pre": false,
+"idx": 9,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Tiffany Stratton is the real winner of the Chelsea Green",
+"Liv Morgan WWE Crown Jewel Championship match"
+],
+"champ": null,
+"pre": false,
+"idx": 1,
+"nontitle": false
+}
+],
+"checked": 1794082371,
+"next_id": 2,
+"updated": 1794076419
+}

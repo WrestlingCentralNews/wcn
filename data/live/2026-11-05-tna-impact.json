@@ -1,0 +1,355 @@
+{
+"key": "2026-11-05-tna-impact",
+"matches": [
+{
+"winner": "Frankie Kazarian and Avery Styles",
+"loser": "Hunter James & Alexander Lev",
+"stip": "Tag Team Match",
+"title": null,
+"fin_en": "by submission",
+"fin_es": "por rendici\u00f3n",
+"who": "",
+"field": null,
+"move": "",
+"id": "m1",
+"first_seen": 1793929611,
+"updated": 1793938985,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-live-results-nemeths-slater-amazing-red/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2308170/tna-thursday-night-impact-november-5-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling-news/tna-impact-results-11-5-nemeths-vs-leon-slater-and-amazing-red"
+}
+],
+"order": 25,
+"pos": {
+"Wrestling Observer": 25,
+"Wrestling Inc": 138,
+"Fightful": 9
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Frankie Kazarian and Avery Styles beat Hunter James & Alexander Lev by submission.",
+"es": "Frankie Kazarian and Avery Styles vencieron a Hunter James & Alexander Lev por rendici\u00f3n."
+},
+{
+"winner": "Eddie Edwards",
+"loser": "Bear Bronson",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1793929611,
+"updated": 1793933433,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-live-results-nemeths-slater-amazing-red/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2308170/tna-thursday-night-impact-november-5-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling-news/tna-impact-results-11-5-nemeths-vs-leon-slater-and-amazing-red"
+}
+],
+"order": 38,
+"pos": {
+"Wrestling Observer": 38,
+"Wrestling Inc": 69,
+"Fightful": 12
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Eddie Edwards beat Bear Bronson by pinfall.",
+"es": "Eddie Edwards venci\u00f3 a Bear Bronson por conteo de tres."
+},
+{
+"winner": "Tag Team Match\" Shotzi Blackheart and Allie",
+"loser": "Fire \u2019N Flava (Kiera Hogan & Tasha Steelz)",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1793930783,
+"updated": 1793938985,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-live-results-nemeths-slater-amazing-red/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling-news/tna-impact-results-11-5-nemeths-vs-leon-slater-and-amazing-red"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2308170/tna-thursday-night-impact-november-5-2026-results/"
+}
+],
+"order": 47,
+"pos": {
+"Wrestling Observer": 47,
+"Fightful": 15,
+"Wrestling Inc": 87
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Tag Team Match\" Shotzi Blackheart and Allie beat Fire \u2019N Flava (Kiera Hogan & Tasha Steelz) by pinfall.",
+"es": "Tag Team Match\" Shotzi Blackheart and Allie vencieron a Fire \u2019N Flava (Kiera Hogan & Tasha Steelz) por conteo de tres."
+},
+{
+"winner": "The Nemeths (Nic Nemeth & Ryan Nemeth)",
+"loser": "Amazing Red & Leon Slater",
+"stip": "TNA World Tag Team Title Match",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m4",
+"first_seen": 1793933916,
+"updated": 1793938472,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-live-results-nemeths-slater-amazing-red/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2308170/tna-thursday-night-impact-november-5-2026-results/"
+}
+],
+"order": 69,
+"pos": {
+"Wrestling Observer": 69,
+"Wrestling Inc": 127
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "The Nemeths (Nic Nemeth & Ryan Nemeth) beat Amazing Red & Leon Slater to retain.",
+"es": "The Nemeths (Nic Nemeth & Ryan Nemeth) vencieron a Amazing Red & Leon Slater y retuvieron el t\u00edtulo."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-live-results-nemeths-slater-amazing-red/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2308170/tna-thursday-night-impact-november-5-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/tna-impact-results-11-5-nemeths-vs-leon-slater-and-amazing-red": "Fightful"
+},
+"kind": "weekly",
+"slug": "tna-impact",
+"date": "2026-11-05",
+"name": "TNA iMPACT!",
+"brand": "TNA",
+"tag": "#TNAiMPACT",
+"start": 1793930400,
+"main": 1793930400,
+"end": 1793939400,
+"card": [
+{
+"stip": "",
+"sides": [
+"Frankie Kazarian & Avery Styles",
+"Hunter James & Alexander Lev"
+],
+"champ": null,
+"pre": false,
+"idx": 19,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Eddie Edwards",
+"Bear Bronson"
+],
+"champ": null,
+"pre": false,
+"idx": 28,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Allie & Shotzi Blackheart",
+"Fire \u2019N Flava (Kiera Hogan & Tasha Steelz)"
+],
+"champ": null,
+"pre": false,
+"idx": 41,
+"nontitle": false
+},
+{
+"stip": "TNA World Tag Team Title Match",
+"sides": [
+"The Nemeths (Nic Nemeth & Ryan Nemeth)",
+"Amazing Red & TNA World Champion Leon Slater"
+],
+"champ": "The Nemeths (Nic Nemeth & Ryan Nemeth)",
+"pre": false,
+"idx": 56,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Elayna Black",
+"Heather by Elegance"
+],
+"champ": null,
+"pre": false,
+"idx": 73,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Mustafa Ali",
+"Frankie Kazarian"
+],
+"champ": null,
+"pre": false,
+"idx": 74,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Moose",
+"Samuel Shaw"
+],
+"champ": null,
+"pre": false,
+"idx": 75,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Elijah",
+"Nic Nemeth"
+],
+"champ": null,
+"pre": false,
+"idx": 76,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Frankie Kazarian and Avery Styles",
+"Hunter James and Alexander Lev"
+],
+"champ": null,
+"pre": false,
+"idx": 46,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Eddie Edwards",
+"Bear Bronson"
+],
+"champ": null,
+"pre": false,
+"idx": 60,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Fire \u2018N Flava",
+"Shotzi Blackheart and Allie"
+],
+"champ": null,
+"pre": false,
+"idx": 84,
+"nontitle": false
+},
+{
+"stip": "TNA World Tag Team Championship",
+"sides": [
+"The Nemeths",
+"Leon Slater and Amazing Red"
+],
+"champ": "The Nemeths",
+"pre": false,
+"idx": 117,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Elayna Back",
+"Heather By Elegance"
+],
+"champ": null,
+"pre": false,
+"idx": 148,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Mustafa Ali",
+"Frakie Kazarian"
+],
+"champ": null,
+"pre": false,
+"idx": 149,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Samuel Shaw",
+"Moose"
+],
+"champ": null,
+"pre": false,
+"idx": 150,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"The System agree to stay out of Eddie Edwards",
+"Bear Bronson"
+],
+"champ": null,
+"pre": false,
+"idx": 11,
+"nontitle": false
+}
+],
+"next_id": 4,
+"updated": 1793939421,
+"checked": 1793957074
+}

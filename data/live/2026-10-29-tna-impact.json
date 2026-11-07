@@ -1,0 +1,360 @@
+{
+"key": "2026-10-29-tna-impact",
+"matches": [
+{
+"winner": "M by Elegance",
+"loser": "Jada Stone",
+"stip": "TNA Knockouts TV Championship Match",
+"title": "retain",
+"fin_en": "by referee stoppage",
+"fin_es": "por detenci\u00f3n del r\u00e9feri",
+"who": "",
+"field": null,
+"move": "",
+"id": "m1",
+"first_seen": 1793321243,
+"updated": 1793328235,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-live-results-october-29-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2301775/tna-thursday-night-impact-october-29-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/tna-impact-results-10-29-slaughterhouse-syx-amazing-red-vs-cedric-alexander/"
+}
+],
+"order": 17,
+"pos": {
+"Wrestling Observer": 17,
+"Wrestling Inc": 32,
+"Fightful": 6
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "M by Elegance beat Jada Stone by referee stoppage to retain.",
+"es": "M by Elegance venci\u00f3 a Jada Stone por detenci\u00f3n del r\u00e9feri y retuvo el t\u00edtulo."
+},
+{
+"winner": "Special Agent 0",
+"loser": "BDE",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1793321243,
+"updated": 1793328235,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-live-results-october-29-2026/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/tna-impact-results-10-29-slaughterhouse-syx-amazing-red-vs-cedric-alexander/"
+}
+],
+"order": 24,
+"pos": {
+"Wrestling Observer": 24,
+"Fightful": 9
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Special Agent 0 beat BDE.",
+"es": "Special Agent 0 venci\u00f3 a BDE."
+},
+{
+"winner": "Amazing Red",
+"loser": "Cedric Alexander",
+"stip": "TNA X-Division Championship Match",
+"title": "retain",
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m3",
+"first_seen": 1793321679,
+"updated": 1793328235,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-live-results-october-29-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2301775/tna-thursday-night-impact-october-29-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/tna-impact-results-10-29-slaughterhouse-syx-amazing-red-vs-cedric-alexander/"
+}
+],
+"order": 35,
+"pos": {
+"Wrestling Observer": 35,
+"Wrestling Inc": 54,
+"Fightful": 13
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Amazing Red beat Cedric Alexander to retain.",
+"es": "Amazing Red venci\u00f3 a Cedric Alexander y retuvo el t\u00edtulo."
+},
+{
+"winner": "A.J. Francis",
+"loser": "John Skyler",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m4",
+"first_seen": 1793323002,
+"updated": 1793328235,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-live-results-october-29-2026/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2301775/tna-thursday-night-impact-october-29-2026-results/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/tna-impact-results-10-29-slaughterhouse-syx-amazing-red-vs-cedric-alexander/"
+}
+],
+"order": 46,
+"pos": {
+"Wrestling Observer": 46,
+"Wrestling Inc": 69,
+"Fightful": 18
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "A.J. Francis beat John Skyler.",
+"es": "A.J. Francis venci\u00f3 a John Skyler."
+},
+{
+"winner": "Elijah",
+"loser": "Ryan Nemeth",
+"stip": "",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m5",
+"first_seen": 1793324694,
+"updated": 1793328571,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-live-results-october-29-2026/"
+},
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/tna-impact-results-10-29-slaughterhouse-syx-amazing-red-vs-cedric-alexander/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2301775/tna-thursday-night-impact-october-29-2026-results/"
+}
+],
+"order": 59,
+"pos": {
+"Wrestling Observer": 59,
+"Fightful": 21,
+"Wrestling Inc": 89
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Elijah beat Ryan Nemeth.",
+"es": "Elijah venci\u00f3 a Ryan Nemeth."
+},
+{
+"winner": "The Syx (Samuel Shaw & Joseph Sawyer)",
+"loser": "The Hardys (Matt Hardy & Jeff Hardy)",
+"stip": "Slaughterhouse Syx Match",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m6",
+"first_seen": 1793328235,
+"updated": 1793328235,
+"sources": [
+{
+"name": "Fightful",
+"url": "https://www.fightful.com/wrestling/tna-impact-results-10-29-slaughterhouse-syx-amazing-red-vs-cedric-alexander/"
+}
+],
+"order": 30024,
+"pos": {
+"Fightful": 24
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "The Syx (Samuel Shaw & Joseph Sawyer) beat The Hardys (Matt Hardy & Jeff Hardy).",
+"es": "The Syx (Samuel Shaw & Joseph Sawyer) vencieron a The Hardys (Matt Hardy & Jeff Hardy)."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/tna-wrestling/tna-results/tna-impact-live-results-october-29-2026/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2301775/tna-thursday-night-impact-october-29-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/tna-impact-results-10-29-slaughterhouse-syx-amazing-red-vs-cedric-alexander": "Fightful",
+"https://www.fightful.com/wrestling/tna-impact-results-10-29-slaughterhouse-syx-amazing-red-vs-cedric-alexander/": "Fightful"
+},
+"kind": "weekly",
+"slug": "tna-impact",
+"date": "2026-10-29",
+"name": "TNA iMPACT!",
+"brand": "TNA",
+"tag": "#TNAiMPACT",
+"start": 1793322000,
+"main": 1793322000,
+"end": 1793331000,
+"card": [
+{
+"stip": "TNA Knockouts TV Championship Match",
+"sides": [
+"M by Elegance",
+"Jada Stone"
+],
+"champ": "M by Elegance",
+"pre": false,
+"idx": 11
+},
+{
+"stip": "",
+"sides": [
+"Special Agent 0",
+"BDE"
+],
+"champ": null,
+"pre": false,
+"idx": 20
+},
+{
+"stip": "TNA X-Division Championship Match",
+"sides": [
+"Amazing Red",
+"Cedric Alexander"
+],
+"champ": "Amazing Red",
+"pre": false,
+"idx": 28
+},
+{
+"stip": "",
+"sides": [
+"John Skyler",
+"AJ Francis"
+],
+"champ": null,
+"pre": false,
+"idx": 41
+},
+{
+"stip": "",
+"sides": [
+"Elijah",
+"Ryan Nemeth"
+],
+"champ": null,
+"pre": false,
+"idx": 53
+},
+{
+"stip": "Slaughterhouse syX Match",
+"sides": [
+"The Hardys (Jeff & Matt)",
+"syX (Joseph Sawyer and Samuel Shaw)"
+],
+"champ": null,
+"pre": false,
+"idx": 62
+},
+{
+"stip": "Knockouts Television Championship",
+"sides": [
+"M By Elegance",
+"Jada Stone"
+],
+"champ": "M By Elegance",
+"pre": false,
+"idx": 27
+},
+{
+"stip": "",
+"sides": [
+"Zero",
+"BDE"
+],
+"champ": null,
+"pre": false,
+"idx": 39
+},
+{
+"stip": "X-Division Championship",
+"sides": [
+"Amazing Red",
+"Cedric Alexander"
+],
+"champ": "Amazing Red",
+"pre": false,
+"idx": 49
+},
+{
+"stip": "",
+"sides": [
+"John Skyler",
+"A.J. Francis"
+],
+"champ": null,
+"pre": false,
+"idx": 66
+},
+{
+"stip": "",
+"sides": [
+"Elijah",
+"Ryan Nemeth"
+],
+"champ": null,
+"pre": false,
+"idx": 87
+}
+],
+"next_id": 6,
+"updated": 1793328921,
+"checked": 1793350690
+}

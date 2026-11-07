@@ -1,0 +1,26 @@
+{
+ "at": 1792633011,
+ "delete": {
+  "code": 200,
+  "body": {
+   "data": {
+    "deleted": true
+   }
+  }
+ },
+ "post": {
+  "code": 201,
+  "body": {
+   "data": {
+    "edit_history_tweet_ids": [
+     ""
+    ],
+    "id": "2113082125180084729",
+    "text": "BREAKING\ud83d\udea8\ud83d\udea8\ud83d\udea8\nSting's Son Steve Borden Returns, Issues Blood &amp; Guts Challenge On Dynamite\n\nSteven Borden made his return to AEW Dynamite after suffering an injury at All Out.\n\n#AEW #AEWDynamite\nFull report: link in bio https://t.co/x6iKo7HF64"
+   }
+  },
+  "text": "BREAKING\ud83d\udea8\ud83d\udea8\ud83d\udea8\nSting's Son Steve Borden Returns, Issues Blood & Guts Challenge On Dynamite\n\nSteven Borden made his return to AEW Dynamite after suffering an injury at All Out.\n\n#AEW #AEWDynamite\nFull report: link in bio",
+  "photo": "site:key-labelled"
+ },
+ "url": "https://x.com/wrestlingWCN/status/2113082125180084729"
+}

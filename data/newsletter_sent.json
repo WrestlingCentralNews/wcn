@@ -1,0 +1,60 @@
+{
+ "sent": {
+  "2026-W43": {
+   "ts": 1792417217,
+   "broadcast_id": 26488159,
+   "status": "sending",
+   "subject": "WCN Weekly: AEW scrapped Dynamite seventh-anniversary plans after PAC death",
+   "stories": [
+    "ceea0697ebbcb",
+    "c538d3f5b27ae",
+    "c896add8a2121",
+    "cea5a6e5c11b2",
+    "ced0052477575",
+    "cdd8d7279102d",
+    "ca38127546dd7",
+    "c499169182aba",
+    "c774796bcb25e",
+    "c8a099009efe6"
+   ]
+  },
+  "2026-W44": {
+   "ts": 1793027876,
+   "broadcast_id": 26615582,
+   "status": "sending",
+   "subject": "WCN Weekly: TNA Wrestling Signs Shayna Baszler",
+   "stories": [
+    "cb913ddea1d55",
+    "cdcbf6730547f",
+    "c52b0090f3451",
+    "c3e78ff2bdffb",
+    "cdf46e0a2524e",
+    "c0c7f83489a92",
+    "ce0dbd82bbd97",
+    "c914c7b83d6a2",
+    "c41b619c195ba",
+    "cdb29863073df"
+   ]
+  }
+ },
+ "tests": [
+  {
+   "ts": 1792400729,
+   "broadcast_id": 26484112,
+   "status": "sending",
+   "subject": "[TEST] WCN Weekly: AEW scrapped Dynamite seventh-anniversary plans after PAC death",
+   "stories": [
+    "ceea0697ebbcb",
+    "c538d3f5b27ae",
+    "c896add8a2121",
+    "cea5a6e5c11b2",
+    "ced0052477575",
+    "cdd8d7279102d",
+    "ca38127546dd7",
+    "c499169182aba",
+    "c774796bcb25e",
+    "c8a099009efe6"
+   ]
+  }
+ ]
+}

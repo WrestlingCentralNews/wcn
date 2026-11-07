@@ -1,0 +1,344 @@
+{
+"key": "2026-11-06-wwe-smackdown",
+"matches": [
+{
+"winner": "Kevin Owens has",
+"loser": "CM Punk",
+"stip": "No-Holds Barred",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m4",
+"first_seen": 1794021170,
+"updated": 1794021875,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/result-of-cm-punk-vs-kevin-owens-no-holds-barred-match-on-wwe-smackdown/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2309607/wwe-smackdown-november-6-2026-results/"
+}
+],
+"order": 30001,
+"pos": {
+"Wrestling Observer": 1,
+"Wrestling Inc": 155
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Kevin Owens has beat CM Punk by pinfall.",
+"es": "Kevin Owens has venci\u00f3 a CM Punk por conteo de tres."
+},
+{
+"winner": "Punk",
+"loser": "Owens in their first-ever singles match in WWE back in August",
+"stip": "No-Holds Barred",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m5",
+"first_seen": 1794021170,
+"updated": 1794021170,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/result-of-cm-punk-vs-kevin-owens-no-holds-barred-match-on-wwe-smackdown/"
+}
+],
+"order": 30004,
+"pos": {
+"Wrestling Observer": 4
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Punk beat Owens in their first-ever singles match in WWE back in August.",
+"es": "Punk venci\u00f3 a Owens in their first-ever singles match in WWE back in August."
+},
+{
+"winner": "Shinsuke Nakamura",
+"loser": "Tama Tonga",
+"stip": "",
+"title": null,
+"fin_en": "by pinfall",
+"fin_es": "por conteo de tres",
+"who": "",
+"field": null,
+"move": "",
+"id": "m1",
+"first_seen": 1794015491,
+"updated": 1794015985,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-cm-punk-vs-kevin-owens-no-holds-barred/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2309607/wwe-smackdown-november-6-2026-results/"
+}
+],
+"order": 23,
+"pos": {
+"Wrestling Observer": 23,
+"Wrestling Inc": 64
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Shinsuke Nakamura beat Tama Tonga by pinfall.",
+"es": "Shinsuke Nakamura venci\u00f3 a Tama Tonga por conteo de tres."
+},
+{
+"winner": "Damian Priest (via referee stoppage)",
+"loser": "Nathan Frazer",
+"stip": "Singles Match",
+"title": null,
+"fin_en": "by referee stoppage",
+"fin_es": "por detenci\u00f3n del r\u00e9feri",
+"who": "",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1794018997,
+"updated": 1794020666,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-cm-punk-vs-kevin-owens-no-holds-barred/"
+},
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2309607/wwe-smackdown-november-6-2026-results/"
+}
+],
+"order": 55,
+"pos": {
+"Wrestling Observer": 55,
+"Wrestling Inc": 161
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Damian Priest (via referee stoppage) beat Nathan Frazer by referee stoppage.",
+"es": "Damian Priest (via referee stoppage) venci\u00f3 a Nathan Frazer por detenci\u00f3n del r\u00e9feri."
+},
+{
+"winner": "Michin and B-Fab",
+"loser": "Fatal Influence",
+"stip": "WWE Women's Tag Team Championship",
+"title": "retain",
+"fin_en": "no contest",
+"fin_es": "sin resultado",
+"who": "",
+"field": null,
+"move": "",
+"id": "m6",
+"first_seen": 1794021472,
+"updated": 1794021472,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2309607/wwe-smackdown-november-6-2026-results/"
+}
+],
+"order": 10160,
+"pos": {
+"Wrestling Inc": 160
+},
+"card": true,
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Michin and B-Fab beat Fatal Influence no contest to retain.",
+"es": "Michin and B-Fab vencieron a Fatal Influence sin resultado y retuvieron el t\u00edtulo."
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/wwe/results/wwe-smackdown-live-results-cm-punk-vs-kevin-owens-no-holds-barred/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2309607/wwe-smackdown-november-6-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/podcasts/owens-vs-cm-punk-the-creed-brothers-depart-wwe-smackdown-11-6-2026-full-show-review-results/": "Fightful",
+"https://www.f4wonline.com/news/wwe/result-of-cm-punk-vs-kevin-owens-no-holds-barred-match-on-wwe-smackdown/": "Wrestling Observer"
+},
+"kind": "weekly",
+"slug": "wwe-smackdown",
+"date": "2026-11-06",
+"name": "WWE SmackDown",
+"brand": "WWE",
+"tag": "#SmackDown",
+"start": 1794013200,
+"main": 1794013200,
+"end": 1794022200,
+"card": [
+{
+"stip": "",
+"sides": [
+"Shinsuke Nakamura",
+"Tama Tonga"
+],
+"champ": null,
+"pre": false,
+"idx": 19,
+"nontitle": false
+},
+{
+"stip": "WWE Women\u2019s Tag Team Championships",
+"sides": [
+"The Baddies (B-Fab & Michin)",
+"Fatal Influence (Fallon Henley & Lainey Reid) (w/"
+],
+"champ": null,
+"pre": false,
+"idx": 35,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Fatal Influence",
+"The Baddies ended in a No Contest (The Baddies retain the WWE Women\u2019s Tag Team Championships)"
+],
+"champ": null,
+"pre": false,
+"idx": 38,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Damian Priest",
+"Nathan Frazer"
+],
+"champ": null,
+"pre": false,
+"idx": 52,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"A video package on Cody Rhodes",
+"Randy Orton was shown"
+],
+"champ": null,
+"pre": false,
+"idx": 59,
+"nontitle": false
+},
+{
+"stip": "No-Holds Barred",
+"sides": [
+"CM Punk",
+"Kevin Owens"
+],
+"champ": null,
+"pre": false,
+"idx": 60,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Shinsuke Nakamura",
+"Tama Tonga"
+],
+"champ": null,
+"pre": false,
+"idx": 57,
+"nontitle": false
+},
+{
+"stip": "Women\u2019s Tag Team Championship",
+"sides": [
+"Michin and B-Fab",
+"Lainey Reid and Fallon Henley"
+],
+"champ": "Michin and B-Fab",
+"pre": false,
+"idx": 86,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Damian Priest",
+"Nathan Frazer"
+],
+"champ": null,
+"pre": false,
+"idx": 114,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Kevin Owens",
+"CM Punk"
+],
+"champ": null,
+"pre": false,
+"idx": 126,
+"nontitle": false
+},
+{
+"stip": "No Holds Barred Match",
+"sides": [
+"CM Punk",
+"Kevin Owens"
+],
+"champ": null,
+"pre": false,
+"idx": 1,
+"nontitle": false
+},
+{
+"stip": "WWE Women\u2019s Tag Team Championship",
+"sides": [
+"Michin & B-Fab",
+"Fallon Henley & Lainey Reed"
+],
+"champ": "Michin & B-Fab",
+"pre": false,
+"idx": 2,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Damian Priest",
+"Nathan Frazer"
+],
+"champ": null,
+"pre": false,
+"idx": 3,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Shinsuke Nakamura",
+"Tama Tonga"
+],
+"champ": null,
+"pre": false,
+"idx": 4,
+"nontitle": false
+}
+],
+"checked": 1794040633,
+"next_id": 6,
+"updated": 1794022262
+}

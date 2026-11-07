@@ -1,0 +1,188 @@
+{
+"shows": {
+"2026-10-17-aew-wrestledream": {
+"posted": {
+"m1": "2111611356927738275",
+"m3": "2111611357766504913",
+"m2": "2111613205105496469",
+"m5": "2111614456035684653",
+"m6": "2111623295451947279",
+"m7": "2111625692500963747",
+"m9": "2111633344345800968",
+"m10": "2111641675059622232",
+"m11": "2111647448225526015",
+"m13": "2111666462351868146",
+"m12": "2111667096199250047",
+"m14": "2111674803874619774"
+},
+"combined": [],
+"n": 12,
+"facts": [
+{
+"winner": "Divine Dominion (Lena Kross & Megan Bayne)",
+"loser": "Sisters of Sin"
+},
+{
+"winner": "DCF (Wardlow, Josh Alexander & Jake Doyle)",
+"loser": "Alex Breese, Papi D & Rhys Maddox"
+},
+{
+"winner": "The Dogs (David Finlay & Clark Connors) & Death Riders (Claudio Castagnoli, Wheeler Yuta, Daniel Garcia & Gabe Kidd)",
+"loser": "The Conglomeration & Bang Bang Gang"
+},
+{
+"winner": "The Motor City Machine Guns",
+"loser": "FTR (Dax Harwood & Cash Wheeler)"
+},
+{
+"winner": "Mercedes Mone",
+"loser": "Thekla"
+},
+{
+"winner": "Nick Wayne",
+"loser": "Jericho"
+},
+{
+"winner": "The Young Bucks (Matt Jackson and Nick Jackson)",
+"loser": "Kevin Knight & Kyle Fletcher"
+},
+{
+"winner": "Persephone",
+"loser": "Hyan, Queen Aminata & Dani Luna"
+},
+{
+"winner": "Andrade El Idolo",
+"loser": "Tommaso Ciampa"
+},
+{
+"winner": "Jon Moxley",
+"loser": "Mark Davis"
+},
+{
+"winner": "\"Hangman\" Adam Page, Brody King, and Bandido",
+"loser": "Swerve Strickland & The New Level"
+},
+{
+"winner": "Will Ospreay",
+"loser": "Adam Copeland, Samoa Joe, Darby Allin, Ricochet, Kazuchika Okada, Konosuke Takeshita & Speedball Mike Bailey"
+}
+]
+},
+"2026-10-19-wwe-raw": {
+"posted": {},
+"combined": [],
+"n": 0,
+"facts": []
+}
+},
+"log": [
+{
+"key": "2026-10-17-aew-wrestledream",
+"ids": [
+"m1"
+],
+"tweet": "2111611356927738275",
+"at": 1792282353,
+"ok": true
+},
+{
+"key": "2026-10-17-aew-wrestledream",
+"ids": [
+"m3"
+],
+"tweet": "2111611357766504913",
+"at": 1792282353,
+"ok": true
+},
+{
+"key": "2026-10-17-aew-wrestledream",
+"ids": [
+"m2"
+],
+"tweet": "2111613205105496469",
+"at": 1792282794,
+"ok": true
+},
+{
+"key": "2026-10-17-aew-wrestledream",
+"ids": [
+"m5"
+],
+"tweet": "2111614456035684653",
+"at": 1792283092,
+"ok": true
+},
+{
+"key": "2026-10-17-aew-wrestledream",
+"ids": [
+"m6"
+],
+"tweet": "2111623295451947279",
+"at": 1792285200,
+"ok": true
+},
+{
+"key": "2026-10-17-aew-wrestledream",
+"ids": [
+"m7"
+],
+"tweet": "2111625692500963747",
+"at": 1792285771,
+"ok": true
+},
+{
+"key": "2026-10-17-aew-wrestledream",
+"ids": [
+"m9"
+],
+"tweet": "2111633344345800968",
+"at": 1792287596,
+"ok": true
+},
+{
+"key": "2026-10-17-aew-wrestledream",
+"ids": [
+"m10"
+],
+"tweet": "2111641675059622232",
+"at": 1792289582,
+"ok": true
+},
+{
+"key": "2026-10-17-aew-wrestledream",
+"ids": [
+"m11"
+],
+"tweet": "2111647448225526015",
+"at": 1792290958,
+"ok": true
+},
+{
+"key": "2026-10-17-aew-wrestledream",
+"ids": [
+"m13"
+],
+"tweet": "2111666462351868146",
+"at": 1792295491,
+"ok": true
+},
+{
+"key": "2026-10-17-aew-wrestledream",
+"ids": [
+"m12"
+],
+"tweet": "2111667096199250047",
+"at": 1792295643,
+"ok": true
+},
+{
+"key": "2026-10-17-aew-wrestledream",
+"ids": [
+"m14"
+],
+"tweet": "2111674803874619774",
+"at": 1792297480,
+"ok": true
+}
+]
+}

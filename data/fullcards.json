@@ -1,0 +1,85 @@
+{
+ "wwe-smackdown/2026-11-06": {
+  "checked": 1794025275,
+  "lines": [
+   "CM Punk battles Kevin Owens in a No Holds Barred Match",
+   "B-Fab & Michin defend the WWE Women\u2019s Tag Team Championship against Fatal Influence",
+   "Nathan Frazer takes on Damian Priest",
+   "Shinsuke Nakamura faces Tama Tonga"
+  ],
+  "source": "https://www.wwe.com/shows/smackdown/2026-11-06",
+  "source_name": "WWE.com",
+  "image": "https://www.wwe.com/f/styles/og_image/public/2026/11/20261023_SD_Match_PunkKo_16x9_Tonight.jpg",
+  "appearances": [],
+  "venue": null,
+  "ts": 1793988666,
+  "first_ts": 1793988666,
+  "show": "wwe-smackdown",
+  "date": "2026-11-06",
+  "inf": {
+   "time": "20:00",
+   "network": "USA Network",
+   "name": null
+  },
+  "start": 1794013200,
+  "items": [
+   {
+    "line": "CM Punk battles Kevin Owens in a No Holds Barred Match",
+    "sid": "c3680ce8a50d9"
+   },
+   {
+    "line": "B-Fab & Michin defend the WWE Women\u2019s Tag Team Championship against Fatal Influence",
+    "sid": "c9ad420389319"
+   },
+   {
+    "line": "Nathan Frazer takes on Damian Priest",
+    "sid": "c9ad420389319"
+   },
+   {
+    "line": "Shinsuke Nakamura faces Tama Tonga",
+    "sid": "c9ad420389319"
+   }
+  ]
+ },
+ "wwe-crown-jewel/2026-11-07": {
+  "lines": [
+   "World Heavyweight Champion Roman Reigns vs. Undisputed WWE Champion Sami Zayn for the Men's Crown Jewel Championship",
+   "WWE Women's Champion Chelsea Green vs. Women's World Champion Liv Morgan for the Women's Crown Jewel Championship",
+   "Cody Rhodes vs. Randy Orton in a Last Man Standing Match",
+   "World Tag Team Champions Bron Breakker and Austin Theory vs. Penta and Je'Von Evans"
+  ],
+  "source": "https://www.wwe.com/shows/wwe-crown-jewel/crown-jewel-2026",
+  "source_name": "WWE.com",
+  "image": "https://www.wwe.com/f/styles/og_image/public/2026/10/20261012_CJ26_RomanSami_16x9_Date.jpg",
+  "appearances": [],
+  "venue": null,
+  "ts": 1793941678,
+  "first_ts": 1793941678,
+  "show": "wwe-crown-jewel",
+  "date": "2026-11-07",
+  "inf": {
+   "time": "12:00",
+   "network": "",
+   "name": "WWE Crown Jewel 2026"
+  },
+  "start": 1794070800,
+  "items": [
+   {
+    "line": "World Heavyweight Champion Roman Reigns vs. Undisputed WWE Champion Sami Zayn for the Men's Crown Jewel Championship",
+    "sid": null
+   },
+   {
+    "line": "WWE Women's Champion Chelsea Green vs. Women's World Champion Liv Morgan for the Women's Crown Jewel Championship",
+    "sid": null
+   },
+   {
+    "line": "Cody Rhodes vs. Randy Orton in a Last Man Standing Match",
+    "sid": null
+   },
+   {
+    "line": "World Tag Team Champions Bron Breakker and Austin Theory vs. Penta and Je'Von Evans",
+    "sid": null
+   }
+  ]
+ }
+}

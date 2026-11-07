@@ -1,0 +1,287 @@
+{
+"key": "2026-11-04-aew-dynamite",
+"matches": [
+{
+"winner": "Queen Aminata, Willow Nightingale, The Brawling Birds & Wrathlander",
+"loser": "Persephone, Triangle of Madness & Divine Dominion",
+"stip": "AEW Women's World Tag Team Championship",
+"title": null,
+"fin_en": "by submission",
+"fin_es": "por rendici\u00f3n",
+"who": "",
+"field": null,
+"move": "",
+"id": "m1",
+"first_seen": 1793844923,
+"updated": 1793851809,
+"sources": [
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-blood-and-guts-live-results-november-4-2026/"
+}
+],
+"order": 20,
+"pos": {
+"Wrestling Observer": 20
+},
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "Queen Aminata, Willow Nightingale, The Brawling Birds & Wrathlander beat Persephone, Triangle of Madness & Divine Dominion by submission.",
+"es": "Queen Aminata, Willow Nightingale, The Brawling Birds & Wrathlander vencieron a Persephone, Triangle of Madness & Divine Dominion por rendici\u00f3n.",
+"card": true
+},
+{
+"winner": "The Don Callis Family (Kyle Fletcher, Kevin Knight, Mark Davis, Jake Doyle & Wardlow)",
+"loser": "Adam Copeland, Will Ospreay, Darby Allin, Steven Borden & The Young Bucks",
+"stip": "Men's Blood & Guts",
+"title": null,
+"fin_en": "",
+"fin_es": "",
+"who": "",
+"field": null,
+"move": "",
+"id": "m2",
+"first_seen": 1793849213,
+"updated": 1793849673,
+"sources": [
+{
+"name": "Wrestling Inc",
+"url": "https://www.wrestlinginc.com/2307145/aew-dynamite-november-4-2026-results/"
+},
+{
+"name": "Wrestling Observer",
+"url": "https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-blood-and-guts-live-results-november-4-2026/"
+}
+],
+"order": 10277,
+"pos": {
+"Wrestling Inc": 284,
+"Wrestling Observer": 42
+},
+"pre": false,
+"conflict": false,
+"confirmed": true,
+"en": "The Don Callis Family (Kyle Fletcher, Kevin Knight, Mark Davis, Jake Doyle & Wardlow) beat Adam Copeland, Will Ospreay, Darby Allin, Steven Borden & The Young Bucks.",
+"es": "The Don Callis Family (Kyle Fletcher, Kevin Knight, Mark Davis, Jake Doyle & Wardlow) vencieron a Adam Copeland, Will Ospreay, Darby Allin, Steven Borden & The Young Bucks.",
+"card": true
+}
+],
+"pages": {
+"https://www.f4wonline.com/news/aew/aew-results/aew-dynamite-blood-and-guts-live-results-november-4-2026/": "Wrestling Observer",
+"https://www.wrestlinginc.com/2307145/aew-dynamite-november-4-2026-results/": "Wrestling Inc",
+"https://www.fightful.com/wrestling-news/aew-dynamite-blood-guts-results-11-4": "Fightful"
+},
+"kind": "weekly",
+"slug": "aew-dynamite",
+"date": "2026-11-04",
+"name": "AEW Dynamite",
+"brand": "AEW",
+"tag": "#AEWDynamite",
+"start": 1793840400,
+"main": 1793840400,
+"end": 1793849400,
+"card": [
+{
+"stip": "Men\u2019s Blood & Guts match",
+"sides": [
+"Will Ospreay, Darby Allin, Adam Copeland, Steven Borden & The Young Bucks",
+"Kazuchika Okada, Kyle Fletcher, Kevin Knight, Wardlow, Mark Davis & Jake Doyle"
+],
+"champ": null,
+"pre": false,
+"idx": 5,
+"nontitle": false
+},
+{
+"stip": "Women\u2019s Blood & Guts match",
+"sides": [
+"Willow Nightingale, Queen Aminata, Kris Statlander, Harley Cameron, Jamie Hayter & Alex Windsor",
+"Thekla, Julia Hart, Skye Blue, Megan Bayne, Lena Kross & Persephone"
+],
+"champ": null,
+"pre": false,
+"idx": 6,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Jericho",
+"Blake Christian"
+],
+"champ": null,
+"pre": false,
+"idx": 45,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"FTR",
+"Motor City Machine Guns in Match #4 of the Best of 5 Series"
+],
+"champ": null,
+"pre": false,
+"idx": 46,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Persephone",
+"Mina Shirakawa"
+],
+"champ": null,
+"pre": false,
+"idx": 47,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Motor City Machine Guns (2)",
+"FTR (1)"
+],
+"champ": null,
+"pre": false,
+"idx": 289,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Mina Shirakawa",
+"Persephone"
+],
+"champ": null,
+"pre": false,
+"idx": 290,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Andrade El Idolo (C)",
+"Tommaso Ciampa"
+],
+"champ": null,
+"pre": false,
+"idx": 291,
+"nontitle": false
+},
+{
+"stip": "Best of 5",
+"sides": [
+"Match #4 @AlexShelley313 / @SuperChrisSabin",
+"Dax Harwood/ @CashWheelerFTR"
+],
+"champ": null,
+"pre": false,
+"idx": 293,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Persephone",
+"@MinaShirakawa"
+],
+"champ": null,
+"pre": false,
+"idx": 297,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Persephone collides",
+"Shirakawa, THIS SATURDAY! pic.twitter.com/CJdXonNhNd"
+],
+"champ": null,
+"pre": false,
+"idx": 299,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Alex Windsor/ @jmehytr",
+"Harley Cameron/ @CallMeKrisStat"
+],
+"champ": null,
+"pre": false,
+"idx": 306,
+"nontitle": false
+},
+{
+"stip": "",
+"sides": [
+"Brawling Birds defend",
+"WrathLander, SATURDAY 11/14! pic.twitter.com/pBZEAeDUuW"
+],
+"champ": null,
+"pre": false,
+"idx": 308,
+"nontitle": false
+},
+{
+"stip": "AEW World Tag Team Championship",
+"sides": [
+"The Young Bucks (C)",
+"Mark Davis and Jake Doyle"
+],
+"champ": null,
+"pre": false,
+"idx": 313,
+"nontitle": false
+},
+{
+"stip": "AEW Women's World Tag Team Championship",
+"sides": [
+"The Brawling Birds (C)",
+"WrathLander"
+],
+"champ": null,
+"pre": false,
+"idx": 314,
+"nontitle": false
+},
+{
+"stip": "Texas Deathmatch for the AEW World Trios Championship",
+"sides": [
+"\"Hangman\" Adam Page, Bandido and Brody King (C)",
+"Swerve Strickland and the New Level"
+],
+"champ": null,
+"pre": false,
+"idx": 315,
+"nontitle": false
+},
+{
+"stip": "AEW Women's World Championship",
+"sides": [
+"Mercedes Mone (C)",
+"Marina Shafir"
+],
+"champ": null,
+"pre": false,
+"idx": 316,
+"nontitle": false
+},
+{
+"stip": "AEW World Championship",
+"sides": [
+"Will Ospreay (C)",
+"Kyle Fletcher"
+],
+"champ": null,
+"pre": false,
+"idx": 317,
+"nontitle": false
+}
+],
+"checked": 1793867423,
+"next_id": 2,
+"updated": 1793851809
+}
